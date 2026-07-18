@@ -3109,3 +3109,107 @@ body.interview-mode .additional-work {
     gap: 10px;
   }
 }
+
+/* Interview-readiness refinements */
+
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 18px;
+}
+
+.hero-links a {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: color var(--ease), text-decoration-color var(--ease);
+}
+
+.hero-links a:hover {
+  color: var(--navy);
+  text-decoration-color: currentColor;
+}
+
+.about-note {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.about-note strong {
+  color: var(--navy);
+}
+
+.case-section {
+  margin-top: 78px;
+}
+
+.contribution-grid-compact article {
+  min-height: 235px;
+  border-bottom: 0;
+}
+
+.evidence-gallery,
+.technology-section {
+  margin-top: 78px;
+}
+
+.job-relevance {
+  padding: 38px 42px;
+}
+
+.site-footer .container {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 12px 24px;
+}
+
+.site-footer p {
+  margin-right: auto;
+}
+
+@media (max-width: 900px) {
+  .contribution-grid-compact article {
+    min-height: 0;
+  }
+
+  .contribution-grid-compact article:nth-child(3) {
+    grid-column: 1 / -1;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-grid {
+    gap: 34px;
+    padding-block: 38px 44px;
+  }
+
+  .hero-links {
+    justify-content: center;
+    margin-top: 16px;
+  }
+
+  .profile-visual {
+    height: 300px;
+  }
+
+  .case-section,
+  .evidence-gallery,
+  .technology-section {
+    margin-top: 58px;
+  }
+
+  .job-relevance {
+    padding: 30px 24px;
+  }
+
+  .site-footer p {
+    margin-right: 0;
+  }
+}
