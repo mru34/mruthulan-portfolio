@@ -1,0 +1,8 @@
+# Local project context and temporary render files
+AGENTS.md
+sources/
+tmp/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
