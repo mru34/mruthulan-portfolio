@@ -26,12 +26,12 @@ Then visit `http://localhost:8000`.
 
 - Sticky responsive navigation
 - Homepage and professional portrait
-- About and skills sections
+- Candidate profile, strengths and job-fit sections
+- Technical skills and working style
 - Education, employment and student-leadership experience
-- Featured SignalBridge case study with official Singapore Polytechnic recognition
-- Live Better Call Bhai project
-- Loomy startup prototype, research evidence and pitch deck
-- Keyboard-accessible Interview Mode (press Escape to exit)
+- Balanced project evidence for SignalBridge, Better Call Bhai, Loomy and KnowCad
+- Direct contact, LinkedIn, GitHub and résumé actions
+- Candidate-focused Interview Mode (press Escape to exit)
 
 ## Structure
 

@@ -51,9 +51,9 @@ interviewPanel.addEventListener('click', (event) => {
 });
 
 evidenceNavButton.addEventListener('click', () => {
-  document.querySelector('#work')?.scrollIntoView();
-  interviewPanel.querySelector('a[href="#work"]')?.focus();
-  announcement.textContent = 'SignalBridge evidence navigation focused.';
+  document.querySelector('#interview-projects')?.scrollIntoView();
+  interviewPanel.querySelector('a[href="#interview-projects"]')?.focus();
+  announcement.textContent = 'Candidate project evidence focused.';
 });
 
 document.addEventListener('keydown', (event) => {

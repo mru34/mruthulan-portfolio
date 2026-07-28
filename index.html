@@ -13,8 +13,8 @@
   <meta name="theme-color" content="#132A4F">
   <title>Mruthulan — Information Technology Portfolio</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css?v=20260718-mobile">
-  <script src="js/script.js?v=20260718-mobile" defer></script>
+  <link rel="stylesheet" href="css/styles.css?v=20260728-candidate">
+  <script src="js/script.js?v=20260728-candidate" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -34,9 +34,10 @@
 
       <div class="nav-links" id="nav-links">
         <a href="#about">About</a>
+        <a href="#fit">Why me</a>
         <a href="#skills">Skills</a>
         <a href="#journey">Experience</a>
-        <a href="#work">Work</a>
+        <a href="#work">Projects</a>
         <a href="#contact">Contact</a>
       </div>
 
@@ -52,8 +53,8 @@
       <strong>Interview Mode</strong>
     </div>
     <nav aria-label="Interview sections">
-      <a href="#interview-project-title">Project overview</a>
-      <a href="#interview-star">STAR evidence</a>
+      <a href="#interview-profile-title">Candidate snapshot</a>
+      <a href="#interview-projects">Project evidence</a>
     </nav>
     <button type="button" data-interview-toggle>Exit <kbd>Esc</kbd></button>
   </aside>
@@ -64,22 +65,23 @@
         <div class="hero-copy">
           <p class="eyebrow"><span></span> Software Development Internship · Year 2 IT Student</p>
           <h1 id="hero-title">Mruthulan</h1>
-          <p class="hero-summary">I am seeking a software development internship where I can contribute to full-stack products, reliable backend logic and user-focused interfaces.</p>
+          <p class="hero-summary">I build useful software, learn quickly and communicate clearly. I am seeking a software development internship where I can contribute across frontend, backend and product delivery.</p>
 
           <ul class="strength-list" aria-label="Core strengths">
-            <li>Problem-solving</li>
-            <li>Teamwork</li>
-            <li>Adaptability</li>
+            <li>Full-stack delivery</li>
+            <li>Clear communication</li>
+            <li>Continuous learning</li>
           </ul>
 
           <div class="hero-actions">
-            <a class="button button-primary" href="#work">View Selected Work <span aria-hidden="true">↘</span></a>
-            <button class="button button-secondary" type="button" data-interview-toggle>Interview View</button>
+            <a class="button button-primary" href="#fit">Why I fit <span aria-hidden="true">↘</span></a>
+            <a class="button button-secondary" href="#work">View projects</a>
           </div>
           <div class="hero-links" aria-label="Professional links">
             <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
             <a href="https://github.com/mru34" target="_blank" rel="noreferrer">GitHub ↗</a>
             <a href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Résumé ↓</a>
+            <button type="button" data-interview-toggle>Interview View</button>
           </div>
         </div>
 
@@ -130,11 +132,46 @@
       </div>
     </section>
 
+    <section class="candidate-fit section" id="fit" aria-labelledby="fit-title">
+      <div class="container">
+        <div class="section-heading section-heading-row fit-heading">
+          <div>
+            <p class="section-number">02 / Why me</p>
+            <h2 id="fit-title">What I bring</h2>
+          </div>
+          <p>A practical student developer who combines technical delivery with communication, customer awareness and a willingness to improve.</p>
+        </div>
+
+        <div class="fit-grid">
+          <article>
+            <span>01</span>
+            <h3>End-to-end thinking</h3>
+            <p>I understand how interfaces, APIs, databases and testing connect to create a complete user experience.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Evidence-led decisions</h3>
+            <p>I use user feedback, testing and real project constraints to improve what I build.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Reliable teammate</h3>
+            <p>Hackathons, class leadership and customer-facing work have strengthened how I collaborate under pressure.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Growth mindset</h3>
+            <p>I adapt quickly, ask useful questions and turn unfamiliar tools into working project outcomes.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <section class="skills section" id="skills" aria-labelledby="skills-title">
       <div class="container">
         <div class="section-heading section-heading-row">
           <div>
-            <p class="section-number">02 / Capabilities</p>
+            <p class="section-number">03 / Capabilities</p>
             <h2 id="skills-title">Skills</h2>
           </div>
           <p>A focused toolkit for building, testing and improving dependable software.</p>
@@ -193,7 +230,7 @@
       <div class="container">
         <div class="section-heading section-heading-row journey-heading">
           <div>
-            <p class="section-number">03 / Experience</p>
+            <p class="section-number">04 / Experience</p>
             <h2 id="journey-title">Learning by doing</h2>
           </div>
           <p>Technical delivery supported by customer-facing work, student leadership and community involvement.</p>
@@ -241,7 +278,160 @@
       </div>
     </section>
 
-    <section class="case-study signalbridge section" id="work" aria-labelledby="project-title">
+    <section class="selected-work section" id="work" aria-labelledby="work-title">
+      <div class="container">
+        <div class="section-heading section-heading-row work-heading">
+          <div>
+            <p class="section-number">05 / Selected work</p>
+            <h2 id="work-title">Projects that show how I work</h2>
+          </div>
+          <p>Three different examples of full-stack development, client delivery and product thinking.</p>
+        </div>
+
+        <div class="project-showcase-grid">
+          <article class="portfolio-project">
+            <div class="project-card-heading">
+              <p>Hackathon-winning team project</p>
+              <h3>SignalBridge</h3>
+            </div>
+            <a class="project-card-image" href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live SignalBridge application">
+              <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface">
+            </a>
+            <p class="project-card-summary">An AI-assisted support platform that helps youth workers maintain continuity of care when young people reach out after working hours.</p>
+            <div class="project-card-role">
+              <span>My contribution</span>
+              <p>Youth-facing frontend, consent and handoff UX, backend integration, Discord integration and automated testing.</p>
+            </div>
+            <div class="project-card-result">
+              <strong>SP InnovateDash 2026 Champion</strong>
+              <span>Featured by Singapore Polytechnic</span>
+            </div>
+            <ul class="project-tags"><li>Next.js</li><li>FastAPI</li><li>PostgreSQL</li><li>Testing</li></ul>
+            <div class="project-card-actions">
+              <a href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer">Live product ↗</a>
+              <a href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noreferrer">Official SP feature ↗</a>
+            </div>
+          </article>
+
+          <article class="portfolio-project">
+            <div class="project-card-heading">
+              <p>Real-client web project</p>
+              <h3>Better Call Bhai</h3>
+            </div>
+            <a class="project-card-image" href="https://bettercalbhai.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the Better Call Bhai website">
+              <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai barber booking homepage">
+            </a>
+            <p class="project-card-summary">A mobile-friendly booking website created for a local barber shop to replace manual WhatsApp appointment coordination.</p>
+            <div class="project-card-role">
+              <span>My contribution</span>
+              <p>Designed and developed the customer journey, appointment form, responsive interface and deployed website.</p>
+            </div>
+            <div class="project-card-result">
+              <strong>Deployed for a real business</strong>
+              <span>Practical client-focused delivery</span>
+            </div>
+            <ul class="project-tags"><li>JavaScript</li><li>Responsive UI</li><li>Booking flow</li><li>Render</li></ul>
+            <div class="project-card-actions">
+              <a href="https://bettercalbhai.onrender.com/" target="_blank" rel="noreferrer">Live website ↗</a>
+              <a href="https://bettercalbhai.onrender.com/#booking" target="_blank" rel="noreferrer">Booking flow ↗</a>
+            </div>
+          </article>
+
+          <article class="portfolio-project">
+            <div class="project-card-heading">
+              <p>IENT startup project · A grade</p>
+              <h3>Loomy</h3>
+            </div>
+            <a class="project-card-image" href="https://loomy-copy-eb9f937f.base44.app/Community" target="_blank" rel="noreferrer" aria-label="Open the Loomy Community prototype">
+              <img src="assets/images/loomy-product-overview.png" alt="Loomy community, profiling and digital wardrobe product concept">
+            </a>
+            <p class="project-card-summary">A social-thrifting concept combining community, clothing swaps and an AI-assisted digital wardrobe.</p>
+            <div class="project-card-role">
+              <span>My contribution</span>
+              <p>Prototype designer focused on product structure, user experience and translating research into a working concept.</p>
+            </div>
+            <div class="project-card-result">
+              <strong>Validated with 30+ youths</strong>
+              <span>70% wanted convenient online thrifting</span>
+            </div>
+            <ul class="project-tags"><li>Product design</li><li>User research</li><li>Prototype</li><li>AI wardrobe</li></ul>
+            <div class="project-card-actions">
+              <a href="https://loomy-copy-eb9f937f.base44.app/Community" target="_blank" rel="noreferrer">Live prototype ↗</a>
+              <a href="assets/Loomy-Pitch-Deck.pdf" target="_blank">Pitch deck ↗</a>
+            </div>
+          </article>
+        </div>
+
+        <aside class="project-brief" aria-label="Additional hackathon project">
+          <div>
+            <p>Additional evidence</p>
+            <h3>KnowCad</h3>
+          </div>
+          <p>An AI co-pilot for customer-service agents that won the Autodesk Singapore Hackathon 2026. It demonstrates collaborative delivery and human-in-the-loop product thinking.</p>
+          <ul class="project-tags"><li>Hackathon champion</li><li>AI workflow</li><li>Team delivery</li></ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="contact-cta section" id="contact" aria-labelledby="contact-title">
+      <div class="container contact-cta-grid">
+        <div>
+          <p class="section-number">06 / Next step</p>
+          <h2 id="contact-title">Let’s discuss how I can contribute.</h2>
+        </div>
+        <div class="contact-cta-copy">
+          <p>I am interested in software development opportunities where I can learn from experienced teams, contribute to real products and keep growing across the full stack.</p>
+          <div class="contact-actions">
+            <a class="button button-primary" href="mailto:mruthulansenthilnathan@gmail.com">Email me</a>
+            <a class="button button-secondary" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Download résumé</a>
+            <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            <a href="https://github.com/mru34" target="_blank" rel="noreferrer">GitHub ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="candidate-interview section" id="interview-view" aria-labelledby="interview-profile-title">
+      <div class="container">
+        <header class="candidate-interview-header">
+          <img src="assets/images/mru-profile.jpg" alt="Professional portrait of Senthil Nathan Mruthulan">
+          <div>
+            <p class="section-number">Interview snapshot</p>
+            <h2 id="interview-profile-title">Mruthulan</h2>
+            <p>Year 2 Information Technology student · Aspiring full-stack developer</p>
+          </div>
+          <button type="button" class="evidence-nav-button" data-evidence-nav>View project evidence</button>
+        </header>
+
+        <div class="candidate-snapshot-grid">
+          <article><p>Who I am</p><strong>Adaptable student developer</strong><span>I turn real problems into practical, user-friendly software.</span></article>
+          <article><p>What I bring</p><strong>Technical range</strong><span>Frontend, backend, databases, testing and product thinking.</span></article>
+          <article><p>How I work</p><strong>Collaborative and reliable</strong><span>Hackathons, leadership and customer-facing work have strengthened my communication.</span></article>
+          <article><p>What I want</p><strong>Software development internship</strong><span>A role where I can contribute, learn quickly and grow across the full stack.</span></article>
+        </div>
+
+        <div class="candidate-project-evidence" id="interview-projects">
+          <article>
+            <span>01</span><h3>SignalBridge</h3>
+            <p>Youth-facing UX, API integration and testing for a hackathon-winning support platform.</p>
+            <strong>SP InnovateDash 2026 Champion</strong>
+          </article>
+          <article>
+            <span>02</span><h3>Better Call Bhai</h3>
+            <p>Designed, built and deployed a responsive booking experience for a real local business.</p>
+            <strong>Real-client delivery</strong>
+          </article>
+          <article>
+            <span>03</span><h3>Loomy</h3>
+            <p>Designed a social-thrifting prototype informed by interviews with more than 30 youths.</p>
+            <strong>A-grade IENT project</strong>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <template id="legacy-portfolio-content">
+    <section class="case-study signalbridge section" id="legacy-signalbridge" hidden aria-labelledby="project-title">
       <div class="container signalbridge-normal">
         <header class="signalbridge-opening">
           <div class="signalbridge-title-block">
@@ -425,7 +615,7 @@
       </div>
     </section>
 
-    <section class="additional-work section" id="more-work" aria-labelledby="additional-work-title">
+    <section class="additional-work section" id="legacy-more-work" hidden aria-labelledby="additional-work-title">
       <div class="container">
         <div class="section-heading section-heading-row additional-work-heading">
           <div>
@@ -491,9 +681,10 @@
         </div>
       </div>
     </section>
+    </template>
   </main>
 
-  <footer class="site-footer" id="contact">
+  <footer class="site-footer">
     <div class="container">
       <p>Senthil Nathan Mruthulan / IT Portfolio</p>
       <a href="mailto:mruthulansenthilnathan@gmail.com">mruthulansenthilnathan@gmail.com</a>
