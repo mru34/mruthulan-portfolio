@@ -13,8 +13,8 @@
   <meta name="theme-color" content="#132A4F">
   <title>Mruthulan — Information Technology Portfolio</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css?v=20260728-candidate">
-  <script src="js/script.js?v=20260728-candidate" defer></script>
+  <link rel="stylesheet" href="css/styles.css?v=20260804-pbca">
+  <script src="js/script.js?v=20260804-pbca" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -47,25 +47,34 @@
     </nav>
   </header>
 
-  <aside class="interview-panel" aria-label="Interview mode navigation" aria-hidden="true">
-    <div>
+  <aside class="interview-panel" aria-label="Interview presentation controls" aria-hidden="true">
+    <div class="interview-panel-brand">
       <span class="interview-status-dot" aria-hidden="true"></span>
-      <strong>Interview Mode</strong>
+      <span><strong>Interview View</strong><small>Ninja Coding House</small></span>
     </div>
-    <nav aria-label="Interview sections">
-      <a href="#interview-profile-title">Candidate snapshot</a>
-      <a href="#interview-projects">Project evidence</a>
+    <nav aria-label="Interview presentation sections">
+      <button type="button" data-interview-step="0" aria-current="step">01 Intro</button>
+      <button type="button" data-interview-step="1">02 Role fit</button>
+      <button type="button" data-interview-step="2">03 Skills</button>
+      <button type="button" data-interview-step="3">04 Projects</button>
+      <button type="button" data-interview-step="4">05 Experience</button>
+      <button type="button" data-interview-step="5">06 Questions</button>
     </nav>
-    <button type="button" data-interview-toggle>Exit <kbd>Esc</kbd></button>
+    <div class="interview-panel-actions">
+      <button type="button" data-interview-prev aria-label="Previous interview section">&larr;</button>
+      <span data-interview-progress>1 / 6</span>
+      <button type="button" data-interview-next aria-label="Next interview section">&rarr;</button>
+      <button type="button" data-interview-toggle>Exit <kbd>Esc</kbd></button>
+    </div>
   </aside>
 
   <main id="main-content">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-grid container">
         <div class="hero-copy">
-          <p class="eyebrow"><span></span> Software Development Internship · Year 2 IT Student</p>
+          <p class="eyebrow"><span></span> Aspiring Full-Stack Developer · Year 2 IT Student</p>
           <h1 id="hero-title">Mruthulan</h1>
-          <p class="hero-summary">I build useful software, learn quickly and communicate clearly. I am seeking a software development internship where I can contribute across frontend, backend and product delivery.</p>
+          <p class="hero-summary">I turn real needs into deployed, user-friendly software. I bring full-stack foundations, practical project experience and the curiosity to learn unfamiliar technologies quickly.</p>
 
           <ul class="strength-list" aria-label="Core strengths">
             <li>Full-stack delivery</li>
@@ -74,14 +83,14 @@
           </ul>
 
           <div class="hero-actions">
-            <a class="button button-primary" href="#fit">Why I fit <span aria-hidden="true">↘</span></a>
+            <a class="button button-primary" href="#fit">Why hire me <span aria-hidden="true">↘</span></a>
             <a class="button button-secondary" href="#work">View projects</a>
           </div>
           <div class="hero-links" aria-label="Professional links">
             <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
             <a href="https://github.com/mru34" target="_blank" rel="noreferrer">GitHub ↗</a>
             <a href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Résumé ↓</a>
-            <button type="button" data-interview-toggle>Interview View</button>
+            <button type="button" data-interview-toggle>Open Interview View</button>
           </div>
         </div>
 
@@ -137,31 +146,31 @@
         <div class="section-heading section-heading-row fit-heading">
           <div>
             <p class="section-number">02 / Why me</p>
-            <h2 id="fit-title">What I bring</h2>
+            <h2 id="fit-title">What I bring to a development team</h2>
           </div>
-          <p>A practical student developer who combines technical delivery with communication, customer awareness and a willingness to improve.</p>
+          <p>Strengths aligned to junior full-stack work: practical delivery, problem-solving, collaboration and rapid learning.</p>
         </div>
 
         <div class="fit-grid">
           <article>
             <span>01</span>
-            <h3>End-to-end thinking</h3>
-            <p>I understand how interfaces, APIs, databases and testing connect to create a complete user experience.</p>
+            <h3>Practical full-stack foundations</h3>
+            <p>I understand how interfaces, APIs, databases, testing and deployment connect to create a complete user experience.</p>
           </article>
           <article>
             <span>02</span>
-            <h3>Evidence-led decisions</h3>
-            <p>I use user feedback, testing and real project constraints to improve what I build.</p>
+            <h3>Problem-solving and quality</h3>
+            <p>I use debugging, testing, user feedback and real project constraints to improve what I build.</p>
           </article>
           <article>
             <span>03</span>
-            <h3>Reliable teammate</h3>
-            <p>Hackathons, class leadership and customer-facing work have strengthened how I collaborate under pressure.</p>
+            <h3>Clear, reliable collaboration</h3>
+            <p>Hackathons, student leadership and customer-facing work have strengthened how I communicate under pressure.</p>
           </article>
           <article>
             <span>04</span>
-            <h3>Growth mindset</h3>
-            <p>I adapt quickly, ask useful questions and turn unfamiliar tools into working project outcomes.</p>
+            <h3>Fast, honest learner</h3>
+            <p>I am open about what I am still learning, ask useful questions and turn unfamiliar tools into working outcomes.</p>
           </article>
         </div>
       </div>
@@ -392,40 +401,120 @@
     </section>
 
     <section class="candidate-interview section" id="interview-view" aria-labelledby="interview-profile-title">
-      <div class="container">
+      <div class="container interview-stage">
         <header class="candidate-interview-header">
-          <img src="assets/images/mru-profile.jpg" alt="Professional portrait of Senthil Nathan Mruthulan">
           <div>
-            <p class="section-number">Interview snapshot</p>
-            <h2 id="interview-profile-title">Mruthulan</h2>
-            <p>Year 2 Information Technology student · Aspiring full-stack developer</p>
+            <p class="section-number">PBCA interview portfolio</p>
+            <h2 id="interview-profile-title">Junior Full Stack Developer</h2>
+            <p>Ninja Coding House · Candidate: Senthil Nathan Mruthulan</p>
           </div>
-          <button type="button" class="evidence-nav-button" data-evidence-nav>View project evidence</button>
+          <div class="interview-role-badge"><span>Target role</span><strong>Full stack · Client projects · Growth</strong></div>
         </header>
 
-        <div class="candidate-snapshot-grid">
-          <article><p>Who I am</p><strong>Adaptable student developer</strong><span>I turn real problems into practical, user-friendly software.</span></article>
-          <article><p>What I bring</p><strong>Technical range</strong><span>Frontend, backend, databases, testing and product thinking.</span></article>
-          <article><p>How I work</p><strong>Collaborative and reliable</strong><span>Hackathons, leadership and customer-facing work have strengthened my communication.</span></article>
-          <article><p>What I want</p><strong>Software development internship</strong><span>A role where I can contribute, learn quickly and grow across the full stack.</span></article>
+        <div class="interview-slides" aria-live="polite">
+          <article class="interview-slide interview-intro is-active" data-interview-slide="0" aria-labelledby="interview-intro-title" tabindex="-1">
+            <div class="interview-intro-profile">
+              <img src="assets/images/mru-profile.jpg" alt="Professional portrait of Senthil Nathan Mruthulan">
+              <div>
+                <p class="interview-kicker">01 · Tell me about yourself</p>
+                <h3 id="interview-intro-title">Mruthulan</h3>
+                <p>Year 2 Diploma in Information Technology student at Singapore Polytechnic.</p>
+              </div>
+            </div>
+            <div class="interview-usp">
+              <span>My unique value</span>
+              <blockquote>I turn real needs into deployed, user-friendly software. I have built for a local business, contributed to a hackathon-winning platform, and combine full-stack foundations with clear communication and a strong willingness to learn.</blockquote>
+            </div>
+            <ul class="interview-proof-strip" aria-label="Professional brand evidence">
+              <li><strong>Build</strong><span>Practical web applications</span></li>
+              <li><strong>Deliver</strong><span>Real users and live deployment</span></li>
+              <li><strong>Collaborate</strong><span>Teams, clients and communities</span></li>
+              <li><strong>Grow</strong><span>Fast learner across the stack</span></li>
+            </ul>
+          </article>
+
+          <article class="interview-slide" data-interview-slide="1" aria-labelledby="interview-fit-title" tabindex="-1" hidden>
+            <div class="interview-slide-heading">
+              <p class="interview-kicker">02 · Why this role</p>
+              <h3 id="interview-fit-title">A strong match for a practical, learning-focused team</h3>
+              <p>Ninja Coding House builds custom software in a small, agile environment. That suits how I learn best: contributing to real work, taking feedback and improving quickly.</p>
+            </div>
+            <div class="role-match-grid">
+              <article><span>The role needs</span><strong>Practical web development</strong><p>I designed, built and deployed Better Call Bhai for a real local business.</p></article>
+              <article><span>The role needs</span><strong>Problem-solving and debugging</strong><p>SignalBridge gave me experience with API integration, automated testing and resolving issues under time pressure.</p></article>
+              <article><span>The role needs</span><strong>Responsive, user-friendly interfaces</strong><p>My projects are designed around real user journeys across desktop and mobile.</p></article>
+              <article><span>The role needs</span><strong>Initiative and willingness to learn</strong><p>I have moved between unfamiliar tools, product domains and team roles to deliver working outcomes.</p></article>
+            </div>
+            <p class="interview-honesty-note"><strong>Learning edge:</strong> I have not yet used PHP and Laravel professionally. I would bring transferable JavaScript, database, API and deployment foundations—and a clear plan to learn the stack quickly.</p>
+          </article>
+
+          <article class="interview-slide" data-interview-slide="2" aria-labelledby="interview-skills-title" tabindex="-1" hidden>
+            <div class="interview-slide-heading">
+              <p class="interview-kicker">03 · Skills with proof</p>
+              <h3 id="interview-skills-title">Every claim is connected to evidence</h3>
+            </div>
+            <div class="interview-evidence-list">
+              <article><div><span>Frontend</span><strong>HTML, CSS and JavaScript</strong></div><p>Responsive booking flow and customer-facing interface for Better Call Bhai.</p></article>
+              <article><div><span>Backend and data</span><strong>APIs, SQL and PostgreSQL</strong></div><p>Backend integration and structured data work for SignalBridge and school projects.</p></article>
+              <article><div><span>Quality</span><strong>Testing, debugging and secure coding</strong></div><p>Automated tests, issue resolution and security-aware development fundamentals.</p></article>
+              <article><div><span>Delivery</span><strong>Git, deployment and iteration</strong></div><p>Deployed working applications on Render and improved them through feedback.</p></article>
+              <article><div><span>Growth plan</span><strong>PHP, Laravel, MySQL and Next.js</strong></div><p>Role-specific technologies I am prepared to learn using documentation, small builds and code review.</p></article>
+            </div>
+          </article>
+
+          <article class="interview-slide" data-interview-slide="3" aria-labelledby="interview-projects-title" tabindex="-1" hidden>
+            <div class="interview-slide-heading interview-slide-heading-row">
+              <div><p class="interview-kicker">04 · Project evidence</p><h3 id="interview-projects-title">Three projects, three kinds of value</h3></div>
+              <p>Use these examples while answering—not only when asked about the portfolio.</p>
+            </div>
+            <div class="interview-project-grid" id="interview-projects">
+              <article>
+                <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai booking website homepage">
+                <div><span>Real client</span><h4>Better Call Bhai</h4><p>Built and deployed a responsive appointment experience to replace manual coordination.</p><strong>Proof: end-to-end delivery</strong></div>
+              </article>
+              <article>
+                <img src="assets/images/signalbridge-login.png" alt="SignalBridge application entry interface">
+                <div><span>Team challenge</span><h4>SignalBridge</h4><p>Contributed frontend, consent and handoff UX, integrations and testing under hackathon pressure.</p><strong>Proof: SP InnovateDash Champion</strong></div>
+              </article>
+              <article>
+                <img src="assets/images/loomy-product-overview.png" alt="Loomy community and digital wardrobe prototype">
+                <div><span>User research</span><h4>Loomy</h4><p>Translated interviews with more than 30 youths into a working social-thrifting concept.</p><strong>Proof: A-grade IENT project</strong></div>
+              </article>
+            </div>
+          </article>
+
+          <article class="interview-slide" data-interview-slide="4" aria-labelledby="interview-experience-title" tabindex="-1" hidden>
+            <div class="interview-slide-heading">
+              <p class="interview-kicker">05 · How I work</p>
+              <h3 id="interview-experience-title">Technical ability supported by people skills</h3>
+            </div>
+            <div class="interview-experience-grid">
+              <article><span>Leadership</span><h4>Youth Harmony Chapter</h4><p>Secretary Subcommittee at Singapore Polytechnic, supporting coordination, communication and follow-through.</p><strong>Evidence for: reliability and teamwork</strong></article>
+              <article><span>Customer experience</span><h4>Watsons Singapore</h4><p>Handled payments, customer questions and busy-period support while maintaining accuracy and a positive attitude.</p><strong>Evidence for: communication under pressure</strong></article>
+              <article><span>Collaborative delivery</span><h4>Hackathons and team projects</h4><p>Worked within short timelines, divided responsibilities and presented technical ideas to different audiences.</p><strong>Evidence for: adaptability and initiative</strong></article>
+            </div>
+            <div class="star-reminder"><span>Answer structure</span><strong>Situation → Task → Action → Result → Relevance to this role</strong></div>
+          </article>
+
+          <article class="interview-slide" data-interview-slide="5" aria-labelledby="interview-questions-title" tabindex="-1" hidden>
+            <div class="interview-slide-heading">
+              <p class="interview-kicker">06 · Close with interest</p>
+              <h3 id="interview-questions-title">Questions for Ninja Coding House</h3>
+              <p>Ask at least two. Listen to the answers and ask one natural follow-up if time allows.</p>
+            </div>
+            <ol class="interview-question-list">
+              <li><span>01</span><p>For a junior developer, what would strong performance look like during the first three months?</p></li>
+              <li><span>02</span><p>How does the team divide work across frontend, backend, API integration and deployment on client projects?</p></li>
+              <li><span>03</span><p>Which technologies or types of projects would you want the successful candidate to learn first?</p></li>
+            </ol>
+            <blockquote class="interview-close">“Thank you for sharing more about the role. The opportunity to learn across live client projects is exactly the kind of environment in which I believe I can contribute and grow.”</blockquote>
+          </article>
         </div>
 
-        <div class="candidate-project-evidence" id="interview-projects">
-          <article>
-            <span>01</span><h3>SignalBridge</h3>
-            <p>Youth-facing UX, API integration and testing for a hackathon-winning support platform.</p>
-            <strong>SP InnovateDash 2026 Champion</strong>
-          </article>
-          <article>
-            <span>02</span><h3>Better Call Bhai</h3>
-            <p>Designed, built and deployed a responsive booking experience for a real local business.</p>
-            <strong>Real-client delivery</strong>
-          </article>
-          <article>
-            <span>03</span><h3>Loomy</h3>
-            <p>Designed a social-thrifting prototype informed by interviews with more than 30 youths.</p>
-            <strong>A-grade IENT project</strong>
-          </article>
+        <div class="interview-mobile-controls" aria-label="Interview presentation controls">
+          <button type="button" data-interview-prev>Previous</button>
+          <span data-interview-progress>1 / 6</span>
+          <button type="button" data-interview-next>Next</button>
         </div>
       </div>
     </section>
