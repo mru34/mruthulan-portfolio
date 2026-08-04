@@ -31,7 +31,9 @@ Then visit `http://localhost:8000`.
 - Education, employment and student-leadership experience
 - Balanced project evidence for SignalBridge, Better Call Bhai, Loomy and KnowCad
 - Direct contact, LinkedIn, GitHub and résumé actions
-- Candidate-focused Interview Mode (press Escape to exit)
+- PBCA Interview View tailored to the Junior Full Stack Developer role at Ninja Coding House
+- Six presentation sections covering USP, role fit, skills evidence, projects, experience and employer questions
+- Keyboard presentation controls: Left/Right arrows, Page Up/Page Down, Home/End and Escape
 
 ## Structure
 
