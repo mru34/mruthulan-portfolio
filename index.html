@@ -8,7 +8,11 @@
   <meta property="og:description" content="Two-time hackathon champion with shipped, real-user products. Next.js, FastAPI, PostgreSQL, testing and deployment. Seeking a 2026 software engineering internship in Singapore.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mru34.github.io/mruthulan-portfolio/">
-  <meta property="og:image" content="https://mru34.github.io/mruthulan-portfolio/assets/images/mru-profile.jpg">
+  <meta property="og:image" content="https://mru34.github.io/mruthulan-portfolio/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Mruthulan — Software Engineering Intern. Two-time hackathon champion, 3 products deployed live.">
+  <meta name="twitter:image" content="https://mru34.github.io/mruthulan-portfolio/assets/og-card.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#132A4F" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
@@ -16,9 +20,24 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css?v=20260809-swe">
-  <!-- Marks the document before first paint so scroll-reveal only hides
-       content when JavaScript is actually available to reveal it again. -->
-  <script>document.documentElement.classList.add('js');</script>
+  <!-- Runs before first paint: marks the document so scroll-reveal only hides
+       content when JS can reveal it again, and applies a stored theme choice
+       so an explicit light/dark pick never flashes the other theme first.
+       No stored choice means no attribute, leaving the OS preference in charge. -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('js');
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+          root.setAttribute('data-theme', saved);
+        }
+      } catch (e) {
+        /* Private browsing can throw on localStorage; the OS preference still applies. */
+      }
+    })();
+  </script>
   <script src="js/script.js?v=20260809-swe" defer></script>
 </head>
 <body>
@@ -46,11 +65,53 @@
         <a href="#contact">Contact</a>
       </div>
 
-      <button class="nav-interview-button" type="button" data-interview-toggle>
-        Interview Mode
-      </button>
+      <div class="nav-tools">
+        <button class="icon-button" type="button" data-command-open aria-label="Open command palette">
+          <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="9" r="6"></circle><path d="M13.5 13.5 17.5 17.5"></path>
+          </svg>
+          <kbd>⌘K</kbd>
+        </button>
+
+        <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+          <svg class="theme-icon-sun" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <circle cx="10" cy="10" r="3.6"></circle>
+            <path d="M10 1.6v2M10 16.4v2M1.6 10h2M16.4 10h2M4.1 4.1l1.4 1.4M14.5 14.5l1.4 1.4M15.9 4.1l-1.4 1.4M5.5 14.5l-1.4 1.4"></path>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3Z"></path>
+          </svg>
+        </button>
+
+        <button class="nav-interview-button" type="button" data-interview-toggle>
+          Interview Mode
+        </button>
+      </div>
     </nav>
   </header>
+
+  <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
+
+  <div class="command-palette" data-command-palette hidden>
+    <div class="command-backdrop" data-command-close></div>
+    <div class="command-dialog" role="dialog" aria-modal="true" aria-labelledby="command-label">
+      <label class="sr-only" id="command-label" for="command-input">Search sections and links</label>
+      <div class="command-field">
+        <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+          <circle cx="9" cy="9" r="6"></circle><path d="M13.5 13.5 17.5 17.5"></path>
+        </svg>
+        <input id="command-input" type="text" placeholder="Jump to a section, or open a link…" autocomplete="off" spellcheck="false" data-command-input>
+        <kbd>Esc</kbd>
+      </div>
+      <ul class="command-results" role="listbox" aria-label="Results" data-command-results></ul>
+      <p class="command-empty" data-command-empty hidden>No matches.</p>
+      <div class="command-footer">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> select</span>
+        <span><kbd>Esc</kbd> close</span>
+      </div>
+    </div>
+  </div>
 
   <aside class="interview-panel" aria-label="Interview presentation controls" aria-hidden="true">
     <div class="interview-panel-brand">
@@ -345,9 +406,11 @@
             </div>
             <ul class="project-tags"><li>Next.js</li><li>FastAPI</li><li>PostgreSQL</li><li>Testing</li></ul>
             <div class="project-card-actions">
+              <a class="project-case-link" href="signalbridge.html">Read the case study →</a>
               <a href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer">Live product ↗</a>
               <a href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noreferrer">Official SP feature ↗</a>
             </div>
+            <p class="project-code-note">Code lives in the competition team's private repository. Happy to walk through my commits in an interview.</p>
           </article>
 
           <article class="portfolio-project reveal">
@@ -372,6 +435,7 @@
               <a href="https://bettercalbhai.onrender.com/" target="_blank" rel="noreferrer">Live website ↗</a>
               <a href="https://bettercalbhai.onrender.com/#booking" target="_blank" rel="noreferrer">Booking flow ↗</a>
             </div>
+            <p class="project-code-note">Client work, so the repository is private. I can share a read-only walkthrough on request.</p>
           </article>
 
           <article class="portfolio-project reveal">
@@ -396,6 +460,7 @@
               <a href="https://loomy-copy-eb9f937f.base44.app/Community" target="_blank" rel="noreferrer">Live prototype ↗</a>
               <a href="assets/Loomy-Pitch-Deck.pdf" target="_blank">Pitch deck ↗</a>
             </div>
+            <p class="project-code-note">Built on a no-code prototyping platform — this one is product and research work, not a codebase.</p>
           </article>
         </div>
 
@@ -421,6 +486,18 @@
             </div>
           </dl>
         </article>
+
+        <section class="build-log reveal" aria-labelledby="build-log-title">
+          <div class="build-log-intro">
+            <p class="section-number">Still building</p>
+            <h3 id="build-log-title">What I'm working on now</h3>
+            <p>This portfolio is itself a hand-written codebase — no framework, no build step. The source is public if you want to read how I write HTML, CSS and JavaScript.</p>
+            <a class="build-log-repo" href="https://github.com/mru34/mruthulan-portfolio" target="_blank" rel="noreferrer">Read this site's source ↗</a>
+          </div>
+          <div class="build-log-feed" data-github-activity>
+            <p class="build-log-fallback">Recent public activity loads from GitHub. <a href="https://github.com/mru34" target="_blank" rel="noreferrer">View my GitHub profile ↗</a></p>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -561,259 +638,6 @@
         </div>
       </div>
     </section>
-
-    <template id="legacy-portfolio-content">
-    <section class="case-study signalbridge section" id="legacy-signalbridge" hidden aria-labelledby="project-title">
-      <div class="container signalbridge-normal">
-        <header class="signalbridge-opening">
-          <div class="signalbridge-title-block">
-            <p class="section-number">04 / Featured work</p>
-            <div class="achievement-badge"><span aria-hidden="true">★</span> SP InnovateDash 2026 Champion</div>
-            <p class="case-label">Singapore Polytechnic’s qualifying competition for Dell InnovateFest 2026</p>
-            <h2 id="project-title">SignalBridge</h2>
-          </div>
-          <p class="signalbridge-summary">An AI-assisted, consent-based support platform that helps youth workers maintain continuity of care when vulnerable young people reach out after working hours.</p>
-        </header>
-
-        <figure class="signalbridge-main-figure">
-          <a class="live-project-image signalbridge-main-visual" href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live SignalBridge application">
-            <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface" width="1280" height="720" loading="lazy" decoding="async">
-            <span class="media-file-label">Live product · Youth and staff entry</span>
-          </a>
-          <figcaption class="live-figure-caption">
-            <span>Public product interface captured from the deployed application</span>
-            <a href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer">Open SignalBridge ↗</a>
-          </figcaption>
-        </figure>
-
-        <div class="result-facts" aria-label="SignalBridge results">
-          <article>
-            <p>01 / Achievement</p>
-            <strong>Won the top prize</strong>
-            <span>SP InnovateDash 2026</span>
-          </article>
-          <article>
-            <p>02 / Progression</p>
-            <strong>Selected for the finals</strong>
-            <span>Representing Singapore Polytechnic at Dell InnovateFest 2026</span>
-          </article>
-          <article>
-            <p>03 / Team</p>
-            <strong>Dell-icious Bugs</strong>
-            <span>Competition team</span>
-          </article>
-        </div>
-
-        <aside class="sp-feature" aria-label="Singapore Polytechnic feature">
-          <div>
-            <p>Independent recognition</p>
-            <strong>Featured by Singapore Polytechnic</strong>
-            <span>SP names Mruthulan as part of the winning team and documents SignalBridge’s real-world purpose.</span>
-          </div>
-          <a href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noreferrer">Read the official feature ↗</a>
-        </aside>
-
-        <div class="case-section problem-solution">
-          <div class="case-section-heading">
-            <p class="section-number">Context</p>
-            <h3>From a missed message to a safe handoff</h3>
-          </div>
-          <div class="problem-solution-grid">
-            <article>
-              <p class="detail-label">The problem</p>
-              <p>Youth workers may not see difficult messages sent after working hours until the following morning. Important context can be lost, and the young person may have to repeat a painful experience when support resumes.</p>
-            </article>
-            <article class="solution-panel">
-              <p class="detail-label">The solution</p>
-              <p>SignalBridge receives after-hours messages, identifies possible support and risk signals, obtains consent before sharing information and prepares a structured handoff brief for the assigned worker.</p>
-              <p>Workers receive prioritised cases, workload information and auditable records of safety-related actions. The system supports human judgement rather than replacing youth workers or acting as an autonomous counsellor.</p>
-            </article>
-          </div>
-        </div>
-
-        <div class="case-section role-section">
-          <div class="role-intro">
-            <div>
-              <p class="section-number">My primary role</p>
-              <h3>Youth-Facing Experience and SafeNight Companion UX</h3>
-            </div>
-            <p>I was primarily responsible for the youth-facing experience and SafeNight Companion UX. My focus was making the chat, consent and handoff journey feel safe, understandable and approachable for young users.</p>
-          </div>
-
-          <div class="contribution-grid contribution-grid-compact" aria-label="My SignalBridge contributions">
-            <article>
-              <p>01</p>
-              <h4>Youth experience &amp; consent</h4>
-              <ul>
-                <li>Built the initial youth-chat frontend</li>
-                <li>Created the handoff-preview and consent flow</li>
-                <li>Improved loading states and mobile usability</li>
-              </ul>
-            </article>
-            <article>
-              <p>02</p>
-              <h4>Full-stack integration</h4>
-              <ul>
-                <li>Connected the youth experience to backend APIs</li>
-                <li>Developed the worker case-filtering interface</li>
-                <li>Built the supervisor safety-audit view</li>
-              </ul>
-            </article>
-            <article>
-              <p>03</p>
-              <h4>Reliability &amp; delivery</h4>
-              <ul>
-                <li>Integrated SafeNight with Discord</li>
-                <li>Added automated backend tests</li>
-                <li>Helped prepare the production-alpha version</li>
-              </ul>
-            </article>
-          </div>
-        </div>
-
-        <div class="case-section evidence-gallery">
-          <div class="case-section-heading gallery-heading">
-            <div>
-              <p class="section-number">Product evidence</p>
-              <h3>Two genuine product views</h3>
-            </div>
-            <p>Captured directly from the deployed application.</p>
-          </div>
-          <div class="media-grid">
-            <figure class="project-media project-media-wide">
-              <a class="media-image-link youth-media" href="assets/images/signalbridge-youth-message.png" target="_blank" aria-label="View the SignalBridge youth message experience">
-                <img src="assets/images/signalbridge-youth-message.png" alt="SignalBridge after-hours youth message and SafeNight response" width="1280" height="720" loading="lazy" decoding="async">
-              </a>
-              <figcaption>After-hours youth message and supportive SafeNight response</figcaption>
-            </figure>
-            <figure class="project-media project-media-wide">
-              <a class="media-image-link consent-media" href="assets/images/signalbridge-process.png" target="_blank" aria-label="View how the SafeNight support process works">
-                <img src="assets/images/signalbridge-process.png" alt="SignalBridge Listen, Read the signals and Hand off carefully process" width="1280" height="720" loading="lazy" decoding="async">
-              </a>
-              <figcaption>Consent-led process: listen, read signals and hand off carefully</figcaption>
-            </figure>
-          </div>
-        </div>
-
-        <div class="case-section technology-section">
-          <div class="case-section-heading">
-            <p class="section-number">Technology stack</p>
-            <h3>Full-stack delivery</h3>
-          </div>
-          <div class="technology-groups">
-            <article><h4>Product &amp; frontend</h4><p>Next.js · React · TypeScript · Tailwind CSS · Consent-led UX</p></article>
-            <article><h4>Backend &amp; data</h4><p>Python · FastAPI · PostgreSQL · SQLAlchemy · Structured AI outputs</p></article>
-            <article><h4>Delivery &amp; integrations</h4><p>Pytest · JWT · Discord · Docker · GitHub · Render</p></article>
-          </div>
-        </div>
-
-        <aside class="job-relevance" aria-labelledby="job-relevance-title">
-          <p class="section-number">Target-role relevance</p>
-          <h3 id="job-relevance-title">Relevant to a software development internship</h3>
-          <p>SignalBridge gave me practical experience across frontend development, API integration, PostgreSQL, testing, Git and deployment while working within a team and presenting to non-technical stakeholders.</p>
-        </aside>
-      </div>
-
-      <div class="container signalbridge-interview" aria-labelledby="interview-project-title">
-        <header class="interview-evidence-header">
-          <div>
-            <p class="section-number">Featured evidence / 01</p>
-            <h2 id="interview-project-title">SignalBridge</h2>
-          </div>
-          <div class="interview-header-actions">
-            <span class="achievement-badge"><span aria-hidden="true">★</span> 2026 Champion</span>
-            <button type="button" class="evidence-nav-button" data-evidence-nav>Return to evidence navigation</button>
-          </div>
-        </header>
-
-        <div class="interview-evidence-grid">
-          <a class="interview-main-image" href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live SignalBridge application">
-            <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface" width="1280" height="720" loading="lazy" decoding="async">
-            <small>Live product interface ↗</small>
-          </a>
-          <aside class="interview-relevance">
-            <p>Target-role relevance</p>
-            <strong>Software Development Intern</strong>
-            <span>Next.js · TypeScript · API integration · PostgreSQL · Testing · Git · Deployment</span>
-          </aside>
-        </div>
-
-        <div class="star-grid" id="interview-star" aria-label="SignalBridge interview evidence">
-          <article><p>Situation</p><span>Youth workers could miss important messages sent after working hours.</span></article>
-          <article><p>Task</p><span>I was responsible for creating a safe and approachable youth-facing experience.</span></article>
-          <article><p>Action</p><span>I developed the youth chat, dashboard, consent and handoff-preview flow, connected the frontend to the backend, improved the mobile experience and contributed to Discord integration and testing.</span></article>
-          <article class="star-result"><p>Result</p><span>Our team won the top prize at SP InnovateDash 2026 and was selected to represent Singapore Polytechnic at Dell InnovateFest 2026.</span></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="additional-work section" id="legacy-more-work" hidden aria-labelledby="additional-work-title">
-      <div class="container">
-        <div class="section-heading section-heading-row additional-work-heading">
-          <div>
-            <p class="section-number">05 / Additional work</p>
-            <h2 id="additional-work-title">More ways I build</h2>
-          </div>
-          <p>Selected work across full-stack delivery, AI-assisted workflows and product design.</p>
-        </div>
-
-        <div class="project-index">
-          <article>
-            <div class="project-index-number">01</div>
-            <div class="project-index-title">
-              <p>Autodesk Singapore Hackathon 2026 Champion</p>
-              <h3>KnowCad</h3>
-            </div>
-            <p class="project-index-summary">An AI co-pilot that helps customer service agents find the right internal information faster while keeping people at the centre of decisions.</p>
-            <ul><li>AI-assisted workflow</li><li>Team delivery</li><li>Human-in-the-loop</li></ul>
-          </article>
-          <article class="project-index-live">
-            <div class="project-index-number">02</div>
-            <div class="project-index-title">
-              <p>Deployed real-client project</p>
-              <h3><a href="https://bettercalbhai.onrender.com/" target="_blank" rel="noreferrer">Better Call Bhai ↗</a></h3>
-            </div>
-            <p class="project-index-summary">A mobile-friendly appointment booking website created for a local barber shop to replace manual WhatsApp-based bookings.</p>
-            <ul><li>Full-stack development</li><li>JavaScript</li><li>Render</li><li>Private client code</li></ul>
-            <div class="project-live-gallery">
-              <a href="https://bettercalbhai.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live Better Call Bhai homepage">
-                <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai premium barber booking homepage" width="1425" height="891" loading="lazy" decoding="async">
-                <span>Homepage</span>
-              </a>
-              <a href="https://bettercalbhai.onrender.com/#booking" target="_blank" rel="noreferrer" aria-label="Open the Better Call Bhai booking experience">
-                <img src="assets/images/better-call-bhai-booking.png" alt="Better Call Bhai appointment booking form" width="1425" height="891" loading="lazy" decoding="async">
-                <span>Booking flow</span>
-              </a>
-            </div>
-          </article>
-          <article class="project-index-live loomy-project">
-            <div class="project-index-number">03</div>
-            <div class="project-index-title">
-              <p>IENT startup project · A grade</p>
-              <h3><a href="https://loomy-copy-eb9f937f.base44.app/Community" target="_blank" rel="noreferrer">Loomy ↗</a></h3>
-            </div>
-            <p class="project-index-summary">A social-thrifting startup concept that combines community, clothing swaps and an AI-assisted digital wardrobe. The team validated the problem through interviews with more than 30 people aged 15–25.</p>
-            <ul><li>Prototype design</li><li>User research</li><li>AI wardrobe concept</li><li>A grade</li></ul>
-            <div class="loomy-evidence" aria-label="Loomy project evidence">
-              <span><strong>30+</strong> interviews</span>
-              <span><strong>70%</strong> wanted convenient online thrifting</span>
-              <span><strong>My role</strong> prototype designer</span>
-            </div>
-            <div class="project-live-gallery loomy-gallery">
-              <a href="https://loomy-copy-eb9f937f.base44.app/Community" target="_blank" rel="noreferrer" aria-label="Open the Loomy Community prototype">
-                <img src="assets/images/loomy-product-overview.png" alt="Loomy product overview showing its community, profiling and AI wardrobe features" width="1400" height="788" loading="lazy" decoding="async">
-                <span>Pitch-deck product concept</span>
-              </a>
-              <a href="assets/Loomy-Pitch-Deck.pdf" target="_blank" aria-label="Open the Loomy pitch deck">
-                <img src="assets/images/loomy-pitch-cover.png" alt="Cover of the Loomy startup pitch deck" width="2200" height="1238" loading="lazy" decoding="async">
-                <span>View pitch deck ↗</span>
-              </a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-    </template>
   </main>
 
   <footer class="site-footer">

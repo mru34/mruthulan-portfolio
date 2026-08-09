@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SignalBridge case study — how a consent-led, AI-assisted support platform helps youth workers keep continuity of care after hours, and what Mruthulan built on it. SP InnovateDash 2026 Champion.">
+  <meta property="og:title" content="SignalBridge — Case Study | Mruthulan">
+  <meta property="og:description" content="SP InnovateDash 2026 Champion. The problem, the consent-led solution, my role across frontend, API integration, Discord and testing, and the result.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://mru34.github.io/mruthulan-portfolio/signalbridge.html">
+  <meta property="og:image" content="https://mru34.github.io/mruthulan-portfolio/assets/og-card.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://mru34.github.io/mruthulan-portfolio/assets/og-card.jpg">
+  <meta name="theme-color" content="#132A4F" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
+  <title>SignalBridge — Case Study | Mruthulan</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css?v=20260809-swe">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('js');
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+          root.setAttribute('data-theme', saved);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <script src="js/script.js?v=20260809-swe" defer></script>
+</head>
+<body class="case-study-page">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header" id="top">
+    <nav class="site-nav container" aria-label="Primary navigation">
+      <a class="brand" href="index.html" aria-label="Back to the portfolio home">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span>Mruthulan</span>
+      </a>
+
+      <div class="nav-links" id="nav-links">
+        <a href="index.html#work">← All projects</a>
+      </div>
+
+      <div class="nav-tools">
+        <button class="icon-button theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+          <svg class="theme-icon-sun" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <circle cx="10" cy="10" r="3.6"></circle>
+            <path d="M10 1.6v2M10 16.4v2M1.6 10h2M16.4 10h2M4.1 4.1l1.4 1.4M14.5 14.5l1.4 1.4M15.9 4.1l-1.4 1.4M5.5 14.5l-1.4 1.4"></path>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3Z"></path>
+          </svg>
+        </button>
+        <a class="nav-interview-button" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Résumé ↓</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
+
+  <main id="main-content">
+<section class="case-study signalbridge section" id="case-study" aria-labelledby="project-title">
+      <div class="container signalbridge-normal">
+        <header class="signalbridge-opening">
+          <div class="signalbridge-title-block">
+            <p class="section-number">Case study</p>
+            <div class="achievement-badge"><span aria-hidden="true">★</span> SP InnovateDash 2026 Champion</div>
+            <p class="case-label">Singapore Polytechnic’s qualifying competition for Dell InnovateFest 2026</p>
+            <h2 id="project-title">SignalBridge</h2>
+          </div>
+          <p class="signalbridge-summary">An AI-assisted, consent-based support platform that helps youth workers maintain continuity of care when vulnerable young people reach out after working hours.</p>
+        </header>
+
+        <figure class="signalbridge-main-figure">
+          <a class="live-project-image signalbridge-main-visual" href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live SignalBridge application">
+            <img  src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface" width="1280" height="720" loading="lazy" decoding="async">
+            <span class="media-file-label">Live product · Youth and staff entry</span>
+          </a>
+          <figcaption class="live-figure-caption">
+            <span>Public product interface captured from the deployed application</span>
+            <a href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer">Open SignalBridge ↗</a>
+          </figcaption>
+        </figure>
+
+        <div class="result-facts" aria-label="SignalBridge results">
+          <article>
+            <p>01 / Achievement</p>
+            <strong>Won the top prize</strong>
+            <span>SP InnovateDash 2026</span>
+          </article>
+          <article>
+            <p>02 / Progression</p>
+            <strong>Selected for the finals</strong>
+            <span>Representing Singapore Polytechnic at Dell InnovateFest 2026</span>
+          </article>
+          <article>
+            <p>03 / Team</p>
+            <strong>Dell-icious Bugs</strong>
+            <span>Competition team</span>
+          </article>
+        </div>
+
+        <aside class="sp-feature" aria-label="Singapore Polytechnic feature">
+          <div>
+            <p>Independent recognition</p>
+            <strong>Featured by Singapore Polytechnic</strong>
+            <span>SP names Mruthulan as part of the winning team and documents SignalBridge’s real-world purpose.</span>
+          </div>
+          <a href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noreferrer">Read the official feature ↗</a>
+        </aside>
+
+        <div class="case-section problem-solution">
+          <div class="case-section-heading">
+            <p class="section-number">Context</p>
+            <h3>From a missed message to a safe handoff</h3>
+          </div>
+          <div class="problem-solution-grid">
+            <article>
+              <p class="detail-label">The problem</p>
+              <p>Youth workers may not see difficult messages sent after working hours until the following morning. Important context can be lost, and the young person may have to repeat a painful experience when support resumes.</p>
+            </article>
+            <article class="solution-panel">
+              <p class="detail-label">The solution</p>
+              <p>SignalBridge receives after-hours messages, identifies possible support and risk signals, obtains consent before sharing information and prepares a structured handoff brief for the assigned worker.</p>
+              <p>Workers receive prioritised cases, workload information and auditable records of safety-related actions. The system supports human judgement rather than replacing youth workers or acting as an autonomous counsellor.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="case-section role-section">
+          <div class="role-intro">
+            <div>
+              <p class="section-number">My primary role</p>
+              <h3>Youth-Facing Experience and SafeNight Companion UX</h3>
+            </div>
+            <p>I was primarily responsible for the youth-facing experience and SafeNight Companion UX. My focus was making the chat, consent and handoff journey feel safe, understandable and approachable for young users.</p>
+          </div>
+
+          <div class="contribution-grid contribution-grid-compact" aria-label="My SignalBridge contributions">
+            <article>
+              <p>01</p>
+              <h4>Youth experience &amp; consent</h4>
+              <ul>
+                <li>Built the initial youth-chat frontend</li>
+                <li>Created the handoff-preview and consent flow</li>
+                <li>Improved loading states and mobile usability</li>
+              </ul>
+            </article>
+            <article>
+              <p>02</p>
+              <h4>Full-stack integration</h4>
+              <ul>
+                <li>Connected the youth experience to backend APIs</li>
+                <li>Developed the worker case-filtering interface</li>
+                <li>Built the supervisor safety-audit view</li>
+              </ul>
+            </article>
+            <article>
+              <p>03</p>
+              <h4>Reliability &amp; delivery</h4>
+              <ul>
+                <li>Integrated SafeNight with Discord</li>
+                <li>Added automated backend tests</li>
+                <li>Helped prepare the production-alpha version</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <div class="case-section evidence-gallery">
+          <div class="case-section-heading gallery-heading">
+            <div>
+              <p class="section-number">Product evidence</p>
+              <h3>Two genuine product views</h3>
+            </div>
+            <p>Captured directly from the deployed application.</p>
+          </div>
+          <div class="media-grid">
+            <figure class="project-media project-media-wide">
+              <a class="media-image-link youth-media" href="assets/images/signalbridge-youth-message.png" target="_blank" aria-label="View the SignalBridge youth message experience">
+                <img  src="assets/images/signalbridge-youth-message.png" alt="SignalBridge after-hours youth message and SafeNight response" width="1280" height="720" loading="lazy" decoding="async">
+              </a>
+              <figcaption>After-hours youth message and supportive SafeNight response</figcaption>
+            </figure>
+            <figure class="project-media project-media-wide">
+              <a class="media-image-link consent-media" href="assets/images/signalbridge-process.png" target="_blank" aria-label="View how the SafeNight support process works">
+                <img  src="assets/images/signalbridge-process.png" alt="SignalBridge Listen, Read the signals and Hand off carefully process" width="1280" height="720" loading="lazy" decoding="async">
+              </a>
+              <figcaption>Consent-led process: listen, read signals and hand off carefully</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="case-section technology-section">
+          <div class="case-section-heading">
+            <p class="section-number">Technology stack</p>
+            <h3>Full-stack delivery</h3>
+          </div>
+          <div class="technology-groups">
+            <article><h4>Product &amp; frontend</h4><p>Next.js · React · TypeScript · Tailwind CSS · Consent-led UX</p></article>
+            <article><h4>Backend &amp; data</h4><p>Python · FastAPI · PostgreSQL · SQLAlchemy · Structured AI outputs</p></article>
+            <article><h4>Delivery &amp; integrations</h4><p>Pytest · JWT · Discord · Docker · GitHub · Render</p></article>
+          </div>
+        </div>
+
+        <aside class="job-relevance" aria-labelledby="job-relevance-title">
+          <p class="section-number">Target-role relevance</p>
+          <h3 id="job-relevance-title">Relevant to a software development internship</h3>
+          <p>SignalBridge gave me practical experience across frontend development, API integration, PostgreSQL, testing, Git and deployment while working within a team and presenting to non-technical stakeholders.</p>
+        </aside>
+
+        <div class="case-section star-section">
+          <div class="case-section-heading">
+            <p class="section-number">Interview summary</p>
+            <h3>The same story, in STAR form</h3>
+          </div>
+          <div class="star-grid" aria-label="SignalBridge interview evidence">
+            <article><p>Situation</p><span>Youth workers could miss important messages sent after working hours.</span></article>
+            <article><p>Task</p><span>I was responsible for creating a safe and approachable youth-facing experience.</span></article>
+            <article><p>Action</p><span>I developed the youth chat, dashboard, consent and handoff-preview flow, connected the frontend to the backend, improved the mobile experience and contributed to Discord integration and testing.</span></article>
+            <article class="star-result"><p>Result</p><span>Our team won the top prize at SP InnovateDash 2026 and was selected to represent Singapore Polytechnic at Dell InnovateFest 2026.</span></article>
+          </div>
+        </div>
+      </div>
+
+      </section>
+
+    <section class="case-next section">
+      <div class="container case-next-inner">
+        <div>
+          <p class="section-number">Next</p>
+          <h2>See the rest of my work</h2>
+        </div>
+        <div class="case-next-actions">
+          <a class="button button-primary" href="index.html#work">All projects</a>
+          <a class="button button-secondary" href="index.html#contact">Get in touch</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Senthil Nathan Mruthulan / SWE Intern Portfolio</p>
+      <a href="mailto:mruthulansenthilnathan@gmail.com">mruthulansenthilnathan@gmail.com</a>
+      <a href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+      <a href="https://github.com/mru34" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a href="index.html">Portfolio home</a>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <div class="mode-announcement sr-only" aria-live="polite"></div>
+</body>
+</html>

@@ -49,36 +49,7 @@
   --ease-out: 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #0b1120;
-    --surface: #121b2e;
-    --surface-2: #182338;
-    --tint: #16233f;
-    --shot-bg: #05080f;
 
-    --text: #e7edf7;
-    --muted: #9dabc2;
-    --heading: #f0f5fc;
-
-    --navy: #0f1a2e;
-    --navy-2: #0a1322;
-    --blue-soft: #9dbeff;
-    --muted-on-navy: #b8c6dc;
-
-    --blue: #7aa5ff;
-    --accent: #f0b357;
-    --accent-tint: #241a09;
-    --accent-border: #5c421c;
-
-    --border: #24304a;
-    --border-2: #2f3d5c;
-
-    --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-    --card-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
-    --card-shadow-hover: 0 26px 60px rgba(0, 0, 0, 0.55);
-  }
-}
 
 /* PBCA role-tailored interview presentation */
 
@@ -5477,33 +5448,7 @@ body.interview-mode .candidate-interview {
 
 /* --- Dark-theme corrections -------------------------------------------- */
 
-@media (prefers-color-scheme: dark) {
-  .hero { border-bottom-color: var(--border); }
 
-  .profile-visual { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }
-
-  /* Photographs render harsh against a dark page */
-  .profile-visual img,
-  .interview-intro-profile img {
-    filter: brightness(0.92) contrast(1.02);
-  }
-
-  .button-primary {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: #08111f;
-  }
-
-  .button-primary:hover { box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); }
-
-  .button-secondary { border-color: var(--border-2); }
-
-  .project-tags li { background: var(--surface-2); }
-
-  .site-header { border-bottom-color: var(--border); }
-
-  .interview-slide { box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45); }
-}
 
 /* --- Hero: density and proof -------------------------------------------- */
 /* Was min-height:100svh with a ~400px content column, leaving ~430px of
@@ -5598,11 +5543,7 @@ body.interview-mode .candidate-interview {
   .availability-dot::after { animation: none; }
 }
 
-@media (prefers-color-scheme: dark) {
-  .availability-dot { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.22); }
-  .availability-dot,
-  .availability-dot::after { background: #22c55e; }
-}
+
 
 @media (max-width: 900px) {
   .hero { min-height: 0; }
@@ -5772,33 +5713,7 @@ body.interview-mode .candidate-interview {
 /* --navy doubles as a dark section background, so in dark mode it no longer
    separates from the page. These few spots need an explicit treatment. */
 
-@media (prefers-color-scheme: dark) {
-  .brand-mark {
-    background: var(--blue);
-    color: #08111f;
-  }
 
-  .nav-interview-button {
-    border-color: var(--border-2);
-    color: var(--text);
-  }
-
-  .nav-interview-button:hover {
-    background: var(--surface-2);
-    border-color: var(--blue);
-    color: var(--text);
-  }
-
-  .profile-facts { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
-
-  .profile-visual { background: var(--surface-2); }
-
-  /* Skills sits on --navy; nudge it off the page colour so the band reads */
-  .skills { background: var(--navy); }
-
-  .strength-list li::before,
-  .eyebrow span { background: var(--blue); }
-}
 
 /* Primary button sits on --navy in the contact block; invert it there */
 .contact-cta .button-primary {
@@ -5812,4 +5727,745 @@ body.interview-mode .candidate-interview {
   border-color: var(--blue-soft);
   color: #0b1a33;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+/* ==========================================================================
+   Dark theme
+   Emitted twice on purpose: once behind the OS preference (skipped when the
+   visitor has explicitly chosen light), and once behind an explicit
+   data-theme="dark" so the in-page toggle wins in both directions.
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0b1120;
+    --surface: #121b2e;
+    --surface-2: #182338;
+    --tint: #16233f;
+    --shot-bg: #05080f;
+    --text: #e7edf7;
+    --muted: #9dabc2;
+    --heading: #f0f5fc;
+    --navy: #0f1a2e;
+    --navy-2: #0a1322;
+    --blue-soft: #9dbeff;
+    --muted-on-navy: #b8c6dc;
+    --blue: #7aa5ff;
+    --accent: #f0b357;
+    --accent-tint: #241a09;
+    --accent-border: #5c421c;
+    --border: #24304a;
+    --border-2: #2f3d5c;
+    --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    --card-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 0 26px 60px rgba(0, 0, 0, 0.55);
+  }
+
+  :root:not([data-theme="light"]) .hero {
+    border-bottom-color: var(--border);
+  }
+
+  :root:not([data-theme="light"]) .profile-visual {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  :root:not([data-theme="light"]) .button-primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #08111f;
+  }
+
+  :root:not([data-theme="light"]) .button-primary:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+  }
+
+  :root:not([data-theme="light"]) .button-secondary {
+    border-color: var(--border-2);
+  }
+
+  :root:not([data-theme="light"]) .project-tags li {
+    background: var(--surface-2);
+  }
+
+  :root:not([data-theme="light"]) .site-header {
+    border-bottom-color: var(--border);
+  }
+
+  :root:not([data-theme="light"]) .interview-slide {
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+  }
+
+  :root:not([data-theme="light"]) .availability-dot {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.22);
+  }
+
+  :root:not([data-theme="light"]) .availability-dot,
+:root:not([data-theme="light"]) .availability-dot::after {
+    background: #22c55e;
+  }
+
+  :root:not([data-theme="light"]) .brand-mark {
+    background: var(--blue);
+    color: #08111f;
+  }
+
+  :root:not([data-theme="light"]) .nav-interview-button {
+    border-color: var(--border-2);
+    color: var(--text);
+  }
+
+  :root:not([data-theme="light"]) .nav-interview-button:hover {
+    background: var(--surface-2);
+    border-color: var(--blue);
+    color: var(--text);
+  }
+
+  :root:not([data-theme="light"]) .profile-facts {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  }
+
+  :root:not([data-theme="light"]) .profile-visual {
+    background: var(--surface-2);
+  }
+
+  :root:not([data-theme="light"]) .strength-list li::before,
+:root:not([data-theme="light"]) .eyebrow span {
+    background: var(--blue);
+  }
+}
+
+:root[data-theme="dark"] {
+  --page: #0b1120;
+  --surface: #121b2e;
+  --surface-2: #182338;
+  --tint: #16233f;
+  --shot-bg: #05080f;
+  --text: #e7edf7;
+  --muted: #9dabc2;
+  --heading: #f0f5fc;
+  --navy: #0f1a2e;
+  --navy-2: #0a1322;
+  --blue-soft: #9dbeff;
+  --muted-on-navy: #b8c6dc;
+  --blue: #7aa5ff;
+  --accent: #f0b357;
+  --accent-tint: #241a09;
+  --accent-border: #5c421c;
+  --border: #24304a;
+  --border-2: #2f3d5c;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --card-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
+  --card-shadow-hover: 0 26px 60px rgba(0, 0, 0, 0.55);
+}
+
+:root[data-theme="dark"] .hero {
+  border-bottom-color: var(--border);
+}
+
+:root[data-theme="dark"] .profile-visual {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme="dark"] .button-primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #08111f;
+}
+
+:root[data-theme="dark"] .button-primary:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="dark"] .button-secondary {
+  border-color: var(--border-2);
+}
+
+:root[data-theme="dark"] .project-tags li {
+  background: var(--surface-2);
+}
+
+:root[data-theme="dark"] .site-header {
+  border-bottom-color: var(--border);
+}
+
+:root[data-theme="dark"] .interview-slide {
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-theme="dark"] .availability-dot {
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.22);
+}
+
+:root[data-theme="dark"] .availability-dot,
+:root[data-theme="dark"] .availability-dot::after {
+  background: #22c55e;
+}
+
+:root[data-theme="dark"] .brand-mark {
+  background: var(--blue);
+  color: #08111f;
+}
+
+:root[data-theme="dark"] .nav-interview-button {
+  border-color: var(--border-2);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] .nav-interview-button:hover {
+  background: var(--surface-2);
+  border-color: var(--blue);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] .profile-facts {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="dark"] .profile-visual {
+  background: var(--surface-2);
+}
+
+:root[data-theme="dark"] .strength-list li::before,
+:root[data-theme="dark"] .eyebrow span {
+  background: var(--blue);
+}
+
+/* ==========================================================================
+   Nav tools, scroll progress, command palette
+   ========================================================================== */
+
+.nav-tools {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-interview-button { justify-self: auto; }
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-2);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--ease), color var(--ease), border-color var(--ease);
+}
+
+.icon-button:hover {
+  background: var(--surface-2);
+  border-color: var(--blue);
+  color: var(--heading);
+}
+
+.icon-button kbd {
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.theme-toggle { padding: 8px; }
+
+/* Show the icon for the theme you would switch *to* */
+.theme-icon-moon { display: none; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon-sun { display: none; }
+  :root:not([data-theme="light"]) .theme-icon-moon { display: block; }
+}
+
+:root[data-theme="dark"] .theme-icon-sun { display: none; }
+:root[data-theme="dark"] .theme-icon-moon { display: block; }
+:root[data-theme="light"] .theme-icon-sun { display: block; }
+:root[data-theme="light"] .theme-icon-moon { display: none; }
+
+/* --- Scroll progress ----------------------------------------------------- */
+
+.scroll-progress {
+  position: fixed;
+  z-index: 60;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.scroll-progress span {
+  display: block;
+  height: 100%;
+  width: var(--scroll-progress, 0%);
+  background: var(--blue);
+  transition: width 90ms linear;
+}
+
+body.interview-mode .scroll-progress { display: none; }
+
+/* --- Active section in nav ---------------------------------------------- */
+
+.nav-links a {
+  position: relative;
+  transition: color var(--ease);
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--blue);
+  transform: scaleX(0);
+  transition: transform var(--ease-out);
+}
+
+.nav-links a[aria-current="true"] { color: var(--heading); }
+.nav-links a[aria-current="true"]::after { transform: scaleX(1); }
+
+/* --- Command palette ----------------------------------------------------- */
+
+.command-palette {
+  position: fixed;
+  z-index: 200;
+  inset: 0;
+  display: grid;
+  place-items: start center;
+  padding: clamp(60px, 12vh, 140px) 20px 20px;
+}
+
+.command-palette[hidden] { display: none; }
+
+.command-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 12, 24, 0.55);
+  backdrop-filter: blur(3px);
+  animation: command-fade 140ms ease-out both;
+}
+
+.command-dialog {
+  position: relative;
+  width: min(100%, 560px);
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  box-shadow: 0 30px 80px rgba(6, 12, 24, 0.35);
+  animation: command-rise 160ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes command-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes command-rise {
+  from { opacity: 0; transform: translateY(-8px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+.command-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 15px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.command-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+.command-field input::placeholder { color: var(--muted); }
+
+.command-field kbd,
+.command-footer kbd {
+  padding: 2px 6px;
+  border: 1px solid var(--border-2);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.command-results {
+  max-height: min(46vh, 340px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+}
+
+.command-results li { margin: 0; }
+
+.command-results button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 11px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.command-results button:hover,
+.command-results button[aria-selected="true"] {
+  background: var(--tint);
+  color: var(--heading);
+}
+
+.command-results .command-kind {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.command-results .command-glyph {
+  width: 22px;
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.command-empty {
+  margin: 0;
+  padding: 22px 16px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.command-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 10px 15px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.command-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .command-backdrop,
+  .command-dialog { animation: none; }
+  .scroll-progress span { transition: none; }
+}
+
+@media (max-width: 900px) {
+  .nav-tools .icon-button[data-command-open] { display: none; }
+  .nav-tools { gap: 6px; }
+}
+
+/* --- Code provenance + build log ---------------------------------------- */
+
+.project-code-note {
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-2);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.build-log {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 44px;
+  margin-top: 22px;
+  padding: 32px 34px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.build-log-intro h3 {
+  margin: 10px 0 0;
+  color: var(--heading);
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.build-log-intro > p {
+  max-width: 46ch;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.build-log-repo {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.build-log-repo:hover { text-decoration: underline; }
+
+.build-log-feed { align-self: center; }
+
+.build-log-fallback {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.build-log-fallback a { color: var(--blue); font-weight: 700; }
+
+.activity-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activity-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-2);
+  font-size: 12px;
+}
+
+.activity-list li:last-child { border-bottom: 0; }
+
+.activity-verb {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.activity-repo {
+  color: var(--heading);
+  font-weight: 700;
+}
+
+.activity-meta {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+@media (max-width: 900px) {
+  .build-log {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 24px 20px;
+  }
+}
+
+/* Lock background scroll while the palette is open */
+body.palette-open { overflow: hidden; }
+
+/* --- Case study page ----------------------------------------------------- */
+
+.case-study-page .case-study.signalbridge { display: block; }
+.case-study-page .signalbridge-normal { display: block; }
+
+.project-case-link { color: var(--accent) !important; }
+
+.case-study-page .nav-links {
+  display: flex;
+  justify-content: center;
+}
+
+.case-study-page .nav-links a {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.case-study-page .nav-links a::after { display: none; }
+.case-study-page .nav-links a:hover { color: var(--heading); }
+
+.case-study-page .nav-interview-button {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.star-section { margin-top: 8px; }
+
+.case-next {
+  background: var(--navy);
+  color: white;
+}
+
+.case-next-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.case-next .section-number { color: var(--blue-soft); }
+
+.case-next h2 {
+  margin: 8px 0 0;
+  color: white;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.case-next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.case-next .button-primary {
+  background: white;
+  border-color: white;
+  color: var(--navy);
+}
+
+.case-next .button-secondary {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: white;
+}
+
+.case-next .button-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 760px) {
+  .case-next-inner { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* --- 404 ----------------------------------------------------------------- */
+
+.notfound {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  text-align: center;
+}
+
+.notfound-inner { max-width: 640px; }
+
+.notfound h1 {
+  margin: 12px 0 0;
+  color: var(--heading);
+  font-size: clamp(38px, 7vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.notfound-copy {
+  margin: 18px auto 0;
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.notfound-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.notfound-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 30px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.notfound-links a {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.notfound-links a:hover { text-decoration: underline; }
+
+/* --- Hero texture -------------------------------------------------------- */
+/* A very low-contrast grid, so the hero reads as composed rather than empty.
+   Sits behind content and never intercepts pointer events. */
+
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--heading) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--heading) 4%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(120% 90% at 82% 26%, #000 0%, transparent 68%);
+}
+
+.hero-grid { z-index: 1; }
+
+/* --- Award pill micro-interaction --------------------------------------- */
+
+.award-pill {
+  transition: transform var(--ease), box-shadow var(--ease);
+}
+
+.portfolio-project:hover .award-pill,
+.project-feature:hover .award-pill {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+/* --- Cross-document view transitions ------------------------------------ */
+/* Progressive enhancement: browsers without support just navigate normally. */
+
+@view-transition { navigation: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+
+  .award-pill,
+  .portfolio-project:hover .award-pill,
+  .project-feature:hover .award-pill {
+    transform: none;
+    transition: none;
+  }
 }
