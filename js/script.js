@@ -146,4 +146,49 @@ window.addEventListener('resize', () => {
   }
 });
 
+/* Reveal sections as they enter the viewport. Anything already on screen at
+   load stays visible, and the whole effect is skipped when the visitor has
+   asked for reduced motion or the browser lacks IntersectionObserver. */
+function setUpScrollReveal() {
+  const revealTargets = [...document.querySelectorAll('.reveal')];
+
+  if (!revealTargets.length) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+    revealTargets.forEach((target) => target.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) {
+        return;
+      }
+
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+  revealTargets.forEach((target, index) => {
+    // Stagger siblings that share a parent so grids cascade rather than pop.
+    const position = [...(target.parentElement?.children ?? [])]
+      .filter((child) => child.classList.contains('reveal'))
+      .indexOf(target);
+
+    target.style.setProperty('--reveal-delay', `${Math.max(position, 0) * 70}ms`);
+    observer.observe(target);
+
+    if (index === 0) {
+      target.classList.add('is-visible');
+    }
+  });
+}
+
+setUpScrollReveal();
+
 showInterviewSlide(0, false);

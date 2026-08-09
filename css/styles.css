@@ -1,15 +1,83 @@
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/inter-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
+  color-scheme: light dark;
+
+  /* Surfaces */
   --page: #f7f8fa;
   --surface: #ffffff;
+  --surface-2: #f1f4f8;
+  --tint: #edf3ff;
+  --shot-bg: #0d1117;
+
+  /* Ink */
   --text: #111827;
   --muted: #5b6472;
+  --heading: #132a4f;
+
+  /* Dark sections (stay dark in both themes) */
   --navy: #132a4f;
+  --navy-2: #0e203e;
+  --blue-soft: #8eb2ff;
+  --muted-on-navy: #c4cfde;
+
+  /* Accent */
   --blue: #2563eb;
+  --accent: #b45309;
+  --accent-tint: #fdf4e7;
+  --accent-border: #e8c99a;
+
+  /* Lines */
   --border: #e2e6ec;
+  --border-2: #d9e0e9;
+
   --shadow: 0 24px 60px rgba(19, 42, 79, 0.12);
+  --card-shadow: 0 18px 45px rgba(19, 42, 79, 0.07);
+  --card-shadow-hover: 0 26px 60px rgba(19, 42, 79, 0.16);
   --container: 1180px;
   --header-height: 68px;
   --ease: 180ms ease;
+  --ease-out: 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0b1120;
+    --surface: #121b2e;
+    --surface-2: #182338;
+    --tint: #16233f;
+    --shot-bg: #05080f;
+
+    --text: #e7edf7;
+    --muted: #9dabc2;
+    --heading: #f0f5fc;
+
+    --navy: #0f1a2e;
+    --navy-2: #0a1322;
+    --blue-soft: #9dbeff;
+    --muted-on-navy: #b8c6dc;
+
+    --blue: #7aa5ff;
+    --accent: #f0b357;
+    --accent-tint: #241a09;
+    --accent-border: #5c421c;
+
+    --border: #24304a;
+    --border-2: #2f3d5c;
+
+    --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    --card-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 0 26px 60px rgba(0, 0, 0, 0.55);
+  }
 }
 
 /* PBCA role-tailored interview presentation */
@@ -41,7 +109,7 @@
 }
 
 .interview-panel-brand small {
-  color: #9fb0ca;
+  color: var(--muted-on-navy);
   font-size: 9px;
   font-weight: 600;
 }
@@ -55,7 +123,7 @@
   padding: 8px 9px;
   border: 0;
   background: transparent;
-  color: #aebbd0;
+  color: var(--muted-on-navy);
   white-space: nowrap;
   font-size: 9px;
   letter-spacing: 0.02em;
@@ -75,7 +143,7 @@
 
 .interview-panel-actions > span {
   min-width: 38px;
-  color: #b9c5d8;
+  color: var(--muted-on-navy);
   text-align: center;
   font-size: 9px;
   font-weight: 800;
@@ -136,7 +204,7 @@ body.interview-mode .candidate-interview {
   min-width: 270px;
   padding: 12px 16px;
   border-left: 3px solid var(--blue);
-  background: #edf3ff;
+  background: var(--tint);
 }
 
 .interview-role-badge span {
@@ -148,7 +216,7 @@ body.interview-mode .candidate-interview {
 }
 
 .interview-role-badge strong {
-  color: var(--navy);
+  color: var(--heading);
   font-size: 11px;
 }
 
@@ -194,7 +262,7 @@ body.interview-mode .candidate-interview {
 .interview-slide-heading h3,
 .interview-intro h3 {
   margin: 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(28px, 3.2vw, 46px);
   line-height: 1.04;
   letter-spacing: -0.045em;
@@ -255,7 +323,7 @@ body.interview-mode .candidate-interview {
 .interview-usp {
   padding: 26px 30px;
   border-left: 4px solid var(--blue);
-  background: #edf3ff;
+  background: var(--tint);
 }
 
 .interview-usp > span {
@@ -268,7 +336,7 @@ body.interview-mode .candidate-interview {
 
 .interview-usp blockquote {
   margin: 12px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(18px, 1.8vw, 26px);
   font-weight: 700;
   line-height: 1.38;
@@ -301,7 +369,7 @@ body.interview-mode .candidate-interview {
 }
 
 .interview-proof-strip strong {
-  color: var(--navy);
+  color: var(--heading);
   font-size: 13px;
 }
 
@@ -340,7 +408,7 @@ body.interview-mode .candidate-interview {
 .role-match-grid strong {
   display: block;
   margin-top: 7px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 15px;
 }
 
@@ -354,14 +422,14 @@ body.interview-mode .candidate-interview {
 .interview-honesty-note {
   margin: 18px 0 0;
   padding: 13px 16px;
-  background: #f7f8fa;
+  background: var(--page);
   color: var(--muted);
   font-size: 11px;
   line-height: 1.5;
 }
 
 .interview-honesty-note strong {
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .interview-evidence-list {
@@ -394,7 +462,7 @@ body.interview-mode .candidate-interview {
 }
 
 .interview-evidence-list strong {
-  color: var(--navy);
+  color: var(--heading);
   font-size: 15px;
 }
 
@@ -417,7 +485,7 @@ body.interview-mode .candidate-interview {
   grid-template-rows: 128px 1fr;
   min-height: 360px;
   border: 1px solid var(--border);
-  background: white;
+  background: var(--surface);
 }
 
 .interview-project-grid img {
@@ -437,7 +505,7 @@ body.interview-mode .candidate-interview {
 .interview-project-grid h4,
 .interview-experience-grid h4 {
   margin: 7px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 19px;
 }
 
@@ -469,7 +537,7 @@ body.interview-mode .candidate-interview {
   flex-direction: column;
   padding: 22px;
   border-top: 3px solid var(--navy);
-  background: #f7f8fa;
+  background: var(--page);
 }
 
 .star-reminder {
@@ -483,7 +551,7 @@ body.interview-mode .candidate-interview {
 }
 
 .star-reminder span {
-  color: #94b3e7;
+  color: var(--blue-soft);
   font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -523,7 +591,7 @@ body.interview-mode .candidate-interview {
 .interview-question-list p {
   margin: 0;
   padding: 13px 18px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 15px;
   font-weight: 700;
   line-height: 1.4;
@@ -533,8 +601,8 @@ body.interview-mode .candidate-interview {
   margin: 18px 0 0;
   padding: 15px 18px;
   border-left: 3px solid var(--blue);
-  background: #edf3ff;
-  color: var(--navy);
+  background: var(--tint);
+  color: var(--heading);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
@@ -670,7 +738,7 @@ body.interview-mode .candidate-interview {
   }
 
   .interview-mobile-controls span {
-    color: #b9c5d8;
+    color: var(--muted-on-navy);
     font-size: 9px;
     font-weight: 800;
   }
@@ -913,7 +981,7 @@ a:focus-visible {
   padding: 9px 14px;
   border: 1px solid var(--navy);
   background: transparent;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -943,7 +1011,7 @@ a:focus-visible {
   content: "";
   position: absolute;
   inset: 0 0 0 58%;
-  background: linear-gradient(135deg, #f2f5f9, #f9fafb);
+  background: linear-gradient(135deg, var(--surface-2), var(--surface-2));
   border-left: 1px solid var(--border);
 }
 
@@ -986,7 +1054,7 @@ a:focus-visible {
 
 h1 {
   margin: 12px 0 14px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(56px, 6vw, 78px);
   line-height: 0.96;
   letter-spacing: -0.065em;
@@ -1007,7 +1075,7 @@ h1 {
   margin: 22px 0 0;
   padding: 0;
   list-style: none;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 13px;
   font-weight: 750;
 }
@@ -1063,11 +1131,11 @@ h1 {
 
 .button-secondary {
   background: transparent;
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .button-secondary:hover {
-  background: #eef2f7;
+  background: var(--surface-2);
 }
 
 .profile-composition {
@@ -1177,7 +1245,7 @@ h1 {
   position: relative;
   z-index: 2;
   margin: 0 0 26px -24px;
-  background: white;
+  background: var(--surface);
   box-shadow: 0 20px 50px rgba(19, 42, 79, 0.12);
 }
 
@@ -1201,7 +1269,7 @@ h1 {
 
 .profile-facts dd {
   margin: 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 12px;
   line-height: 1.35;
   font-weight: 700;
@@ -1220,7 +1288,7 @@ h1 {
 .section-heading h2,
 .case-study-header h2 {
   margin: 10px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(36px, 4.1vw, 58px);
   line-height: 1.08;
   letter-spacing: -0.05em;
@@ -1237,7 +1305,7 @@ h1 {
 .about-content .lead {
   max-width: 680px;
   margin: 0 0 18px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(24px, 2.5vw, 34px);
   line-height: 1.28;
   letter-spacing: -0.035em;
@@ -1256,7 +1324,7 @@ h1 {
   margin: 36px 0 0;
   padding: 0;
   list-style: none;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 13px;
   font-weight: 700;
 }
@@ -1280,7 +1348,7 @@ h1 {
 }
 
 .skills .section-number {
-  color: #8eb2ff;
+  color: var(--blue-soft);
 }
 
 .skills .section-heading h2 {
@@ -1297,7 +1365,7 @@ h1 {
 .section-heading-row > p {
   max-width: 390px;
   margin: 0 0 5px;
-  color: #b9c4d5;
+  color: var(--muted-on-navy);
 }
 
 .skills-grid {
@@ -1324,7 +1392,7 @@ h1 {
 
 .skill-index {
   margin: 0 0 34px;
-  color: #8eb2ff;
+  color: var(--blue-soft);
   font-size: 11px;
   font-weight: 750;
   letter-spacing: 0.12em;
@@ -1339,7 +1407,7 @@ h1 {
   margin: 0;
   padding: 0;
   list-style: none;
-  color: #c8d1df;
+  color: var(--muted-on-navy);
   font-size: 14px;
 }
 
@@ -1376,7 +1444,7 @@ h1 {
   overflow: hidden;
   aspect-ratio: 16 / 7.2;
   min-height: 370px;
-  background: #eef2f6;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   box-shadow: 0 28px 70px rgba(19, 42, 79, 0.12);
 }
@@ -1387,9 +1455,9 @@ h1 {
   align-items: center;
   justify-content: space-between;
   padding: 0 22px;
-  background: white;
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
-  color: var(--navy);
+  color: var(--heading);
   font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.08em;
@@ -1434,7 +1502,7 @@ h1 {
 }
 
 .dashboard-sidebar span.active {
-  background: #72a1ff;
+  background: var(--blue-soft);
 }
 
 .dashboard-content {
@@ -1468,8 +1536,8 @@ h1 {
 
 .dashboard-kpis span {
   height: 66px;
-  background: white;
-  border: 1px solid #dce2ea;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
 }
 
 .dashboard-data {
@@ -1486,13 +1554,13 @@ h1 {
   align-items: end;
   gap: 6%;
   padding: 22px;
-  background: white;
-  border: 1px solid #dce2ea;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
 }
 
 .chart i {
   flex: 1;
-  background: #8eaff1;
+  background: var(--blue-soft);
 }
 
 .chart i:nth-child(1) { height: 34%; }
@@ -1511,7 +1579,7 @@ h1 {
 
 .list i {
   height: 7px;
-  background: #d8dee7;
+  background: var(--border-2);
 }
 
 .list i:nth-child(2) { width: 78%; }
@@ -1566,7 +1634,7 @@ h1 {
 .case-details h3,
 .technology-row h3 {
   margin: 0 0 9px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 16px;
 }
 
@@ -1603,15 +1671,15 @@ h1 {
   padding: 7px 11px;
   background: var(--page);
   border: 1px solid var(--border);
-  color: var(--navy);
+  color: var(--heading);
   font-size: 11px;
   font-weight: 700;
 }
 
 .site-footer {
   padding-block: 30px;
-  background: #0e203e;
-  color: #c4ccda;
+  background: var(--navy-2);
+  color: var(--muted-on-navy);
   font-size: 12px;
 }
 
@@ -1657,14 +1725,14 @@ h1 {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #74a5ff;
+  background: var(--blue-soft);
   box-shadow: 0 0 0 4px rgba(116, 165, 255, 0.16);
 }
 
 .interview-panel nav {
   display: flex;
   gap: 22px;
-  color: #ccd5e4;
+  color: var(--muted-on-navy);
   font-size: 11px;
   font-weight: 700;
 }
@@ -1686,7 +1754,7 @@ h1 {
 kbd {
   margin-left: 5px;
   font: inherit;
-  color: #aebbd0;
+  color: var(--muted-on-navy);
 }
 
 body.interview-mode .interview-panel {
@@ -1743,7 +1811,7 @@ body.interview-mode .section {
 body.interview-mode .result-detail {
   position: relative;
   z-index: 1;
-  background: #edf3ff;
+  background: var(--tint);
   box-shadow: inset 0 0 0 2px var(--blue);
 }
 
@@ -1815,7 +1883,7 @@ body.interview-mode .dashboard-placeholder {
     display: grid;
     gap: 0;
     padding: 18px;
-    background: white;
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
     opacity: 0;
     visibility: hidden;
@@ -2198,7 +2266,7 @@ body.interview-mode .dashboard-placeholder {
   aspect-ratio: 16 / 9;
   display: block;
   overflow: hidden;
-  background: #071b19;
+  background: var(--shot-bg);
   border: 1px solid var(--border);
 }
 
@@ -2219,7 +2287,7 @@ body.interview-mode .dashboard-placeholder {
   height: 100%;
   display: block;
   object-fit: contain;
-  background: #061815;
+  background: var(--shot-bg);
 }
 
 .project-index-live {
@@ -2239,7 +2307,7 @@ body.interview-mode .dashboard-placeholder {
   overflow: hidden;
   aspect-ratio: 16 / 9;
   display: block;
-  background: #090909;
+  background: var(--shot-bg);
   border: 1px solid var(--border);
 }
 
@@ -2275,9 +2343,9 @@ body.interview-mode .dashboard-placeholder {
   gap: 32px;
   margin-top: 20px;
   padding: 24px 28px;
-  border: 1px solid #cbd7e9;
+  border: 1px solid var(--muted-on-navy);
   border-left: 4px solid var(--blue);
-  background: #eef4ff;
+  background: var(--tint);
 }
 
 .sp-feature p,
@@ -2296,7 +2364,7 @@ body.interview-mode .dashboard-placeholder {
 .sp-feature strong {
   display: block;
   margin-top: 5px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 18px;
 }
 
@@ -2319,7 +2387,7 @@ body.interview-mode .dashboard-placeholder {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   border: 1px solid var(--border);
-  background: white;
+  background: var(--surface);
 }
 
 .loomy-evidence span {
@@ -2337,7 +2405,7 @@ body.interview-mode .dashboard-placeholder {
 
 .loomy-evidence strong {
   display: block;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 13px;
 }
 
@@ -2414,7 +2482,7 @@ body.interview-mode .dashboard-placeholder {
 .signalbridge-title-block h2,
 .interview-evidence-header h2 {
   margin: 12px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(58px, 7vw, 88px);
   line-height: 0.94;
   letter-spacing: -0.065em;
@@ -2427,9 +2495,9 @@ body.interview-mode .dashboard-placeholder {
   gap: 8px;
   margin-top: 22px;
   padding: 8px 11px;
-  background: #eaf1ff;
+  background: var(--tint);
   border-left: 3px solid var(--blue);
-  color: var(--navy);
+  color: var(--heading);
   font-size: 11px;
   line-height: 1.2;
   font-weight: 800;
@@ -2464,7 +2532,7 @@ body.interview-mode .dashboard-placeholder {
   overflow: hidden;
   aspect-ratio: 16 / 8.2;
   min-height: 440px;
-  background: #edf1f6;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   box-shadow: 0 32px 80px rgba(19, 42, 79, 0.16);
 }
@@ -2477,7 +2545,7 @@ body.interview-mode .dashboard-placeholder {
   padding-inline: 24px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  color: var(--navy);
+  color: var(--heading);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.09em;
@@ -2523,7 +2591,7 @@ body.interview-mode .dashboard-placeholder {
 }
 
 .signal-app-nav i.active {
-  background: #78a5ff;
+  background: var(--blue-soft);
 }
 
 .signal-app-workspace {
@@ -2560,7 +2628,7 @@ body.interview-mode .dashboard-placeholder {
   height: 250px;
   padding: 26px;
   background: var(--surface);
-  border: 1px solid #dce2ea;
+  border: 1px solid var(--border-2);
 }
 
 .signal-chat-preview {
@@ -2572,13 +2640,13 @@ body.interview-mode .dashboard-placeholder {
 .signal-chat-preview i {
   width: 64%;
   height: 30px;
-  background: #e2e8f1;
+  background: var(--border-2);
 }
 
 .signal-chat-preview i:nth-child(even) {
   align-self: flex-end;
   width: 72%;
-  background: #dce8ff;
+  background: var(--tint);
 }
 
 .signal-case-preview {
@@ -2588,13 +2656,13 @@ body.interview-mode .dashboard-placeholder {
 }
 
 .signal-case-preview span {
-  border-left: 4px solid #9bb8ef;
-  background: #f1f4f8;
+  border-left: 4px solid var(--blue-soft);
+  background: var(--surface-2);
 }
 
 .signal-case-preview span:first-child {
   border-left-color: var(--blue);
-  background: #eaf1ff;
+  background: var(--tint);
 }
 
 .media-file-label {
@@ -2644,7 +2712,7 @@ body.interview-mode .dashboard-placeholder {
 
 .result-facts strong {
   display: block;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 18px;
   line-height: 1.25;
 }
@@ -2673,7 +2741,7 @@ body.interview-mode .dashboard-placeholder {
 .challenge-column h3,
 .job-relevance h3 {
   margin: 8px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(30px, 3.5vw, 46px);
   line-height: 1.16;
   letter-spacing: -0.045em;
@@ -2692,7 +2760,7 @@ body.interview-mode .dashboard-placeholder {
 
 .problem-solution-grid .solution-panel {
   padding-left: 38px;
-  background: #f1f5fa;
+  background: var(--surface-2);
   border-left: 1px solid var(--border);
 }
 
@@ -2726,7 +2794,7 @@ body.interview-mode .dashboard-placeholder {
 }
 
 .role-intro .section-number {
-  color: #8eb2ff;
+  color: var(--blue-soft);
 }
 
 .role-intro h3 {
@@ -2735,7 +2803,7 @@ body.interview-mode .dashboard-placeholder {
 
 .role-intro > p {
   margin: 0 0 4px;
-  color: #c4cfde;
+  color: var(--muted-on-navy);
   font-size: 16px;
 }
 
@@ -2771,7 +2839,7 @@ body.interview-mode .dashboard-placeholder {
 .contribution-grid h4,
 .technology-groups h4 {
   margin: 0 0 14px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 16px;
 }
 
@@ -2824,9 +2892,9 @@ body.interview-mode .dashboard-placeholder {
   justify-content: flex-end;
   padding: 24px;
   overflow: hidden;
-  background: #eef2f6;
+  background: var(--surface-2);
   border: 1px solid var(--border);
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .project-media-tall .media-placeholder {
@@ -2892,7 +2960,7 @@ body.interview-mode .dashboard-placeholder {
 
 .consent-media,
 .audit-media {
-  background: #eaf1ff;
+  background: var(--tint);
 }
 
 .worker-media {
@@ -2902,7 +2970,7 @@ body.interview-mode .dashboard-placeholder {
 
 .worker-media small,
 .worker-media span {
-  color: #a8c4ff;
+  color: var(--blue-soft);
 }
 
 .worker-media::before,
@@ -2911,7 +2979,7 @@ body.interview-mode .dashboard-placeholder {
 }
 
 .team-media {
-  background: #dfe5ed;
+  background: var(--border-2);
 }
 
 .project-media figcaption {
@@ -2939,7 +3007,7 @@ body.interview-mode .dashboard-placeholder {
 
 .architecture-flow li:last-child {
   border-right: 0;
-  background: #edf3ff;
+  background: var(--tint);
 }
 
 .architecture-flow li:not(:last-child)::after {
@@ -2952,7 +3020,7 @@ body.interview-mode .dashboard-placeholder {
   height: 22px;
   display: grid;
   place-items: center;
-  background: white;
+  background: var(--surface);
   color: var(--blue);
   font-size: 14px;
 }
@@ -2968,7 +3036,7 @@ body.interview-mode .dashboard-placeholder {
 
 .architecture-flow strong {
   display: block;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 14px;
 }
 
@@ -3016,7 +3084,7 @@ body.interview-mode .dashboard-placeholder {
   grid-template-columns: 1.14fr 0.86fr;
   gap: 80px;
   padding: 58px;
-  background: #f1f4f8;
+  background: var(--surface-2);
 }
 
 .challenge-column > p:not(.section-number) {
@@ -3026,12 +3094,12 @@ body.interview-mode .dashboard-placeholder {
 
 .challenge-column .technical-challenge {
   padding-top: 22px;
-  border-top: 1px solid #d9e0e9;
+  border-top: 1px solid var(--border-2);
 }
 
 .learning-column {
   padding-left: 44px;
-  border-left: 1px solid #d9e0e9;
+  border-left: 1px solid var(--border-2);
 }
 
 .learning-column ul {
@@ -3043,8 +3111,8 @@ body.interview-mode .dashboard-placeholder {
 .learning-column li {
   position: relative;
   padding: 10px 0 10px 19px;
-  border-bottom: 1px solid #d9e0e9;
-  color: var(--navy);
+  border-bottom: 1px solid var(--border-2);
+  color: var(--heading);
   font-size: 13px;
 }
 
@@ -3066,7 +3134,7 @@ body.interview-mode .dashboard-placeholder {
 }
 
 .job-relevance .section-number {
-  color: #8eb2ff;
+  color: var(--blue-soft);
 }
 
 .job-relevance h3 {
@@ -3077,7 +3145,7 @@ body.interview-mode .dashboard-placeholder {
 .job-relevance > p:last-child {
   max-width: 860px;
   margin: 22px 0 0;
-  color: #c7d1df;
+  color: var(--muted-on-navy);
   font-size: 16px;
 }
 
@@ -3131,7 +3199,7 @@ body.interview-mode .signalbridge-interview {
   padding: 9px 12px;
   border: 1px solid var(--navy);
   background: transparent;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 10px;
   font-weight: 800;
   cursor: pointer;
@@ -3152,7 +3220,7 @@ body.interview-mode .signalbridge-interview {
   position: relative;
   height: 270px;
   overflow: hidden;
-  background: #e9eef5;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   box-shadow: 0 18px 44px rgba(19, 42, 79, 0.14);
 }
@@ -3176,8 +3244,8 @@ body.interview-mode .signalbridge-interview {
 }
 
 .interview-image-content span {
-  background: white;
-  border-left: 4px solid #8fb0ed;
+  background: var(--surface);
+  border-left: 4px solid var(--blue-soft);
 }
 
 .interview-image-content span:last-child {
@@ -3208,7 +3276,7 @@ body.interview-mode .signalbridge-interview {
 
 .interview-relevance p {
   margin: 0 auto auto 0;
-  color: #91b4fa;
+  color: var(--blue-soft);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.11em;
@@ -3222,7 +3290,7 @@ body.interview-mode .signalbridge-interview {
 
 .interview-relevance span {
   margin-top: 13px;
-  color: #bdc9da;
+  color: var(--muted-on-navy);
   font-size: 10px;
   line-height: 1.6;
 }
@@ -3261,12 +3329,12 @@ body.interview-mode .signalbridge-interview {
 }
 
 .star-grid .star-result {
-  background: #edf3ff;
+  background: var(--tint);
   box-shadow: inset 0 0 0 2px var(--blue);
 }
 
 .star-grid .star-result span {
-  color: var(--navy);
+  color: var(--heading);
   font-weight: 650;
 }
 
@@ -3363,7 +3431,7 @@ body.interview-mode .signalbridge-interview {
 
   .learning-column {
     padding: 30px 0 0;
-    border-top: 1px solid #d9e0e9;
+    border-top: 1px solid var(--border-2);
     border-left: 0;
   }
 
@@ -3575,7 +3643,7 @@ body.interview-mode .signalbridge-interview {
 }
 
 .button-linkedin:hover {
-  background: #edf3ff;
+  background: var(--tint);
 }
 
 .skills-grid {
@@ -3616,7 +3684,7 @@ body.interview-mode .signalbridge-interview {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  color: #9fb0c9;
+  color: var(--muted-on-navy);
   font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.08em;
@@ -3633,7 +3701,7 @@ body.interview-mode .signalbridge-interview {
 }
 
 .journey-primary .journey-label {
-  color: #8eb2ff;
+  color: var(--blue-soft);
 }
 
 .journey-primary h3,
@@ -3646,7 +3714,7 @@ body.interview-mode .signalbridge-interview {
 
 .journey-org {
   margin: 6px 0 24px;
-  color: #c1ccdc;
+  color: var(--muted-on-navy);
   font-size: 13px;
 }
 
@@ -3654,7 +3722,7 @@ body.interview-mode .signalbridge-interview {
   margin: auto 0 0;
   padding: 22px 0 0 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
-  color: #c8d2e0;
+  color: var(--muted-on-navy);
   font-size: 13px;
 }
 
@@ -3681,7 +3749,7 @@ body.interview-mode .signalbridge-interview {
 }
 
 .journey-secondary h3 {
-  color: var(--navy);
+  color: var(--heading);
   font-size: 20px;
 }
 
@@ -3731,7 +3799,7 @@ body.interview-mode .signalbridge-interview {
 
 .project-index-title h3 {
   margin: 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 25px;
   line-height: 1.1;
   letter-spacing: -0.035em;
@@ -3758,7 +3826,7 @@ body.interview-mode .signalbridge-interview {
   padding: 6px 9px;
   background: var(--surface);
   border: 1px solid var(--border);
-  color: var(--navy);
+  color: var(--heading);
   font-size: 9px;
   font-weight: 700;
 }
@@ -3891,7 +3959,7 @@ body.interview-mode .additional-work {
 }
 
 .hero-links a:hover {
-  color: var(--navy);
+  color: var(--heading);
   text-decoration-color: currentColor;
 }
 
@@ -3903,7 +3971,7 @@ body.interview-mode .additional-work {
 }
 
 .about-note strong {
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .case-section {
@@ -4336,7 +4404,7 @@ body.interview-mode .additional-work {
   }
 
   .problem-solution-grid .solution-panel {
-    background: #f1f5fa;
+    background: var(--surface-2);
   }
 
   .problem-solution-grid article > p:not(.detail-label) {
@@ -4507,7 +4575,7 @@ body.interview-mode .additional-work {
 }
 
 .hero-links button:hover {
-  color: var(--navy);
+  color: var(--heading);
   text-decoration-color: currentColor;
 }
 
@@ -4551,7 +4619,7 @@ body.interview-mode .additional-work {
 
 .fit-grid h3 {
   margin: 54px 0 14px;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 21px;
   line-height: 1.2;
   letter-spacing: -0.035em;
@@ -4596,7 +4664,7 @@ body.interview-mode .additional-work {
 
 .project-card-heading h3 {
   margin: 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 30px;
   line-height: 1.05;
   letter-spacing: -0.045em;
@@ -4607,7 +4675,7 @@ body.interview-mode .additional-work {
   display: block;
   margin-top: 22px;
   overflow: hidden;
-  background: #edf1f5;
+  background: var(--surface-2);
   border: 1px solid var(--border);
 }
 
@@ -4646,7 +4714,7 @@ body.interview-mode .additional-work {
 
 .project-card-role p {
   margin: 8px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 12px;
   line-height: 1.55;
 }
@@ -4654,7 +4722,7 @@ body.interview-mode .additional-work {
 .project-card-result {
   margin-top: 18px;
   padding: 14px 15px;
-  background: #edf3ff;
+  background: var(--tint);
   border-left: 3px solid var(--blue);
 }
 
@@ -4664,7 +4732,7 @@ body.interview-mode .additional-work {
 }
 
 .project-card-result strong {
-  color: var(--navy);
+  color: var(--heading);
   font-size: 12px;
 }
 
@@ -4687,7 +4755,7 @@ body.interview-mode .additional-work {
   padding: 5px 7px;
   background: var(--page);
   border: 1px solid var(--border);
-  color: var(--navy);
+  color: var(--heading);
   font-size: 9px;
   font-weight: 700;
 }
@@ -4719,7 +4787,7 @@ body.interview-mode .additional-work {
 
 .project-brief > div > p {
   margin: 0 0 7px;
-  color: #8eb2ff;
+  color: var(--blue-soft);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -4733,7 +4801,7 @@ body.interview-mode .additional-work {
 
 .project-brief > p {
   margin: 0;
-  color: #c8d2e0;
+  color: var(--muted-on-navy);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -4764,7 +4832,7 @@ body.interview-mode .additional-work {
 .contact-cta h2 {
   max-width: 560px;
   margin: 10px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: clamp(42px, 5vw, 66px);
   line-height: 1.05;
   letter-spacing: -0.055em;
@@ -4824,7 +4892,7 @@ body.interview-mode .candidate-interview {
 
 .candidate-interview-header h2 {
   margin: 3px 0 0;
-  color: var(--navy);
+  color: var(--heading);
   font-size: 42px;
   line-height: 1;
   letter-spacing: -0.05em;
@@ -4869,7 +4937,7 @@ body.interview-mode .candidate-interview {
 }
 
 .candidate-snapshot-grid strong {
-  color: var(--navy);
+  color: var(--heading);
   font-size: 15px;
 }
 
@@ -4901,13 +4969,13 @@ body.interview-mode .candidate-interview {
 
 .candidate-project-evidence p {
   margin: 14px 0;
-  color: #c5cfdd;
+  color: var(--muted-on-navy);
   font-size: 11px;
   line-height: 1.55;
 }
 
 .candidate-project-evidence strong {
-  color: #8eb2ff;
+  color: var(--blue-soft);
   font-size: 11px;
 }
 
@@ -5126,7 +5194,7 @@ body.interview-mode .candidate-interview {
   padding: 8px 9px;
   border: 0;
   background: transparent;
-  color: #aebbd0;
+  color: var(--muted-on-navy);
   white-space: nowrap;
   font-size: 9px;
   letter-spacing: 0.02em;
@@ -5207,4 +5275,541 @@ body.interview-mode .candidate-interview {
   .candidate-interview-header h2 {
     font-size: 21px;
   }
+}
+
+/* ==========================================================================
+   Polish layer — theme fixes, product framing, motion, accent
+   ========================================================================== */
+
+/* --- Theme-aware chrome ------------------------------------------------- */
+
+.site-header {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
+@supports not (background: color-mix(in srgb, red 50%, blue)) {
+  .site-header { background: var(--surface); }
+}
+
+/* Section rhythm: alternate surfaces, close on a dark block */
+.selected-work { background: var(--surface); }
+
+.contact-cta {
+  background: var(--navy);
+  border-top: 0;
+  color: white;
+}
+
+.contact-cta .section-number { color: var(--blue-soft); }
+.contact-cta h2 { color: white; }
+.contact-cta-copy > p { color: var(--muted-on-navy); }
+
+.contact-cta .button-secondary {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: white;
+}
+
+.contact-cta .button-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.contact-cta .contact-actions > a:not(.button) { color: var(--blue-soft); }
+
+/* --- Product screenshots ------------------------------------------------ */
+/* Screenshots are dark-UI captures. Framing them on a dark mat with
+   object-fit:contain shows the whole screen instead of cropping to a
+   black rectangle. */
+
+.project-card-image {
+  position: relative;
+  padding: 10px;
+  background: var(--shot-bg);
+  border-color: var(--border-2);
+}
+
+.project-card-image img {
+  object-fit: contain;
+  transition: transform var(--ease-out);
+}
+
+.project-card-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.portfolio-project:hover .project-card-image img { transform: scale(1.03); }
+
+/* --- Hover states ------------------------------------------------------- */
+
+.portfolio-project {
+  transition: transform var(--ease-out), box-shadow var(--ease-out),
+    border-color var(--ease-out);
+}
+
+.portfolio-project:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+  border-color: color-mix(in srgb, var(--blue) 40%, var(--border));
+}
+
+.fit-grid article,
+.skill-group,
+.journey-secondary article {
+  transition: background var(--ease), transform var(--ease);
+}
+
+.fit-grid article:hover { background: var(--surface-2); }
+
+.journey-secondary article:hover { transform: translateX(3px); }
+
+.project-card-actions a,
+.hero-links a,
+.site-footer a,
+.contact-actions a:not(.button) {
+  position: relative;
+  transition: color var(--ease);
+}
+
+.project-card-actions a::after,
+.hero-links a::after,
+.contact-actions a:not(.button)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--ease-out);
+}
+
+.project-card-actions a:hover::after,
+.hero-links a:hover::after,
+.contact-actions a:not(.button):hover::after {
+  transform: scaleX(1);
+}
+
+.button {
+  transition: transform var(--ease), box-shadow var(--ease),
+    background var(--ease), border-color var(--ease);
+}
+
+.button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(19, 42, 79, 0.28);
+}
+
+.button-secondary:hover { background: var(--surface-2); }
+
+/* --- Award accent ------------------------------------------------------- */
+/* Championships were the same blue as every ordinary link. Reserve a warm
+   accent so the strongest credential reads first. */
+
+.project-card-result.is-award {
+  background: var(--accent-tint);
+  border-left-color: var(--accent);
+}
+
+.project-card-result.is-award strong { color: var(--accent); }
+
+.award-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  background: var(--accent-tint);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.award-pill::before {
+  content: "★";
+  font-size: 11px;
+  line-height: 1;
+}
+
+/* --- Scroll reveal ------------------------------------------------------ */
+
+/* Only hide when JS is present to bring it back — otherwise the page
+   would render permanently blank sections if the script fails to load. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--ease-out), transform var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal,
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .portfolio-project:hover,
+  .button-primary:hover,
+  .journey-secondary article:hover {
+    transform: none;
+  }
+
+  .project-card-image img,
+  .portfolio-project:hover .project-card-image img {
+    transform: none;
+  }
+}
+
+/* --- Dark-theme corrections -------------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+  .hero { border-bottom-color: var(--border); }
+
+  .profile-visual { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }
+
+  /* Photographs render harsh against a dark page */
+  .profile-visual img,
+  .interview-intro-profile img {
+    filter: brightness(0.92) contrast(1.02);
+  }
+
+  .button-primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #08111f;
+  }
+
+  .button-primary:hover { box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5); }
+
+  .button-secondary { border-color: var(--border-2); }
+
+  .project-tags li { background: var(--surface-2); }
+
+  .site-header { border-bottom-color: var(--border); }
+
+  .interview-slide { box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45); }
+}
+
+/* --- Hero: density and proof -------------------------------------------- */
+/* Was min-height:100svh with a ~400px content column, leaving ~430px of
+   dead space. Content now carries the space; the floor just prevents a
+   cramped hero on short viewports. */
+
+.hero {
+  min-height: min(calc(100svh - var(--header-height)), 780px);
+}
+
+.hero-grid { padding-block: 64px; }
+
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 22px 0 0;
+  padding: 7px 13px 7px 11px;
+  background: var(--tint);
+  border: 1px solid color-mix(in srgb, var(--blue) 22%, transparent);
+  border-radius: 999px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.availability-dot {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
+}
+
+.availability-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #16a34a;
+  animation: availability-pulse 2.4s ease-out infinite;
+}
+
+@keyframes availability-pulse {
+  0%   { transform: scale(1); opacity: 0.7; }
+  70%  { transform: scale(2.6); opacity: 0; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+.hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 34px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+
+.hero-proof li {
+  display: grid;
+  gap: 3px;
+  padding-right: 30px;
+  margin-right: 30px;
+  border-right: 1px solid var(--border);
+}
+
+.hero-proof li:last-child {
+  padding-right: 0;
+  margin-right: 0;
+  border-right: 0;
+}
+
+.hero-proof strong {
+  color: var(--heading);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.hero-proof span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .availability-dot::after { animation: none; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .availability-dot { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.22); }
+  .availability-dot,
+  .availability-dot::after { background: #22c55e; }
+}
+
+@media (max-width: 900px) {
+  .hero { min-height: 0; }
+  .hero-grid { padding-block: 40px; }
+}
+
+/* Below this the flex row wraps and leaves a dangling divider, so switch
+   to a grid and drop the rules entirely. */
+@media (max-width: 700px) {
+  .hero-proof {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .hero-proof li {
+    padding-right: 0;
+    margin-right: 0;
+    border-right: 0;
+  }
+
+  .hero-proof strong { font-size: 22px; }
+  .hero-proof span { font-size: 9px; }
+}
+
+/* --- KnowCad feature band ----------------------------------------------- */
+/* Second championship was previously a footnote aside. Given equal weight
+   to the carded projects, minus the screenshot it does not have. */
+
+.project-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 44px;
+  margin-top: 22px;
+  padding: 34px 36px;
+  background: var(--navy);
+  border-left: 4px solid var(--accent);
+  color: white;
+}
+
+.project-feature-main h3 {
+  margin: 16px 0 0;
+  font-size: 32px;
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.project-feature-main > p {
+  max-width: 52ch;
+  margin: 14px 0 0;
+  color: var(--muted-on-navy);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.project-feature .project-tags { margin-top: 20px; }
+
+.project-feature .project-tags li {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.project-feature .award-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(240, 179, 87, 0.45);
+  color: #f0b357;
+}
+
+.project-feature-facts {
+  display: grid;
+  align-content: center;
+  gap: 0;
+  margin: 0;
+}
+
+.project-feature-facts > div {
+  padding: 13px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.project-feature-facts > div:last-child { padding-bottom: 0; }
+
+.project-feature-facts dt {
+  color: var(--blue-soft);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.project-feature-facts dd {
+  margin: 6px 0 0;
+  color: var(--muted-on-navy);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .project-feature {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 26px 22px;
+  }
+  .project-feature-main h3 { font-size: 26px; }
+}
+
+/* --- Skills: shipped vs learning ---------------------------------------- */
+
+.skills-legend {
+  margin: 46px 0 0;
+  color: var(--blue-soft);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.skills-legend + .skills-grid { margin-top: 18px; }
+
+.skills-learning {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 40px;
+  align-items: center;
+  margin-top: 46px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.skills-learning .skills-legend { margin: 0; }
+
+.skills-learning > div > p:last-child {
+  max-width: 46ch;
+  margin: 10px 0 0;
+  color: var(--muted-on-navy);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.skills-learning ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skills-learning li {
+  padding: 8px 13px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .skills-learning {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* --- Dark-theme: elements keyed to --navy need their own contrast --------- */
+/* --navy doubles as a dark section background, so in dark mode it no longer
+   separates from the page. These few spots need an explicit treatment. */
+
+@media (prefers-color-scheme: dark) {
+  .brand-mark {
+    background: var(--blue);
+    color: #08111f;
+  }
+
+  .nav-interview-button {
+    border-color: var(--border-2);
+    color: var(--text);
+  }
+
+  .nav-interview-button:hover {
+    background: var(--surface-2);
+    border-color: var(--blue);
+    color: var(--text);
+  }
+
+  .profile-facts { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+
+  .profile-visual { background: var(--surface-2); }
+
+  /* Skills sits on --navy; nudge it off the page colour so the band reads */
+  .skills { background: var(--navy); }
+
+  .strength-list li::before,
+  .eyebrow span { background: var(--blue); }
+}
+
+/* Primary button sits on --navy in the contact block; invert it there */
+.contact-cta .button-primary {
+  background: white;
+  border-color: white;
+  color: var(--navy);
+}
+
+.contact-cta .button-primary:hover {
+  background: var(--blue-soft);
+  border-color: var(--blue-soft);
+  color: #0b1a33;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
