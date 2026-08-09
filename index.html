@@ -3,18 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Mruthulan's software development portfolio: full-stack projects, hackathon wins, product work and leadership at Singapore Polytechnic.">
-  <meta property="og:title" content="Mruthulan — Software Development Portfolio">
-  <meta property="og:description" content="Full-stack projects, hackathon-winning work and product evidence from a Year 2 Information Technology student at Singapore Polytechnic.">
+  <meta name="description" content="Senthil Nathan Mruthulan — software engineering intern candidate. Two-time hackathon champion (SP InnovateDash 2026, Autodesk Singapore 2026) with deployed full-stack products. Year 2 Information Technology, Singapore Polytechnic.">
+  <meta property="og:title" content="Mruthulan — Software Engineering Intern Portfolio">
+  <meta property="og:description" content="Two-time hackathon champion with shipped, real-user products. Next.js, FastAPI, PostgreSQL, testing and deployment. Seeking a 2026 software engineering internship in Singapore.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mru34.github.io/mruthulan-portfolio/">
   <meta property="og:image" content="https://mru34.github.io/mruthulan-portfolio/assets/images/mru-profile.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#132A4F">
-  <title>Mruthulan — Information Technology Portfolio</title>
+  <meta name="theme-color" content="#132A4F" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
+  <title>Mruthulan — Software Engineering Intern Portfolio</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css?v=20260804-pbca">
-  <script src="js/script.js?v=20260804-pbca" defer></script>
+  <link rel="preload" href="assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css?v=20260809-swe">
+  <!-- Marks the document before first paint so scroll-reveal only hides
+       content when JavaScript is actually available to reveal it again. -->
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="js/script.js?v=20260809-swe" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -50,7 +55,7 @@
   <aside class="interview-panel" aria-label="Interview presentation controls" aria-hidden="true">
     <div class="interview-panel-brand">
       <span class="interview-status-dot" aria-hidden="true"></span>
-      <span><strong>Interview View</strong><small>Ninja Coding House</small></span>
+      <span><strong>Interview View</strong><small>SWE Internship</small></span>
     </div>
     <nav aria-label="Interview presentation sections">
       <button type="button" data-interview-step="0" aria-current="step">01 Intro</button>
@@ -72,31 +77,39 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-grid container">
         <div class="hero-copy">
-          <p class="eyebrow"><span></span> Aspiring Full-Stack Developer · Year 2 IT Student</p>
+          <p class="eyebrow"><span></span> Software Engineering Intern · Year 2 IT · Singapore Polytechnic</p>
           <h1 id="hero-title">Mruthulan</h1>
-          <p class="hero-summary">I turn real needs into deployed, user-friendly software. I bring full-stack foundations, practical project experience and the curiosity to learn unfamiliar technologies quickly.</p>
+          <p class="hero-summary">I build and ship software people actually use — a booking site running for a real barber shop, and a hackathon-winning support platform built across Next.js, FastAPI and PostgreSQL.</p>
+
+          <p class="availability"><span class="availability-dot" aria-hidden="true"></span> Available for 2026 software engineering internships · Singapore</p>
 
           <ul class="strength-list" aria-label="Core strengths">
-            <li>Full-stack delivery</li>
-            <li>Clear communication</li>
-            <li>Continuous learning</li>
+            <li>Ships to production</li>
+            <li>Full-stack foundations</li>
+            <li>Learns fast under pressure</li>
           </ul>
 
           <div class="hero-actions">
-            <a class="button button-primary" href="#fit">Why hire me <span aria-hidden="true">↘</span></a>
-            <a class="button button-secondary" href="#work">View projects</a>
+            <a class="button button-primary" href="#work">See what I've shipped <span aria-hidden="true">↘</span></a>
+            <a class="button button-secondary" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Download résumé</a>
           </div>
           <div class="hero-links" aria-label="Professional links">
-            <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            <a href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noreferrer">LinkedIn ↗</a>
             <a href="https://github.com/mru34" target="_blank" rel="noreferrer">GitHub ↗</a>
-            <a href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Résumé ↓</a>
-            <button type="button" data-interview-toggle>Open Interview View</button>
+            <a href="mailto:mruthulansenthilnathan@gmail.com">Email ↗</a>
+            <button type="button" data-interview-toggle>Interview View</button>
           </div>
+
+          <ul class="hero-proof" aria-label="Track record at a glance">
+            <li><strong>2×</strong><span>Hackathon champion</span></li>
+            <li><strong>3</strong><span>Products deployed live</span></li>
+            <li><strong>30+</strong><span>Users interviewed</span></li>
+          </ul>
         </div>
 
         <div class="profile-composition" aria-label="Profile overview">
           <div class="profile-visual profile-visual-photo">
-            <img src="assets/images/mru-profile.jpg" alt="Professional portrait of Senthil Nathan Mruthulan">
+            <img src="assets/images/mru-profile.jpg" alt="Professional portrait of Senthil Nathan Mruthulan" width="1254" height="1254" fetchpriority="high" decoding="async">
             <span class="profile-label">Senthil Nathan Mruthulan</span>
           </div>
 
@@ -128,7 +141,7 @@
           <p class="section-number">01 / Profile</p>
           <h2 id="about-title">About me</h2>
         </div>
-        <div class="about-content">
+        <div class="about-content reveal">
           <p class="lead">I enjoy turning real problems into reliable digital products people can use with confidence.</p>
           <p>I am Senthil Nathan Mruthulan, a Year 2 Information Technology student at Singapore Polytechnic pursuing full-stack development. My experience spans real-user web applications, AI-assisted hackathon products, database-backed systems and collaborative delivery under pressure.</p>
           <p class="about-note"><strong>Languages:</strong> English and Tamil · Native or bilingual proficiency</p>
@@ -151,7 +164,7 @@
           <p>Strengths aligned to junior full-stack work: practical delivery, problem-solving, collaboration and rapid learning.</p>
         </div>
 
-        <div class="fit-grid">
+        <div class="fit-grid reveal">
           <article>
             <span>01</span>
             <h3>Practical full-stack foundations</h3>
@@ -183,54 +196,69 @@
             <p class="section-number">03 / Capabilities</p>
             <h2 id="skills-title">Skills</h2>
           </div>
-          <p>A focused toolkit for building, testing and improving dependable software.</p>
+          <p>Separated honestly: what I have already built and shipped with, and what I am actively learning next.</p>
         </div>
 
-        <div class="skills-grid">
+        <p class="skills-legend">Built and shipped with</p>
+
+        <div class="skills-grid reveal">
           <article class="skill-group">
             <p class="skill-index">A</p>
-            <h3>Development</h3>
+            <h3>Languages &amp; web</h3>
             <ul>
-              <li>Java</li>
               <li>JavaScript</li>
-              <li>TypeScript</li>
-              <li>React &amp; Next.js</li>
+              <li>Java</li>
               <li>HTML &amp; CSS</li>
-              <li>Node.js</li>
+              <li>SQL</li>
+              <li>Responsive UI</li>
             </ul>
           </article>
           <article class="skill-group">
             <p class="skill-index">B</p>
             <h3>Backend &amp; data</h3>
             <ul>
+              <li>Node.js</li>
               <li>Python &amp; FastAPI</li>
-              <li>SQL</li>
               <li>PostgreSQL</li>
-              <li>MySQL</li>
-              <li>Database design</li>
+              <li>Relational database design</li>
             </ul>
           </article>
           <article class="skill-group">
             <p class="skill-index">C</p>
             <h3>Engineering</h3>
             <ul>
-              <li>API integration</li>
+              <li>REST API integration</li>
               <li>Git &amp; GitHub</li>
-              <li>Docker &amp; Render</li>
-              <li>Testing &amp; debugging</li>
-              <li>Secure coding fundamentals</li>
+              <li>Automated testing</li>
+              <li>Debugging</li>
+              <li>Render deployment</li>
             </ul>
           </article>
           <article class="skill-group">
             <p class="skill-index">D</p>
             <h3>Product &amp; teamwork</h3>
             <ul>
-              <li>UI/UX &amp; product design</li>
-              <li>Team collaboration</li>
+              <li>AI-assisted workflows</li>
+              <li>User research</li>
+              <li>Rapid prototyping</li>
               <li>Technical communication</li>
-              <li>Continuous learning</li>
             </ul>
           </article>
+        </div>
+
+        <div class="skills-learning reveal">
+          <div>
+            <p class="skills-legend">Actively learning</p>
+            <p>Technologies I have touched on projects but would not yet claim as strengths. I would rather tell you this up front than overstate it in an interview.</p>
+          </div>
+          <ul aria-label="Technologies currently being learned">
+            <li>TypeScript</li>
+            <li>React &amp; Next.js</li>
+            <li>Docker</li>
+            <li>MySQL</li>
+            <li>Secure coding practices</li>
+            <li>CI/CD</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -245,7 +273,7 @@
           <p>Technical delivery supported by customer-facing work, student leadership and community involvement.</p>
         </div>
 
-        <div class="journey-grid">
+        <div class="journey-grid reveal">
           <article class="journey-primary">
             <div class="journey-meta">
               <span>2025–Present</span>
@@ -294,26 +322,26 @@
             <p class="section-number">05 / Selected work</p>
             <h2 id="work-title">Projects that show how I work</h2>
           </div>
-          <p>Three different examples of full-stack development, client delivery and product thinking.</p>
+          <p>Four projects across full-stack development, client delivery, AI-assisted workflows and product research — two of them competition winners.</p>
         </div>
 
         <div class="project-showcase-grid">
-          <article class="portfolio-project">
+          <article class="portfolio-project reveal">
             <div class="project-card-heading">
-              <p>Hackathon-winning team project</p>
+              <p><span class="award-pill">Champion</span></p>
               <h3>SignalBridge</h3>
             </div>
             <a class="project-card-image" href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live SignalBridge application">
-              <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface">
+              <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface" width="1280" height="720" loading="lazy" decoding="async">
             </a>
             <p class="project-card-summary">An AI-assisted support platform that helps youth workers maintain continuity of care when young people reach out after working hours.</p>
             <div class="project-card-role">
               <span>My contribution</span>
               <p>Youth-facing frontend, consent and handoff UX, backend integration, Discord integration and automated testing.</p>
             </div>
-            <div class="project-card-result">
+            <div class="project-card-result is-award">
               <strong>SP InnovateDash 2026 Champion</strong>
-              <span>Featured by Singapore Polytechnic</span>
+              <span>Featured by Singapore Polytechnic · Selected for Dell InnovateFest 2026</span>
             </div>
             <ul class="project-tags"><li>Next.js</li><li>FastAPI</li><li>PostgreSQL</li><li>Testing</li></ul>
             <div class="project-card-actions">
@@ -322,13 +350,13 @@
             </div>
           </article>
 
-          <article class="portfolio-project">
+          <article class="portfolio-project reveal">
             <div class="project-card-heading">
               <p>Real-client web project</p>
               <h3>Better Call Bhai</h3>
             </div>
             <a class="project-card-image" href="https://bettercalbhai.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the Better Call Bhai website">
-              <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai barber booking homepage">
+              <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai barber booking homepage" width="1425" height="891" loading="lazy" decoding="async">
             </a>
             <p class="project-card-summary">A mobile-friendly booking website created for a local barber shop to replace manual WhatsApp appointment coordination.</p>
             <div class="project-card-role">
@@ -346,13 +374,13 @@
             </div>
           </article>
 
-          <article class="portfolio-project">
+          <article class="portfolio-project reveal">
             <div class="project-card-heading">
-              <p>IENT startup project · A grade</p>
+              <p>Entrepreneurship project · A grade</p>
               <h3>Loomy</h3>
             </div>
             <a class="project-card-image" href="https://loomy-copy-eb9f937f.base44.app/Community" target="_blank" rel="noreferrer" aria-label="Open the Loomy Community prototype">
-              <img src="assets/images/loomy-product-overview.png" alt="Loomy community, profiling and digital wardrobe product concept">
+              <img src="assets/images/loomy-product-overview.png" alt="Loomy community, profiling and digital wardrobe product concept" width="1400" height="788" loading="lazy" decoding="async">
             </a>
             <p class="project-card-summary">A social-thrifting concept combining community, clothing swaps and an AI-assisted digital wardrobe.</p>
             <div class="project-card-role">
@@ -371,14 +399,28 @@
           </article>
         </div>
 
-        <aside class="project-brief" aria-label="Additional hackathon project">
-          <div>
-            <p>Additional evidence</p>
-            <h3>KnowCad</h3>
+        <article class="project-feature reveal" aria-labelledby="knowcad-title">
+          <div class="project-feature-main">
+            <span class="award-pill">Autodesk Singapore Hackathon 2026 · Champion</span>
+            <h3 id="knowcad-title">KnowCad</h3>
+            <p>An AI co-pilot that helps customer-service agents retrieve the right internal knowledge faster, while keeping a human in the decision loop rather than automating the judgement away.</p>
+            <ul class="project-tags"><li>AI workflow</li><li>Retrieval</li><li>Human-in-the-loop</li><li>Team delivery</li></ul>
           </div>
-          <p>An AI co-pilot for customer-service agents that won the Autodesk Singapore Hackathon 2026. It demonstrates collaborative delivery and human-in-the-loop product thinking.</p>
-          <ul class="project-tags"><li>Hackathon champion</li><li>AI workflow</li><li>Team delivery</li></ul>
-        </aside>
+          <dl class="project-feature-facts">
+            <div>
+              <dt>My contribution</dt>
+              <dd>Built the retrieval workflow and helped translate a technical concept for a non-technical judging panel.</dd>
+            </div>
+            <div>
+              <dt>Constraint</dt>
+              <dd>Delivered end-to-end within a single hackathon weekend.</dd>
+            </div>
+            <div>
+              <dt>Why it matters</dt>
+              <dd>My second competition win in 2026, on a different team and a different problem domain.</dd>
+            </div>
+          </dl>
+        </article>
       </div>
     </section>
 
@@ -388,12 +430,12 @@
           <p class="section-number">06 / Next step</p>
           <h2 id="contact-title">Let’s discuss how I can contribute.</h2>
         </div>
-        <div class="contact-cta-copy">
+        <div class="contact-cta-copy reveal">
           <p>I am interested in software development opportunities where I can learn from experienced teams, contribute to real products and keep growing across the full stack.</p>
           <div class="contact-actions">
             <a class="button button-primary" href="mailto:mruthulansenthilnathan@gmail.com">Email me</a>
             <a class="button button-secondary" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Download résumé</a>
-            <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            <a href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noreferrer">LinkedIn ↗</a>
             <a href="https://github.com/mru34" target="_blank" rel="noreferrer">GitHub ↗</a>
           </div>
         </div>
@@ -404,17 +446,17 @@
       <div class="container interview-stage">
         <header class="candidate-interview-header">
           <div>
-            <p class="section-number">PBCA interview portfolio</p>
-            <h2 id="interview-profile-title">Junior Full Stack Developer</h2>
-            <p>Ninja Coding House · Candidate: Senthil Nathan Mruthulan</p>
+            <p class="section-number">Interview portfolio</p>
+            <h2 id="interview-profile-title">Software Engineering Intern</h2>
+            <p>Candidate: Senthil Nathan Mruthulan · Singapore Polytechnic</p>
           </div>
-          <div class="interview-role-badge"><span>Target role</span><strong>Full stack · Client projects · Growth</strong></div>
+          <div class="interview-role-badge"><span>Target role</span><strong>Software engineering · Full stack · 2026 internship</strong></div>
         </header>
 
         <div class="interview-slides" aria-live="polite">
           <article class="interview-slide interview-intro is-active" data-interview-slide="0" aria-labelledby="interview-intro-title" tabindex="-1">
             <div class="interview-intro-profile">
-              <img src="assets/images/mru-profile.jpg" alt="Professional portrait of Senthil Nathan Mruthulan">
+              <img src="assets/images/mru-profile.jpg" alt="Professional portrait of Senthil Nathan Mruthulan" width="1254" height="1254" loading="lazy" decoding="async">
               <div>
                 <p class="interview-kicker">01 · Tell me about yourself</p>
                 <h3 id="interview-intro-title">Mruthulan</h3>
@@ -437,15 +479,15 @@
             <div class="interview-slide-heading">
               <p class="interview-kicker">02 · Why this role</p>
               <h3 id="interview-fit-title">A strong match for a practical, learning-focused team</h3>
-              <p>Ninja Coding House builds custom software in a small, agile environment. That suits how I learn best: contributing to real work, taking feedback and improving quickly.</p>
+              <p>I learn best by contributing to real work, taking feedback and improving quickly — which is exactly what an engineering internship is built around.</p>
             </div>
             <div class="role-match-grid">
-              <article><span>The role needs</span><strong>Practical web development</strong><p>I designed, built and deployed Better Call Bhai for a real local business.</p></article>
-              <article><span>The role needs</span><strong>Problem-solving and debugging</strong><p>SignalBridge gave me experience with API integration, automated testing and resolving issues under time pressure.</p></article>
-              <article><span>The role needs</span><strong>Responsive, user-friendly interfaces</strong><p>My projects are designed around real user journeys across desktop and mobile.</p></article>
-              <article><span>The role needs</span><strong>Initiative and willingness to learn</strong><p>I have moved between unfamiliar tools, product domains and team roles to deliver working outcomes.</p></article>
+              <article><span>Internships need</span><strong>Practical web development</strong><p>I designed, built and deployed Better Call Bhai for a real local business.</p></article>
+              <article><span>Internships need</span><strong>Problem-solving and debugging</strong><p>SignalBridge gave me experience with API integration, automated testing and resolving issues under time pressure.</p></article>
+              <article><span>Internships need</span><strong>Responsive, user-friendly interfaces</strong><p>My projects are designed around real user journeys across desktop and mobile.</p></article>
+              <article><span>Internships need</span><strong>Initiative and willingness to learn</strong><p>I have moved between unfamiliar tools, product domains and team roles to deliver working outcomes.</p></article>
             </div>
-            <p class="interview-honesty-note"><strong>Learning edge:</strong> I have not yet used PHP and Laravel professionally. I would bring transferable JavaScript, database, API and deployment foundations—and a clear plan to learn the stack quickly.</p>
+            <p class="interview-honesty-note"><strong>Learning edge:</strong> I have not yet worked in a professional engineering team, and there are parts of most stacks I am still learning. I bring transferable JavaScript, database, API and deployment foundations — and I would rather say that clearly than overstate it.</p>
           </article>
 
           <article class="interview-slide" data-interview-slide="2" aria-labelledby="interview-skills-title" tabindex="-1" hidden>
@@ -458,7 +500,7 @@
               <article><div><span>Backend and data</span><strong>APIs, SQL and PostgreSQL</strong></div><p>Backend integration and structured data work for SignalBridge and school projects.</p></article>
               <article><div><span>Quality</span><strong>Testing, debugging and secure coding</strong></div><p>Automated tests, issue resolution and security-aware development fundamentals.</p></article>
               <article><div><span>Delivery</span><strong>Git, deployment and iteration</strong></div><p>Deployed working applications on Render and improved them through feedback.</p></article>
-              <article><div><span>Growth plan</span><strong>PHP, Laravel, MySQL and Next.js</strong></div><p>Role-specific technologies I am prepared to learn using documentation, small builds and code review.</p></article>
+              <article><div><span>Growth plan</span><strong>TypeScript, Docker, CI/CD and team code review</strong></div><p>Technologies I am prepared to pick up quickly using documentation, small builds and feedback from experienced engineers.</p></article>
             </div>
           </article>
 
@@ -469,15 +511,15 @@
             </div>
             <div class="interview-project-grid" id="interview-projects">
               <article>
-                <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai booking website homepage">
+                <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai booking website homepage" width="1425" height="891" loading="lazy" decoding="async">
                 <div><span>Real client</span><h4>Better Call Bhai</h4><p>Built and deployed a responsive appointment experience to replace manual coordination.</p><strong>Proof: end-to-end delivery</strong></div>
               </article>
               <article>
-                <img src="assets/images/signalbridge-login.png" alt="SignalBridge application entry interface">
+                <img src="assets/images/signalbridge-login.png" alt="SignalBridge application entry interface" width="1280" height="720" loading="lazy" decoding="async">
                 <div><span>Team challenge</span><h4>SignalBridge</h4><p>Contributed frontend, consent and handoff UX, integrations and testing under hackathon pressure.</p><strong>Proof: SP InnovateDash Champion</strong></div>
               </article>
               <article>
-                <img src="assets/images/loomy-product-overview.png" alt="Loomy community and digital wardrobe prototype">
+                <img src="assets/images/loomy-product-overview.png" alt="Loomy community and digital wardrobe prototype" width="1400" height="788" loading="lazy" decoding="async">
                 <div><span>User research</span><h4>Loomy</h4><p>Translated interviews with more than 30 youths into a working social-thrifting concept.</p><strong>Proof: A-grade IENT project</strong></div>
               </article>
             </div>
@@ -499,15 +541,16 @@
           <article class="interview-slide" data-interview-slide="5" aria-labelledby="interview-questions-title" tabindex="-1" hidden>
             <div class="interview-slide-heading">
               <p class="interview-kicker">06 · Close with interest</p>
-              <h3 id="interview-questions-title">Questions for Ninja Coding House</h3>
+              <h3 id="interview-questions-title">Questions for the team</h3>
               <p>Ask at least two. Listen to the answers and ask one natural follow-up if time allows.</p>
             </div>
             <ol class="interview-question-list">
-              <li><span>01</span><p>For a junior developer, what would strong performance look like during the first three months?</p></li>
-              <li><span>02</span><p>How does the team divide work across frontend, backend, API integration and deployment on client projects?</p></li>
-              <li><span>03</span><p>Which technologies or types of projects would you want the successful candidate to learn first?</p></li>
+              <li><span>01</span><p>For an intern, what would strong performance look like by the end of the internship?</p></li>
+              <li><span>02</span><p>How does the team divide work across frontend, backend, API integration and deployment?</p></li>
+              <li><span>03</span><p>Which technologies or types of projects would you want an intern to pick up first?</p></li>
+              <li><span>04</span><p>What does code review and mentorship look like day to day for someone at my level?</p></li>
             </ol>
-            <blockquote class="interview-close">“Thank you for sharing more about the role. The opportunity to learn across live client projects is exactly the kind of environment in which I believe I can contribute and grow.”</blockquote>
+            <blockquote class="interview-close">“Thank you for sharing more about the role. The opportunity to learn from an experienced engineering team on real production work is exactly the environment where I think I can contribute and grow.”</blockquote>
           </article>
         </div>
 
@@ -534,7 +577,7 @@
 
         <figure class="signalbridge-main-figure">
           <a class="live-project-image signalbridge-main-visual" href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live SignalBridge application">
-            <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface">
+            <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface" width="1280" height="720" loading="lazy" decoding="async">
             <span class="media-file-label">Live product · Youth and staff entry</span>
           </a>
           <figcaption class="live-figure-caption">
@@ -639,13 +682,13 @@
           <div class="media-grid">
             <figure class="project-media project-media-wide">
               <a class="media-image-link youth-media" href="assets/images/signalbridge-youth-message.png" target="_blank" aria-label="View the SignalBridge youth message experience">
-                <img src="assets/images/signalbridge-youth-message.png" alt="SignalBridge after-hours youth message and SafeNight response">
+                <img src="assets/images/signalbridge-youth-message.png" alt="SignalBridge after-hours youth message and SafeNight response" width="1280" height="720" loading="lazy" decoding="async">
               </a>
               <figcaption>After-hours youth message and supportive SafeNight response</figcaption>
             </figure>
             <figure class="project-media project-media-wide">
               <a class="media-image-link consent-media" href="assets/images/signalbridge-process.png" target="_blank" aria-label="View how the SafeNight support process works">
-                <img src="assets/images/signalbridge-process.png" alt="SignalBridge Listen, Read the signals and Hand off carefully process">
+                <img src="assets/images/signalbridge-process.png" alt="SignalBridge Listen, Read the signals and Hand off carefully process" width="1280" height="720" loading="lazy" decoding="async">
               </a>
               <figcaption>Consent-led process: listen, read signals and hand off carefully</figcaption>
             </figure>
@@ -685,7 +728,7 @@
 
         <div class="interview-evidence-grid">
           <a class="interview-main-image" href="https://signalbridge-web.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live SignalBridge application">
-            <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface">
+            <img src="assets/images/signalbridge-login.png" alt="SignalBridge youth and staff entry interface" width="1280" height="720" loading="lazy" decoding="async">
             <small>Live product interface ↗</small>
           </a>
           <aside class="interview-relevance">
@@ -734,11 +777,11 @@
             <ul><li>Full-stack development</li><li>JavaScript</li><li>Render</li><li>Private client code</li></ul>
             <div class="project-live-gallery">
               <a href="https://bettercalbhai.onrender.com/" target="_blank" rel="noreferrer" aria-label="Open the live Better Call Bhai homepage">
-                <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai premium barber booking homepage">
+                <img src="assets/images/better-call-bhai-home.png" alt="Better Call Bhai premium barber booking homepage" width="1425" height="891" loading="lazy" decoding="async">
                 <span>Homepage</span>
               </a>
               <a href="https://bettercalbhai.onrender.com/#booking" target="_blank" rel="noreferrer" aria-label="Open the Better Call Bhai booking experience">
-                <img src="assets/images/better-call-bhai-booking.png" alt="Better Call Bhai appointment booking form">
+                <img src="assets/images/better-call-bhai-booking.png" alt="Better Call Bhai appointment booking form" width="1425" height="891" loading="lazy" decoding="async">
                 <span>Booking flow</span>
               </a>
             </div>
@@ -758,11 +801,11 @@
             </div>
             <div class="project-live-gallery loomy-gallery">
               <a href="https://loomy-copy-eb9f937f.base44.app/Community" target="_blank" rel="noreferrer" aria-label="Open the Loomy Community prototype">
-                <img src="assets/images/loomy-product-overview.png" alt="Loomy product overview showing its community, profiling and AI wardrobe features">
+                <img src="assets/images/loomy-product-overview.png" alt="Loomy product overview showing its community, profiling and AI wardrobe features" width="1400" height="788" loading="lazy" decoding="async">
                 <span>Pitch-deck product concept</span>
               </a>
               <a href="assets/Loomy-Pitch-Deck.pdf" target="_blank" aria-label="Open the Loomy pitch deck">
-                <img src="assets/images/loomy-pitch-cover.png" alt="Cover of the Loomy startup pitch deck">
+                <img src="assets/images/loomy-pitch-cover.png" alt="Cover of the Loomy startup pitch deck" width="2200" height="1238" loading="lazy" decoding="async">
                 <span>View pitch deck ↗</span>
               </a>
             </div>
@@ -777,7 +820,7 @@
     <div class="container">
       <p>Senthil Nathan Mruthulan / IT Portfolio</p>
       <a href="mailto:mruthulansenthilnathan@gmail.com">mruthulansenthilnathan@gmail.com</a>
-      <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+      <a href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noreferrer">LinkedIn ↗</a>
       <a href="https://github.com/mru34" target="_blank" rel="noreferrer">GitHub ↗</a>
       <a href="https://github.com/mru34/mruthulan-portfolio" target="_blank" rel="noreferrer">Portfolio source ↗</a>
       <a href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" download>Résumé ↓</a>
