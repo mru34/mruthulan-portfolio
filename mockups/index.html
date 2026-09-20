@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Portfolio V2 — Direction Mockups</title>
+<style>
+  @font-face{font-family:Inter;src:url('../assets/fonts/inter-var-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
+  *{box-sizing:border-box}
+  body{margin:0;background:#0d0d0c;color:#f4f3ee;font:400 16px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .shell{width:min(100% - 48px,980px);margin-inline:auto;padding-block:72px}
+  h1{font-size:clamp(2.2rem,5vw,3.4rem);letter-spacing:-.03em;margin:0 0 12px}
+  .lead{color:rgba(244,243,238,.65);max-width:640px;font-size:17px;margin:0 0 56px}
+  .directions{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .card{border:1px solid rgba(244,243,238,.14);border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:16px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:rgba(244,243,238,.35);transform:translateY(-3px)}
+  .card .tag{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#7c96ff}
+  .card.b .tag{color:#ff3d1a}
+  .card h2{margin:0;font-size:26px;letter-spacing:-.02em}
+  .card p{margin:0;color:rgba(244,243,238,.6);font-size:14px;line-height:1.6}
+  .card .intent{border-top:1px solid rgba(244,243,238,.14);padding-top:16px;margin-top:4px}
+  .card .intent strong{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:rgba(244,243,238,.45);margin-bottom:8px}
+  .card a.open{margin-top:8px;display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;border-bottom:2px solid currentColor;padding-bottom:3px;align-self:flex-start}
+  .card.a a.open{color:#7c96ff}
+  .card.b a.open{color:#ff3d1a}
+  .note{margin-top:56px;padding-top:32px;border-top:1px solid rgba(244,243,238,.14);color:rgba(244,243,238,.55);font-size:13px;line-height:1.7;max-width:720px}
+  .note strong{color:#f4f3ee}
+  @media(max-width:760px){.directions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <h1>Portfolio V2 — two directions</h1>
+  <p class="lead">Two live, interactive mockups built from the real project facts and copy limits in the brief — geometric placeholders only, no images. Open each on desktop and resize to phone width to get a feel for both. Pick one, mix elements, or send notes and I'll refine before building the full clickable 3D prototype.</p>
+
+  <div class="directions">
+    <div class="card a">
+      <span class="tag">Direction A — Recommended</span>
+      <h2>Signal Lab</h2>
+      <p>Near-black, sharp and experimental. One electric accent, one warm accent. Oversized type, a faint CSS grid + grain, and a five-module node graph standing in for the eventual 3D hero scene.</p>
+      <div class="intent">
+        <strong>Interaction intent</strong>
+        <p>Click a project button (or a node) to see the connected module light up and the proof panel update — a preview of how the real 3D scene will respond to the same selection state. Everything here already works by mouse, touch and keyboard.</p>
+      </div>
+      <a class="open" href="signal-lab.html">Open Signal Lab ↗</a>
+    </div>
+    <div class="card b">
+      <span class="tag">Direction B — Comparison</span>
+      <h2>Kinetic Type</h2>
+      <p>Paper-toned, editorial and typographic. Hard rules, a scrolling fact marquee, and a stacked-card project switcher built entirely from CSS depth — no 3D at all.</p>
+      <div class="intent">
+        <strong>Interaction intent</strong>
+        <p>Selecting a project name in the list promotes its stacked card to the front with a short cross-fade and updates the fact line beneath the list. Faster to build and the most robust fallback if the 3D scene proves too heavy on weaker devices.</p>
+      </div>
+      <a class="open" href="kinetic-type.html">Open Kinetic Type ↗</a>
+    </div>
+  </div>
+
+  <p class="note"><strong>What these are (and aren't):</strong> both are plain HTML/CSS/vanilla-JS, not the final React + Three Fiber build — that comes in the next stage once a direction is picked. Copy follows the brief's word limits, project facts are unchanged, and the interaction shown is real (try Tab + Enter, or turn off animations) but simplified from the full accessibility/keyboard spec in the brief. Nothing here is a live page yet — no header nav links, case pages or footer links are wired up.</p>
+</div>
+</body>
+</html>
