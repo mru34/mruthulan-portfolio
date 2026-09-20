@@ -22,7 +22,7 @@ export function Hero() {
           <i></i> DEVELOPER · SINGAPORE
         </p>
         <h1 id="hero-title">
-          Mruthulan builds software for <em>real people</em>.
+          <em>Mruthulan</em>.
         </h1>
         <p className="hero-intro">
           Developer and builder in Singapore, shipping human-centred products across interface
