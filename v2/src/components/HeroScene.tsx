@@ -1,13 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Line, RoundedBox } from '@react-three/drei';
+import { Html, Line, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 import { HERO_PROJECTS } from '../data/projects';
 
-const RADIUS_3D = 2.15;
+const RADIUS_3D = 1.95;
 const ELECTRIC = '#7c96ff';
 const IDLE_COLOR = '#3a3f4d';
 const EDGE_IDLE = '#4a4f5c';
+
+// One distinct primitive per module so the scene reads as five different
+// objects, not five copies of the same box.
+const SHAPES: Record<string, 'icosahedron' | 'octahedron' | 'box' | 'dodecahedron' | 'torus'> = {
+  signalbridge: 'icosahedron',
+  meant: 'octahedron',
+  bettercallbhai: 'box',
+  bossbreaker: 'dodecahedron',
+  loomy: 'torus',
+};
 
 function nodePosition(angleDeg: number): [number, number, number] {
   const theta = (angleDeg * Math.PI) / 180;
@@ -16,15 +26,17 @@ function nodePosition(angleDeg: number): [number, number, number] {
 
 interface ModuleNodeProps {
   id: string;
+  index: string;
   angle: number;
   active: boolean;
   onSelect: (id: string) => void;
 }
 
-function ModuleNode({ id, angle, active, onSelect }: ModuleNodeProps) {
+function ModuleNode({ id, index, angle, active, onSelect }: ModuleNodeProps) {
   const [hovered, setHovered] = useState(false);
   const position = nodePosition(angle);
   const highlighted = active || hovered;
+  const shape = SHAPES[id] ?? 'box';
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : '';
@@ -32,6 +44,29 @@ function ModuleNode({ id, angle, active, onSelect }: ModuleNodeProps) {
       document.body.style.cursor = '';
     };
   }, [hovered]);
+
+  const handlers = {
+    scale: highlighted ? 1.15 : 1,
+    onClick: (e: { stopPropagation: () => void }) => {
+      e.stopPropagation();
+      onSelect(id);
+    },
+    onPointerOver: (e: { stopPropagation: () => void }) => {
+      e.stopPropagation();
+      setHovered(true);
+    },
+    onPointerOut: () => setHovered(false),
+  };
+
+  const material = (
+    <meshStandardMaterial
+      color={highlighted ? ELECTRIC : IDLE_COLOR}
+      emissive={highlighted ? ELECTRIC : '#20242e'}
+      emissiveIntensity={active ? 0.4 : hovered ? 0.2 : 0.4}
+      roughness={0.3}
+      metalness={0.3}
+    />
+  );
 
   return (
     <group>
@@ -42,30 +77,56 @@ function ModuleNode({ id, angle, active, onSelect }: ModuleNodeProps) {
         transparent
         opacity={active ? 1 : 0.5}
       />
-      <RoundedBox
-        args={[0.82, 0.62, 0.28]}
-        radius={0.08}
-        smoothness={4}
-        position={position}
-        scale={highlighted ? 1.1 : 1}
-        onClick={(e) => {
-          e.stopPropagation();
-          onSelect(id);
-        }}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-        }}
-        onPointerOut={() => setHovered(false)}
-      >
-        <meshStandardMaterial
-          color={highlighted ? ELECTRIC : IDLE_COLOR}
-          emissive={highlighted ? ELECTRIC : '#20242e'}
-          emissiveIntensity={active ? 0.35 : hovered ? 0.15 : 0.4}
-          roughness={0.35}
-          metalness={0.1}
-        />
-      </RoundedBox>
+
+      {shape === 'box' && (
+        <RoundedBox args={[0.72, 0.56, 0.3]} radius={0.08} smoothness={4} position={position} {...handlers}>
+          {material}
+        </RoundedBox>
+      )}
+      {shape === 'icosahedron' && (
+        <mesh position={position} {...handlers}>
+          <icosahedronGeometry args={[0.42, 0]} />
+          {material}
+        </mesh>
+      )}
+      {shape === 'octahedron' && (
+        <mesh position={position} {...handlers}>
+          <octahedronGeometry args={[0.46, 0]} />
+          {material}
+        </mesh>
+      )}
+      {shape === 'dodecahedron' && (
+        <mesh position={position} {...handlers}>
+          <dodecahedronGeometry args={[0.42, 0]} />
+          {material}
+        </mesh>
+      )}
+      {shape === 'torus' && (
+        <mesh position={position} {...handlers}>
+          <torusGeometry args={[0.32, 0.14, 12, 28]} />
+          {material}
+        </mesh>
+      )}
+
+      <Html position={position} center distanceFactor={6} style={{ pointerEvents: 'none' }}>
+        <div
+          style={{
+            fontFamily: 'Inter, system-ui, sans-serif',
+            fontSize: '11px',
+            fontWeight: 800,
+            letterSpacing: '0.05em',
+            color: highlighted ? '#08090c' : 'rgba(244,243,238,0.75)',
+            background: highlighted ? ELECTRIC : 'rgba(17,19,25,0.75)',
+            borderRadius: '999px',
+            padding: '3px 8px',
+            whiteSpace: 'nowrap',
+            transform: 'translateY(38px)',
+            transition: 'background 0.2s, color 0.2s',
+          }}
+        >
+          {index}
+        </div>
+      </Html>
     </group>
   );
 }
@@ -129,6 +190,7 @@ function Scene({ activeId, reducedMotion, onSelect }: SceneProps) {
         <ModuleNode
           key={p.id}
           id={p.id}
+          index={p.index}
           angle={p.angle}
           active={p.id === activeId}
           onSelect={onSelect}
@@ -151,7 +213,7 @@ export default function HeroScene({ activeId, reducedMotion, inView, onSelect }:
     <Canvas
       dpr={[1, 1.5]}
       frameloop={frameloop}
-      camera={{ position: [0, 0, 6], fov: 40 }}
+      camera={{ position: [0, 0, 7], fov: 40 }}
       gl={{ antialias: true, alpha: true }}
     >
       <Scene activeId={activeId} reducedMotion={reducedMotion} onSelect={onSelect} />
