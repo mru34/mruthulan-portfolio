@@ -2,6 +2,10 @@
 
 Personal portfolio for Senthil Nathan Mruthulan at [mruthulan.com](https://mruthulan.com). It is a static site built with HTML, CSS and JavaScript and hosted on GitHub Pages.
 
+## Redesign
+
+Read [REDESIGN_PLAN.md](REDESIGN_PLAN.md) before changing the site. It contains the V2 direction, interaction and 3D prototype scope, concise content rules, accessibility and device checks, rollout steps, and a copy-paste prompt for Claude. The current site is a temporary simplified version with geometric placeholders; the full redesign should be developed and reviewed on a separate branch.
+
 ## Pages
 
 - `index.html` — introduction, selected projects, recognition and contact
@@ -24,4 +28,4 @@ The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The ta
 
 ## Assets
 
-Images and PDFs live in `assets/`. The MEANT poster comes from the [public team repository](https://github.com/King-Shelton/meant-DellInnovateFest). `sitemap.xml` and `robots.txt` provide search crawler entry points.
+The site uses CSS geometric placeholders in place of portrait and project images. The photo-free social sharing card and linked PDFs live in `assets/`. `sitemap.xml` and `robots.txt` provide search crawler entry points.
