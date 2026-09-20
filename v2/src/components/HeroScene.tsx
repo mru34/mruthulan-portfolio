@@ -110,18 +110,18 @@ function Scene({ activeId, reducedMotion, onSelect }: SceneProps) {
 
   return (
     <group ref={group}>
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[3, 4, 5]} intensity={1.1} color={ELECTRIC} />
-      <directionalLight position={[-3, -2, 3]} intensity={0.6} color="#ff8a52" />
+      <ambientLight intensity={1.1} />
+      <directionalLight position={[3, 4, 5]} intensity={0.7} color={ELECTRIC} />
+      <directionalLight position={[-3, -2, 3]} intensity={0.25} color="#ff8a52" />
 
       <mesh ref={hub}>
-        <icosahedronGeometry args={[0.55, 0]} />
+        <icosahedronGeometry args={[0.55, 1]} />
         <meshStandardMaterial
           color={IDLE_COLOR}
           emissive={ELECTRIC}
-          emissiveIntensity={0.15}
-          roughness={0.4}
-          metalness={0.2}
+          emissiveIntensity={0.55}
+          roughness={0.5}
+          metalness={0.05}
         />
       </mesh>
 
