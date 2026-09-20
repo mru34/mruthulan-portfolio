@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08090c">
+<meta name="robots" content="noindex">
+<title>Page system mockup — Work / Wins / About / Contact</title>
+<link rel="stylesheet" href="page-system.css">
+</head>
+<body>
+<div class="bg-grid" aria-hidden="true"></div>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="top"><div class="shell nav-wrap">
+  <a class="brand" href="#top"><span class="brand-mark">m</span> mruthulan</a>
+  <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
+  <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+    <a href="#work">Work</a><a href="#wins">Wins</a><a href="#about">About</a><a href="#contact">Contact</a>
+    <a class="nav-resume" href="#">Résumé ↗</a>
+  </nav>
+</div></header>
+
+<main id="main" class="shell">
+<p class="note" style="margin-top:32px"><strong>Reviewer note:</strong> this is a static mockup, not the final build. Click any project in Work to see the shape and proof panel update — same pattern the hero already uses, now covering all six projects. Scroll to Wins to see its reveal-on-view highlight (it plays once). Colour is now used by role only: electric = interactive/selected, warm = recognition — the six projects are told apart by shape.</p>
+
+<section class="section" id="work" aria-labelledby="work-title" style="border-top:0">
+  <div class="section-head">
+    <div><p class="kicker">01 / Selected work</p><h2 id="work-title">Six things I've made.</h2></div>
+    <p>Select a project — the shape and proof panel update. Every project also opens as its own page.</p>
+  </div>
+
+  <div class="work-switcher">
+    <div class="work-list" role="group" aria-label="Select a project" id="work-list"></div>
+
+    <div class="work-display">
+      <div class="shape-stage" aria-hidden="true">
+        <span class="stage-index" id="stage-index">01</span>
+        <svg id="stage-shape" viewBox="0 0 100 100"></svg>
+      </div>
+      <div class="work-proof" role="status" aria-live="polite">
+        <p class="proof-kicker" id="proof-award"></p>
+        <h3 id="proof-name"></h3>
+        <p class="hook" id="proof-hook"></p>
+        <p class="proof-text" id="proof-text"></p>
+        <div class="tags" id="proof-tags"></div>
+        <div class="work-actions" id="proof-actions"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="wins" aria-labelledby="wins-title">
+  <div class="section-head"><div><p class="kicker">02 / Recognition</p><h2 id="wins-title">Two champions. One podium.</h2></div></div>
+  <div class="wins-strip">
+    <div class="win-card"><span class="win-tag">2026 · Champion</span><h3>SP InnovateDash</h3><p>Champion — qualified the team for Dell InnovateFest.</p></div>
+    <div class="win-card"><span class="win-tag">2026 · 2nd Runner-up</span><h3>Dell InnovateFest</h3><p>Second runner-up, S$3,000 — a separate project (MEANT) from SignalBridge.</p></div>
+    <div class="win-card"><span class="win-tag">2026 · Champion</span><h3>Autodesk AI+ML Hackathon</h3><p>First place for KnowCad, Singapore.</p></div>
+  </div>
+</section>
+
+<section class="section" id="about" aria-labelledby="about-title">
+  <div class="about-grid">
+    <div><p class="kicker">03 / About</p><h2 id="about-title">Curious by default.</h2></div>
+    <div>
+      <p class="about-lead">Year 2 IT student at Singapore Polytechnic, turning rough ideas into useful, human-centred products across interfaces, APIs, data and practical AI. Open to internships and ambitious collaborations.</p>
+      <div class="toolkit"><strong>Tools I've worked with</strong>JavaScript · HTML &amp; CSS · Java · Python &amp; FastAPI · Node.js · SQL (PostgreSQL/MySQL) · Git · Testing</div>
+      <div class="about-links"><a href="#">GitHub ↗</a><a href="#">LinkedIn ↗</a><a href="#">Full résumé ↗</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact" aria-labelledby="contact-title">
+  <p class="kicker">04 / Say hello</p>
+  <h2 id="contact-title">Have something worth building?</h2>
+  <p>Open to internships, collaborations and ambitious ideas.</p>
+  <a class="contact-link" href="mailto:mruthulansenthilnathan@gmail.com">Let's talk ↗</a>
+</section>
+</main>
+
+<footer class="site-footer"><div class="shell footer-inner">
+  <span>mruthulan. — Made with care in Singapore.</span>
+  <nav aria-label="Footer links"><a href="#">Email</a><a href="#">LinkedIn</a><a href="#">GitHub</a><a href="#">Privacy</a><a href="#top">Back to top ↑</a></nav>
+</div></footer>
+
+<script>
+(function(){
+  var SHAPES = {
+    hexagon: '<polygon class="shape-mark filled" points="90,50 70,84.6 30,84.6 10,50 30,15.4 70,15.4"/>',
+    diamond: '<polygon class="shape-mark filled" points="50,8 92,50 50,92 8,50"/>',
+    box: '<rect class="shape-mark filled" x="14" y="26" width="72" height="48" rx="10"/>',
+    pentagon: '<polygon class="shape-mark filled" points="50,8 90,37 74,88 26,88 10,37"/>',
+    ring: '<circle class="shape-mark" cx="50" cy="50" r="34" stroke-width="14"/>',
+    triangle: '<polygon class="shape-mark filled" points="50,10 90,84 10,84"/>'
+  };
+
+  var PROJECTS = [
+    { id:'signalbridge', index:'01', name:'SignalBridge', shape:'hexagon',
+      award:"SP InnovateDash '26 Champion", hook:'Youth support without lost context.',
+      proof:'I own the youth-facing experience — consent/handoff flow, frontend-to-API and Discord integration, plus tests.',
+      tags:['Next.js','FastAPI','PostgreSQL'],
+      actions:[{label:'Explore the case study ↗',href:'case-page.html'},{label:'Live product ↗',href:'#',secondary:true}] },
+    { id:'meant', index:'02', name:'MEANT', shape:'diamond',
+      award:"Dell InnovateFest '26 · 2nd runner-up", hook:'Faster AAC conversations. User in control.',
+      proof:'Client &amp; Demo Engineering lead — the PWA client, accessibility and the booth/demo experience.',
+      tags:['Accessible UX','Local AI','FastAPI'],
+      actions:[{label:'Explore the case study ↗',href:'case-page.html'}] },
+    { id:'bettercallbhai', index:'03', name:'Better Call Bhai', shape:'box',
+      award:'Live client site', hook:'Barber bookings, minus the back-and-forth.',
+      proof:'Designed the booking flow and mobile interface, then built and deployed it on Render.',
+      tags:['Frontend','Deployment'],
+      actions:[{label:'Explore the case study ↗',href:'case-page.html'},{label:'Live site ↗',href:'#',secondary:true}] },
+    { id:'bossbreaker', index:'04', name:'Boss Breaker', shape:'pentagon',
+      award:'Coursework build', hook:'Wellness as a game.',
+      proof:'Full-stack CA2 build — challenges, points and boss raids, with Express, MySQL and JWT auth.',
+      tags:['JavaScript','Node.js','MySQL'],
+      actions:[{label:'Explore the case study ↗',href:'case-page.html'},{label:'View code ↗',href:'#',secondary:true}] },
+    { id:'loomy', index:'05', name:'Loomy', shape:'ring',
+      award:'Product concept', hook:'Thrifting with a community.',
+      proof:'Prototype designer — concept, UX and frontend, shaped by 30+ interviews with youths aged 15–25.',
+      tags:['User research','Product design'],
+      actions:[{label:'Explore the case study ↗',href:'case-page.html'},{label:'Pitch deck ↗',href:'#',secondary:true}] },
+    { id:'knowcad', index:'06', name:'KnowCad', shape:'triangle',
+      award:'Autodesk AI+ML Hackathon Champion', hook:'Less searching. Better answers.',
+      proof:'Collaborated on the build and helped present it to a non-technical audience.',
+      tags:['Retrieval','AI workflow'],
+      actions:[{label:'Explore the case study ↗',href:'case-page.html'}] }
+  ];
+
+  var listEl = document.getElementById('work-list');
+  PROJECTS.forEach(function(p){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.project = p.id;
+    btn.setAttribute('aria-pressed', 'false');
+    btn.setAttribute('aria-label', p.index + ' ' + p.name + ' — ' + p.award);
+    btn.innerHTML = '<span class="num">'+p.index+'</span><span class="name">'+p.name+'</span><span class="award-chip">'+p.award+'</span>';
+    btn.addEventListener('click', function(){ select(p.id); });
+    listEl.appendChild(btn);
+  });
+
+  var stageIndex = document.getElementById('stage-index');
+  var stageShape = document.getElementById('stage-shape');
+  var award = document.getElementById('proof-award');
+  var name = document.getElementById('proof-name');
+  var hook = document.getElementById('proof-hook');
+  var text = document.getElementById('proof-text');
+  var tagsEl = document.getElementById('proof-tags');
+  var actionsEl = document.getElementById('proof-actions');
+
+  function select(id){
+    var p = PROJECTS.find(function(x){ return x.id === id; });
+    if(!p) return;
+    listEl.querySelectorAll('button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.project === id)); });
+    stageIndex.textContent = p.index;
+    stageShape.innerHTML = SHAPES[p.shape];
+    award.textContent = p.award;
+    name.textContent = p.name;
+    hook.textContent = p.hook;
+    text.innerHTML = p.proof;
+    tagsEl.innerHTML = p.tags.map(function(t){ return '<span>'+t+'</span>'; }).join('');
+    actionsEl.innerHTML = p.actions.map(function(a){ return '<a'+(a.secondary?' class="secondary"':'')+' href="'+a.href+'">'+a.label+'</a>'; }).join('');
+  }
+  select('signalbridge');
+
+  // Wins reveal-on-view, once, respecting reduced motion
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var winCards = document.querySelectorAll('.win-card');
+  if(reduce || typeof IntersectionObserver === 'undefined'){
+    winCards.forEach(function(c){ c.classList.add('revealed'); });
+  } else {
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry, i){
+        if(entry.isIntersecting){
+          setTimeout(function(){ entry.target.classList.add('revealed'); }, i * 90);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+    winCards.forEach(function(c){ obs.observe(c); });
+  }
+
+  var menuBtn = document.querySelector('.menu-button');
+  var nav = document.getElementById('main-nav');
+  menuBtn.addEventListener('click', function(){
+    var open = menuBtn.getAttribute('aria-expanded') === 'true';
+    menuBtn.setAttribute('aria-expanded', String(!open));
+    nav.classList.toggle('open', !open);
+  });
+})();
+</script>
+</body>
+</html>
