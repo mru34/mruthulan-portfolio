@@ -44,7 +44,7 @@ The first 10 seconds should answer:
 HEADER       Name/logo | Work | Wins | About | Contact | Résumé
 HERO         One strong sentence + two actions + interactive project object
 WORK         Select a project -> visual reacts -> concise proof panel updates
-WINS         Two champions + one Dell podium result, in a compact strip
+WINS         Three hackathon wins, in a compact strip
 ABOUT        One short human statement + useful skills and links
 CONTACT      Big, unmistakable email action
 CASE PAGES   Short overview first; optional deeper technical story
