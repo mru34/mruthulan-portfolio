@@ -590,10 +590,12 @@ button:focus-visible {
   flex-wrap: wrap;
 }
 .work-actions a {
+  display: inline-block;
   font-size: 14px;
   font-weight: 800;
   border-bottom: 2px solid var(--electric);
-  padding-bottom: 3px;
+  padding-block: 11px;
+  margin-block: -8px;
 }
 .work-actions a:hover {
   color: var(--electric);
@@ -924,7 +926,9 @@ button:focus-visible {
   font-weight: 700;
   color: var(--muted);
   border-bottom: 1px solid var(--line-strong);
-  margin-bottom: 36px;
+  padding-block: 11px;
+  margin-top: -11px;
+  margin-bottom: 25px;
 }
 .case-back:hover {
   color: var(--electric);
@@ -975,10 +979,12 @@ button:focus-visible {
   margin-bottom: 48px;
 }
 .case-actions a {
+  display: inline-block;
   font-size: 14px;
   font-weight: 800;
   border-bottom: 2px solid var(--electric);
-  padding-bottom: 3px;
+  padding-block: 11px;
+  margin-block: -8px;
 }
 .case-actions a:hover {
   color: var(--electric);
@@ -1058,6 +1064,8 @@ button:focus-visible {
   align-items: center;
   gap: 12px;
   list-style: none;
+  padding-block: 11px;
+  margin-block: -11px;
 }
 .case-disclosure summary::-webkit-details-marker {
   display: none;
@@ -1125,6 +1133,9 @@ button:focus-visible {
 }
 .case-nav a {
   color: var(--muted);
+  display: inline-block;
+  padding-block: 11px;
+  margin-block: -11px;
 }
 .case-nav a:hover {
   color: var(--electric);
