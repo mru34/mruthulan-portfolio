@@ -25,7 +25,7 @@ interface NodeGraphFallbackProps {
 export function NodeGraphFallback({ activeId, onSelect }: NodeGraphFallbackProps) {
   const pentagonPath =
     HERO_PROJECTS.map((p, i) => {
-      const { x, y } = nodeCenter(p.angle);
+      const { x, y } = nodeCenter(p.heroAngle);
       return `${i === 0 ? 'M' : 'L'}${x},${y}`;
     }).join(' ') + ' Z';
 
@@ -38,7 +38,7 @@ export function NodeGraphFallback({ activeId, onSelect }: NodeGraphFallbackProps
     >
       <g className="edges">
         {HERO_PROJECTS.map((p) => {
-          const { x, y } = nodeCenter(p.angle);
+          const { x, y } = nodeCenter(p.heroAngle);
           return (
             <path
               key={p.id}
@@ -56,7 +56,7 @@ export function NodeGraphFallback({ activeId, onSelect }: NodeGraphFallbackProps
         </text>
       </g>
       {HERO_PROJECTS.map((p) => {
-        const { x, y } = nodeCenter(p.angle);
+        const { x, y } = nodeCenter(p.heroAngle);
         return (
           <g
             key={p.id}

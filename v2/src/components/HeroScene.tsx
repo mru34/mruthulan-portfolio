@@ -2,22 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Html, Line, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
-import { HERO_PROJECTS } from '../data/projects';
+import { HERO_PROJECTS, type ShapeKind } from '../data/projects';
 
 const RADIUS_3D = 1.95;
 const ELECTRIC = '#7c96ff';
 const IDLE_COLOR = '#3a3f4d';
 const EDGE_IDLE = '#4a4f5c';
-
-// One distinct primitive per module so the scene reads as five different
-// objects, not five copies of the same box.
-const SHAPES: Record<string, 'icosahedron' | 'octahedron' | 'box' | 'dodecahedron' | 'torus'> = {
-  signalbridge: 'icosahedron',
-  meant: 'octahedron',
-  bettercallbhai: 'box',
-  bossbreaker: 'dodecahedron',
-  loomy: 'torus',
-};
 
 function nodePosition(angleDeg: number): [number, number, number] {
   const theta = (angleDeg * Math.PI) / 180;
@@ -28,15 +18,15 @@ interface ModuleNodeProps {
   id: string;
   index: string;
   angle: number;
+  shape: ShapeKind;
   active: boolean;
   onSelect: (id: string) => void;
 }
 
-function ModuleNode({ id, index, angle, active, onSelect }: ModuleNodeProps) {
+function ModuleNode({ id, index, angle, shape, active, onSelect }: ModuleNodeProps) {
   const [hovered, setHovered] = useState(false);
   const position = nodePosition(angle);
   const highlighted = active || hovered;
-  const shape = SHAPES[id] ?? 'box';
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : '';
@@ -104,6 +94,12 @@ function ModuleNode({ id, index, angle, active, onSelect }: ModuleNodeProps) {
       {shape === 'torus' && (
         <mesh position={position} {...handlers}>
           <torusGeometry args={[0.32, 0.14, 12, 28]} />
+          {material}
+        </mesh>
+      )}
+      {shape === 'tetrahedron' && (
+        <mesh position={position} {...handlers}>
+          <tetrahedronGeometry args={[0.5, 0]} />
           {material}
         </mesh>
       )}
@@ -191,7 +187,8 @@ function Scene({ activeId, reducedMotion, onSelect }: SceneProps) {
           key={p.id}
           id={p.id}
           index={p.index}
-          angle={p.angle}
+          angle={p.heroAngle}
+          shape={p.shape}
           active={p.id === activeId}
           onSelect={onSelect}
         />

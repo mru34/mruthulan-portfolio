@@ -6,6 +6,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 import { useWebglSupport } from '../hooks/useWebglSupport';
 import { useInView } from '../hooks/useInView';
 import { HERO_PROJECTS } from '../data/projects';
+import { track } from '../lib/analytics';
 
 const HeroScene = lazy(() => import('./HeroScene'));
 
@@ -15,13 +16,18 @@ export function Hero() {
   const webglSupported = useWebglSupport();
   const { ref, inView } = useInView<HTMLDivElement>();
 
+  function select(id: string) {
+    setActiveId(id);
+    track('project_select', { project_id: id, surface: 'hero' });
+  }
+
   return (
     <section className="hero shell" id="top" aria-labelledby="hero-title">
       <div className="hero-copy">
         <p className="badge">
           <i></i> DEVELOPER · SINGAPORE
         </p>
-        <h1 id="hero-title">
+        <h1 id="hero-title" tabIndex={-1} data-route-heading>
           <em>Mruthulan</em>.
         </h1>
         <p className="hero-intro">
@@ -42,20 +48,20 @@ export function Hero() {
       <div className="hero-visual">
         <div className="scene-frame" ref={ref} aria-hidden="true">
           {webglSupported ? (
-            <Suspense fallback={<NodeGraphFallback activeId={activeId} onSelect={setActiveId} />}>
+            <Suspense fallback={<NodeGraphFallback activeId={activeId} onSelect={select} />}>
               <HeroScene
                 activeId={activeId}
                 reducedMotion={reducedMotion}
                 inView={inView}
-                onSelect={setActiveId}
+                onSelect={select}
               />
             </Suspense>
           ) : (
-            <NodeGraphFallback activeId={activeId} onSelect={setActiveId} />
+            <NodeGraphFallback activeId={activeId} onSelect={select} />
           )}
         </div>
 
-        <ProjectPicker activeId={activeId} onSelect={setActiveId} />
+        <ProjectPicker activeId={activeId} onSelect={select} />
         <ProofPanel activeId={activeId} />
         {!webglSupported && (
           <p className="fallback-note">
