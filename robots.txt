@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mruthulan.com/sitemap.xml

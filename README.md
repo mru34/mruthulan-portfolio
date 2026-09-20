@@ -1,63 +1,27 @@
-# Mruthulan — Software Engineering Intern Portfolio
+# Mruthulan's portfolio
 
-A portfolio built with semantic HTML, CSS and vanilla JavaScript. It runs entirely in the browser with no backend, database, build step or third-party runtime dependency.
+Personal portfolio for Senthil Nathan Mruthulan at [mruthulan.com](https://mruthulan.com). It is a static site built with HTML, CSS and JavaScript and hosted on GitHub Pages.
 
-## Live site
+## Pages
 
-https://mru34.github.io/mruthulan-portfolio/
+- `index.html` — introduction, selected projects, recognition and contact
+- `signalbridge.html` — SignalBridge case study
+- `meant.html` — MEANT case study
+- `privacy.html` — analytics information and visitor choice
+- `404.html` — missing page
 
-## Preview locally
+## Preview
 
-### Quick option
+Run `python -m http.server 8000` in this folder and open `http://localhost:8000`.
 
-Open `index.html` directly in a modern browser.
+## Publishing and domain
 
-### Recommended option
+GitHub Pages publishes the `main` branch from the repository root. The `CNAME` file sets `mruthulan.com` as the custom domain. The Namecheap DNS zone should have GitHub Pages' four apex A records and a `www` CNAME to `mru34.github.io`.
 
-From this folder, start any simple local web server. For example, if Python is installed:
+## Analytics
 
-```text
-python -m http.server 8000
-```
+The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**. The choice is stored in that browser and can be changed on the privacy page. Aggregate reports are available in the Google Analytics property named `mruthulan.com`.
 
-Then visit `http://localhost:8000`.
+## Assets
 
-## Contents
-
-- Sticky responsive navigation, a reading-progress bar and active-section highlighting
-- Light/dark theme that follows the operating system, with an in-page toggle that persists
-- Command palette (`Cmd`/`Ctrl` + `K`) for jumping to any section, page or link
-- Hero positioned for software engineering internships, with availability and track-record signals
-- Candidate profile, strengths and role-fit sections
-- Skills split into technologies already shipped with and technologies actively being learned
-- Education, employment and student-leadership experience
-- Four projects: SignalBridge, Better Call Bhai, Loomy and KnowCad
-- Direct contact, LinkedIn, GitHub and résumé actions
-- SignalBridge case study on its own page, with a live GitHub activity feed on the home page
-- Interview View: a six-section presentation mode for interview preparation
-- Keyboard presentation controls: Left/Right arrows, Page Up/Page Down, Home/End and Escape
-
-## Accessibility and performance notes
-
-- Inter is self-hosted as a single variable `woff2` (~48 KB) and preloaded, so the site renders in its intended typeface rather than a per-OS fallback.
-- Scroll reveal, hover lifts and the availability pulse are all disabled under `prefers-reduced-motion: reduce`.
-- Every `<img>` carries intrinsic `width`/`height` to prevent layout shift; below-the-fold images are lazy-loaded and the hero portrait is marked `fetchpriority="high"`.
-- Colours are custom properties on `:root`. The dark theme is emitted twice — once behind `prefers-color-scheme` (skipped when the visitor has explicitly chosen light) and once behind `data-theme="dark"` — so the toggle wins in both directions. An inline head script applies a stored choice before first paint, so there is no flash.
-- The command palette traps focus, is fully keyboard driven, and closes on `Esc`.
-- The GitHub feed is unauthenticated and rate limited, so every failure path leaves the server-rendered fallback in place.
-- Scroll reveal is gated behind a `.js` class, so content is never hidden when the script does not run.
-
-## Structure
-
-```text
-index.html             home
-signalbridge.html      case study
-404.html
-css/styles.css
-js/script.js
-assets/fonts/          Inter variable woff2 + license
-assets/images/
-assets/og-card.jpg     1200x630 social share card
-assets/*.pdf           résumé and pitch deck
-README.md
-```
+Images and PDFs live in `assets/`. The MEANT poster comes from the [public team repository](https://github.com/King-Shelton/meant-DellInnovateFest). `sitemap.xml` and `robots.txt` provide search crawler entry points.
