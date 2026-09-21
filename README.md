@@ -8,8 +8,9 @@ The site follows the **Signal Lab v3** direction. The hero and the Work section 
 
 - **Hero** creates curiosity. One abstract system that names no project, the full name, and a single specific hook. There is no project picker here.
 - **Work** is the evidence. Six rows, each carrying the role and the result on the row itself, each linking to its own case page. Hovering or tabbing a row lights that section in the project's colour — the only ambient-light moment on the page.
-- **Recognition** inverts to a printed ledger on bone, with no glow at all.
+- **Recognition** inverts to bone. Three award rows state the exact result without interaction; hover, focus or tap opens an event-photo slot and the proof link.
 - **About** is personal and specific, with an optional portrait.
+- **Credentials** is a short timeline: education, representing SP at Dell InnovateFest, and student leadership. Drawn from the résumé, confirmed by Mruthulan.
 - **Contact** ends the thread that runs down the whole page in a beacon.
 
 Each case page tells its story with a different module — a handoff flow, a conversation turn, a before/after, a funnel, a ladder of mechanics, a research tally — over the same shared navigation.
@@ -27,6 +28,9 @@ Prototype sources for both iterations live in `design/signal-lab-v2/`. The longe
 - Project facts, award wording and roles are only ever taken from verified sources.
 - **Nothing unfilled is ever rendered as content.** A decision with no stated reasoning omits its "Because" block; Loomy's quote spine is not drawn until there are real quotes. Never ship a visible "awaiting wording" state.
 - No file paths, slot names or authoring instructions appear on any public page.
+- **The phone number on the résumé is never published.** There is an automated check for it.
+- The MEANT repository is private, so it is linked nowhere; the MEANT case page is that award's proof instead.
+- LinkedIn is always `linkedin.com/in/mruthulan`.
 
 ## Pages
 

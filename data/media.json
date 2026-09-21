@@ -1,21 +1,25 @@
 {
-  "about-portrait":        { "src": null, "alt": "", "focal": "50% 35%" },
-  "about-candid":          { "src": null, "alt": "" },
+  "about-portrait":            { "src": null, "alt": "", "focal": "50% 35%" },
+  "about-candid":              { "src": null, "alt": "" },
 
-  "signalbridge-shot-1":   { "src": null, "alt": "" },
-  "signalbridge-shot-2":   { "src": null, "alt": "" },
-  "signalbridge-demo":     { "src": null, "poster": null },
+  "award-sp-innovatedash":     { "src": null, "alt": "" },
+  "award-dell-innovatefest":   { "src": null, "alt": "" },
+  "award-autodesk":            { "src": null, "alt": "" },
 
-  "meant-shot-1":          { "src": null, "alt": "" },
-  "meant-demo":            { "src": null, "poster": null },
+  "signalbridge-shot-1":       { "src": null, "alt": "" },
+  "signalbridge-shot-2":       { "src": null, "alt": "" },
+  "signalbridge-demo":         { "src": null, "poster": null },
 
-  "better-call-bhai-shot-1": { "src": null, "alt": "" },
-  "better-call-bhai-shot-2": { "src": null, "alt": "" },
+  "meant-shot-1":              { "src": null, "alt": "" },
+  "meant-demo":                { "src": null, "poster": null },
 
-  "knowcad-shot-1":        { "src": null, "alt": "" },
+  "better-call-bhai-shot-1":   { "src": null, "alt": "" },
+  "better-call-bhai-shot-2":   { "src": null, "alt": "" },
 
-  "boss-breaker-shot-1":   { "src": null, "alt": "" },
-  "boss-breaker-shot-2":   { "src": null, "alt": "" },
+  "knowcad-shot-1":            { "src": null, "alt": "" },
 
-  "loomy-prototype-1":     { "src": null, "alt": "" }
+  "boss-breaker-shot-1":       { "src": null, "alt": "" },
+  "boss-breaker-shot-2":       { "src": null, "alt": "" },
+
+  "loomy-prototype-1":         { "src": null, "alt": "" }
 }
