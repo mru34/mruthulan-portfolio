@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mobile work — selected row expands</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&family=Spline+Sans:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0B0E14;color:#E9ECF2;font-family:"Spline Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#E9ECF2;text-decoration:none}a:hover{color:#FFFFFF}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left;width:100%}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.14em;font-size:10px;color:#7E8899;margin:0}
+.dsp{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;letter-spacing:-.035em;line-height:.94;margin:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:10px}
+.r{position:relative;display:flex;align-items:center;gap:14px;min-height:58px;padding:16px 4px;border-top:1px solid #181E29}
+.r-num{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;color:#5E6879;width:18px;flex-shrink:0}
+.r-name{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:20px;letter-spacing:-.02em;color:#96A0B1}
+.r-hook{font-size:12px;color:#5E6879;margin-top:3px}
+.proof-k{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#6E7889;margin:0 0 5px}
+.proof-v{font-size:13px;line-height:1.45;color:#D2D8E3;margin:0}
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;min-height:50px;border-radius:999px;background:var(--acc);color:#07090E;font-weight:600;font-size:15px;flex-grow:1}
+.ghost{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:999px;border:1px solid #2A3342;font-size:15px;flex-grow:1}
+.tag{display:inline-flex;padding:5px 10px;border:1px solid var(--acc);border-radius:999px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}
+</style>
+</helmet>
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0E14; padding: 26px 20px 0; --acc: #FF8095;">
+  <div aria-hidden="true" style="position: absolute; inset: 0; background-image: repeating-linear-gradient(90deg, rgba(174,196,230,.045) 0 1px, transparent 1px 78px);"></div>
+
+  <div style="position: relative;">
+    <p class="mono" style="margin: 0 0 12px;">01 / Selected work</p>
+    <h2 class="dsp" style="font-size: 38px; color: #FFFFFF;">Six builds.<br>Pick one.</h2>
+
+    <div style="margin-top: 22px;">
+      <button class="r" aria-pressed="false">
+        <span class="r-num">01</span>
+        <span style="flex-grow: 1;"><span class="r-name">SignalBridge</span><span class="r-hook" style="display: block;">Youth support that never loses context.</span></span>
+      </button>
+      <button class="r" aria-pressed="false">
+        <span class="r-num">02</span>
+        <span style="flex-grow: 1;"><span class="r-name">MEANT</span><span class="r-hook" style="display: block;">Faster AAC replies. The user picks every word.</span></span>
+      </button>
+
+      <div style="position: relative; margin: 0 -6px; border: 1px solid #2C1D22; border-radius: 18px; background: linear-gradient(155deg, #161014 0%, #0A0C11 62%); overflow: hidden; padding: 20px 18px;">
+        <div aria-hidden="true" style="position: absolute; right: -70px; top: -90px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(closest-side, #FF8095, transparent 70%); opacity: .20;"></div>
+        <div aria-hidden="true" style="position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #FF8095;"></div>
+
+        <div style="position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+          <div style="flex-grow: 1;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="mono" style="color: #FF8095;">03 / 06</span>
+              <span class="tag">Live client site</span>
+            </div>
+            <h3 class="dsp" style="font-size: 32px; margin: 12px 0 0; color: #FFFFFF;">Better Call Bhai</h3>
+            <p style="margin: 8px 0 0; font-size: 15px; line-height: 1.35; color: #C3CAD7;">Barber bookings, minus the back-and-forth.</p>
+          </div>
+          <svg viewBox="0 0 120 120" width="62" height="62" fill="none" stroke="#FF8095" aria-hidden="true" style="flex-shrink: 0; margin-top: 4px;"><g transform="skewY(-8) translate(0 8)"><rect x="18" y="16" width="84" height="20" rx="6" stroke-opacity=".4"/><rect x="18" y="44" width="84" height="20" rx="6" stroke-width="2"/><rect x="18" y="72" width="84" height="20" rx="6" stroke-opacity=".4"/><path d="M76 54 l5 5 10 -11" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
+        </div>
+
+        <div style="position: relative; display: flex; flex-direction: column; gap: 14px; border-top: 1px solid #241A1E; margin-top: 18px; padding-top: 16px;">
+          <div><p class="proof-k">What it does</p><p class="proof-v">Pick a slot, confirm, done. No phone tag for a local barber shop.</p></div>
+          <div style="display: flex; gap: 18px;">
+            <div style="flex: 1 1 0;"><p class="proof-k">My role</p><p class="proof-v">Web design, frontend build and deployment</p></div>
+            <div style="flex: 1 1 0;"><p class="proof-k">Built with</p><p class="proof-v">HTML · CSS · JavaScript · Render</p></div>
+          </div>
+        </div>
+
+        <div style="position: relative; display: flex; gap: 10px; margin-top: 18px;">
+          <a class="cta" href="Case-SignalBridge.dc.html">Case study <span aria-hidden="true">→</span></a>
+          <a class="ghost" href="https://bettercalbhai.onrender.com/">Visit <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <button class="r" style="border-top: 0; margin-top: 8px;" aria-pressed="false">
+        <span class="r-num">04</span>
+        <span style="flex-grow: 1;"><span class="r-name">KnowCad</span><span class="r-hook" style="display: block;">Less searching. Better answers.</span></span>
+      </button>
+      <button class="r" aria-pressed="false">
+        <span class="r-num">05</span>
+        <span style="flex-grow: 1;"><span class="r-name">Boss Breaker</span><span class="r-hook" style="display: block;">Wellness, played as a game.</span></span>
+      </button>
+      <button class="r" style="border-bottom: 1px solid #181E29;" aria-pressed="false">
+        <span class="r-num">06</span>
+        <span style="flex-grow: 1;"><span class="r-name">Loomy</span><span class="r-hook" style="display: block;">Thrifting, with a community attached.</span></span>
+      </button>
+    </div>
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
