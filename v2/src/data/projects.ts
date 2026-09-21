@@ -92,8 +92,25 @@ export const PROJECTS: Project[] = [
     links: { live: 'https://bettercalbhai.onrender.com/' },
   },
   {
-    id: 'bossbreaker',
+    id: 'knowcad',
     index: '04',
+    name: 'KnowCad',
+    shape: 'tetrahedron',
+    // Not in the hero scene — brief §6 keeps it to work index + wins only.
+    award: 'Autodesk AI+ML Hackathon Champion',
+    hook: 'Less searching. Better answers.',
+    proof: 'Autodesk Singapore AI+ML Hackathon champion.',
+    tags: ['Retrieval', 'AI workflow'],
+    problem: 'Customer-service agents lose time hunting for answers across internal systems.',
+    role: 'Collaborated on the build and helped present it to a non-technical audience.',
+    // No decisions list — evidence is thin (see sourcebook), so the case page stays brief
+    // rather than inventing detail.
+    outcome: 'Autodesk Singapore AI+ML Hackathon 2026 champion.',
+    links: {},
+  },
+  {
+    id: 'bossbreaker',
+    index: '05',
     name: 'Boss Breaker',
     shape: 'dodecahedron',
     heroAngle: 216,
@@ -112,7 +129,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'loomy',
-    index: '05',
+    index: '06',
     name: 'Loomy',
     shape: 'torus',
     heroAngle: 288,
@@ -131,23 +148,6 @@ export const PROJECTS: Project[] = [
       live: 'https://loomy-copy-eb9f937f.base44.app/Community',
       deck: assetUrl('/assets/Loomy-Pitch-Deck.pdf'),
     },
-  },
-  {
-    id: 'knowcad',
-    index: '06',
-    name: 'KnowCad',
-    shape: 'tetrahedron',
-    // Not in the hero scene — brief §6 keeps it to work index + wins only.
-    award: 'Autodesk AI+ML Hackathon Champion',
-    hook: 'Less searching. Better answers.',
-    proof: 'Autodesk Singapore AI+ML Hackathon champion.',
-    tags: ['Retrieval', 'AI workflow'],
-    problem: 'Customer-service agents lose time hunting for answers across internal systems.',
-    role: 'Collaborated on the build and helped present it to a non-technical audience.',
-    // No decisions list — evidence is thin (see sourcebook), so the case page stays brief
-    // rather than inventing detail.
-    outcome: 'Autodesk Singapore AI+ML Hackathon 2026 champion.',
-    links: {},
   },
 ];
 

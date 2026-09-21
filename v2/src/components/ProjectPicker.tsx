@@ -15,7 +15,7 @@ export function ProjectPicker({ activeId, onSelect }: ProjectPickerProps) {
           aria-pressed={project.id === activeId}
           onClick={() => onSelect(project.id)}
         >
-          {project.index} {project.name}
+          {project.name}
         </button>
       ))}
     </div>

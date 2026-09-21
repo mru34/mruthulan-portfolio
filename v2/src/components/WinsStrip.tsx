@@ -57,7 +57,7 @@ export function WinsStrip() {
         <div className="section-head">
           <div>
             <p className="kicker">02 / Recognition</p>
-            <h2 id="wins-title">Three hackathon wins.</h2>
+            <h2 id="wins-title">Two champions. One Dell podium.</h2>
           </div>
         </div>
         <div className="wins-strip">

@@ -16,14 +16,14 @@ function nodePosition(angleDeg: number): [number, number, number] {
 
 interface ModuleNodeProps {
   id: string;
-  index: string;
+  label: string;
   angle: number;
   shape: ShapeKind;
   active: boolean;
   onSelect: (id: string) => void;
 }
 
-function ModuleNode({ id, index, angle, shape, active, onSelect }: ModuleNodeProps) {
+function ModuleNode({ id, label, angle, shape, active, onSelect }: ModuleNodeProps) {
   const [hovered, setHovered] = useState(false);
   const position = nodePosition(angle);
   const highlighted = active || hovered;
@@ -120,7 +120,7 @@ function ModuleNode({ id, index, angle, shape, active, onSelect }: ModuleNodePro
             transition: 'background 0.2s, color 0.2s',
           }}
         >
-          {index}
+          {label}
         </div>
       </Html>
     </group>
@@ -186,7 +186,7 @@ function Scene({ activeId, reducedMotion, onSelect }: SceneProps) {
         <ModuleNode
           key={p.id}
           id={p.id}
-          index={p.index}
+          label={p.name}
           angle={p.heroAngle}
           shape={p.shape}
           active={p.id === activeId}

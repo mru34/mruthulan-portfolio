@@ -7,7 +7,7 @@ export function Footer() {
         <span>mruthulan. — Made with care in Singapore.</span>
         <nav aria-label="Footer links">
           <a href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
-          <a href="https://www.linkedin.com/in/mruthulan" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">
             LinkedIn
           </a>
           <a href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">

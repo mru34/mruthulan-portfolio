@@ -67,10 +67,7 @@ export function NodeGraphFallback({ activeId, onSelect }: NodeGraphFallbackProps
             onClick={() => onSelect(p.id)}
           >
             <rect x={x - NODE_W / 2} y={y - NODE_H / 2} width={NODE_W} height={NODE_H} rx="14" />
-            <text className="num" x={x} y={y - 10} textAnchor="middle">
-              {p.index}
-            </text>
-            <text x={x} y={y + 6} textAnchor="middle">
+            <text x={x} y={y + 4} textAnchor="middle">
               {p.name.split(' ')[0].toUpperCase()}
             </text>
           </g>

@@ -1,25 +1,22 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense } from 'react';
 import { ProjectPicker } from './ProjectPicker';
 import { ProofPanel } from './ProofPanel';
 import { NodeGraphFallback } from './NodeGraphFallback';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { useWebglSupport } from '../hooks/useWebglSupport';
 import { useInView } from '../hooks/useInView';
-import { HERO_PROJECTS } from '../data/projects';
-import { track } from '../lib/analytics';
 
 const HeroScene = lazy(() => import('./HeroScene'));
 
-export function Hero() {
-  const [activeId, setActiveId] = useState(HERO_PROJECTS[0].id);
+interface HeroProps {
+  activeId: string;
+  onSelect: (id: string) => void;
+}
+
+export function Hero({ activeId, onSelect: select }: HeroProps) {
   const reducedMotion = useReducedMotion();
   const webglSupported = useWebglSupport();
   const { ref, inView } = useInView<HTMLDivElement>();
-
-  function select(id: string) {
-    setActiveId(id);
-    track('project_select', { project_id: id, surface: 'hero' });
-  }
 
   return (
     <section className="hero shell" id="top" aria-labelledby="hero-title">
@@ -28,7 +25,7 @@ export function Hero() {
           <i></i> DEVELOPER · SINGAPORE
         </p>
         <h1 id="hero-title" tabIndex={-1} data-route-heading>
-          <em>Mruthulan</em>.
+          <em>Senthil Nathan Mruthulan</em>.
         </h1>
         <p className="hero-intro">
           Developer and builder in Singapore, shipping human-centred products across interface

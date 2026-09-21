@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PROJECTS } from '../data/projects';
 import { ProjectShapeMark } from './ProjectShapeMark';
-import { track } from '../lib/analytics';
 
 const LINK_LABELS: Record<'live' | 'code' | 'deck', string> = {
   live: 'Live product ↗',
@@ -10,14 +8,13 @@ const LINK_LABELS: Record<'live' | 'code' | 'deck', string> = {
   deck: 'Pitch deck ↗',
 };
 
-export function WorkSection() {
-  const [activeId, setActiveId] = useState(PROJECTS[0].id);
-  const project = PROJECTS.find((p) => p.id === activeId) ?? PROJECTS[0];
+interface WorkSectionProps {
+  activeId: string;
+  onSelect: (id: string) => void;
+}
 
-  function select(id: string) {
-    setActiveId(id);
-    track('project_select', { project_id: id, surface: 'work' });
-  }
+export function WorkSection({ activeId, onSelect: select }: WorkSectionProps) {
+  const project = PROJECTS.find((p) => p.id === activeId) ?? PROJECTS[0];
 
   return (
     <section className="section" id="work" aria-labelledby="work-title" style={{ borderTop: 0 }}>
