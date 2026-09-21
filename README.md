@@ -4,23 +4,33 @@ Personal portfolio for Senthil Nathan Mruthulan at [mruthulan.com](https://mruth
 
 ## Design
 
-The site follows the **Signal Lab v2** direction: a dark, lit stage with six code-drawn project forms, a selector that keeps the hero and the work panel in sync, and a light "recognition" section that breaks the rhythm.
+The site follows the **Signal Lab v3** direction. The hero and the Work section have different jobs and do not repeat each other:
+
+- **Hero** creates curiosity. One abstract system that names no project, the full name, and a single specific hook. There is no project picker here.
+- **Work** is the evidence. Six rows, each carrying the role and the result on the row itself, each linking to its own case page. Hovering or tabbing a row lights that section in the project's colour — the only ambient-light moment on the page.
+- **Recognition** inverts to a printed ledger on bone, with no glow at all.
+- **About** is personal and specific, with an optional portrait.
+- **Contact** ends the thread that runs down the whole page in a beacon.
+
+Each case page tells its story with a different module — a handoff flow, a conversation turn, a before/after, a funnel, a ladder of mechanics, a research tally — over the same shared navigation.
 
 The forms are inline SVG plus CSS layers — **no WebGL and no 3D library**. Depth comes from gradients, filters and transforms, so the visuals survive reduced motion, low-powered phones and old browsers.
 
-Design sources for the direction live in `design/signal-lab-v2/`. The longer brief is in [REDESIGN_PLAN.md](REDESIGN_PLAN.md).
+Prototype sources for both iterations live in `design/signal-lab-v2/`. The longer brief is in [REDESIGN_PLAN.md](REDESIGN_PLAN.md).
 
 ### Rules the design depends on
 
-- No portrait, stock photos or project screenshots. Visual placeholders are labelled and drawn in code.
+- No stock photography, ever. Real photos are optional and supplied by Mruthulan; every slot has a drawn fallback that looks finished on its own.
 - Every animation sits inside a `prefers-reduced-motion: no-preference` query.
-- Selection works with mouse, touch and keyboard. Arrow keys move through the hero selector.
-- Without JavaScript the selector is removed and all six project panels are shown stacked.
-- Project facts, award wording and roles are only ever taken from verified sources. **MEANT's personal role is a visible placeholder** until Mruthulan supplies the wording; it must be filled in before launch.
+- Every project row is a real link, so mouse, touch and keyboard all reach the same place. Hover and focus produce the same ambient response.
+- Without JavaScript the rows still work as links, the fallbacks still draw, and only the parallax and the ambient light are lost.
+- Project facts, award wording and roles are only ever taken from verified sources.
+- **Nothing unfilled is ever rendered as content.** A decision with no stated reasoning omits its "Because" block; Loomy's quote spine is not drawn until there are real quotes. Never ship a visible "awaiting wording" state.
+- No file paths, slot names or authoring instructions appear on any public page.
 
 ## Pages
 
-- `index.html` — hero selector, six projects, recognition, about and contact
+- `index.html` — hero, the work index, recognition, about and contact
 - `signalbridge.html`, `meant.html`, `better-call-bhai.html`, `knowcad.html`, `boss-breaker.html`, `loomy.html` — one case study per project
 - `privacy.html` — analytics information and visitor choice
 - `404.html` — missing page
@@ -36,6 +46,10 @@ GitHub Pages publishes the `main` branch from the repository root. The `CNAME` f
 ## Analytics
 
 The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**. The choice is stored in that browser and can be changed on the privacy page. After consent the site sends `project_select`, `case_open`, `resume_click` and `contact_click` events — no names, email addresses or free text.
+
+## Photos and media
+
+Every image is optional. Slots render a designed fallback by default, so a page with no photos still looks finished. To add one: drop the file in `assets/media/` and name it in `data/media.json`. See `assets/media/README.md` for the slot list, crops and rules. Nothing about this system is visible on the site itself.
 
 ## Assets
 
