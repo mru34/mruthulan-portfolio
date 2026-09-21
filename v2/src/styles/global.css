@@ -690,8 +690,10 @@ button:focus-visible {
   font-weight: 700;
 }
 .about-links a {
+  display: inline-block;
   border-bottom: 1px solid var(--line-strong);
-  padding-bottom: 3px;
+  padding-block: 11px;
+  margin-block: -8px;
 }
 .about-links a:hover {
   border-color: var(--electric);
@@ -742,10 +744,17 @@ button:focus-visible {
 .footer-inner nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 24px;
+  align-items: center;
+  gap: 4px 24px;
   font-size: 13px;
   font-weight: 700;
   color: var(--muted);
+}
+.footer-inner nav a,
+.footer-inner nav button {
+  display: inline-block;
+  padding-block: 11px;
+  margin-block: -11px;
 }
 .footer-inner a:hover,
 .footer-inner button:hover {
