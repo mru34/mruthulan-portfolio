@@ -215,15 +215,66 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .rec-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; margin-bottom: 40px; }
 .rec-head h2 { font-size: clamp(38px, 4.8vw, 66px); color: var(--bone-ink); margin-top: 18px; }
 .rec-seal { flex-shrink: 0; opacity: .5; }
+.rec-lead { margin-top: 20px; font-size: 17px; line-height: 1.6; color: var(--bone-body); max-width: 520px; }
+.award-inline { color: var(--brass-ink); border-bottom: 1px solid var(--bone-line); padding-bottom: 2px; font-size: 14px; }
+.award-inline:hover { color: var(--bone-ink); border-bottom-color: var(--brass); }
 
-.ledger { display: grid; grid-template-columns: 96px minmax(0, 1fr) 300px 190px; gap: 28px; align-items: baseline; padding: 30px 0; border-top: 1px solid var(--bone-line); }
-.ledger:last-of-type { border-bottom: 1px solid var(--bone-line); }
-.ledger-num { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 54px; line-height: .8; color: var(--bone-line); letter-spacing: -.04em; }
-.ledger-name { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: 34px; letter-spacing: -.03em; color: var(--bone-ink); line-height: 1; display: block; }
-.ledger-note { display: block; font-size: 14.5px; color: var(--bone-body); margin-top: 8px; line-height: 1.5; }
-.ledger-place { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass-ink); }
-.ledger-link { color: var(--bone-ink); border-bottom: 1px solid var(--brass); padding-bottom: 2px; }
-.ledger-link:hover { color: var(--brass-ink); }
+/* Award rows: the result is always visible. Hover, focus or tap reveals the
+   event photo and the proof link. */
+.award-item { position: relative; border-top: 1px solid var(--bone-line); transition: background .35s var(--ease); }
+.award-item:last-of-type { border-bottom: 1px solid var(--bone-line); }
+.award-item:hover, .award-item:focus-within, .award-item.is-open { background: linear-gradient(90deg, rgba(138, 106, 47, .07), transparent 70%); }
+
+.award-head {
+  display: grid; grid-template-columns: 70px minmax(0, 1fr) 270px 34px;
+  gap: 26px; align-items: center; width: 100%;
+  padding: 28px 8px 28px 0; background: none; border: 0; text-align: left; cursor: pointer;
+  transition: padding-left .35s var(--ease);
+}
+.award-item:hover .award-head, .award-item:focus-within .award-head { padding-left: 12px; }
+.award-num { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 46px; line-height: .8; color: var(--bone-line); letter-spacing: -.04em; transition: color .35s var(--ease); }
+.award-item:hover .award-num, .award-item:focus-within .award-num, .award-item.is-open .award-num { color: var(--brass); }
+.award-name { display: block; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: 32px; letter-spacing: -.03em; color: var(--bone-ink); line-height: 1; }
+.award-with { display: block; font-size: 14.5px; color: var(--bone-body); margin-top: 8px; line-height: 1.5; }
+.award-place { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass-ink); line-height: 1.6; }
+.award-toggle { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--bone-line); display: flex; align-items: center; justify-content: center; color: var(--brass-ink); transition: transform .35s var(--ease), border-color .35s var(--ease); }
+.award-item:hover .award-toggle, .award-item:focus-within .award-toggle, .award-item.is-open .award-toggle { border-color: var(--brass); transform: rotate(45deg); }
+
+.award-reveal {
+  max-height: 0; overflow: hidden; visibility: hidden;
+  transition: max-height .45s var(--ease), visibility 0s linear .45s;
+}
+.award-item:hover .award-reveal,
+.award-item:focus-within .award-reveal,
+.award-item.is-open .award-reveal {
+  max-height: 460px; visibility: visible;
+  transition: max-height .45s var(--ease), visibility 0s;
+}
+.award-reveal-inner { display: flex; gap: 30px; align-items: flex-end; padding: 0 0 30px 96px; }
+.award-photo { width: 300px; flex-shrink: 0; }
+.award-proof { flex-grow: 1; min-width: 0; }
+.award-proof p { font-size: 15px; line-height: 1.6; color: var(--bone-body); max-width: 420px; margin-bottom: 16px; }
+.award-link {
+  display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 0 18px;
+  border: 1px solid var(--brass); border-radius: 999px;
+  color: var(--bone-ink); font-size: 14px; font-weight: 600;
+  transition: background .25s var(--ease), color .25s var(--ease), transform .25s var(--ease);
+}
+.award-link:hover { background: var(--brass); color: #FBF8F2; transform: translateY(-2px); }
+.award-item .media { border-color: var(--bone-line); background: linear-gradient(150deg, #E7DFD0, #DCD2C0); }
+.award-item .media-fallback::before { background: radial-gradient(70% 60% at 50% 42%, rgba(138, 106, 47, .18), transparent 70%); opacity: 1; }
+.award-item .media-fallback svg { opacity: .5; }
+
+/* ------------------------------------------------------- credentials */
+
+.creds { position: relative; padding: 96px 0; background: var(--deep); overflow: hidden; color: #2A3342; }
+.creds > .shell { position: relative; }
+.cred { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 34px; padding: 26px 0; border-top: 1px solid var(--hair); align-items: baseline; }
+.cred:last-of-type { border-bottom: 1px solid var(--hair); }
+.cred-when { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--acc); }
+.cred h3 { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -.02em; color: #fff; }
+.cred-where { display: block; font-size: 14.5px; color: var(--muted); margin-top: 7px; }
+.cred p { margin-top: 10px; font-size: 15px; line-height: 1.6; color: #B6BECC; max-width: 640px; }
 
 /* -------------------------------------------------------------- about */
 
@@ -464,7 +515,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .hero-copy { width: 460px; }
   .work-row { grid-template-columns: 30px minmax(0, 1fr) 190px 200px 36px; gap: 18px; }
   .about-top { gap: 46px; }
-  .ledger { grid-template-columns: 70px minmax(0, 1fr) 230px 150px; gap: 20px; }
+  .award-head { grid-template-columns: 56px minmax(0, 1fr) 210px 30px; gap: 18px; }
+  .award-reveal-inner { padding-left: 74px; }
+  .cred { grid-template-columns: 170px minmax(0, 1fr); gap: 24px; }
   .contact-inner { padding-left: 70px; }
 }
 
@@ -488,8 +541,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .section-head { flex-direction: column; align-items: flex-start; gap: 18px; }
   .section-aside { text-align: left; max-width: 520px; margin-bottom: 0; }
 
-  .ledger { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
-  .ledger-place, .ledger-link { grid-column: 2; }
+  .award-head { grid-template-columns: 46px minmax(0, 1fr) 30px; gap: 14px; align-items: start; padding: 22px 0; }
+  .award-place { grid-column: 2; margin-top: 10px; }
+  .award-toggle { grid-row: 1; grid-column: 3; }
+  .award-reveal-inner { flex-direction: column; align-items: stretch; gap: 18px; padding: 0 0 24px 60px; }
+  .award-photo { width: 100%; max-width: 320px; }
+  .cred { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .rec-head { flex-direction: column; gap: 18px; }
   .rec-seal { display: none; }
 
@@ -537,8 +594,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .about { padding: 72px 0; }
   .contact { padding: 84px 0 80px; }
   .band { padding: 50px 0 56px; }
-  .ledger-num { font-size: 38px; }
-  .ledger-name { font-size: 26px; }
+  .award-num { font-size: 32px; }
+  .award-name { font-size: 24px; }
+  .creds { padding: 72px 0; }
   .quote { padding: 22px 20px; }
   .quote blockquote { font-size: 19px; }
   .tally-wrap { gap: 24px; }
@@ -571,6 +629,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 @media (max-width: 380px) {
   :root { --gut: 18px; --thread-x: 14px; }
+  .award-reveal-inner { padding-left: 0; }
+  .award-head { grid-template-columns: 38px minmax(0, 1fr) 28px; gap: 10px; }
   .hero-title { font-size: 32px; }
   .work-name { font-size: 20px; }
   .case-facts { grid-template-columns: minmax(0, 1fr); }

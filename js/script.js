@@ -46,29 +46,68 @@
   });
 
   /* ------------------------------------------------------- hero depth --- */
+  /* Three layers at different depths answer to the pointer, to touch, and to
+     scroll. Under reduced motion none of it runs and the art sits still. */
 
   const system = document.querySelector('.system');
   const layers = Array.from(document.querySelectorAll('.system-layer'));
+  const hero = system && system.closest('.hero');
 
-  if (system && layers.length && window.matchMedia('(pointer: fine)').matches && !still.matches) {
-    let frame = 0;
-    system.closest('.hero').addEventListener('pointermove', (event) => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        const box = system.getBoundingClientRect();
-        const x = (event.clientX - box.left) / box.width - 0.5;
-        const y = (event.clientY - box.top) / box.height - 0.5;
-        layers.forEach((layer) => {
-          const depth = parseFloat(layer.dataset.depth) || 0;
-          layer.style.transform = `translate3d(${(x * depth).toFixed(1)}px, ${(y * depth).toFixed(1)}px, 0)`;
-        });
+  if (hero && layers.length && !still.matches) {
+    let px = 0, py = 0, sy = 0, frame = 0;
+
+    const apply = () => {
+      frame = 0;
+      layers.forEach((layer) => {
+        const depth = parseFloat(layer.dataset.depth) || 0;
+        const x = px * depth;
+        // scroll pushes the near layers further than the far ones
+        const y = py * depth + sy * depth * 0.55;
+        layer.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
       });
-    });
-    system.closest('.hero').addEventListener('pointerleave', () => {
-      layers.forEach((layer) => { layer.style.transform = ''; });
-    });
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(apply); };
+
+    const track = (clientX, clientY) => {
+      const box = system.getBoundingClientRect();
+      px = Math.max(-0.6, Math.min(0.6, (clientX - box.left) / box.width - 0.5));
+      py = Math.max(-0.6, Math.min(0.6, (clientY - box.top) / box.height - 0.5));
+      schedule();
+    };
+
+    if (window.matchMedia('(pointer: fine)').matches) {
+      hero.addEventListener('pointermove', (e) => track(e.clientX, e.clientY));
+      hero.addEventListener('pointerleave', () => { px = 0; py = 0; schedule(); });
+    }
+    hero.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      if (t) track(t.clientX, t.clientY);
+    }, { passive: true });
+    hero.addEventListener('touchend', () => { px = 0; py = 0; schedule(); }, { passive: true });
+
+    window.addEventListener('scroll', () => {
+      const h = hero.offsetHeight || 1;
+      sy = Math.max(0, Math.min(1.2, window.scrollY / h));
+      schedule();
+    }, { passive: true });
   }
+
+  /* ------------------------------------------------------- award rows --- */
+  /* Hover and focus open a row through CSS. This adds the tap/click toggle
+     and keeps aria-expanded honest for screen readers. */
+
+  document.querySelectorAll('.award-item .award-head').forEach((head) => {
+    const item = head.closest('.award-item');
+    head.addEventListener('click', () => {
+      const open = !item.classList.contains('is-open');
+      item.classList.toggle('is-open', open);
+      head.setAttribute('aria-expanded', String(open));
+    });
+    head.addEventListener('focus', () => head.setAttribute('aria-expanded', 'true'));
+    head.addEventListener('blur', () => {
+      if (!item.classList.contains('is-open')) head.setAttribute('aria-expanded', 'false');
+    });
+  });
 
   /* ------------------------------------------------ work row ambience --- */
 
