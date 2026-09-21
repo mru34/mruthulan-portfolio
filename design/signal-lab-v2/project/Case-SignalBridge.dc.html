@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Case study — SignalBridge</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&family=Spline+Sans:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#07090E;color:#E9ECF2;font-family:"Spline Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#E9ECF2;text-decoration:none}a:hover{color:#FFFFFF}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:#7E8899;margin:0}
+.dsp{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;letter-spacing:-.035em;line-height:.92;margin:0}
+:focus-visible{outline:2px solid #5BE1D8;outline-offset:4px;border-radius:8px}
+.cta{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;background:#5BE1D8;color:#07090E;font-weight:600;font-size:15px;transition:transform .25s,box-shadow .25s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(91,225,216,.3);color:#07090E}
+.ghost{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;border:1px solid #2A3342;font-size:15px;transition:border-color .25s,transform .25s}
+.ghost:hover{border-color:#5BE1D8;transform:translateY(-2px)}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:5px 11px;border:1px solid #5BE1D8;border-radius:999px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#5BE1D8}
+.fact-k{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6E7889;margin:0 0 10px}
+.fact-v{font-size:17px;line-height:1.4;color:#E9ECF2;margin:0;font-weight:500}
+.sec{display:flex;gap:80px;padding:54px 0;border-top:1px solid #161C26}
+.sec-h{width:360px;flex-shrink:0}
+.sec-b{flex-grow:1;max-width:660px}
+.sec-b p{margin:0 0 16px;font-size:18px;line-height:1.65;color:#B6BECC}
+.sec-b p:last-child{margin-bottom:0}
+.tlink{color:#5BE1D8;border-bottom:1px solid rgba(91,225,216,.4);padding-bottom:2px}
+.tlink:hover{color:#5BE1D8;border-bottom-color:#5BE1D8}
+.ph{position:relative;height:320px;border:1px solid #1B2230;border-radius:18px;background:linear-gradient(150deg,#0E131B,#090C12);overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:26px 28px}
+.ph-mark{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;font-size:56px;line-height:.95;letter-spacing:-.04em;color:#5BE1D8;opacity:.9;margin:0}
+@media (prefers-reduced-motion: no-preference){
+@keyframes drift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-12px,0)}}
+@keyframes travel{0%{stroke-dashoffset:520}100%{stroke-dashoffset:-60}}
+@keyframes breathe{0%,100%{opacity:.32}50%{opacity:.62}}
+.formbox{animation:drift 9s ease-in-out infinite}
+.travel{animation:travel 3.6s linear infinite}
+.pulse{animation:breathe 4.4s ease-in-out infinite}
+}
+</style>
+</helmet>
+
+<div style="width: 1440px; height: 2480px; display: flex; flex-direction: column; background: #07090E;">
+
+  <header style="flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 30px 80px;">
+    <a class="mono" href="Main.dc.html" style="color: #E9ECF2; letter-spacing: .2em;">← Back to all work</a>
+    <nav style="display: flex; gap: 30px;" aria-label="Main">
+      <a class="mono" href="Main.dc.html">Work</a>
+      <a class="mono" href="Main.dc.html">Recognition</a>
+      <a class="mono" href="https://mruthulan.com/assets/Senthil-Nathan-Mruthulan-Resume.pdf">Résumé ↗</a>
+    </nav>
+  </header>
+
+  <section style="position: relative; flex-shrink: 0; height: 600px; padding: 0 80px; display: flex; align-items: center; gap: 40px; overflow: hidden;">
+    <div aria-hidden="true" style="position: absolute; right: 60px; top: -140px; width: 900px; height: 700px; border-radius: 50%; background: radial-gradient(closest-side, #5BE1D8, transparent 70%); opacity: .16; filter: blur(22px);"></div>
+    <div style="position: relative; width: 640px; flex-shrink: 0;">
+      <span class="chip">SP InnovateDash 2026 — Champion</span>
+      <h1 class="dsp" style="font-size: 104px; margin: 24px 0 0; color: #FFFFFF;">Signal<br>Bridge</h1>
+      <p style="margin: 26px 0 0; font-size: 24px; line-height: 1.4; color: #C3CAD7; max-width: 520px;">After-hours conversations left youth workers without the context they needed for the next handoff.</p>
+      <div style="display: flex; align-items: center; gap: 14px; margin-top: 34px;">
+        <a class="cta" href="https://signalbridge-web.onrender.com/">Live product <span aria-hidden="true">↗</span></a>
+        <a class="ghost" href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026">SP’s feature <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <div class="formbox" aria-hidden="true" style="position: relative; flex-grow: 1; height: 420px; display: flex; align-items: center; justify-content: center;">
+      <svg viewBox="0 0 640 470" width="560" height="410" style="overflow: visible;">
+        <defs>
+          <linearGradient id="csbA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FF3EC"/><stop offset="1" stop-color="#2C7F8B" stop-opacity=".35"/></linearGradient>
+          <radialGradient id="csbG"><stop offset="0" stop-color="#5BE1D8" stop-opacity=".34"/><stop offset="1" stop-color="#5BE1D8" stop-opacity="0"/></radialGradient>
+          <filter id="csbB" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="17"/></filter>
+        </defs>
+        <ellipse class="pulse" cx="320" cy="250" rx="280" ry="150" fill="url(#csbG)"/>
+        <path d="M90 320 Q320 96 550 320" fill="none" stroke="#5BE1D8" stroke-opacity=".30" stroke-width="30" filter="url(#csbB)"/>
+        <path d="M90 348 Q320 150 550 348" fill="none" stroke="#5BE1D8" stroke-opacity=".13" stroke-width="2"/>
+        <path d="M90 320 Q320 96 550 320" fill="none" stroke="url(#csbA)" stroke-width="4" stroke-linecap="round"/>
+        <path class="travel" d="M90 320 Q320 96 550 320" fill="none" stroke="#EAFFFB" stroke-width="4" stroke-linecap="round" stroke-dasharray="30 520"/>
+        <g fill="#07090E" stroke="#5BE1D8" stroke-width="2"><path d="M205 224 l15 15 -15 15 -15 -15 z"/><path d="M320 196 l17 17 -17 17 -17 -17 z"/><path d="M435 224 l15 15 -15 15 -15 -15 z"/></g>
+        <circle cx="90" cy="320" r="13" fill="#07090E" stroke="#5BE1D8" stroke-width="1.6"/>
+        <g stroke="#5BE1D8" stroke-width="1.6" fill="none" opacity=".85"><circle cx="58" cy="300" r="6"/><circle cx="52" cy="342" r="4.5"/><circle cx="82" cy="360" r="5"/></g>
+        <rect x="506" y="288" width="92" height="66" rx="9" fill="#0C131A" stroke="#5BE1D8" stroke-opacity=".7"/>
+        <rect x="518" y="302" width="52" height="4" rx="2" fill="#5BE1D8"/><rect x="518" y="315" width="68" height="4" rx="2" fill="#5BE1D8" fill-opacity=".45"/><rect x="518" y="328" width="40" height="4" rx="2" fill="#5BE1D8" fill-opacity=".3"/>
+        <path d="M40 404 H600" stroke="#5BE1D8" stroke-opacity=".16"/>
+      </svg>
+    </div>
+  </section>
+
+  <div style="flex-shrink: 0; display: flex; gap: 0; margin: 0 80px; padding: 34px 0; border-top: 1px solid #161C26; border-bottom: 1px solid #161C26; background: #090C12;">
+    <div style="flex: 1 1 0; padding: 0 34px; border-right: 1px solid #161C26;"><p class="fact-k">Recognition</p><p class="fact-v">SP InnovateDash 2026 Champion</p></div>
+    <div style="flex: 1 1 0; padding: 0 34px; border-right: 1px solid #161C26;"><p class="fact-k">My focus</p><p class="fact-v">Youth UX, integrations and testing</p></div>
+    <div style="flex: 1 1 0; padding: 0 34px; border-right: 1px solid #161C26;"><p class="fact-k">Stack</p><p class="fact-v">Next.js · FastAPI · PostgreSQL</p></div>
+    <div style="flex: 1 1 0; padding: 0 34px;"><p class="fact-k">Context</p><p class="fact-v">Singapore Children’s Society challenge</p></div>
+  </div>
+
+  <div style="flex-shrink: 0; padding: 0 80px;">
+    <section class="sec" style="border-top: 0;">
+      <div class="sec-h"><p class="mono" style="margin: 0 0 14px;">01 / The problem</p><h2 class="dsp" style="font-size: 40px; color: #FFFFFF;">Support should carry context forward.</h2></div>
+      <div class="sec-b">
+        <p>Youth workers pick up conversations that started somewhere else — a late-night message, a different volunteer, a different week. The context rarely travels with the person.</p>
+        <p>SignalBridge makes the next handoff clearer while keeping the final judgement with the worker, not the model.</p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><p class="mono" style="margin: 0 0 14px;">02 / The product</p><h2 class="dsp" style="font-size: 40px; color: #FFFFFF;">One place for a careful handoff.</h2></div>
+      <div class="sec-b">
+        <p>Conversations, risk signals and consent-led briefs sit in one view. AI drafts the summary; the worker edits, approves or discards it before anything moves on.</p>
+        <p><a class="tlink" href="https://signalbridge-web.onrender.com/">Explore the live product ↗</a></p>
+      </div>
+    </section>
+
+    <div style="display: flex; gap: 24px; padding: 20px 0 54px;">
+      <figure style="flex: 1 1 0; margin: 0;">
+        <div class="ph" aria-hidden="true">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;"><span class="mono" style="color: #5BE1D8;">Youth experience</span><span class="mono">01</span></div>
+          <svg viewBox="0 0 200 120" width="100%" height="120" fill="none" stroke="#5BE1D8" aria-hidden="true" style="opacity:.45;"><rect x="10" y="20" width="84" height="16" rx="8"/><rect x="10" y="48" width="120" height="16" rx="8"/><rect x="106" y="76" width="84" height="16" rx="8" stroke-dasharray="3 4"/></svg>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;"><p class="ph-mark">Care<br>linked.</p><span class="mono" style="color: #4E5766;">Visual placeholder</span></div>
+        </div>
+        <figcaption style="margin-top: 14px;"><span class="mono">Youth-facing conversation experience</span></figcaption>
+      </figure>
+      <figure style="flex: 1 1 0; margin: 0;">
+        <div class="ph" aria-hidden="true">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;"><span class="mono" style="color: #5BE1D8;">Consent-led handoff</span><span class="mono">02</span></div>
+          <svg viewBox="0 0 200 120" width="100%" height="120" fill="none" stroke="#5BE1D8" aria-hidden="true" style="opacity:.45;"><path d="M14 90 Q100 20 186 90" stroke-width="2"/><path d="M100 46 l9 9 -9 9 -9 -9 z"/><circle cx="14" cy="90" r="7"/><rect x="164" y="80" width="30" height="22" rx="5"/></svg>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;"><p class="ph-mark">Worker<br>decides.</p><span class="mono" style="color: #4E5766;">Visual placeholder</span></div>
+        </div>
+        <figcaption style="margin-top: 14px;"><span class="mono">From message to a consent-led worker handoff</span></figcaption>
+      </figure>
+    </div>
+
+    <section class="sec">
+      <div class="sec-h"><p class="mono" style="margin: 0 0 14px;">03 / My contribution</p><h2 class="dsp" style="font-size: 40px; color: #FFFFFF;">From interface to integration.</h2></div>
+      <div class="sec-b">
+        <p>I built the youth-facing flow, the API and Discord integrations, and the automated tests that kept the handoff logic honest as the team moved fast.</p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><p class="mono" style="margin: 0 0 14px;">04 / The result</p><h2 class="dsp" style="font-size: 40px; color: #FFFFFF;">Champion at SP InnovateDash 2026.</h2></div>
+      <div class="sec-b">
+        <p>The win qualified our team for Dell InnovateFest, where we built MEANT — a separate project with a different team goal.</p>
+        <p><a class="tlink" href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026">Read Singapore Polytechnic’s feature ↗</a></p>
+      </div>
+    </section>
+  </div>
+
+  <section style="position: relative; flex-grow: 1; margin-top: 20px; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; gap: 40px; background: #090C12; border-top: 1px solid #161C26; overflow: hidden;">
+    <div aria-hidden="true" style="position: absolute; left: 50%; bottom: -300px; width: 1200px; height: 480px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(closest-side, #FFB661, transparent 70%); opacity: .14; filter: blur(20px);"></div>
+    <div style="position: relative;">
+      <p class="mono" style="margin: 0 0 16px;">Next</p>
+      <h2 class="dsp" style="font-size: 54px; color: #FFFFFF;">A different kind of<br>communication problem.</h2>
+    </div>
+    <a class="cta" style="position: relative; background: #FFB661;" href="Main.dc.html">Meet MEANT <span aria-hidden="true">→</span></a>
+  </section>
+
+  <footer style="flex-shrink: 0; height: 120px; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #161C26;">
+    <span class="mono" style="color: #9AA3B4;">Mruthulan · Made in Singapore</span>
+    <nav style="display: flex; gap: 28px;" aria-label="Footer">
+      <a class="mono" href="Main.dc.html">Home</a>
+      <a class="mono" href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
+      <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan">LinkedIn</a>
+      <a class="mono" href="https://github.com/mru34">GitHub</a>
+    </nav>
+  </footer>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2480}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

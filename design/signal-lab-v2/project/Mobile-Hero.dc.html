@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mobile hero — tap to select</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&family=Spline+Sans:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#07090E;color:#E9ECF2;font-family:"Spline Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#E9ECF2;text-decoration:none}a:hover{color:#FFFFFF}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.14em;font-size:10px;color:#7E8899;margin:0}
+.dsp{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;letter-spacing:-.035em;line-height:.92;margin:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:10px}
+.lamp{position:absolute;left:50%;top:-90px;width:520px;height:420px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,var(--acc),transparent 72%);opacity:.22;filter:blur(18px);transition:opacity .6s;pointer-events:none}
+.floor{position:absolute;left:-40px;right:-40px;bottom:0;height:200px;background-image:repeating-linear-gradient(90deg,rgba(174,196,230,.10) 0 1px,transparent 1px 56px),repeating-linear-gradient(0deg,rgba(174,196,230,.10) 0 1px,transparent 1px 56px);transform:perspective(420px) rotateX(68deg);transform-origin:bottom center;-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,.95),rgba(0,0,0,0) 76%);mask-image:linear-gradient(to top,rgba(0,0,0,.95),rgba(0,0,0,0) 76%)}
+.chipbtn{position:relative;min-height:62px;padding:10px 8px 9px;border:1px solid #232B39;border-radius:12px;background:#0C1017;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;transition:border-color .3s,background .3s,transform .2s}
+.chipbtn svg{width:22px;height:22px;fill:none;stroke:#8B94A6;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.chipbtn span{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#7E8899;transition:color .3s;text-align:center;line-height:1.1}
+.chipbtn:active{transform:scale(.96)}
+.chipbtn.sel{border-color:var(--acc);background:var(--acc-tint);box-shadow:0 0 0 1px var(--acc),0 6px 20px var(--acc-glow)}
+.chipbtn.sel svg{stroke:var(--acc)}
+.chipbtn.sel span{color:#E9ECF2}
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;padding:0 20px;border-radius:999px;background:var(--acc);color:#07090E;font-weight:600;font-size:16px}
+.tag{display:inline-flex;padding:5px 10px;border:1px solid var(--acc);border-radius:999px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);line-height:1.3}
+@media (prefers-reduced-motion: no-preference){
+@keyframes drift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-9px,0)}}
+@keyframes breathe{0%,100%{opacity:.32}50%{opacity:.62}}
+@keyframes travel{0%{stroke-dashoffset:520}100%{stroke-dashoffset:-60}}
+@keyframes twinkle{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes rise{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes caret{0%,45%{opacity:1}50%,95%{opacity:0}100%{opacity:1}}
+.formbox{animation:drift 9s ease-in-out infinite}
+.pulse{animation:breathe 4.4s ease-in-out infinite}
+.travel{animation:travel 3.6s linear infinite}
+.tw{animation:twinkle 3.2s ease-in-out infinite}
+.spinner{transform-box:fill-box;transform-origin:center;animation:spin 26s linear infinite}
+.riser{animation:rise 4.6s ease-in-out infinite}
+.caret{animation:caret 1.15s steps(1,end) infinite}
+}
+</style>
+</helmet>
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #07090E; display: flex; flex-direction: column; --acc: {{acc}}; --acc-glow: {{accGlow}}; --acc-tint: {{accTint}};">
+
+  <header style="position: relative; z-index: 4; display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 0; flex-shrink: 0;">
+    <span class="mono" style="color: #E9ECF2; letter-spacing: .2em;">M / Signal Lab</span>
+    <button aria-label="Open menu" style="width: 44px; height: 44px; border: 1px solid #232B39; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;">
+      <span style="display: block; width: 16px; height: 1.5px; background: #E9ECF2;"></span>
+      <span style="display: block; width: 16px; height: 1.5px; background: #E9ECF2;"></span>
+    </button>
+  </header>
+
+  <div style="position: relative; z-index: 3; padding: 22px 20px 0; flex-shrink: 0;">
+    <p class="mono" style="display: flex; align-items: center; gap: 10px; margin: 0 0 14px;"><span style="display: inline-block; width: 22px; height: 1px; background: var(--acc);"></span>Singapore · Open to internships</p>
+    <h1 class="dsp" style="font-size: 44px; color: #FFFFFF;">Senthil Nathan<br>Mruthulan</h1>
+    <p style="margin: 14px 0 0; font-size: 17px; line-height: 1.35; color: #C3CAD7; font-weight: 500;">I build software people actually use.</p>
+  </div>
+
+  <div style="position: relative; flex-grow: 1; min-height: 0; margin-top: 6px;">
+    <div class="lamp" aria-hidden="true"></div>
+    <div class="floor" aria-hidden="true"></div>
+    <div class="formbox" aria-hidden="true" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+      <sc-if value="{{isSb}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 640 470" width="348" height="255" style="overflow: visible;">
+          <defs><radialGradient id="msbG"><stop offset="0" stop-color="#5BE1D8" stop-opacity=".40"/><stop offset="1" stop-color="#5BE1D8" stop-opacity="0"/></radialGradient><linearGradient id="msbA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FF3EC"/><stop offset="1" stop-color="#2C7F8B" stop-opacity=".4"/></linearGradient></defs>
+          <ellipse class="pulse" cx="320" cy="250" rx="270" ry="145" fill="url(#msbG)"/>
+          <path d="M90 348 Q320 150 550 348" fill="none" stroke="#5BE1D8" stroke-opacity=".14" stroke-width="3"/>
+          <path d="M90 320 Q320 96 550 320" fill="none" stroke="url(#msbA)" stroke-width="6" stroke-linecap="round"/>
+          <path class="travel" d="M90 320 Q320 96 550 320" fill="none" stroke="#EAFFFB" stroke-width="6" stroke-linecap="round" stroke-dasharray="30 520"/>
+          <g fill="#07090E" stroke="#5BE1D8" stroke-width="3"><path d="M205 224 l15 15 -15 15 -15 -15 z"/><path d="M320 196 l17 17 -17 17 -17 -17 z"/><path d="M435 224 l15 15 -15 15 -15 -15 z"/></g>
+          <circle cx="90" cy="320" r="15" fill="#07090E" stroke="#5BE1D8" stroke-width="3"/>
+          <rect x="506" y="288" width="92" height="66" rx="10" fill="#0C131A" stroke="#5BE1D8" stroke-width="2.4"/>
+          <rect x="518" y="304" width="52" height="6" rx="3" fill="#5BE1D8"/><rect x="518" y="320" width="68" height="6" rx="3" fill="#5BE1D8" fill-opacity=".45"/>
+        </svg>
+      </sc-if>
+      <sc-if value="{{isMt}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 640 470" width="348" height="255" style="overflow: visible;">
+          <defs><radialGradient id="mmtG"><stop offset="0" stop-color="#FFB661" stop-opacity=".38"/><stop offset="1" stop-color="#FFB661" stop-opacity="0"/></radialGradient></defs>
+          <ellipse class="pulse" cx="320" cy="250" rx="270" ry="150" fill="url(#mmtG)"/>
+          <path d="M320 168 L320 278" stroke="#FFD9A8" stroke-width="4" fill="none"/>
+          <g class="riser"><g transform="rotate(-40 320 470)"><rect x="292" y="240" width="56" height="36" rx="8" fill="#12141A" stroke="#FFB661" stroke-width="2.4" stroke-opacity=".5"/></g></g>
+          <g class="riser" style="animation-delay:.4s"><g transform="rotate(-20 320 470)"><rect x="292" y="240" width="56" height="36" rx="8" fill="#12141A" stroke="#FFB661" stroke-width="2.4" stroke-opacity=".5"/></g></g>
+          <g class="riser" style="animation-delay:.8s"><g transform="rotate(0 320 470)"><rect x="288" y="234" width="64" height="42" rx="9" fill="#1C1508" stroke="#FFB661" stroke-width="3"/><rect x="300" y="252" width="40" height="6" rx="3" fill="#FFD9A8"/></g></g>
+          <g class="riser" style="animation-delay:1.2s"><g transform="rotate(20 320 470)"><rect x="292" y="240" width="56" height="36" rx="8" fill="#12141A" stroke="#FFB661" stroke-width="2.4" stroke-opacity=".5"/></g></g>
+          <g class="riser" style="animation-delay:1.6s"><g transform="rotate(40 320 470)"><rect x="292" y="240" width="56" height="36" rx="8" fill="#12141A" stroke="#FFB661" stroke-width="2.4" stroke-opacity=".5"/></g></g>
+          <rect x="212" y="104" width="216" height="62" rx="31" fill="#0B0D12" stroke="#FFD9A8" stroke-width="3"/>
+          <rect x="236" y="128" width="86" height="8" rx="4" fill="#FFD9A8"/><rect x="332" y="128" width="46" height="8" rx="4" fill="#FFB661" fill-opacity=".5"/>
+          <rect class="caret" x="390" y="120" width="4" height="22" rx="2" fill="#FFD9A8"/>
+        </svg>
+      </sc-if>
+      <sc-if value="{{isBb}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 640 470" width="348" height="255" style="overflow: visible;">
+          <defs><radialGradient id="mbbG"><stop offset="0" stop-color="#FF8095" stop-opacity=".36"/><stop offset="1" stop-color="#FF8095" stop-opacity="0"/></radialGradient></defs>
+          <ellipse class="pulse" cx="320" cy="240" rx="265" ry="145" fill="url(#mbbG)"/>
+          <g transform="translate(150 70) skewY(-9)">
+            <rect x="0" y="0" width="330" height="58" rx="12" fill="#0D1117" stroke="#2A2F3A" stroke-width="2.4"/><rect x="20" y="24" width="86" height="8" rx="4" fill="#57606F"/>
+            <rect x="0" y="80" width="330" height="58" rx="12" fill="#0D1117" stroke="#2A2F3A" stroke-width="2.4"/><rect x="20" y="104" width="104" height="8" rx="4" fill="#57606F"/>
+            <rect x="0" y="160" width="330" height="58" rx="12" fill="#1E1116" stroke="#FF8095" stroke-width="3.4"/><rect x="20" y="184" width="118" height="8" rx="4" fill="#FFB3BF"/>
+            <rect x="236" y="178" width="76" height="22" rx="11" fill="#FF8095"/>
+            <path d="M250 189 l7 8 14 -16" fill="none" stroke="#1E1116" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="0" y="240" width="330" height="58" rx="12" fill="#0D1117" stroke="#2A2F3A" stroke-width="2.4"/><rect x="20" y="264" width="72" height="8" rx="4" fill="#57606F"/>
+          </g>
+        </svg>
+      </sc-if>
+      <sc-if value="{{isKc}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 640 470" width="348" height="255" style="overflow: visible;">
+          <defs><radialGradient id="mkcG"><stop offset="0" stop-color="#AC93FF" stop-opacity=".38"/><stop offset="1" stop-color="#AC93FF" stop-opacity="0"/></radialGradient></defs>
+          <ellipse class="pulse" cx="320" cy="250" rx="270" ry="148" fill="url(#mkcG)"/>
+          <g fill="#AC93FF"><rect class="tw" x="120" y="80" width="22" height="26" rx="4" opacity=".3"/><rect class="tw" x="220" y="56" width="20" height="24" rx="4" opacity=".24" style="animation-delay:.9s"/><rect class="tw" x="380" y="66" width="20" height="24" rx="4" opacity=".26" style="animation-delay:1.5s"/><rect class="tw" x="486" y="86" width="22" height="26" rx="4" opacity=".3" style="animation-delay:.5s"/></g>
+          <g class="spinner"><g fill="none" stroke="#AC93FF" stroke-width="3" stroke-linejoin="round"><path d="M320 190 L400 236 L320 282 L240 236 Z"/><path d="M240 236 L240 320 L320 366 L400 320 L400 236" stroke-opacity=".55"/><path d="M320 282 L320 366" stroke-opacity=".45"/></g><path d="M320 190 L400 236 L320 282 L240 236 Z" fill="#AC93FF" fill-opacity=".12"/></g>
+          <rect x="372" y="300" width="150" height="58" rx="10" fill="#0E0B18" stroke="#AC93FF" stroke-width="2.6"/>
+          <rect x="386" y="318" width="70" height="7" rx="3.5" fill="#CBB8FF"/><rect x="386" y="334" width="112" height="7" rx="3.5" fill="#AC93FF" fill-opacity=".45"/>
+        </svg>
+      </sc-if>
+      <sc-if value="{{isBx}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 640 470" width="348" height="255" style="overflow: visible;">
+          <defs><radialGradient id="mbxG"><stop offset="0" stop-color="#A4EC76" stop-opacity=".34"/><stop offset="1" stop-color="#A4EC76" stop-opacity="0"/></radialGradient></defs>
+          <ellipse class="pulse" cx="320" cy="270" rx="262" ry="142" fill="url(#mbxG)"/>
+          <g class="spinner" style="animation-duration:34s"><ellipse cx="320" cy="290" rx="228" ry="64" fill="none" stroke="#A4EC76" stroke-opacity=".24" stroke-width="2.4"/></g>
+          <path d="M198 378 L442 378 L412 410 L228 410 Z" fill="#0F1510" stroke="#2C3A26" stroke-width="2.4"/>
+          <rect x="214" y="320" width="212" height="58" rx="8" fill="#101711" stroke="#2C3A26" stroke-width="2.4"/>
+          <rect x="230" y="262" width="180" height="58" rx="8" fill="#121A12" stroke="#33422B" stroke-width="2.4"/>
+          <rect x="248" y="204" width="144" height="58" rx="8" fill="#141D13" stroke="#3A4B31" stroke-width="2.4"/>
+          <rect x="264" y="146" width="112" height="58" rx="8" fill="#16210F" stroke="#A4EC76" stroke-width="3"/>
+          <rect x="240" y="104" width="160" height="16" rx="8" fill="#0C1108" stroke="#3A4B31" stroke-width="2"/>
+          <rect x="244" y="108" width="98" height="8" rx="4" fill="#A4EC76"/>
+        </svg>
+      </sc-if>
+      <sc-if value="{{isLm}}" hint-placeholder-val="{{true}}">
+        <svg viewBox="0 0 640 470" width="348" height="255" style="overflow: visible;">
+          <defs><radialGradient id="mlmG"><stop offset="0" stop-color="#84B6FF" stop-opacity=".34"/><stop offset="1" stop-color="#84B6FF" stop-opacity="0"/></radialGradient></defs>
+          <ellipse class="pulse" cx="320" cy="250" rx="268" ry="148" fill="url(#mlmG)"/>
+          <g transform="translate(186 76) matrix(1,0,-0.3,0.94,0,0)">
+            <g stroke="#3C4C66" stroke-width="15" stroke-linecap="round"><path d="M20 0 V300"/><path d="M64 0 V300"/><path d="M108 0 V300"/><path d="M152 0 V300"/><path d="M196 0 V300"/><path d="M240 0 V300"/></g>
+            <g stroke="#84B6FF" stroke-width="15" stroke-dasharray="44 44"><path d="M0 26 H260" opacity=".9"/><path d="M0 70 H260" stroke-dashoffset="44" opacity=".75"/><path class="riser" d="M0 114 H260" opacity=".9"/><path d="M0 158 H260" stroke-dashoffset="44" opacity=".75"/><path d="M0 202 H260" opacity=".9"/><path d="M0 246 H260" stroke-dashoffset="44" opacity=".75"/></g>
+          </g>
+          <g transform="rotate(-14 470 120)"><path d="M436 86 H548 L568 120 L548 154 H436 Z" fill="#0C1118" stroke="#84B6FF" stroke-width="2.6"/><circle cx="454" cy="120" r="8" fill="none" stroke="#84B6FF" stroke-width="2.4"/></g>
+        </svg>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="position: relative; z-index: 3; padding: 0 20px; flex-shrink: 0;">
+    <div role="group" aria-label="Select a project" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+      <sc-for list="{{items}}" as="item" hint-placeholder-count="6">
+        <button class="chipbtn {{item.cls}}" onClick="{{item.pick}}" aria-pressed="{{item.selStr}}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="{{item.d}}"></path></svg>
+          <span>{{item.short}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="position: relative; z-index: 3; flex-shrink: 0; margin: 16px 0 0; padding: 18px 20px 22px; border-top: 1px solid #1B2230; background: linear-gradient(to bottom, rgba(12,16,23,.85), #07090E);">
+    <span class="tag">{{cur.result}}</span>
+    <p class="dsp" style="font-size: 30px; margin: 12px 0 6px; color: #FFFFFF;">{{cur.name}}</p>
+    <p style="margin: 0 0 16px; font-size: 14px; line-height: 1.4; color: #B6BECC;">{{cur.hook}}</p>
+    <a class="cta" href="Case-SignalBridge.dc.html">Case study <span aria-hidden="true">→</span></a>
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"start":{"editor":"enum","options":["SignalBridge","MEANT","Better Call Bhai","KnowCad","Boss Breaker","Loomy"],"default":"SignalBridge","section":"Prototype"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  data() {
+    return [
+      { id: 'sb', short: 'Signal­Bridge', name: 'SignalBridge', hook: 'Youth support that never loses context.', result: 'SP InnovateDash 2026 — Champion', acc: '#5BE1D8', glow: 'rgba(91,225,216,.30)', tint: 'rgba(91,225,216,.10)', d: 'M3 18 Q12 4 21 18 M12 8 l2.5 2.5 -2.5 2.5 -2.5 -2.5 z' },
+      { id: 'mt', short: 'MEANT', name: 'MEANT', hook: 'Faster AAC replies. The user picks every word.', result: 'Dell InnovateFest 2026 — 2nd runner-up · S$3,000', acc: '#FFB661', glow: 'rgba(255,182,97,.28)', tint: 'rgba(255,182,97,.10)', d: 'M4 20 Q12 6 20 20 M9 13 h6 M12 4 v4' },
+      { id: 'bb', short: 'B.C. Bhai', name: 'Better Call Bhai', hook: 'Barber bookings, minus the back-and-forth.', result: 'Live client site', acc: '#FF8095', glow: 'rgba(255,128,149,.28)', tint: 'rgba(255,128,149,.10)', d: 'M4 6 h16 M4 12 h16 M4 18 h16 M14 12 l2 2 3.5 -4' },
+      { id: 'kc', short: 'KnowCad', name: 'KnowCad', hook: 'Less searching. Better answers.', result: 'Autodesk SG AI+ML Hackathon — Champion', acc: '#AC93FF', glow: 'rgba(172,147,255,.28)', tint: 'rgba(172,147,255,.10)', d: 'M12 4 L20 9 L12 14 L4 9 Z M4 9 v6 l8 5 8 -5 V9' },
+      { id: 'bx', short: 'Boss­Breaker', name: 'Boss Breaker', hook: 'Wellness, played as a game.', result: 'Full-stack coursework build', acc: '#A4EC76', glow: 'rgba(164,236,118,.26)', tint: 'rgba(164,236,118,.10)', d: 'M6 19 h12 M8 14 h8 M10 9 h4 M8 5 h8' },
+      { id: 'lm', short: 'Loomy', name: 'Loomy', hook: 'Thrifting, with a community attached.', result: '30+ user interviews', acc: '#84B6FF', glow: 'rgba(132,182,255,.28)', tint: 'rgba(132,182,255,.10)', d: 'M4 7 h16 M4 12 h16 M4 17 h16 M9 4 v16 M15 4 v16' }
+    ];
+  }
+
+  renderVals() {
+    const list = this.data();
+    const byName = { 'SignalBridge': 'sb', 'MEANT': 'mt', 'Better Call Bhai': 'bb', 'KnowCad': 'kc', 'Boss Breaker': 'bx', 'Loomy': 'lm' };
+    const key = (this.state && this.state.sel) || byName[this.props.start] || 'sb';
+    const cur = list.filter(function (p) { return p.id === key; })[0] || list[0];
+    const self = this;
+    return {
+      items: list.map(function (p) {
+        const on = p.id === key;
+        return { short: p.short, d: p.d, cls: on ? 'sel' : '', selStr: on ? 'true' : 'false', pick: function () { self.setState({ sel: p.id }); } };
+      }),
+      cur: { name: cur.name, hook: cur.hook, result: cur.result },
+      acc: cur.acc, accGlow: cur.glow, accTint: cur.tint,
+      isSb: key === 'sb', isMt: key === 'mt', isBb: key === 'bb', isKc: key === 'kc', isBx: key === 'bx', isLm: key === 'lm'
+    };
+  }
+}
+</script>
+</body>
+</html>

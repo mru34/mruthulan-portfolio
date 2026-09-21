@@ -1,0 +1,61 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-09-21T11:00:00Z" },
+  "title": "Signal Lab v2 — Mruthulan portfolio prototype",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "designSystems": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1440, "h": 4800, "title": "Desktop 1440 — full page (live: pick any project)", "is_interactive": true },
+    "Hero-MEANT.dc.html": { "x": 0, "y": 5200, "w": 1440, "h": 880, "title": "Hero — MEANT selected" },
+    "Hero-KnowCad.dc.html": { "x": 1520, "y": 5200, "w": 1440, "h": 880, "title": "Hero — KnowCad selected" },
+    "Hero-Loomy.dc.html": { "x": 3040, "y": 5200, "w": 1440, "h": 880, "title": "Hero — Loomy selected" },
+    "Mobile-Hero.dc.html": { "x": 0, "y": 6480, "w": 390, "h": 844, "title": "Mobile — hero (live: tap to select)", "is_interactive": true },
+    "Mobile-Work.dc.html": { "x": 470, "y": 6480, "w": 390, "h": 844, "title": "Mobile — work, row expanded" },
+    "Mobile-Close.dc.html": { "x": 940, "y": 6480, "w": 390, "h": 844, "title": "Mobile — wins + contact" },
+    "Case-SignalBridge.dc.html": { "x": 0, "y": 7724, "w": 1440, "h": 2480, "title": "Case study — SignalBridge" },
+    "Mobile-Case.dc.html": { "x": 1520, "y": 7724, "w": 390, "h": 844, "title": "Mobile — case study" },
+    "States.dc.html": { "x": 0, "y": 10604, "w": 1440, "h": 1000, "title": "Interaction states, touch parity & fallbacks" }
+  },
+  "order": [
+    "Main.dc.html",
+    "Hero-MEANT.dc.html",
+    "Hero-KnowCad.dc.html",
+    "Hero-Loomy.dc.html",
+    "Mobile-Hero.dc.html",
+    "Mobile-Work.dc.html",
+    "Mobile-Close.dc.html",
+    "Case-SignalBridge.dc.html",
+    "Mobile-Case.dc.html",
+    "States.dc.html"
+  ],
+  "notes": {
+    "t-hero": { "x": 0, "y": 4900, "text": "Selected-project reveals", "kind": "title1", "maxW": 4480 },
+    "t-mobile": { "x": 0, "y": 6180, "text": "Mobile 390", "kind": "title1", "maxW": 1330 },
+    "t-case": { "x": 0, "y": 7424, "text": "Case study", "kind": "title1", "maxW": 1910 },
+    "s-start": {
+      "x": 1560, "y": 0, "w": 520, "color": "teal",
+      "text": "START HERE — press Play on this artboard.\n\nPick any of the six projects in the hero arc or the work list; both stay in sync from one selection state.\n\nWHAT MOVES: the form drifts 14px on a 9s loop; the accent lamp behind it slides to a new position over 0.7s; the selected node scales 1.34× and lifts 12px, dropping a tick line toward the readout; the work row indents 16px and grows an accent rule. Each project's form has its own idle motion — SignalBridge sends a pulse along the span, MEANT's suggestion tiles breathe in sequence, KnowCad's cube turns once every 26s, Loomy's weft threads slide.\n\nNothing auto-rotates and nothing hijacks scroll."
+    },
+    "s-work": {
+      "x": 1560, "y": 780, "w": 520, "color": "blue",
+      "text": "WORK — proof inside the preview.\n\nThe old panel was a big empty rectangle with one shape. Here the panel leads with the award chip and project name, then gives three proof cells — what it does, my role, built with — above the two actions. The procedural mark is demoted to a 184px inset at the right, overlapping the panel edge.\n\nMEANT's role cell is a dashed placeholder on purpose: it is the one personal contribution I could not verify from the repo or the live site. Tell me the wording and it becomes normal text."
+    },
+    "s-rhythm": {
+      "x": 1560, "y": 1560, "w": 520, "color": "orange",
+      "text": "PAGE RHYTHM — five different grounds.\n\nHero #07090E with a perspective floor and a lit horizon · a thin credibility strip · Work #0B0E14 with a vertical rule grid · WINS on bone #F2EDE4 with brass edges and 92px type — the one light section, so it reads as the celebration · About #10141C · Contact back to #07090E with 104px type, a horizon line and a glow that carries the selected project's colour.\n\nNo glass cards anywhere. Depth comes from real lighting and layering, not blur panels."
+    },
+    "s-limits": {
+      "x": 1560, "y": 2340, "w": 520, "color": "gray",
+      "text": "PROTOTYPE LIMITS, so nothing surprises you:\n\n· Only SignalBridge's case page is drawn. Every project's 'Case study' action points at it so you can feel the template; in the build each gets its own.\n\n· No photos, screenshots or stock imagery anywhere, including the case page — the two case figures are labelled geometric placeholders as the brief requires.\n\n· Award wording, the LinkedIn URL, project order and the SignalBridge/MEANT separation are carried over from the live site unchanged."
+    },
+    "s-touch": {
+      "x": 1420, "y": 6480, "w": 450, "color": "purple",
+      "text": "TOUCH — press Play on the mobile hero.\n\nThe hero arc becomes a 3×2 grid of 62px targets. ONE TAP selects: the chip takes the accent border and tint, the form swaps, the lamp changes colour, and the readout below updates its award chip, name, hook and case button. The chip scales to 0.95 for 120ms so the tap is felt.\n\nNo hover-only information, no long-press, no drag, and the case study is always one more tap — never hidden behind the graphic.\n\nOn the work screen the selected row expands in place instead of opening a separate panel."
+    },
+    "s-fallback": {
+      "x": 1560, "y": 10604, "w": 520, "color": "green",
+      "text": "FALLBACKS — the third panel row on this board shows each one drawn.\n\nA recommendation worth your decision: this direction uses inline SVG + CSS layers, NOT WebGL. Perspective, lighting and depth are all done with gradients, filters and transforms. That removes the 3D bundle, the loading gate and the no-WebGL cliff entirely, and it runs on a weak phone.\n\nTIER 1 full motion. TIER 2 prefers-reduced-motion: every animation is inside a no-preference query, so the default is one static composed frame — selection still changes form, lighting and copy, it just cross-fades. TIER 3 no JavaScript: the full six-project index ships in HTML as links with colour marks and outcomes.\n\nIf you would rather keep real WebGL for the hero, say so — it is a swap of one layer, not a redesign."
+    }
+  }
+}
