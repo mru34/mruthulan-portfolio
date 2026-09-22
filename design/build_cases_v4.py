@@ -154,12 +154,29 @@ def deck(slides, pdf, label):
         f'<p class="deck-count">Slide <b class="deck-now">1</b> / {len(slides)}</p>'
         f'<a class="ghost deck-open" href="{pdf}" target="_blank" rel="noopener">'
         'Open the full deck (PDF) <span aria-hidden="true">↗</span></a>'
-        '<p class="deck-hint">Arrow keys or a swipe move through the deck once it has focus.</p>'
+        '<p class="deck-hint">Tap a slide to read it full screen. '
+        '<span class="deck-hint-pointer">Arrow keys or a swipe move through the deck once it has focus.</span></p>'
         '</div></div>')
 
 
 def evidence(figures):
     return '<div class="evidence">' + ''.join(figures) + '</div>'
+
+
+def evidence_feature(lead, rest, pending=None):
+    """A lead frame at full width with a supporting row beneath it. Until the
+    real files arrive each frame draws its fallback, so the block reads as
+    finished either way -- it is simply bigger than a side-by-side pair, which
+    is what an interface screenshot or a demo deserves.
+
+    `pending` is the one honest line under a block whose frames are all still
+    waiting on files. The media loader removes it as soon as they are filled."""
+    note = f'<p class="evidence-pending">{pending}</p>' if pending else ''
+    return ('<div class="evidence-feature">'
+            + lead.replace('<figure>', '<figure class="evidence-lead">')
+            + ('<div class="evidence">' + ''.join(rest) + '</div>' if rest else '')
+            + note
+            + '</div>')
 
 
 def tally(count, label):
@@ -230,10 +247,11 @@ PROJECTS = [
                       'Built the Discord integration, so the conversation stayed where it already was.', None),
                  ])),
             band('Evidence', 'What it actually looks like.',
-                 evidence([
-                     media('signalbridge-shot-1', 'ratio-1610', 'Youth-facing conversation — the part I built') .replace('<figure>', '<figure class="wide">'),
-                     media('signalbridge-demo', 'ratio-169', 'Message → consent → brief, in one take', fallback='play'),
-                 ])),
+                 evidence_feature(
+                     media('signalbridge-shot-1', 'ratio-1610', 'Youth-facing conversation — the part I built'),
+                     [media('signalbridge-shot-2', 'ratio-1610', 'The handoff brief, before the worker edits it'),
+                      media('signalbridge-demo', 'ratio-169', 'Message → consent → brief, in one take', fallback='play')],
+                     pending='Frames reserved — interface captures and the demo clip are not published yet')),
         ],
         'role': ('I built the youth-facing interfaces, the consent and handoff workflows, the API '
                  'and Discord integrations, and the automated tests that kept the handoff logic '
@@ -269,10 +287,11 @@ PROJECTS = [
                  '<p class="band-note" style="max-width:700px">A generic text-to-speech voice makes a '
                  'Singaporean user sound like someone else. Building the Singaporean TTS voice was my '
                  'part of the build, alongside the interface and the demo we presented.</p>'
-                 + evidence([
-                     media('meant-shot-1', 'ratio-1610', 'The AAC board and suggestion strip').replace('<figure>', '<figure class="wide">'),
-                     media('meant-demo', 'ratio-169', 'A full turn, spoken', fallback='play'),
-                 ])),
+                 + evidence_feature(
+                     media('meant-shot-1', 'ratio-1610', 'The AAC board and suggestion strip'),
+                     [media('meant-shot-2', 'ratio-1610', 'Turn Claim, holding the conversation open'),
+                      media('meant-demo', 'ratio-169', 'A full turn, spoken', fallback='play')],
+                     pending='Frames reserved — interface captures and the demo clip are not published yet')),
             band('If the AI stops', 'It degrades into something that still works.',
                  '<p class="band-note" style="max-width:700px">If the AI layer goes down, the AAC board '
                  'and typing still work. A communication aid that fails closed is not a communication aid.</p>'),
@@ -537,7 +556,10 @@ def render(p):
           <p class="mono">Next project</p>
           <h2 class="dsp" style="margin-top:14px">{nxt['name']}</h2>
         </div>
-        <a class="cta" href="{nxt['slug']}.html">Open {nxt['name']} <span aria-hidden="true">→</span></a>
+        <div class="case-next-actions">
+          <a class="cta" href="{nxt['slug']}.html">Open {nxt['name']} <span aria-hidden="true">→</span></a>
+          <a class="ghost" href="index.html#work-{p['id']}"><span aria-hidden="true">←</span> Back to all work</a>
+        </div>
       </div>
     </section>
   </main>

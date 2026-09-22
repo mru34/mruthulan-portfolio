@@ -60,3 +60,32 @@ itself, which states Champion and links the LinkedIn post and SP's feature.
 Note the naming: the row is titled **SP InnovateDash 2026** while the slide in
 the photograph reads **Dell InnovateDash Finals**. Same event, two shorthands.
 Worth aligning the row title if you want the page and the photo to match.
+
+## Open question: the event's name
+
+The photo you supplied for the SignalBridge row shows the organiser's own
+title slide. It reads, verbatim:
+
+> Welcome to the
+> **Dell InnovateDash Finals**
+> Singapore Polytechnic – 26th June 2026
+> *Dell Technologies*
+
+The site currently calls this row **SP InnovateDash 2026 — Champion**, and the
+credentials entry says the win "sent the team to the national final" at Dell
+InnovateFest.
+
+Nothing has been changed. The slide is consistent with SP InnovateDash and the
+Dell InnovateDash Finals being the same event — Dell-run, hosted at Singapore
+Polytechnic — but that is an inference from one photograph, not a confirmation,
+and this machine has no outbound web access to check it.
+
+Tell me which name the organisers used and I will make every mention match:
+
+- keep **SP InnovateDash 2026** everywhere, or
+- change to **Dell InnovateDash 2026** (index row, case chip, case facts, page
+  titles and meta descriptions, credentials entry), or
+- something else, e.g. "Dell InnovateDash, Singapore Polytechnic".
+
+The alt text on the photo describes what is on the screen, so it says "Dell
+InnovateDash Finals" regardless of which label the rest of the site uses.

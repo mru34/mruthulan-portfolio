@@ -1,0 +1,57 @@
+<!-- Source for assets/og-card.jpg (1200x630 link preview).
+     Render: open at a 1200x630 viewport with deviceScaleFactor 2,
+     wait for document.fonts.ready, screenshot, downsample to 1200x630, save as JPEG.
+     Same typefaces, ground colour and constellation as the live hero. -->
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face { font-family:'Bricolage Grotesque'; font-weight:400 800; src:url('../assets/fonts/bricolage-grotesque-latin.woff2') format('woff2'); }
+@font-face { font-family:'Spline Sans'; font-weight:300 700; src:url('../assets/fonts/spline-sans-latin.woff2') format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-weight:100 800; src:url('../assets/fonts/jetbrains-mono-latin.woff2') format('woff2'); }
+*{box-sizing:border-box;margin:0}
+body{width:1200px;height:630px;overflow:hidden;background:#07090E;color:#E9ECF2;
+  font-family:'Spline Sans',sans-serif;position:relative}
+.lamp{position:absolute;left:58%;top:-34%;width:1000px;height:760px;border-radius:50%;
+  background:radial-gradient(closest-side,#5BE1D8,transparent 72%);opacity:.34;filter:blur(24px)}
+.vig{position:absolute;inset:0;background:radial-gradient(118% 82% at 14% 46%,rgba(7,9,14,.96) 30%,rgba(7,9,14,0) 80%)}
+.grid{position:absolute;inset:0;opacity:.14;
+  background-image:radial-gradient(circle at 1px 1px,rgba(150,172,200,.30) 1px,transparent 0);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(130% 92% at 50% 42%,#000 28%,transparent 80%)}
+.art{position:absolute;right:52px;top:50%;transform:translateY(-50%);width:560px;height:520px}
+.wrap{position:relative;z-index:2;padding:74px 80px;height:100%;display:flex;flex-direction:column;justify-content:center}
+.kick{display:flex;align-items:center;gap:14px;font-family:'JetBrains Mono',monospace;
+  font-size:16px;letter-spacing:.17em;text-transform:uppercase;color:#9BA5B7}
+.kick::before{content:"";display:block;width:44px;height:1px;background:#5BE1D8}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;letter-spacing:-.037em;
+  line-height:.93;font-size:92px;color:#fff;margin-top:26px}
+.line{margin-top:30px;font-size:30px;line-height:1.3;color:#C8CFDC;font-weight:500;max-width:19ch}
+.meta{margin-top:auto;display:flex;align-items:center;gap:18px;font-family:'JetBrains Mono',monospace;
+  font-size:15px;letter-spacing:.15em;text-transform:uppercase;color:#8794A8}
+.dot{width:5px;height:5px;border-radius:50%;background:#5BE1D8;flex:none}
+</style></head><body>
+<div class="lamp"></div><div class="grid"></div><div class="vig"></div>
+<svg class="art" viewBox="0 0 700 620" fill="none">
+  <defs><linearGradient id="l" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#8FF3EC" stop-opacity=".9"/><stop offset="1" stop-color="#4E6E9E" stop-opacity=".3"/></linearGradient></defs>
+  <g stroke="url(#l)" stroke-width="2" opacity=".85">
+    <path d="M96 404 C210 300 300 196 402 150"/><path d="M402 150 C520 176 590 250 618 352"/>
+    <path d="M618 352 C560 452 452 496 336 486"/><path d="M336 486 C226 490 140 466 96 404"/>
+    <path d="M96 404 C250 380 330 300 402 150" stroke-opacity=".45"/>
+    <path d="M336 486 C420 380 520 372 618 352" stroke-opacity=".45"/>
+    <path d="M402 150 C380 300 356 400 336 486" stroke-opacity=".35"/>
+  </g>
+  <g stroke-width="2.4" fill="none">
+    <circle cx="402" cy="150" r="21" stroke="#5BE1D8"/><circle cx="618" cy="352" r="16" stroke="#FFB661"/>
+    <circle cx="336" cy="486" r="18" stroke="#FF8095"/><circle cx="96" cy="404" r="17" stroke="#AC93FF"/>
+    <circle cx="512" cy="452" r="13" stroke="#A4EC76"/><circle cx="238" cy="252" r="12" stroke="#84B6FF"/>
+  </g>
+  <g><circle cx="402" cy="150" r="5.5" fill="#5BE1D8"/><circle cx="618" cy="352" r="4.5" fill="#FFB661"/>
+    <circle cx="336" cy="486" r="5" fill="#FF8095"/><circle cx="96" cy="404" r="5" fill="#AC93FF"/>
+    <circle cx="512" cy="452" r="4" fill="#A4EC76"/><circle cx="238" cy="252" r="4" fill="#84B6FF"/></g>
+</svg>
+<div class="wrap">
+  <p class="kick">Singapore · Developer</p>
+  <h1>Senthil Nathan<br>Mruthulan</h1>
+  <p class="line">I build software people actually use.</p>
+  <p class="meta">Six builds<span class="dot"></span>Three hackathon awards<span class="dot"></span>mruthulan.com</p>
+</div>
+</body></html>

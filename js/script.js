@@ -25,9 +25,13 @@
   }
 
   // focus follows the eye, so the keyboard carries on from the same place
+  const NATURALLY_FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]';
   function focusOn(target) {
     if (!target) return;
-    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    /* Only headings and sections need a tabindex to receive focus. Adding one
+       to something already focusable -- a work row is a link -- would set it
+       to -1 and drop it out of the tab order for good. */
+    if (!target.matches(NATURALLY_FOCUSABLE)) target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });
   }
 
@@ -148,7 +152,6 @@
   const grid = field && field.querySelector('.field-grid');
   const heroLayers = Array.from(document.querySelectorAll('.system-layer'));
   const heroEl = document.querySelector('.hero');
-  const fine = window.matchMedia('(pointer: fine)').matches;
 
   function tone(colour) {
     if (field) field.style.setProperty('--tone', colour || '');
@@ -196,8 +199,16 @@
       schedule();
     };
 
-    if (fine) {
-      window.addEventListener('pointermove', (e) => point(e.clientX, e.clientY), { passive: true });
+    /* A mouse hovers, a finger drags -- pointermove covers both, so a tablet
+       gets the same response as a laptop instead of a still picture. It is
+       rAF-throttled and writes only transforms, so a scroll-drag costs a
+       couple of composited frames. */
+    window.addEventListener('pointermove', (e) => point(e.clientX, e.clientY), { passive: true });
+    if (heroEl) {
+      heroEl.addEventListener('touchmove', (e) => {
+        const t = e.touches[0];
+        if (t) point(t.clientX, t.clientY);
+      }, { passive: true });
     }
 
     /* A tap on open ground: the aura moves there and a ring expands from it.
@@ -380,6 +391,16 @@
           slot.insertBefore(node, slot.firstChild);
           slot.classList.add('has-file');
         });
+
+        /* A frame that is still waiting says so, once per block. The note is
+           written into the page so it is there without JavaScript too, and
+           removed here the moment every frame in that block has a file. */
+        document.querySelectorAll('.evidence-pending').forEach((note) => {
+          const block = note.closest('.evidence-feature');
+          if (!block) return;
+          const empty = block.querySelectorAll('[data-media]:not(.has-file)').length;
+          if (!empty) note.remove();
+        });
       })
       .catch(() => { /* no manifest, or offline: the fallbacks stand. */ });
   }
@@ -428,7 +449,7 @@
       if (document.activeElement && document.activeElement.disabled) deckEl.focus();
     });
 
-    let sx = 0, sy = 0, swiping = false;
+    let sx = 0, sy = 0, swiping = false, swiped = false;
     const stage = deckEl.querySelector('.deck-stage');
     if (stage) {
       stage.addEventListener('touchstart', (event) => {
@@ -441,9 +462,92 @@
         const t = event.changedTouches[0];
         const dx = t.clientX - sx;
         const dy = t.clientY - sy;
-        if (Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy) * 1.6) show(at + (dx < 0 ? 1 : -1), true);
+        if (Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+          swiped = true;
+          show(at + (dx < 0 ? 1 : -1), true);
+        }
       }, { passive: true });
     }
+
+    /* On a phone a 16:9 slide is too small to read in the column, so tapping
+       it opens a full-screen view. Escape or the close button returns focus
+       to the slide you opened. */
+    const lightbox = document.createElement('div');
+    lightbox.className = 'deck-zoom';
+    lightbox.hidden = true;
+    lightbox.innerHTML =
+      '<button class="deck-zoom-close" type="button" aria-label="Close full screen">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>' +
+      '<div class="deck-zoom-frame"><img alt=""></div>' +
+      '<div class="deck-zoom-bar"><p class="deck-zoom-count mono"></p>' +
+      '<button class="deck-zoom-turn mono" type="button" hidden></button></div>';
+    /* Body, not the deck: `main section > .shell` carries z-index 2, so a
+       lightbox left inside the deck lives in that section's stacking context
+       and any later section paints straight over it. */
+    document.body.appendChild(lightbox);
+    const zoomImg = lightbox.querySelector('img');
+    const zoomCount = lightbox.querySelector('.deck-zoom-count');
+    const zoomClose = lightbox.querySelector('.deck-zoom-close');
+    const zoomTurn = lightbox.querySelector('.deck-zoom-turn');
+    let lastFocus = null;
+
+    /* A 16:9 slide inside a portrait phone is about a third of the screen --
+       still too small to read. Turning it a quarter turn lets the long edge
+       use the long edge of the screen, which is the whole point of opening
+       it full screen. The turn is offered, never forced: the button says
+       which way it will go and flips back. */
+    const portrait = () => window.innerHeight > window.innerWidth * 1.1;
+    function setTurn(on) {
+      lightbox.classList.toggle('is-turned', on);
+      zoomTurn.textContent = on ? 'Show upright' : 'Turn sideways';
+      zoomTurn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    zoomTurn.addEventListener('click', () => setTurn(!lightbox.classList.contains('is-turned')));
+
+    function openZoom() {
+      const img = slides[at].querySelector('img');
+      if (!img) return;
+      lastFocus = document.activeElement;
+      zoomImg.src = img.currentSrc || img.src;
+      zoomImg.alt = img.alt;
+      zoomCount.textContent = 'Slide ' + (at + 1) + ' / ' + slides.length;
+      zoomTurn.hidden = !portrait();
+      setTurn(portrait());
+      lightbox.hidden = false;
+      document.body.classList.add('deck-zoomed');
+      zoomClose.focus();
+    }
+    function closeZoom() {
+      lightbox.hidden = true;
+      document.body.classList.remove('deck-zoomed');
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    zoomClose.addEventListener('click', closeZoom);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeZoom(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !lightbox.hidden) closeZoom();
+    });
+
+    if (stage) {
+      stage.style.cursor = 'zoom-in';
+      stage.addEventListener('click', (e) => {
+        if (swiped) { swiped = false; return; }   // a swipe is not a tap
+        if (e.target.closest('button')) return;
+        openZoom();
+      });
+    }
+    // a slide is a real control now, so it needs to be reachable and announced
+    slides.forEach((slide) => {
+      const img = slide.querySelector('img');
+      if (!img) return;
+      slide.setAttribute('tabindex', '0');
+      slide.setAttribute('role', 'button');
+      slide.setAttribute('aria-label', 'Open this slide full screen');
+      slide.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openZoom(); }
+      });
+    });
 
     show(0, false);
   });
