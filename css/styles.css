@@ -114,7 +114,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 12px; border: 1px solid var(--acc); border-radius: 999px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase;
+  font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase;
   color: var(--acc); line-height: 1.4;
 }
 
@@ -213,7 +213,7 @@ main.notfound { position: relative; z-index: 2; }
 .hero-lamp {
   position: absolute; left: 46%; top: -28%; width: 1180px; height: 820px;
   border-radius: 50%; background: radial-gradient(closest-side, var(--acc), transparent 72%);
-  opacity: .2; filter: blur(22px); pointer-events: none;
+  opacity: .27; filter: blur(22px); pointer-events: none;
 }
 .hero-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(118% 78% at 16% 42%, rgba(7, 9, 14, .95) 32%, rgba(7, 9, 14, 0) 78%); }
 .hero-inner { position: relative; z-index: 2; display: flex; align-items: center; min-height: 760px; padding-top: 30px; padding-bottom: 40px; }
@@ -223,7 +223,7 @@ main.notfound { position: relative; z-index: 2; }
 .hero-hook { margin-top: 18px; font-size: clamp(17px, 1.15vw, 19px); line-height: 1.6; color: var(--muted); max-width: 46ch; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 38px; }
 
-.system { position: relative; flex-grow: 1; min-width: 0; height: 620px; }
+.system { position: relative; flex-grow: 1; min-width: 0; height: clamp(560px, 46vw, 720px); }
 .system-layer { position: absolute; inset: 0; transition: transform .5s var(--ease); }
 .system-layer svg { width: 100%; height: 100%; overflow: visible; }
 
@@ -249,6 +249,15 @@ main.notfound { position: relative; z-index: 2; }
 .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: 58px; }
 .section-head h2 { font-size: clamp(40px, 5.2vw, 74px); margin-top: 20px; }
 .section-aside { max-width: 340px; font-size: 16px; line-height: 1.6; color: var(--muted); text-align: right; margin-bottom: 10px; }
+/* the hint only means something to a pointer */
+/* Two versions of the same sentence: the pointer one names hover and tab,
+   the touch one says only what a finger can do. Each reads as a whole
+   sentence, so hiding either never leaves a fragment behind. */
+.touch-hint { display: none; }
+@media (hover: none), (max-width: 860px) {
+  .pointer-hint { display: none; }
+  .touch-hint { display: inline; }
+}
 
 .work-row {
   position: relative; display: grid;
@@ -258,12 +267,19 @@ main.notfound { position: relative; z-index: 2; }
   transition: padding-left .35s var(--ease), background .35s var(--ease);
 }
 .work-row:last-of-type { border-bottom: 1px solid var(--hair); }
+/* landing here from a case page: room above, and a brief mark so you can see
+   which row you came back to */
+.work-row { scroll-margin-top: 96px; }
+.work-row:target { background: linear-gradient(90deg, var(--row-tint), transparent 60%); }
+.work-row:target .work-name { color: #fff; }
+.work-row:target .work-num { color: var(--row-acc); }
 .work-row:hover, .work-row:focus-visible { padding-left: 14px; background: linear-gradient(90deg, var(--row-tint), transparent 60%); }
 .work-num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: var(--faint); transition: color .3s var(--ease); }
 .work-name { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: clamp(28px, 2.5vw, 40px); letter-spacing: -.028em; color: var(--text-soft); line-height: 1.02; transition: color .3s var(--ease); display: block; }
 .work-hook { display: block; font-size: 15.5px; line-height: 1.45; color: var(--muted); margin-top: 10px; transition: color .3s var(--ease); }
-.work-k { display: block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin-bottom: 9px; }
+.work-k { display: block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin-bottom: 9px; }
 .work-v { display: block; font-size: 16px; line-height: 1.5; color: var(--body); }
+.work-cell-result .work-v { color: var(--text); font-weight: 500; }
 .work-arrow { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #2A3342; display: flex; align-items: center; justify-content: center; color: var(--dim); transition: border-color .3s var(--ease), color .3s var(--ease), transform .3s var(--ease); }
 .work-row:hover .work-name, .work-row:focus-visible .work-name { color: #fff; }
 .work-row:hover .work-num, .work-row:focus-visible .work-num { color: var(--row-acc); }
@@ -478,7 +494,7 @@ main.notfound { position: relative; z-index: 2; }
 .case-facts { width: 330px; flex-shrink: 0; border-left: 1px solid #1E2531; padding-left: 32px; }
 .case-fact { margin-bottom: 26px; }
 .case-fact:last-child { margin-bottom: 0; }
-.case-fact-k { display: block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin-bottom: 9px; }
+.case-fact-k { display: block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin-bottom: 9px; }
 .case-fact-v { display: block; font-size: 17.5px; line-height: 1.5; color: var(--text); font-weight: 500; }
 
 .band { position: relative; padding: 88px 0 96px; }
@@ -498,7 +514,7 @@ main.notfound { position: relative; z-index: 2; }
 /* story module: decisions */
 .decisions { display: flex; gap: 28px; margin-top: 52px; }
 .decision { flex: 1 1 0; min-width: 0; padding: 32px 30px 32px 34px; border-left: 2px solid var(--acc); background: linear-gradient(90deg, var(--acc-tint, rgba(91,225,216,.06)), transparent 70%); }
-.decision-k { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.decision-k { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 .decision-k.on { color: var(--acc); }
 .decision p { margin: 10px 0 22px; font-size: clamp(16.5px, 1.1vw, 18px); line-height: 1.6; }
 .decision p:last-child { margin-bottom: 0; }
@@ -512,14 +528,14 @@ main.notfound { position: relative; z-index: 2; }
 .quote { position: relative; border: 1px solid var(--line); border-radius: 20px; padding: 36px 40px; background: linear-gradient(120deg, rgba(132, 182, 255, .05), transparent 70%); }
 .quote-node { position: absolute; left: -52px; top: 40px; width: 11px; height: 11px; border-radius: 50%; background: var(--ink); border: 2px solid var(--acc); }
 .quote blockquote { margin: 0; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 500; font-size: clamp(22px, 1.9vw, 28px); line-height: 1.35; letter-spacing: -.02em; color: #fff; }
-.quote figcaption { margin-top: 18px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.quote figcaption { margin-top: 18px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
 
 /* story module: before / after compare */
 .compare { display: flex; align-items: stretch; gap: 0; margin-top: 52px; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
 .compare > div { flex: 1 1 0; min-width: 0; padding: 38px 40px; }
 .compare > div:first-child { background: linear-gradient(120deg, rgba(255, 255, 255, .02), transparent); }
 .compare > div:last-child { background: linear-gradient(120deg, var(--acc-tint, rgba(255,128,149,.07)), transparent 70%); border-left: 1px solid var(--line); }
-.compare h3 { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.compare h3 { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 .compare > div:last-child h3 { color: var(--acc); }
 .compare ul { margin: 22px 0 0; padding: 0; list-style: none; }
 .compare li { position: relative; padding-left: 24px; margin-bottom: 15px; font-size: clamp(16.5px, 1.1vw, 18px); line-height: 1.6; color: var(--body); }
@@ -532,7 +548,7 @@ main.notfound { position: relative; z-index: 2; }
 .funnel-step { width: 100%; border: 1px solid var(--line); border-radius: 18px; padding: 30px 34px; background: linear-gradient(150deg, #0E131B, #0A0D13); text-align: center; }
 .funnel-step:nth-child(2) { width: 78%; }
 .funnel-step:nth-child(3) { width: 56%; border-color: var(--acc); background: linear-gradient(150deg, var(--acc-tint, rgba(172,147,255,.1)), #0A0D13); }
-.funnel-step h3 { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.funnel-step h3 { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 .funnel-step:nth-child(3) h3 { color: var(--acc); }
 .funnel-step p { margin-top: 12px; font-size: clamp(16.5px, 1.1vw, 18px); line-height: 1.6; color: var(--body); }
 .funnel-step:nth-child(3) p { color: var(--text); }
@@ -580,6 +596,62 @@ main.notfound { position: relative; z-index: 2; }
 .deck-note strong { color: var(--text-soft); font-weight: 600; }
 .deck-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+/* An author `display` beats the UA rule for [hidden], so a closed lightbox
+   would otherwise sit invisible over the whole page and swallow every click. */
+[hidden] { display: none !important; }
+
+/* full-screen slide: the only way a 16:9 deck is readable on a phone */
+.deck-zoom {
+  position: fixed; inset: 0; z-index: 90;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px; padding: 20px;
+  background: rgba(4, 6, 10, .95);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.deck-zoom-frame {
+  flex: 1 1 auto; min-height: 0; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.deck-zoom img {
+  max-width: 100%; max-height: 100%;
+  border-radius: 12px; background: #fff;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+}
+/* A quarter turn, so a 16:9 slide can use the long edge of a portrait screen.
+   The image is taken out of flow first: rotated in place it would still lay
+   out at its unrotated width and push the frame sideways. */
+.deck-zoom.is-turned img {
+  position: absolute; left: 50%; top: 50%;
+  max-width: none; max-height: none;
+  /* the long edge spans the screen's long edge, without the short edge
+     (width / 16 * 9 once turned) outgrowing the frame */
+  width: min(calc(100vh - 170px), calc((100vw - 40px) * 16 / 9)); height: auto;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+.deck-zoom-bar { display: flex; align-items: center; gap: 18px; flex: 0 0 auto; }
+.deck-zoom-count { margin: 0; color: var(--muted); }
+.deck-zoom-turn {
+  min-height: 44px; padding: 0 18px; border-radius: 999px;
+  border: 1px solid #2A3342; color: var(--text-soft);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase;
+  display: inline-flex; align-items: center;
+}
+.deck-zoom-turn:hover { border-color: var(--acc); color: var(--acc); }
+.deck-zoom-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 1px solid #2A3342; background: rgba(12, 16, 23, .9);
+  display: flex; align-items: center; justify-content: center; color: var(--text);
+}
+.deck-zoom-close:hover { border-color: var(--acc); color: var(--acc); }
+body.deck-zoomed { overflow: hidden; }
+/* the slide itself is a control on touch, so say so */
+.deck.is-live .deck-slide { cursor: zoom-in; }
+.deck-hint-pointer { display: inline; }
+@media (hover: none) { .deck-hint-pointer { display: none; } }
+
 /* story module: evidence grid */
 .evidence { display: flex; gap: 28px; align-items: stretch; margin-top: 52px; }
 .evidence figure { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
@@ -592,6 +664,26 @@ main.notfound { position: relative; z-index: 2; }
 /* a single proof photograph, not a full-bleed screenshot */
 .evidence .proof-photo { flex: 0 1 560px; }
 
+/* A lead frame at full width, with the rest beneath it. An interface shot or
+   a demo is the strongest thing a case page can show, so it gets the room. */
+/* The lead frame is the slot a real screenshot or a demo belongs in, so it is
+   deliberately the biggest thing in the section. It is also capped: a 16:10
+   box across the full shell would be 800px of empty placeholder until the
+   file lands, which reads as unfinished rather than as a frame waiting. */
+.evidence-feature { margin-top: 52px; }
+.evidence-feature > .evidence-lead { display: block; margin: 0 auto; max-width: 1040px; }
+.evidence-feature > .evidence-lead > .media { max-height: 58vh; }
+.evidence-feature > .evidence { margin-top: 24px; }
+/* and the glyph inside a fallback never grows past a plausible UI chrome size */
+.media-fallback svg { max-width: 220px; }
+/* one ratio across the supporting row, so the two frames and their captions line up */
+.evidence-feature > .evidence > figure > .media { aspect-ratio: 16 / 10; }
+.evidence-pending {
+  margin: 18px auto 0; max-width: 1040px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint);
+}
+
 /* story module: stat */
 .stat { text-align: right; flex-shrink: 0; }
 .stat-num { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: clamp(90px, 13vw, 190px); color: var(--acc); line-height: .78; letter-spacing: -.04em; }
@@ -603,6 +695,9 @@ main.notfound { position: relative; z-index: 2; }
 
 .case-next { position: relative; padding: 84px 0; background: var(--deep); border-top: 1px solid var(--line-soft); overflow: hidden; }
 .case-next > .shell { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 30px; }
+.case-next-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.case-next-actions .ghost { border-color: #2A3342; }
+.case-next-actions .ghost:hover { border-color: var(--next-acc, var(--acc)); }
 .case-next-glow { position: absolute; left: 50%; bottom: -320px; width: 1200px; height: 520px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(closest-side, var(--next-acc, var(--acc)), transparent 70%); opacity: .13; filter: blur(22px); pointer-events: none; }
 .case-next h2 { font-size: clamp(28px, 3.6vw, 54px); }
 .case-next .cta { background: var(--next-acc, var(--acc)); }
@@ -714,18 +809,23 @@ main.notfound { position: relative; z-index: 2; }
   .hero-copy { width: 100%; }
   .hero-hook { max-width: none; }
   .hero-vignette { background: radial-gradient(120% 60% at 50% 18%, rgba(7, 9, 14, .92) 40%, rgba(7, 9, 14, 0) 82%); }
-  .system { height: 260px; }
-  .system-layer { transform: none !important; }
+  .system { height: clamp(340px, 52vw, 460px); }
 
-  .work-row { grid-template-columns: 30px minmax(0, 1fr) 48px; gap: 16px; grid-template-areas: "n t a" ". r a" ". s a"; padding: 26px 6px 26px 0; align-items: start; }
+  /* Result before role, and both labels inline: four short lines instead of
+     six blocks, which is what made the list feel tall and repetitive. */
+  .work-row { grid-template-columns: 34px minmax(0, 1fr) 48px; gap: 14px; grid-template-areas: "n t a" ". s a" ". r a"; padding: 24px 6px 26px 0; align-items: start; }
+  .work-cell-role .work-k, .work-cell-result .work-k { display: inline; margin: 0 8px 0 0; vertical-align: baseline; }
+  .work-cell-role .work-v, .work-cell-result .work-v { display: inline; }
+  .work-cell-result .work-v { color: var(--row-acc); font-weight: 600; font-size: 17px; }
+  .work-cell-role .work-v { color: var(--muted); font-size: 16px; }
   /* the row is tall once it stacks, so the number and the arrow ride the
      top line rather than floating in the middle of it */
   .work-num { margin-top: 10px; }
   .work-arrow { margin-top: 2px; }
   .work-num { grid-area: n; }
   .work-row > .work-main { grid-area: t; }
-  .work-row > .work-cell-role { grid-area: r; margin-top: 20px; }
-  .work-row > .work-cell-result { grid-area: s; margin-top: 16px; }
+  .work-row > .work-cell-result { grid-area: s; margin-top: 14px; }
+  .work-row > .work-cell-role { grid-area: r; margin-top: 8px; }
   .work-arrow { grid-area: a; }
   .work-ghost { display: none; }
 
@@ -789,8 +889,8 @@ main.notfound { position: relative; z-index: 2; }
   .nav-resume { border: 0; padding: 0; justify-content: flex-start; }
 
   .work { padding: 72px 0 80px; }
-  .work-name { font-size: 26px; }
-  .work-v { font-size: 15.5px; }
+  .work-name { font-size: 28px; font-weight: 800; letter-spacing: -.03em; }
+  .work-k { font-size: 12.5px; }
   .wins { padding: 78px 0 84px; }
   .about { padding: 72px 0; }
   .contact { padding: 84px 0 80px; }
@@ -825,8 +925,8 @@ main.notfound { position: relative; z-index: 2; }
   .hero-line { font-size: 17px; margin-top: 18px; }
   .hero-hook { font-size: 15px; }
   .hero-actions { gap: 14px; margin-top: 26px; flex-direction: column; align-items: stretch; }
-  .system { height: 200px; }
-  .work-name { font-size: 24px; }
+  .system { height: clamp(260px, 62vw, 330px); }
+  .work-name { font-size: 27px; }
   .band { padding: 60px 0 64px; }
   /* headings set their own line breaks for a wide column; on a phone the
      natural wrap reads better than a stranded last word */
@@ -845,15 +945,16 @@ main.notfound { position: relative; z-index: 2; }
   .award-reveal-inner { padding-left: 0; }
   .award-head { grid-template-columns: 38px minmax(0, 1fr) 28px; gap: 10px; }
   .hero-title { font-size: 32px; }
-  .work-name { font-size: 21px; }
+  .work-name { font-size: 24px; }
   .case-facts { grid-template-columns: minmax(0, 1fr); }
-  .brand { font-size: 10px; letter-spacing: .16em; }
+  .brand { font-size: 12px; letter-spacing: .14em; }
   .award-name { font-size: 21px; }
   .award-result { font-size: 19px; }
-  .award-with { font-size: 14.5px; }
-  .work-v { font-size: 15px; }
+  .award-with { font-size: 15px; }
+  .work-cell-result .work-v { font-size: 16px; }
+  .work-cell-role .work-v { font-size: 15.5px; }
   .case-fact-v { font-size: 16px; }
-  .deck-count { min-width: 0; font-size: 11px; letter-spacing: .1em; }
+  .deck-count { min-width: 0; font-size: 12.5px; letter-spacing: .1em; }
   .deck-btn { width: 46px; height: 46px; }
 }
 
