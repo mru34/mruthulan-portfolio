@@ -3,6 +3,97 @@
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  /* ------------------------------------------------------- arrival --- */
+  /* Where a page should start when you arrive on it.
+     A top-level tab gets this right on its own, but embedded -- in an iframe
+     sized to its content, which is how the preview renders -- the OUTER
+     document keeps the scroll position it had when you clicked, so a fresh
+     page opens partway down. `scrollIntoView` is the one call that crosses a
+     frame boundary, so landing on the heading fixes the embedded case and
+     leaves the plain case exactly as it was.
+
+     Back and forward are left alone: `scrollRestoration` stays on `auto`, and
+     a `back_forward` navigation is never touched, so returning to a page puts
+     you back where you were. */
+
+  function scrollTo(target, instant) {
+    if (!target) return;
+    target.scrollIntoView({
+      block: 'start',
+      behavior: instant || still.matches ? 'instant' : 'smooth'
+    });
+  }
+
+  // focus follows the eye, so the keyboard carries on from the same place
+  function focusOn(target) {
+    if (!target) return;
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  }
+
+  function hashTarget() {
+    if (location.hash.length < 2) return null;
+    try { return document.querySelector(location.hash); } catch (e) { return null; }
+  }
+
+  const heading = () => document.querySelector('.case-title, #hero-title, main h1, main h2');
+
+  const entry = (performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || null;
+  const restored = entry ? entry.type === 'back_forward' : false;
+
+  if (!restored) {
+    /* Focus moves only when you got here from a link -- arriving at the site
+       cold should still put the skip link first. */
+    let sameSite = false;
+    try { sameSite = !!document.referrer && new URL(document.referrer).origin === location.origin; }
+    catch (e) { sameSite = false; }
+    const moveFocus = sameSite || location.hash.length > 1;
+
+    // Once the reader has taken over, nothing here touches the scroll again.
+    let taken = false;
+    const takeOver = () => { taken = true; };
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(
+      (type) => window.addEventListener(type, takeOver, { once: true, passive: true }));
+
+    const land = () => {
+      if (taken) return;
+      const target = hashTarget();
+      if (target) {
+        scrollTo(target, true);
+        if (moveFocus) focusOn(target);
+        return;
+      }
+      /* No fragment: start at the very top of the page, so the header and the
+         way back are on screen above the title. */
+      window.scrollTo(0, 0);
+      if (!moveFocus) return;
+      /* Only when the reader followed a link from inside the site. Arriving
+         cold, `scrollIntoView` would move the sequential focus starting point
+         past the skip link, and the skip link has to stay the first tab stop
+         for someone who just landed here. */
+      scrollTo(document.querySelector('.site-header') || document.body, true);
+      focusOn(heading());
+    };
+    // after layout, and again once webfonts have settled the page height
+    requestAnimationFrame(land);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(land);
+  }
+
+  /* An in-page link has the same problem when embedded: the browser scrolls
+     the fragment into view inside the frame, but the frame itself stays put.
+     The default is left to run -- so the hash, history and Back all behave
+     natively -- and the target is then nudged into view. */
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest && event.target.closest('a[href^="#"]');
+    if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey) return;
+    const hash = link.getAttribute('href');
+    if (hash.length < 2) return;
+    let target = null;
+    try { target = document.querySelector(hash); } catch (e) { return; }
+    if (!target) return;
+    requestAnimationFrame(() => { scrollTo(target, false); focusOn(target); });
+  });
+
   /* ------------------------------------------------------------- menu --- */
 
   const menuButton = document.querySelector('.menu-button');

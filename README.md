@@ -21,6 +21,33 @@ The forms are inline SVG plus CSS layers — **no WebGL and no 3D library**. Dep
 
 Prototype sources for both iterations live in `design/signal-lab-v2/`. The longer brief is in [REDESIGN_PLAN.md](REDESIGN_PLAN.md).
 
+### Arriving on a page
+
+A link to a case page has to open at that page's title. In a normal tab the
+browser does that by itself, but **embedded** — in an iframe sized to its
+content, which is how the shared preview renders — the *outer* document keeps
+the scroll position it had when the link was clicked, so a fresh page opens
+partway down. `scrollIntoView` is the one call that crosses a frame boundary,
+so on arrival the page scrolls its own top into view and puts focus on the
+heading. In-page fragment links do the same thing after the browser's default
+has run, so the hash and history stay native.
+
+Back and forward are deliberately untouched: `history.scrollRestoration` is
+left on `auto`, and a `back_forward` navigation never runs any of this, so
+returning to a page puts the reader back where they were. The landing also
+stands down the moment the reader scrolls, so nothing ever pulls the page out
+from under them.
+
+### Type scale
+
+The hero and the case titles are the only display-scale type. Everything that
+*carries information* — project names, the role and result on each Work row,
+case body copy, award details, captions and links — is sized to be read, not
+skimmed past, with `clamp()` so it tracks the viewport from phone to wide
+laptop. Paragraphs are capped at `--prose` (68ch) so a wider shell never turns
+into a long line. The smallest mono labels use `--faint`, which is the lowest
+value in the palette that still clears 6:1 on the section grounds.
+
 ### Rules the design depends on
 
 - No stock photography, ever. Real photos are optional and supplied by Mruthulan; every slot has a drawn fallback that looks finished on its own.
