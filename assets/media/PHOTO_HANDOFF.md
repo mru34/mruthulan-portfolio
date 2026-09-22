@@ -40,3 +40,23 @@ photo exists.
 `meant-award.jpg` (the wide stage shot whose screen reads *Dell InnovateFest
 2026 — Polytechnic 2nd Runner-up*) is also available if you would rather use it
 than the close handover.
+
+
+## SP InnovateDash photos — received and placed
+
+Two photos of the **Dell InnovateDash Finals, Singapore Polytechnic, 26 June
+2026** (the event's own title slide, readable in the group shot) now fill the
+SignalBridge row:
+
+| Site file | Served as | Shows |
+| --- | --- | --- |
+| `signalbridge-innovatedash-team.jpg` | `win-signalbridge-team.webp` | The line-up on stage with the finals title slide behind. |
+| `signalbridge-innovatedash-award.jpg` | `win-signalbridge-award.webp` | A prize being handed over. |
+
+Neither shows a Champion trophy or plaque — they show the finals and the prize
+presentation — so the captions say exactly that and leave the result to the row
+itself, which states Champion and links the LinkedIn post and SP's feature.
+
+Note the naming: the row is titled **SP InnovateDash 2026** while the slide in
+the photograph reads **Dell InnovateDash Finals**. Same event, two shorthands.
+Worth aligning the row title if you want the page and the photo to match.
