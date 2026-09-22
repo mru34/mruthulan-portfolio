@@ -25,13 +25,18 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <div class="field" aria-hidden="true">
+    <div class="field-grid"></div>
+    <div class="field-aura"></div>
+  </div>
+
   <header class="site-header" id="top">
     <div class="shell nav-wrap">
       <a class="brand" href="#top">Mruthulan</a>
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
       <nav class="main-nav" id="main-nav" aria-label="Main">
         <a href="#work">Work</a>
-        <a href="#recognition">Recognition</a>
+        <a href="#wins">Wins</a>
         <a href="#about">About</a>
         <a href="#credentials">Credentials</a>
         <a href="#contact">Contact</a>
@@ -55,7 +60,7 @@
           <p class="hero-hook">Six builds. One of them is taking bookings for a barber shop in Singapore right now.</p>
           <div class="hero-actions">
             <a class="cta" href="#work">Start with the work <span aria-hidden="true">↓</span></a>
-            <a class="ghost" href="https://www.linkedin.com/in/mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+            <a class="ghost" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
             <a class="ghost" href="mailto:mruthulansenthilnathan@gmail.com" data-event="contact_click">Email me</a>
           </div>
         </div>
@@ -165,43 +170,41 @@
       </div>
     </section>
 
-    <!-- ====================================================== recognition -->
-    <section class="rec" id="recognition" aria-labelledby="rec-title">
-      <div class="thread" aria-hidden="true" style="color:#C9BFA9;opacity:.9"></div>
-      <div class="knot" aria-hidden="true" style="top:0;background:#8A6A2F;--knot-ring:#F2EDE4;box-shadow:0 0 0 4px #F2EDE4"></div>
+    <!-- ============================================================= wins -->
+    <span id="recognition" class="anchor-alias" aria-hidden="true"></span>
+    <section class="wins" id="wins" aria-labelledby="wins-title">
+      <div class="wins-light" aria-hidden="true">
+        <span class="wins-ray a"></span>
+        <span class="wins-ray b"></span>
+      </div>
+      <div class="thread" aria-hidden="true" style="color:var(--gold);opacity:.16"></div>
+      <div class="knot" aria-hidden="true" style="top:0;background:var(--gold);--knot-ring:var(--win-ground);box-shadow:0 0 0 4px var(--win-ground),0 0 18px var(--gold-glow)"></div>
       <div class="shell">
-        <div class="rec-head reveal">
+        <div class="wins-head reveal">
           <div>
-            <p class="mono kicker">02 / Recognition</p>
-            <h2 class="dsp" id="rec-title">3 hackathon awards.</h2>
-            <p class="rec-lead">All in 2026, with three different projects. Open a row for the photo and the proof.</p>
+            <p class="mono kicker">02 / Wins</p>
+            <h2 class="dsp" id="wins-title"><em>3 hackathon awards.</em></h2>
+            <p class="wins-lead">Two champions and a second runner-up, all in 2026, across three different projects. Open a row for the photographs and the proof.</p>
           </div>
-          <svg class="rec-seal" width="104" height="104" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="#8A6A2F"><circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="35" stroke-dasharray="3 5"/><circle cx="50" cy="50" r="23"/></svg>
+          <svg class="wins-seal" width="112" height="112" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="var(--gold)">
+            <circle cx="50" cy="50" r="46" stroke-opacity=".5"/>
+            <g><circle cx="50" cy="50" r="35" stroke-dasharray="3 5"/></g>
+            <circle cx="50" cy="50" r="23" stroke-opacity=".8"/>
+            <path d="M50 38l3.4 7.3 7.9 1-5.8 5.6 1.5 8-7-3.8-7 3.8 1.5-8-5.8-5.6 7.9-1z" stroke-opacity=".9"/>
+          </svg>
         </div>
 
         <div class="award-item reveal" data-award="sp">
           <button class="award-head" type="button" aria-expanded="false" aria-controls="award-sp-panel">
             <span class="award-num">01</span>
             <span><span class="award-name">SP InnovateDash 2026</span><span class="award-with">With <strong>SignalBridge</strong> — a consent-led youth support platform.</span></span>
-            <span class="award-place">Champion</span>
-            <span class="award-toggle" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg>
-            </span>
+            <span class="award-place"><span class="award-result">Champion</span></span>
+            <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
           </button>
           <div class="award-reveal" id="award-sp-panel">
             <div class="award-reveal-inner">
-              <figure class="award-photo">
-                <div class="media ratio-32" data-media="award-sp-innovatedash">
-                  <div class="media-fallback" aria-hidden="true">
-                    <svg viewBox="0 0 120 80" fill="none" stroke="#8A6A2F" stroke-width="1.1"><circle cx="60" cy="34" r="19" stroke-opacity=".9"/><circle cx="60" cy="34" r="26" stroke-opacity=".45" stroke-dasharray="3 5"/><path d="M60 26l2.6 5.6 6 .8-4.4 4.3 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1-4.4-4.3 6-.8z" stroke-opacity=".9"/><path d="M48 58l-5 16 17-7 17 7-5-16" stroke-opacity=".6"/></svg>
-                  </div>
-                </div>
-              </figure>
-              <div class="award-proof">
-                <p>The win qualified our team for Dell InnovateFest. Singapore Polytechnic featured the team.</p>
-                <a class="award-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7476489524982857730/" target="_blank" rel="noopener noreferrer" data-event="proof_click">Read my LinkedIn post <span aria-hidden="true">↗</span></a>
-                <p style="margin-top:14px;margin-bottom:0"><a class="award-inline" href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noopener noreferrer">Singapore Polytechnic’s feature ↗</a></p>
-              </div>
+              <div class="award-photos"><figure><div class="media ratio-32" data-media="win-signalbridge-team"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><circle cx="42" cy="32" r="10"/><circle cx="60" cy="27" r="11.5"/><circle cx="78" cy="32" r="10"/><path d="M26 60c0-9 7-15 16-15s16 6 16 15"/><path d="M44 62c0-10 7-17 16-17s16 7 16 17"/><path d="M62 60c0-9 7-15 16-15s16 6 16 15"/><path d="M14 70h92" stroke-opacity=".3"/></svg></div></div></figure><figure><div class="media ratio-32" data-media="win-signalbridge-award"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><path d="M46 14h28v13a14 14 0 0 1-28 0z"/><path d="M46 17h-9a9 9 0 0 0 9 9"/><path d="M74 17h9a9 9 0 0 1-9 9"/><path d="M60 41v10"/><path d="M50 58h20l3 9H47z"/><circle cx="60" cy="40" r="30" stroke-opacity=".28" stroke-dasharray="3 6"/></svg></div></div></figure></div>
+              <div class="award-proof"><p>The win qualified our team for Dell InnovateFest. Singapore Polytechnic featured the team.</p><a class="award-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7476489524982857730/" target="_blank" rel="noopener noreferrer" data-event="proof_click">Read my LinkedIn post <span aria-hidden="true">↗</span></a><p style="margin-top:16px;margin-bottom:0"><a class="award-inline" href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noopener noreferrer">Singapore Polytechnic’s feature ↗</a></p></div>
             </div>
           </div>
         </div>
@@ -210,24 +213,13 @@
           <button class="award-head" type="button" aria-expanded="false" aria-controls="award-dell-panel">
             <span class="award-num">02</span>
             <span><span class="award-name">Dell InnovateFest 2026</span><span class="award-with">With <strong>MEANT</strong> — an AAC communication assistant, built with SPD Ltd. A separate project from SignalBridge.</span></span>
-            <span class="award-place">Second runner-up<br>S$3,000</span>
-            <span class="award-toggle" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg>
-            </span>
+            <span class="award-place"><span class="award-result">Second runner-up</span><span class="award-prize">S$3,000 prize</span></span>
+            <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
           </button>
           <div class="award-reveal" id="award-dell-panel">
             <div class="award-reveal-inner">
-              <figure class="award-photo">
-                <div class="media ratio-32" data-media="award-dell-innovatefest">
-                  <div class="media-fallback" aria-hidden="true">
-                    <svg viewBox="0 0 120 80" fill="none" stroke="#8A6A2F" stroke-width="1.1"><circle cx="60" cy="34" r="19" stroke-opacity=".9"/><circle cx="60" cy="34" r="26" stroke-opacity=".45" stroke-dasharray="3 5"/><path d="M60 26l2.6 5.6 6 .8-4.4 4.3 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1-4.4-4.3 6-.8z" stroke-opacity=".9"/><path d="M48 58l-5 16 17-7 17 7-5-16" stroke-opacity=".6"/></svg>
-                  </div>
-                </div>
-              </figure>
-              <div class="award-proof">
-                <p>Representing Singapore Polytechnic at the national final.</p>
-                <a class="award-link" href="meant.html" data-event="proof_click">Read the MEANT case study <span aria-hidden="true">→</span></a>
-              </div>
+              <div class="award-photos single"><figure><div class="media ratio-32" data-media="win-meant-event"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><path d="M30 60V36l14-9 14 9v24"/><path d="M58 60V28l16-10 16 10v32"/><path d="M16 60h88" stroke-opacity=".4"/><path d="M60 8v9M48 13l4 7M72 13l-4 7" stroke-opacity=".6"/></svg></div></div></figure></div>
+              <div class="award-proof"><p>Representing Singapore Polytechnic at the national final.</p><a class="award-link" href="meant.html" data-event="proof_click">Read the MEANT case study <span aria-hidden="true">→</span></a></div>
             </div>
           </div>
         </div>
@@ -236,24 +228,13 @@
           <button class="award-head" type="button" aria-expanded="false" aria-controls="award-autodesk-panel">
             <span class="award-num">03</span>
             <span><span class="award-name">Autodesk Singapore AI+ML Hackathon 2026</span><span class="award-with">With <strong>KnowCad</strong> — an AI customer-service co-pilot.</span></span>
-            <span class="award-place">Champion</span>
-            <span class="award-toggle" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg>
-            </span>
+            <span class="award-place"><span class="award-result">Champion</span></span>
+            <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
           </button>
           <div class="award-reveal" id="award-autodesk-panel">
             <div class="award-reveal-inner">
-              <figure class="award-photo">
-                <div class="media ratio-32" data-media="award-autodesk">
-                  <div class="media-fallback" aria-hidden="true">
-                    <svg viewBox="0 0 120 80" fill="none" stroke="#8A6A2F" stroke-width="1.1"><circle cx="60" cy="34" r="19" stroke-opacity=".9"/><circle cx="60" cy="34" r="26" stroke-opacity=".45" stroke-dasharray="3 5"/><path d="M60 26l2.6 5.6 6 .8-4.4 4.3 1.1 6.1-5.3-2.9-5.3 2.9 1.1-6.1-4.4-4.3 6-.8z" stroke-opacity=".9"/><path d="M48 58l-5 16 17-7 17 7-5-16" stroke-opacity=".6"/></svg>
-                  </div>
-                </div>
-              </figure>
-              <div class="award-proof">
-                <p>First place, working to a short deadline and presenting the concept to a non-technical audience.</p>
-                <a class="award-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7445494743490453504/" target="_blank" rel="noopener noreferrer" data-event="proof_click">Read my LinkedIn post <span aria-hidden="true">↗</span></a>
-              </div>
+              <div class="award-photos single"><figure><div class="media ratio-32" data-media="win-knowcad-event"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><path d="M30 60V36l14-9 14 9v24"/><path d="M58 60V28l16-10 16 10v32"/><path d="M16 60h88" stroke-opacity=".4"/><path d="M60 8v9M48 13l4 7M72 13l-4 7" stroke-opacity=".6"/></svg></div></div></figure></div>
+              <div class="award-proof"><p>First place, working to a short deadline and presenting the concept to a non-technical audience.</p><a class="award-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7445494743490453504/" target="_blank" rel="noopener noreferrer" data-event="proof_click">Read my LinkedIn post <span aria-hidden="true">↗</span></a></div>
             </div>
           </div>
         </div>
@@ -315,7 +296,7 @@
             <p class="toolkit">JavaScript · HTML &amp; CSS · Java · Python &amp; FastAPI · Node.js · SQL &amp; PostgreSQL · Git · Testing</p>
             <div class="about-links">
               <a class="quiet" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-              <a class="quiet" href="https://www.linkedin.com/in/mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+              <a class="quiet" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
               <a class="quiet" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
             </div>
           </div>
@@ -381,7 +362,7 @@
           <p class="contact-lead">Open to software internships and collaborations.</p>
           <a class="cta contact-mail" href="mailto:mruthulansenthilnathan@gmail.com" data-event="contact_click">mruthulansenthilnathan@gmail.com</a>
           <div class="contact-links">
-            <a class="ghost" href="https://www.linkedin.com/in/mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+            <a class="ghost" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
             <a class="ghost" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
             <a class="ghost" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
           </div>
@@ -395,7 +376,7 @@
       <span class="mono">Mruthulan · Made in Singapore</span>
       <nav class="footer-nav" aria-label="Footer">
         <a class="mono" href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
-        <a class="mono" href="https://www.linkedin.com/in/mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="mono" href="privacy.html">Privacy</a>
         <a class="mono" href="#top">Back to top ↑</a>
