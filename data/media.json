@@ -20,15 +20,25 @@
     "alt": "",
     "caption": null
   },
-  "win-meant-event": {
-    "src": null,
-    "alt": "",
-    "caption": null
+  "win-meant-handover": {
+    "src": "win-meant-handover.webp",
+    "alt": "Six students in school blazers and red ties on a stage, holding a clear acrylic plaque engraved 2nd Runner Up together with an event official, flanked by two hosts.",
+    "caption": "Taking the plaque at Dell InnovateFest"
   },
-  "win-knowcad-event": {
-    "src": null,
-    "alt": "",
-    "caption": null
+  "win-meant-team": {
+    "src": "win-meant-team.webp",
+    "alt": "The MEANT team standing with the second runner-up plaque in front of their project poster at Dell InnovateFest, with two of the event's organisers.",
+    "caption": "With the MEANT poster, after the result"
+  },
+  "win-knowcad-champion": {
+    "src": "win-knowcad-champion.webp",
+    "alt": "Team members on a stage holding small trophies while a photographer takes the shot, in front of a screen reading 2026 AI Hackathon, Winners — Champion, KnowCAD Intellicase.",
+    "caption": "Champion, announced on the night"
+  },
+  "win-knowcad-team": {
+    "src": "win-knowcad-team.webp",
+    "alt": "Four team members in Autodesk Singapore Hackathon 2026 shirts, each holding a small Champion trophy, in front of the event screen.",
+    "caption": "The team, with the trophies"
   },
   "signalbridge-shot-1": {
     "src": null,

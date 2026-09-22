@@ -348,16 +348,20 @@ main.notfound { position: relative; z-index: 2; }
 .award-item:hover .award-reveal,
 .award-item:focus-within .award-reveal,
 .award-item.is-open .award-reveal {
-  max-height: 960px; visibility: visible;
+  max-height: 1200px; visibility: visible;
   transition: max-height .5s var(--ease), visibility 0s;
 }
-.award-reveal-inner { display: flex; gap: 34px; align-items: flex-end; padding: 6px 0 42px 118px; }
+.award-reveal-inner { display: flex; gap: 36px; align-items: flex-start; padding: 6px 0 44px 118px; }
 
-/* One slot, or the two-photo story on the SignalBridge row. */
-.award-photos { display: flex; gap: 18px; flex-shrink: 0; }
-.award-photos figure { width: 330px; }
-.award-photos.single figure { width: 430px; }
-.award-proof { flex-grow: 1; min-width: 0; }
+/* The photo pair. Each frame keeps its own aspect ratio and the row shares
+   one height, so the widths come out proportional and nothing is ever
+   cropped -- no face, no award, no readable event text. The flex ratio and
+   the aspect are set from the file's real dimensions as it loads; until then
+   the drawn fallback uses the 3:2 default below. */
+.award-photos { display: flex; gap: 16px; align-items: flex-start; flex: 1 1 62%; min-width: 0; }
+.award-photos figure { flex: 1 1 0; min-width: 0; }
+.award-photos.single { flex: 1 1 46%; }
+.award-proof { flex: 1 1 30%; min-width: 230px; }
 .award-proof p { font-size: clamp(16px, 1.1vw, 18px); line-height: 1.65; color: #B3A58B; max-width: 48ch; margin-bottom: 22px; }
 .award-link {
   display: inline-flex; align-items: center; gap: 9px; min-height: 52px; padding: 0 24px;
@@ -686,8 +690,8 @@ main.notfound { position: relative; z-index: 2; }
   .award-head { grid-template-columns: 70px minmax(0, 1fr) 240px 42px; gap: 22px; padding: 32px 8px 32px 0; }
   .award-num { font-size: 48px; }
   .award-reveal-inner { padding-left: 92px; gap: 28px; }
-  .award-photos figure { width: 260px; }
-  .award-photos.single figure { width: 340px; }
+  .award-photos { flex: 1 1 58%; }
+  .award-proof { flex: 1 1 34%; min-width: 200px; }
   .cred { grid-template-columns: 190px minmax(0, 1fr); gap: 28px; }
   .case-facts { width: 290px; }
   .case-role-k { width: 260px; }
@@ -740,8 +744,8 @@ main.notfound { position: relative; z-index: 2; }
   .wins-head { flex-direction: column; gap: 18px; }
   .wins-seal { display: none; }
   .award-place { text-align: left; grid-column: 2; margin-top: 12px; }
-  .award-photos { flex-direction: column; }
-  .award-photos figure, .award-photos.single figure { width: 100%; max-width: 420px; }
+  .award-photos { flex-direction: column; flex: 1 1 auto; }
+  .award-photos figure { flex: 0 0 auto; width: 100%; max-width: 520px; }
 
   .about-top { flex-direction: column; gap: 32px; }
   .about-portrait { width: 100%; max-width: 400px; }

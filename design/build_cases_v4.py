@@ -344,7 +344,7 @@ PROJECTS = [
                  'link to the code. What is public is the result, the write-up I posted at the '
                  'time, and the description above.</p>'
                  + evidence([
-                     media('win-knowcad-event', 'ratio-32', fallback='award').replace('<figure>', '<figure class="proof-photo">'),
+                     media('win-knowcad-champion', 'ratio-32', fallback='award').replace('<figure>', '<figure class="proof-photo">'),
                  ])),
         ],
         'role': 'I worked on retrieval, the AI workflow, and getting the team’s work delivered in hackathon time.',
