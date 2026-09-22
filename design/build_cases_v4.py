@@ -306,9 +306,9 @@ PROJECTS = [
                                     'Confirm.'])), deep=True),
             band('Evidence', 'The booking flow, end to end.',
                  evidence([
-                     media('better-call-bhai-shot-1', 'ratio-1610', 'Choosing a service').replace('<figure>', '<figure class="wide">'),
+                     media('better-call-bhai-shot-1', 'ratio-1610', 'Choosing a service'),
                      media('better-call-bhai-shot-2', 'ratio-1610', 'Picking an open slot'),
-                     media('better-call-bhai-shot-3', 'ratio-1610', 'The booking, confirmed'),
+                     media('better-call-bhai-shot-3', 'ratio-1610', 'Confirmed, with a WhatsApp receipt'),
                  ])
                  + testimonial(OWNER_QUOTE, OWNER_ATTRIBUTION)),
         ],
@@ -374,8 +374,8 @@ PROJECTS = [
                  ]), deep=True),
             band('Evidence', 'The build.',
                  evidence([
-                     media('boss-breaker-shot-1', 'ratio-1610', 'Challenges and the points ledger').replace('<figure>', '<figure class="wide">'),
-                     media('boss-breaker-shot-2', 'ratio-1610', 'A boss raid in progress'),
+                     media('boss-breaker-shot-1', 'ratio-1610', 'Challenges, each worth points'),
+                     media('boss-breaker-shot-2', 'ratio-1610', 'Points, boss HP and inventory in one view'),
                  ])),
         ],
         'role': 'I built the API, the database schema and the game logic that ties challenges, points and raids together.',

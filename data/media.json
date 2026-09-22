@@ -1,25 +1,88 @@
 {
-  "about-portrait":            { "src": null, "alt": "", "caption": null, "focal": "50% 35%" },
-  "about-candid":              { "src": null, "alt": "", "caption": null },
-
-  "win-signalbridge-team":     { "src": null, "alt": "", "caption": null },
-  "win-signalbridge-award":    { "src": null, "alt": "", "caption": null },
-  "win-meant-event":           { "src": null, "alt": "", "caption": null },
-  "win-knowcad-event":         { "src": null, "alt": "", "caption": null },
-
-  "signalbridge-shot-1":       { "src": null, "alt": "", "caption": null },
-  "signalbridge-shot-2":       { "src": null, "alt": "", "caption": null },
-  "signalbridge-demo":         { "src": null, "poster": null, "caption": null },
-
-  "meant-shot-1":              { "src": null, "alt": "", "caption": null },
-  "meant-demo":                { "src": null, "poster": null, "caption": null },
-
-  "better-call-bhai-shot-1":   { "src": null, "alt": "", "caption": null },
-  "better-call-bhai-shot-2":   { "src": null, "alt": "", "caption": null },
-  "better-call-bhai-shot-3":   { "src": null, "alt": "", "caption": null },
-
-  "boss-breaker-shot-1":       { "src": null, "alt": "", "caption": null },
-  "boss-breaker-shot-2":       { "src": null, "alt": "", "caption": null },
-
-  "loomy-prototype-1":         { "src": null, "alt": "", "caption": null }
+  "about-portrait": {
+    "src": null,
+    "alt": "",
+    "caption": null,
+    "focal": "50% 35%"
+  },
+  "about-candid": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "win-signalbridge-team": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "win-signalbridge-award": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "win-meant-event": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "win-knowcad-event": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "signalbridge-shot-1": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "signalbridge-shot-2": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "signalbridge-demo": {
+    "src": null,
+    "poster": null,
+    "caption": null
+  },
+  "meant-shot-1": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  },
+  "meant-demo": {
+    "src": null,
+    "poster": null,
+    "caption": null
+  },
+  "better-call-bhai-shot-1": {
+    "src": "better-call-bhai-shot-1.jpg",
+    "alt": "The Better Call Bhai booking form with a service chosen from the shop's menu",
+    "caption": "Choosing a service"
+  },
+  "better-call-bhai-shot-2": {
+    "src": "better-call-bhai-shot-2.jpg",
+    "alt": "A day's time slots, with the taken ones struck through and one selected",
+    "caption": "Picking an open slot"
+  },
+  "better-call-bhai-shot-3": {
+    "src": "better-call-bhai-shot-3.jpg",
+    "alt": "The confirmation screen showing the service, date and time of the booking",
+    "caption": "Confirmed, with a WhatsApp receipt"
+  },
+  "boss-breaker-shot-1": {
+    "src": "boss-breaker-shot-1.jpg",
+    "alt": "The Boss Breaker challenge list, each wellness challenge showing its point value",
+    "caption": "Challenges, each worth points"
+  },
+  "boss-breaker-shot-2": {
+    "src": "boss-breaker-shot-2.jpg",
+    "alt": "The Boss Breaker dashboard showing a points total, the active boss's remaining HP and the inventory",
+    "caption": "Points, boss HP and inventory in one view"
+  },
+  "loomy-prototype-1": {
+    "src": null,
+    "alt": "",
+    "caption": null
+  }
 }

@@ -580,7 +580,11 @@ main.notfound { position: relative; z-index: 2; }
 .evidence { display: flex; gap: 28px; align-items: stretch; margin-top: 52px; }
 .evidence figure { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
 .evidence .wide { flex: 2 1 0; }
-.evidence figure:not(.wide):not(:only-child) > .media { aspect-ratio: auto; flex: 1 1 auto; }
+/* Only when a row mixes ratios: the wide figure sets the height and the rest
+   match it. Rows whose figures share a ratio keep it, so nothing is cropped.
+   Without :has() support the rule is skipped and every figure keeps its own
+   aspect ratio, which is the safe result either way. */
+.evidence:has(.wide) figure:not(.wide):not(:only-child) > .media { aspect-ratio: auto; flex: 1 1 auto; }
 /* a single proof photograph, not a full-bleed screenshot */
 .evidence .proof-photo { flex: 0 1 560px; }
 
