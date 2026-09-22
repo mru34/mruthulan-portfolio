@@ -34,10 +34,17 @@ To remove a photo again, set `src` back to `null`. The fallback returns.
 | --- | --- | --- | --- |
 | `about-portrait` | 4:5 | 900 × 1125 | About. Crop to head and shoulders. |
 | `about-candid` | 3:2 | 1200 × 800 | About, optional. With no file the block is removed entirely rather than left blank. |
-| `win-signalbridge-team` | 3:2 | 1200 × 800 | Wins, SP InnovateDash — the group picture. |
-| `win-signalbridge-award` | 3:2 | 1200 × 800 | Wins, SP InnovateDash — you receiving the award. |
-| `win-meant-event` | 3:2 | 1200 × 800 | Wins, Dell InnovateFest. Optional. |
-| `win-knowcad-event` | 3:2 | 1200 × 800 | Wins, Autodesk hackathon. Also used as the proof photo on the KnowCad case page. |
+| `win-signalbridge-team` | any | ≥ 1200 wide | Wins, SP InnovateDash — the group picture. **Empty:** no SP InnovateDash photo has been supplied yet. |
+| `win-signalbridge-award` | any | ≥ 1200 wide | Wins, SP InnovateDash — you receiving the award. **Empty**, same reason. |
+| `win-meant-handover` | any | ≥ 1200 wide | Wins, Dell InnovateFest — taking the plaque on stage. |
+| `win-meant-team` | any | ≥ 1200 wide | Wins, Dell InnovateFest — the team with the plaque and the MEANT poster. |
+| `win-knowcad-champion` | any | ≥ 1200 wide | Wins, Autodesk hackathon — the result on the screen. Also the proof photo on the KnowCad case page. |
+| `win-knowcad-team` | any | ≥ 1200 wide | Wins, Autodesk hackathon — the team with the trophies. |
+
+An award photo is **never cropped.** The frame takes the file's own aspect ratio
+as it loads, and the two frames in a row share one height, so their widths come
+out proportional. Any shape works: nothing will cut a face, an award or readable
+event text. The `3:2` in the markup only shapes the drawn fallback.
 | `<project>-shot-1`, `-shot-2`, `-shot-3` | 16:10 | 1600 × 1000 | Case page evidence. App frame only — no browser chrome, no real names or personal data. |
 | `<project>-demo` | 16:9 | ≤ 8s, muted | Case page. Set `poster` to one of the screenshots; it is used as the still under reduced motion. |
 | `loomy-prototype-1` | 16:10 | 1600 × 1000 | Loomy. Labelled as a prototype screen, not a shipped product. |

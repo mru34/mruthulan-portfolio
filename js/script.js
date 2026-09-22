@@ -354,9 +354,28 @@
           }
 
           if (entry.focal) node.style.objectPosition = entry.focal;
+
+          /* An award photo is never cropped: the frame takes the file's own
+             aspect ratio, and the figure's flex ratio is set to match, so a
+             pair sits at one height with proportional widths. Anything that
+             would otherwise be cut -- a face at the edge, the award, the
+             event text on a screen -- simply stays in frame. */
+          const shapeToFile = () => {
+            if (!node.naturalWidth || !node.naturalHeight) return;
+            const ratio = node.naturalWidth / node.naturalHeight;
+            slot.style.aspectRatio = node.naturalWidth + ' / ' + node.naturalHeight;
+            const figure = slot.closest('.award-photos figure');
+            if (figure) figure.style.flexGrow = ratio.toFixed(4);
+          };
+          if (slot.closest('.award-photos')) {
+            if (node.complete) shapeToFile();
+            node.addEventListener('load', shapeToFile);
+          }
+
           node.addEventListener('error', () => {
             node.remove();
             slot.classList.remove('has-file');
+            slot.style.aspectRatio = '';
           });
           slot.insertBefore(node, slot.firstChild);
           slot.classList.add('has-file');
