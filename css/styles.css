@@ -45,6 +45,14 @@
   --acc: #5BE1D8;
   --acc-glow: rgba(91, 225, 216, .30);
 
+  /* Wins: a warm ground of its own, still cut from the same dark as the hero */
+  --win-ground: #0B0A07;
+  --gold: #F2C97E;
+  --gold-deep: #C9964A;
+  --gold-soft: #E3C79A;
+  --gold-line: #433824;
+  --gold-glow: rgba(242, 201, 126, .32);
+
   --shell: 1320px;
   --gut: 80px;
   --thread-x: 52px;
@@ -74,6 +82,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 :focus-visible { outline: 2px solid var(--acc); outline-offset: 5px; border-radius: 8px; }
 
 .shell { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 var(--gut); }
+
+/* Keeps older #recognition links working now that the section is #wins. */
+.anchor-alias { display: block; height: 0; }
 
 .skip-link {
   position: absolute; left: 16px; top: -60px; z-index: 60;
@@ -121,6 +132,49 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 .text-link { color: var(--acc); border-bottom: 1px solid var(--acc-glow); padding-bottom: 2px; }
 .text-link:hover { color: var(--acc); border-bottom-color: var(--acc); }
+
+/* ---------------------------------------------------------- the field */
+/* One fixed ambient layer for the whole site. It sits above the section
+   grounds and below every piece of content (`main section > .shell` is
+   raised to z-index 2), so it can light the page without ever touching
+   legibility: the aura only ever adds light, never subtracts it. */
+
+.field { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; contain: strict; }
+
+.field-aura {
+  position: absolute; left: 0; top: 0;
+  width: var(--aura, 820px); height: var(--aura, 820px);
+  margin-left: calc(var(--aura, 820px) / -2);
+  margin-top: calc(var(--aura, 820px) / -2);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--tone, var(--acc)), transparent 70%);
+  opacity: .1; filter: blur(26px); mix-blend-mode: screen;
+  transform: translate3d(50vw, 42vh, 0);
+  transition: background .55s var(--ease), opacity .55s var(--ease);
+}
+
+/* The depth layer. Scroll shifts it against the page, which is what makes
+   the ground read as sitting behind the content rather than on it. */
+.field-grid {
+  position: absolute; left: -6%; right: -6%; top: -14%; bottom: -14%;
+  background-image: radial-gradient(circle at 1px 1px, rgba(150, 172, 200, .22) 1px, transparent 0);
+  background-size: 52px 52px;
+  opacity: .16;
+  -webkit-mask-image: radial-gradient(130% 90% at 50% 40%, #000 30%, transparent 78%);
+          mask-image: radial-gradient(130% 90% at 50% 40%, #000 30%, transparent 78%);
+}
+
+/* The local reaction to a tap or click on open ground. */
+.field-ping {
+  position: absolute; left: 0; top: 0; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+  border-radius: 50%; border: 1px solid var(--tone, var(--acc));
+  opacity: 0; mix-blend-mode: screen;
+}
+
+main section > .shell,
+main.text-page > .shell,
+main.notfound { position: relative; z-index: 2; }
+.site-header, .site-footer { position: relative; z-index: 30; }
 
 /* ---------------------------------------------------------- the thread */
 
@@ -206,39 +260,77 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .work-row:hover .work-num, .work-row:focus-visible .work-num { color: var(--row-acc); }
 .work-row:hover .work-arrow, .work-row:focus-visible .work-arrow { border-color: var(--row-acc); color: var(--row-acc); transform: translateX(4px); }
 
-/* -------------------------------------------------------- recognition */
+/* --------------------------------------------------------------- wins */
+/* Same dark family as the hero and Work, lit differently: this section is
+   the one place on the page allowed to celebrate. Gold light, display-scale
+   placings, and a slow shimmer that only runs when motion is welcome. */
 
-.rec { position: relative; padding: 96px 0; background: var(--bone); color: var(--bone-ink); overflow: hidden; }
-.rec > .shell { position: relative; }
-.rec .kicker { color: var(--brass-ink); }
-.rec .kicker::before { background: var(--brass); }
-.rec-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; margin-bottom: 40px; }
-.rec-head h2 { font-size: clamp(38px, 4.8vw, 66px); color: var(--bone-ink); margin-top: 18px; }
-.rec-seal { flex-shrink: 0; opacity: .5; }
-.rec-lead { margin-top: 20px; font-size: 17px; line-height: 1.6; color: var(--bone-body); max-width: 520px; }
-.award-inline { color: var(--brass-ink); border-bottom: 1px solid var(--bone-line); padding-bottom: 2px; font-size: 14px; }
-.award-inline:hover { color: var(--bone-ink); border-bottom-color: var(--brass); }
+.wins { position: relative; padding: 118px 0 124px; background: var(--win-ground); overflow: hidden; color: #2B2417; }
+.wins > .shell { position: relative; z-index: 2; }
+.wins .kicker { color: var(--gold-soft); }
+.wins .kicker::before { background: var(--gold); }
 
-/* Award rows: the result is always visible. Hover, focus or tap reveals the
-   event photo and the proof link. */
-.award-item { position: relative; border-top: 1px solid var(--bone-line); transition: background .35s var(--ease); }
-.award-item:last-of-type { border-bottom: 1px solid var(--bone-line); }
-.award-item:hover, .award-item:focus-within, .award-item.is-open { background: linear-gradient(90deg, rgba(138, 106, 47, .07), transparent 70%); }
+.wins-light { position: absolute; inset: 0; pointer-events: none; }
+.wins-light::before {
+  content: ""; position: absolute; left: 50%; top: -420px;
+  width: 1500px; height: 900px; transform: translateX(-50%);
+  background: radial-gradient(closest-side, var(--gold), transparent 70%);
+  opacity: .13; filter: blur(30px);
+}
+/* two soft shafts, as if the light is coming from above the stage */
+.wins-ray {
+  position: absolute; top: -300px; width: 320px; height: 1600px;
+  background: linear-gradient(to bottom, var(--gold-glow), transparent 58%);
+  filter: blur(30px); opacity: .42;
+}
+.wins-ray.a { left: 12%; transform: rotate(14deg); }
+.wins-ray.b { right: 8%; transform: rotate(-17deg); width: 380px; }
+
+.wins-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; margin-bottom: 54px; }
+.wins-head h2 { font-size: clamp(44px, 6vw, 84px); margin-top: 20px; color: #fff; }
+.wins-head h2 em {
+  font-style: normal;
+  background: linear-gradient(96deg, var(--gold-soft) 8%, #FFF3DC 32%, var(--gold) 52%, var(--gold-deep) 82%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.wins-lead { margin-top: 22px; font-size: 17px; line-height: 1.6; color: #B2A489; max-width: 540px; }
+.wins-seal { flex-shrink: 0; opacity: .55; }
+.award-inline { color: var(--gold-soft); border-bottom: 1px solid var(--gold-line); padding-bottom: 2px; font-size: 14px; }
+.award-inline:hover { color: #fff; border-bottom-color: var(--gold); }
+
+/* Award rows: the placing is always visible. Hover, focus or tap reveals the
+   event photographs and the proof link. */
+.award-item { position: relative; border-top: 1px solid var(--gold-line); transition: background .35s var(--ease); }
+.award-item:last-of-type { border-bottom: 1px solid var(--gold-line); }
+.award-item:hover, .award-item:focus-within, .award-item.is-open {
+  background: linear-gradient(94deg, rgba(242, 201, 126, .09), rgba(242, 201, 126, .02) 52%, transparent 78%);
+}
 
 .award-head {
-  display: grid; grid-template-columns: 70px minmax(0, 1fr) 270px 34px;
+  display: grid; grid-template-columns: 74px minmax(0, 1fr) 260px 38px;
   gap: 26px; align-items: center; width: 100%;
-  padding: 28px 8px 28px 0; background: none; border: 0; text-align: left; cursor: pointer;
+  padding: 30px 8px 30px 0; background: none; border: 0; text-align: left; cursor: pointer;
   transition: padding-left .35s var(--ease);
 }
-.award-item:hover .award-head, .award-item:focus-within .award-head { padding-left: 12px; }
-.award-num { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 46px; line-height: .8; color: var(--bone-line); letter-spacing: -.04em; transition: color .35s var(--ease); }
-.award-item:hover .award-num, .award-item:focus-within .award-num, .award-item.is-open .award-num { color: var(--brass); }
-.award-name { display: block; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: 32px; letter-spacing: -.03em; color: var(--bone-ink); line-height: 1; }
-.award-with { display: block; font-size: 14.5px; color: var(--bone-body); margin-top: 8px; line-height: 1.5; }
-.award-place { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass-ink); line-height: 1.6; }
-.award-toggle { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--bone-line); display: flex; align-items: center; justify-content: center; color: var(--brass-ink); transition: transform .35s var(--ease), border-color .35s var(--ease); }
-.award-item:hover .award-toggle, .award-item:focus-within .award-toggle, .award-item.is-open .award-toggle { border-color: var(--brass); transform: rotate(45deg); }
+.award-item:hover .award-head, .award-item:focus-within .award-head, .award-item.is-open .award-head { padding-left: 14px; }
+.award-num { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: 50px; line-height: .8; color: #3A3120; letter-spacing: -.04em; transition: color .35s var(--ease); }
+.award-item:hover .award-num, .award-item:focus-within .award-num, .award-item.is-open .award-num { color: var(--gold); }
+.award-name { display: block; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: 33px; letter-spacing: -.03em; color: #fff; line-height: 1.02; }
+.award-with { display: block; font-size: 14.5px; color: #9E937E; margin-top: 9px; line-height: 1.5; }
+.award-with strong { color: var(--gold-soft); font-weight: 600; }
+
+.award-place { text-align: right; }
+.award-result {
+  display: block;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700;
+  font-size: 26px; letter-spacing: -.02em; line-height: 1; color: var(--gold);
+}
+.award-prize { display: block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #9E937E; margin-top: 9px; }
+
+.award-toggle { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--gold-line); display: flex; align-items: center; justify-content: center; color: var(--gold-soft); transition: transform .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease); }
+.award-item:hover .award-toggle, .award-item:focus-within .award-toggle, .award-item.is-open .award-toggle { border-color: var(--gold); background: rgba(242, 201, 126, .1); transform: rotate(45deg); }
 
 .award-reveal {
   max-height: 0; overflow: hidden; visibility: hidden;
@@ -247,23 +339,30 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .award-item:hover .award-reveal,
 .award-item:focus-within .award-reveal,
 .award-item.is-open .award-reveal {
-  max-height: 460px; visibility: visible;
-  transition: max-height .45s var(--ease), visibility 0s;
+  max-height: 720px; visibility: visible;
+  transition: max-height .5s var(--ease), visibility 0s;
 }
-.award-reveal-inner { display: flex; gap: 30px; align-items: flex-end; padding: 0 0 30px 96px; }
-.award-photo { width: 300px; flex-shrink: 0; }
+.award-reveal-inner { display: flex; gap: 32px; align-items: flex-end; padding: 4px 0 34px 100px; }
+
+/* One slot, or the two-photo story on the SignalBridge row. */
+.award-photos { display: flex; gap: 18px; flex-shrink: 0; }
+.award-photos figure { width: 272px; }
+.award-photos.single figure { width: 320px; }
 .award-proof { flex-grow: 1; min-width: 0; }
-.award-proof p { font-size: 15px; line-height: 1.6; color: var(--bone-body); max-width: 420px; margin-bottom: 16px; }
+.award-proof p { font-size: 15px; line-height: 1.6; color: #A99C85; max-width: 420px; margin-bottom: 18px; }
 .award-link {
-  display: inline-flex; align-items: center; gap: 9px; min-height: 46px; padding: 0 18px;
-  border: 1px solid var(--brass); border-radius: 999px;
-  color: var(--bone-ink); font-size: 14px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 9px; min-height: 48px; padding: 0 20px;
+  border-radius: 999px; border: 1px solid var(--gold-deep);
+  color: var(--gold); font-size: 14px; font-weight: 600;
   transition: background .25s var(--ease), color .25s var(--ease), transform .25s var(--ease);
 }
-.award-link:hover { background: var(--brass); color: #FBF8F2; transform: translateY(-2px); }
-.award-item .media { border-color: var(--bone-line); background: linear-gradient(150deg, #E7DFD0, #DCD2C0); }
-.award-item .media-fallback::before { background: radial-gradient(70% 60% at 50% 42%, rgba(138, 106, 47, .18), transparent 70%); opacity: 1; }
-.award-item .media-fallback svg { opacity: .5; }
+.award-link:hover { background: var(--gold); color: #1A1305; transform: translateY(-2px); }
+
+/* The award frames carry a drawn mark, never a photograph that is not there. */
+.award-item .media { border-color: var(--gold-line); background: linear-gradient(150deg, #191408, #0D0B06); }
+.award-item .media-fallback::before { background: radial-gradient(70% 62% at 50% 42%, rgba(242, 201, 126, .16), transparent 70%); opacity: 1; }
+.award-item .media-fallback svg { opacity: .62; width: 38%; }
+.award-item .media-caption { color: #9E937E; }
 
 /* ------------------------------------------------------- credentials */
 
@@ -432,10 +531,40 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .tally span:nth-child(5n) { margin-right: 14px; }
 .tally-plus { align-self: flex-end; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 20px; color: var(--acc); line-height: 42px; }
 
+/* story module: pitch-deck viewer */
+/* Without JavaScript every slide simply stacks, so the deck is still
+   readable; `is-live` turns the stack into a one-at-a-time viewer. */
+
+.deck { margin-top: 40px; }
+.deck-stage { position: relative; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: #0A0E15; }
+.deck.is-live .deck-stage { aspect-ratio: 1655 / 931; }
+.deck-slide { margin: 0 0 10px; }
+.deck.is-live .deck-slide { position: absolute; inset: 0; margin: 0; }
+.deck-slide img { display: block; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+
+.deck-bar { display: flex; align-items: center; gap: 14px; margin-top: 20px; flex-wrap: wrap; }
+.deck-nav { display: flex; gap: 10px; }
+.deck-btn {
+  width: 48px; height: 48px; border-radius: 50%; border: 1px solid #2A3342;
+  display: flex; align-items: center; justify-content: center; color: var(--text);
+  transition: border-color .22s var(--ease), color .22s var(--ease), background .22s var(--ease);
+}
+.deck-btn:hover:not(:disabled) { border-color: var(--acc); color: var(--acc); }
+.deck-btn:disabled { opacity: .3; cursor: default; }
+.deck-count { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: .14em; color: var(--muted); min-width: 66px; }
+.deck-count b { color: #fff; font-weight: 400; }
+.deck-open { margin-left: auto; }
+.deck-hint { width: 100%; margin: 0; font-size: 13px; color: var(--dim); }
+.deck-note { margin-top: 22px; font-size: 15px; line-height: 1.6; color: var(--dim); max-width: 640px; }
+.deck-note strong { color: var(--text-soft); font-weight: 600; }
+.deck-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
 /* story module: evidence grid */
 .evidence { display: flex; gap: 24px; align-items: stretch; margin-top: 40px; }
 .evidence figure { flex: 1 1 0; min-width: 0; }
 .evidence .wide { flex: 2 1 0; }
+/* a single proof photograph, not a full-bleed screenshot */
+.evidence .proof-photo { flex: 0 1 560px; }
 
 /* story module: stat */
 .stat { text-align: right; flex-shrink: 0; }
@@ -501,6 +630,22 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .p-trace { animation: sl-trace 5.2s linear infinite; }
   .p-flow { animation: sl-flow 6s linear infinite; }
   .p-slide { animation: sl-slide 7s ease-in-out infinite; }
+
+  /* wins: a slow pass of light over the headline, and breathing stage rays */
+  @keyframes wn-shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+  @keyframes wn-ray { 0%, 100% { opacity: .2; } 50% { opacity: .42; } }
+  @keyframes wn-turn { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+  @keyframes fd-ping { 0% { opacity: .85; transform: translate3d(var(--x), var(--y), 0) scale(.2); }
+                     100% { opacity: 0; transform: translate3d(var(--x), var(--y), 0) scale(7); } }
+  .wins-head h2 em { animation: wn-shimmer 7s linear infinite; }
+  .wins-ray { animation: wn-ray 9s ease-in-out infinite; }
+  .wins-ray.b { animation-duration: 11s; animation-delay: -3s; }
+  .wins-seal > g { transform-origin: 50% 50%; animation: wn-turn 54s linear infinite; }
+  .field-ping { animation: fd-ping 1.15s var(--ease) forwards; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-ping { display: none; }
+  .field-aura { transition: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -515,8 +660,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .hero-copy { width: 460px; }
   .work-row { grid-template-columns: 30px minmax(0, 1fr) 190px 200px 36px; gap: 18px; }
   .about-top { gap: 46px; }
-  .award-head { grid-template-columns: 56px minmax(0, 1fr) 210px 30px; gap: 18px; }
-  .award-reveal-inner { padding-left: 74px; }
+  .award-head { grid-template-columns: 58px minmax(0, 1fr) 210px 34px; gap: 18px; }
+  .award-reveal-inner { padding-left: 76px; }
+  .award-photos figure { width: 224px; }
   .cred { grid-template-columns: 170px minmax(0, 1fr); gap: 24px; }
   .contact-inner { padding-left: 70px; }
 }
@@ -541,14 +687,19 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .section-head { flex-direction: column; align-items: flex-start; gap: 18px; }
   .section-aside { text-align: left; max-width: 520px; margin-bottom: 0; }
 
-  .award-head { grid-template-columns: 46px minmax(0, 1fr) 30px; gap: 14px; align-items: start; padding: 22px 0; }
-  .award-place { grid-column: 2; margin-top: 10px; }
+  .award-head { grid-template-columns: 46px minmax(0, 1fr) 38px; gap: 14px; align-items: start; padding: 24px 0; }
   .award-toggle { grid-row: 1; grid-column: 3; }
-  .award-reveal-inner { flex-direction: column; align-items: stretch; gap: 18px; padding: 0 0 24px 60px; }
+  .award-reveal-inner { flex-direction: column; align-items: stretch; gap: 18px; padding: 0 0 26px 60px; }
+  .award-item:hover .award-reveal,
+  .award-item:focus-within .award-reveal,
+  .award-item.is-open .award-reveal { max-height: 1400px; }
   .award-photo { width: 100%; max-width: 320px; }
   .cred { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .rec-head { flex-direction: column; gap: 18px; }
-  .rec-seal { display: none; }
+  .wins-head { flex-direction: column; gap: 18px; }
+  .wins-seal { display: none; }
+  .award-place { text-align: left; grid-column: 2; margin-top: 12px; }
+  .award-photos { flex-direction: column; }
+  .award-photos figure, .award-photos.single figure { width: 100%; max-width: 340px; }
 
   .about-top { flex-direction: column; gap: 32px; }
   .about-portrait { width: 100%; max-width: 340px; }
@@ -590,12 +741,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .nav-resume { border: 0; padding: 0; justify-content: flex-start; }
 
   .work { padding: 72px 0 80px; }
-  .rec { padding: 72px 0; }
+  .wins { padding: 78px 0 84px; }
   .about { padding: 72px 0; }
   .contact { padding: 84px 0 80px; }
   .band { padding: 50px 0 56px; }
-  .award-num { font-size: 32px; }
+  .award-num { font-size: 34px; }
   .award-name { font-size: 24px; }
+  .award-result { font-size: 21px; }
+  .deck-open { margin-left: 0; width: 100%; }
+  .deck-bar { gap: 12px; }
   .creds { padding: 72px 0; }
   .quote { padding: 22px 20px; }
   .quote blockquote { font-size: 19px; }
@@ -635,8 +789,23 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .work-name { font-size: 20px; }
   .case-facts { grid-template-columns: minmax(0, 1fr); }
   .brand { font-size: 10px; letter-spacing: .16em; }
+  .award-name { font-size: 21px; }
+  .award-result { font-size: 19px; }
+  .deck-count { min-width: 0; font-size: 11px; letter-spacing: .1em; }
+  .deck-btn { width: 46px; height: 46px; }
+}
+
+/* ----------------------------------------------- field on small screens */
+/* A smaller aura and a coarser grid: less area to composite, and no large
+   blur radius, which is the expensive part on a phone GPU. */
+
+@media (max-width: 860px) {
+  .field-aura { --aura: 500px; filter: blur(16px); opacity: .12; }
+  .field-grid { background-size: 64px 64px; opacity: .12; }
 }
 
 /* ------------------------------------------------------ no javascript */
 
 .no-js .system-layer { transform: none !important; }
+.no-js .field { display: none; }
+.no-js .deck-bar { display: none; }
