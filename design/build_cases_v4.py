@@ -165,7 +165,9 @@ def deck(slides, pdf, label):
 
 
 def evidence(figures):
-    return '<div class="evidence">' + ''.join(figures) + '</div>'
+    # two or more frames become a swipe gallery on a phone (script.js); one stays a figure
+    attr = ' data-gallery aria-label="Screenshots"' if len(figures) > 1 else ''
+    return f'<div class="evidence"{attr}>' + ''.join(figures) + '</div>'
 
 
 def evidence_feature(lead, rest, pending=None):
@@ -179,7 +181,7 @@ def evidence_feature(lead, rest, pending=None):
     note = f'<p class="evidence-pending">{pending}</p>' if pending else ''
     return ('<div class="evidence-feature">'
             + lead.replace('<figure>', '<figure class="evidence-lead">')
-            + ('<div class="evidence">' + ''.join(rest) + '</div>' if rest else '')
+            + (evidence(rest) if rest else '')
             + note
             + '</div>')
 
@@ -198,10 +200,14 @@ def tally(count, label):
 
 LOOMY_QUOTES = []  # Mruthulan's interview notes — nothing here until he supplies them.
 
-# The shop owner's testimonial for Better Call Bhai. Both must be his exact
-# approved words and his chosen attribution; until then the block is not built.
-OWNER_QUOTE = None
-OWNER_ATTRIBUTION = None
+# The shop owner's testimonial for Better Call Bhai lives in data/content.json.
+# It must be the owner's exact approved words; until its status is 'ready'
+# and the quote is set, the block is not built at all.
+_CONTENT = json.loads((ROOT / 'data' / 'content.json').read_text(encoding='utf-8'))
+_T = _CONTENT.get('betterCallBhaiTestimonial', {})
+_READY = _T.get('status') == 'ready' and bool(_T.get('quote'))
+OWNER_QUOTE = html.escape(_T['quote']) if _READY else None
+OWNER_ATTRIBUTION = (html.escape(_T.get('attribution', '')) + (' — ' + html.escape(_T['role']) if _T.get('role') else '')) if _READY else None
 
 # Renders of the real pitch deck, one per page. The alt text describes what is
 # on the slide — nothing is claimed here that the slide does not say.
@@ -508,6 +514,23 @@ def neighbour(p, which):
             f'<span class="case-step-arrow" aria-hidden="true">{arrow}</span></a>')
 
 
+def case_strip(p):
+    """The phone reading bar: back to this project's row, where you are, and
+    the neighbours. Hidden until script.js shows it past the hero, and hidden
+    again near the bottom navigation, so it never covers the end of a page."""
+    prev, nxt = BY_ID[p['prev']], BY_ID[p['next']]
+    return (f'<nav class="case-strip" aria-label="Case study navigation" hidden>'
+            f'<span class="case-strip-progress" aria-hidden="true"><span></span></span>'
+            f'<a class="case-strip-work" href="index.html#work-{p["id"]}"><span aria-hidden="true">←</span> Work</a>'
+            f'<a class="case-strip-prev" href="{prev["slug"]}.html" data-event="case_open" data-project="{prev["id"]}" '
+            f'aria-label="Previous project: {html.escape(prev["name"])}"><span aria-hidden="true">‹</span></a>'
+            f'<span class="case-strip-count"><span class="sr-only">Project </span>{p["n"]:02d}'
+            f'<span aria-hidden="true"> / </span><span class="sr-only"> of </span>06</span>'
+            f'<a class="case-strip-next" href="{nxt["slug"]}.html" data-event="case_open" data-project="{nxt["id"]}" '
+            f'aria-label="Next project: {html.escape(nxt["name"])}">Next <span aria-hidden="true">→</span></a>'
+            f'</nav>')
+
+
 def render(p):
     acc, glow, tint = ACC[p['id']]
     nxt_acc = ACC[p['next']][0]
@@ -592,6 +615,8 @@ def render(p):
         </div>
       </div>
     </section>
+
+    {case_strip(p)}
 
     {''.join(p['bands'])}
 

@@ -1,9 +1,13 @@
 {
   "about-portrait": {
+    "status": "awaiting",
+    "note": "A real photograph of Mruthulan, supplied by him. 4:5 crop. Until src is set the About section shows a designed monogram, never an empty frame.",
     "src": null,
     "alt": "",
     "caption": null,
-    "focal": "50% 35%"
+    "focal": "50% 35%",
+    "width": null,
+    "height": null
   },
   "about-candid": {
     "src": null,

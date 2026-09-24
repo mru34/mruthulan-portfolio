@@ -11,17 +11,28 @@ The site follows the **Signal Lab v3** direction. The hero and the Work section 
 - **Hero** is the name, one line, one hook, a four-fact proof strip (each fact links to what backs it up) and the **constellation**: one node per project in that project's colour. Hover or keyboard focus previews a node; a click or tap selects it, lights its connections and tints the room; the readout's "Open case study" is the deliberate second step. Every node has a plain link twin in the Work list.
 - **Work** is the evidence. Six rows, each carrying the role and the result on the row itself, each linking to its own case page. On phones the role collapses to one short line and the result leads. Hovering, tabbing or tapping a row tints the whole environment in that project's colour.
 - **Wins** keeps the dark ground but lights it differently — gold stage light, display-scale placings, a slow shimmer on the headline. Three rows state the exact placing without any interaction; a click, tap or Enter opens one row at a time, with the event photographs and my LinkedIn post, and the page settles so the heading and first photo are in view. Without JavaScript every row is simply open.
-- **About** is a two-sentence introduction, four proof blocks (ship, constraints, tests, presenting — each linking to its evidence), what I'm looking for, and the tools grouped by where they were used. The portrait slot only appears if a real photo exists.
+- **About** is a two-sentence introduction, three compact ideas (ship real products; design around users and constraints; communicate through presentations and leadership), what I'm looking for, and the tools grouped by where they were used. The 4:5 portrait slot shows a real photo when `data/media.json` names one and a designed monogram until then — never an empty frame.
 - **Credentials** is three entries: the diploma (with one line on representing SP), and two student-leadership roles.
-- **Contact** is a chooser, not a single `mailto:` link: copy the address (works everywhere), Gmail compose, the default mail app, or LinkedIn. The same chooser opens as a dialog from the hero, the case-page nav and search. The footer keeps a direct email link with a copy button beside it.
+- **Contact** is a chooser, not a single `mailto:` link: copy the address (works everywhere), Gmail compose, the default mail app, or LinkedIn. On a phone, Copy and LinkedIn lead and the two mail-app routes sit under an "Other email options" disclosure. The same chooser opens as a dialog from the hero, the case-page nav and search. The footer keeps a direct email link with a copy button beside it.
 
 Behind all of it sits one fixed **field** layer: an aura that follows the pointer anywhere in the viewport, a depth layer that shifts against the page as you scroll, and a brief ring where you tap open ground. It paints above the section grounds and below every piece of content, and it only ever adds light, so nothing it does can reduce contrast. Under reduced motion no listener is attached at all.
 
 Each case page tells its story with a different module — a handoff flow, a conversation turn, a before/after, a funnel, a ladder of mechanics, a research tally and an inline pitch-deck viewer — over the same shared navigation. Every case page opens with an **At a glance** block (Role, Result, Stack, Team or Partner, Status where they apply) and ends with previous project, next project and back to all work, which returns to that project's row.
 
+### Phones
+
+The phone layout (640px and narrower) is its own composition on the same markup; tablets and desktops are untouched.
+
+- One spacing scale (8 12 16 24 32 48 64) and section padding of 48px, so a menu jump lands each section label about 32px under the sticky header.
+- Work rows show the number, name, one line, the result as a badge and a readable "View case study →"; the role lives on the case page.
+- Image groups — the Wins photographs and multi-screenshot evidence rows (`data-gallery`) — become native swipe galleries: scroll snap, ~85vw frames with the next one peeking, Previous/Next and an announced counter, tap to enlarge. Without JavaScript they stack.
+- Case pages get a bottom reading bar (`← Work · 03 / 06 · Next →`) with a progress line; it appears past the hero, steps aside near the bottom navigation and respects the safe area.
+- The analytics question waits for a first scroll or tap (or eight seconds) and is a compact bottom sheet with two equally weighted buttons.
+- Touch is deliberate: a tap moves the aura and rings open ground; a drag that becomes a scroll does nothing, and nothing is tied to scroll position on touch-only devices.
+
 ### Motion
 
-Native scrolling only — no scroll-jacking library. The first load is a ~700ms stagger (name and lead, then proof and actions, then the constellation); the name and lead rise without fading, so first paint never waits on an animation. Section reveals use `IntersectionObserver`. Moving between the home page and a case page is a short cross-fade through the View Transitions API where supported, with the header held still; other browsers simply navigate. Long passages dim the ambient aura behind them. Under `prefers-reduced-motion: reduce` there is no entrance, no drift, no parallax and no cross-page transition.
+Native scrolling only — no scroll-jacking library. The first load is a ~700ms stagger (name and lead, then proof and actions, then the constellation); the name and lead rise without fading, so first paint never waits on an animation. Nothing starts hidden: every block is visible in the markup, and only blocks that later scroll into view get a short arrival from a softened (never blank) start, so a fast scroll or a full-page capture never meets empty space. Moving between the home page and a case page is a short cross-fade through the View Transitions API where supported, with the header held still; other browsers simply navigate. Long passages dim the ambient aura behind them. Under `prefers-reduced-motion: reduce` there is no entrance, no drift, no parallax and no cross-page transition.
 
 The forms are inline SVG plus CSS layers — **no WebGL and no 3D library**. Depth comes from gradients, filters and transforms, so the visuals survive reduced motion, low-powered phones and old browsers.
 
@@ -89,6 +100,10 @@ GitHub Pages publishes the `main` branch from the repository root. The `CNAME` f
 ## Analytics
 
 The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**. The choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `search_open`, `search_result_open` (the result's id, never the query), `contact_chooser_open`, `contact_copy_email`, `contact_open_gmail`, `contact_open_mail_app`, `contact_open_linkedin`, `deck_open`, `deck_fullscreen` and `evidence_fullscreen` — no names, email addresses or free text.
+
+## Words still to be supplied
+
+`data/content.json` holds text only Mruthulan can write — the personal About paragraph and the Better Call Bhai owner testimonial. An entry renders only when its `status` is `ready` and its text is set; until then nothing appears. Re-run `design/build_cases_v4.py` after filling in the testimonial.
 
 ## Photos and media
 
