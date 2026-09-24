@@ -13,91 +13,125 @@
   "win-signalbridge-team": {
     "src": "win-signalbridge-team.webp",
     "alt": "A line-up of students and staff at the Dell InnovateDash Finals, four of the students holding boxed headphone prizes, beneath a screen reading Welcome to the Dell InnovateDash Finals, Singapore Polytechnic, 26 June 2026.",
-    "caption": "The finals, at Singapore Polytechnic"
+    "caption": "The finals, at Singapore Polytechnic",
+    "width": 1400,
+    "height": 936
   },
   "win-signalbridge-award": {
     "src": "win-signalbridge-award.webp",
     "alt": "A student being handed a boxed Alienware Pro headset by one of the organisers at the Dell InnovateDash Finals.",
-    "caption": "Collecting the prize"
+    "caption": "Collecting the prize",
+    "width": 1400,
+    "height": 936
   },
   "win-meant-handover": {
     "src": "win-meant-handover.webp",
     "alt": "Six students in school blazers and red ties on a stage, holding a clear acrylic plaque engraved 2nd Runner Up together with an event official, flanked by two hosts.",
-    "caption": "Taking the plaque at Dell InnovateFest"
+    "caption": "Taking the plaque at Dell InnovateFest",
+    "width": 1321,
+    "height": 991
   },
   "win-meant-team": {
     "src": "win-meant-team.webp",
     "alt": "The MEANT team standing with the second runner-up plaque in front of their project poster at Dell InnovateFest, with two of the event's organisers.",
-    "caption": "With the MEANT poster, after the result"
+    "caption": "With the MEANT poster, after the result",
+    "width": 1321,
+    "height": 991
   },
   "win-knowcad-champion": {
     "src": "win-knowcad-champion.webp",
     "alt": "Team members on a stage holding small trophies while a photographer takes the shot, in front of a screen reading 2026 AI Hackathon, Winners — Champion, KnowCAD Intellicase.",
-    "caption": "Champion, announced on the night"
+    "caption": "Champion, announced on the night",
+    "width": 1179,
+    "height": 705
   },
   "win-knowcad-team": {
     "src": "win-knowcad-team.webp",
     "alt": "Four team members in Autodesk Singapore Hackathon 2026 shirts, each holding a small Champion trophy, in front of the event screen.",
-    "caption": "The team, with the trophies"
+    "caption": "The team, with the trophies",
+    "width": 1321,
+    "height": 991
   },
   "signalbridge-shot-1": {
-    "src": null,
-    "alt": "",
-    "caption": null
+    "src": "signalbridge-shot-1.webp",
+    "alt": "SafeNight, the youth-facing chat: a fictional youth, Mira, writes after hours about classmates editing her photos, and SafeNight offers to prepare a note so she does not have to repeat everything tomorrow.",
+    "caption": "SafeNight, the youth-facing conversation — the part I built",
+    "width": 1600,
+    "height": 1000
   },
   "signalbridge-shot-2": {
-    "src": null,
-    "alt": "",
-    "caption": null
-  },
-  "signalbridge-demo": {
-    "src": null,
-    "poster": null,
-    "caption": null
+    "src": "signalbridge-shot-2.webp",
+    "alt": "The worker's handoff brief for the fictional case: consent received, risk level, the key quote, main concern, emotional state and what not to ask again, with buttons to mark it reviewed or escalate.",
+    "caption": "The handoff brief the worker opens next morning",
+    "width": 1600,
+    "height": 1000
   },
   "meant-shot-1": {
-    "src": null,
-    "alt": "",
-    "caption": null
+    "src": "meant-shot-1.webp",
+    "alt": "The MEANT tablet: the partner has asked what they would like to order, and four large reply buttons offer roasted chicken rice, steamed chicken rice, char siew rice and duck rice, with Not these and Edit beneath.",
+    "caption": "They ask; the user picks one of four ranked replies",
+    "width": 1600,
+    "height": 1000
   },
   "meant-shot-2": {
-    "src": null,
-    "alt": "",
-    "caption": null
-  },
-  "meant-demo": {
-    "src": null,
-    "poster": null,
-    "caption": null
+    "src": "meant-shot-2.webp",
+    "alt": "The partner's display showing Give me a moment in large green text after the user pressed Wait.",
+    "caption": "Turn Claim on the partner's screen, holding the conversation open",
+    "width": 1600,
+    "height": 1000
   },
   "better-call-bhai-shot-1": {
-    "src": "better-call-bhai-shot-1.jpg",
+    "src": "better-call-bhai-shot-1.webp",
     "alt": "The Better Call Bhai booking form with a service chosen from the shop's menu",
-    "caption": "Choosing a service"
+    "caption": "Choosing a service",
+    "width": 1600,
+    "height": 1000
   },
   "better-call-bhai-shot-2": {
-    "src": "better-call-bhai-shot-2.jpg",
+    "src": "better-call-bhai-shot-2.webp",
     "alt": "A day's time slots, with the taken ones struck through and one selected",
-    "caption": "Picking an open slot"
+    "caption": "Picking an open slot",
+    "width": 1600,
+    "height": 1000
   },
   "better-call-bhai-shot-3": {
-    "src": "better-call-bhai-shot-3.jpg",
+    "src": "better-call-bhai-shot-3.webp",
     "alt": "A confirmed booking showing the service, date and time, with a button to open the WhatsApp confirmation. The customer name is outside the frame.",
-    "caption": "Confirmed, with a WhatsApp receipt"
+    "caption": "Confirmed, with a WhatsApp receipt",
+    "width": 1600,
+    "height": 506
   },
   "boss-breaker-shot-1": {
-    "src": "boss-breaker-shot-1.jpg",
+    "src": "boss-breaker-shot-1.webp",
     "alt": "The Boss Breaker challenge list, each wellness challenge showing its point value",
-    "caption": "Challenges, each worth points"
+    "caption": "Challenges, each worth points",
+    "width": 1600,
+    "height": 1000
   },
   "boss-breaker-shot-2": {
-    "src": "boss-breaker-shot-2.jpg",
+    "src": "boss-breaker-shot-2.webp",
     "alt": "The Boss Breaker dashboard showing a points total, the active boss's remaining HP and the inventory",
-    "caption": "Points, boss HP and inventory in one view"
+    "caption": "Points, boss HP and inventory in one view",
+    "width": 1600,
+    "height": 1000
   },
   "loomy-prototype-1": {
     "src": null,
     "alt": "",
     "caption": null
+  },
+  "signalbridge-shot-3": {
+    "src": "signalbridge-shot-3.webp",
+    "alt": "The youth-side preview titled Your worker is ready for you, showing the quote, what happened tonight, how she was feeling and what comes next, before anything is shared.",
+    "caption": "What the youth sees before the note is shared",
+    "width": 1600,
+    "height": 1000
+  },
+  "meant-shot-3": {
+    "src": "meant-shot-3.webp",
+    "alt": "The MEANT AAC board of symbol buttons, with the phrase I want help composed in the message bar beside Speak and show.",
+    "caption": "The AAC board — it still works with the AI layer off",
+    "width": 1600,
+    "height": 1000
   }
 }
