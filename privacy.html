@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07090E">
   <meta name="description" content="How analytics works on Mruthulan's portfolio and how to change your choice.">
   <link rel="canonical" href="https://mruthulan.com/privacy.html">
@@ -15,7 +15,8 @@
   <script src="js/script.js" defer></script>
   <script src="js/analytics.js" defer></script>
 </head>
-<body>
+<body data-page="privacy">
+  <span id="top" class="anchor-alias" aria-hidden="true"></span>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="field" aria-hidden="true">
@@ -26,14 +27,22 @@
   <header class="site-header">
     <div class="shell nav-wrap">
       <a class="brand" href="index.html">Mruthulan</a>
-      <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
       <nav class="main-nav" id="main-nav" aria-label="Main">
         <a href="index.html#work">Work</a>
         <a href="index.html#wins">Wins</a>
         <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
-        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+        <a href="index.html#credentials">Credentials</a>
+        <a href="index.html#contact" data-contact-open>Contact</a>
+        <a class="nav-resume-menu" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
       </nav>
+      <div class="nav-tools">
+        <button class="search-button" type="button" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          <span class="search-label">Search</span><kbd class="search-kbd" aria-hidden="true">Ctrl K</kbd>
+        </button>
+        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé <span aria-hidden="true">↗</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
+      </div>
     </div>
   </header>
 
@@ -46,7 +55,7 @@
 
       <section>
         <h2>What is measured</h2>
-        <p>Google Analytics may collect page views, approximate geographic location, referral source, browser and device information, and interactions such as outbound clicks and which project you open. It uses cookies or similar browser identifiers. I use aggregate reports to improve the site, and I do not ask you to create an account here.</p>
+        <p>Google Analytics may collect page views, approximate geographic location, referral source, browser and device information, and interactions such as outbound clicks, which project you open, and whether you used site search or the contact options. Search never sends what you typed, only which result you opened. It uses cookies or similar browser identifiers. I use aggregate reports to improve the site, and I do not ask you to create an account here.</p>
       </section>
 
       <section>
@@ -68,8 +77,9 @@
       <span class="mono">Mruthulan · Made in Singapore</span>
       <nav class="footer-nav" aria-label="Footer">
         <a class="mono" href="index.html">Home</a>
-        <a class="mono" href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
+        <span class="footer-mail"><a class="mono" href="mailto:mruthulansenthilnathan@gmail.com?subject=Portfolio%20enquiry">Email</a><button class="mono footer-copy" type="button" data-contact-action="copy">Copy address</button></span>
         <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="mono" href="privacy.html" aria-current="page">Privacy</a>
       </nav>
     </div>
