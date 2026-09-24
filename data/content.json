@@ -1,0 +1,21 @@
+{
+  "_readme": "Words that only Mruthulan can supply. Anything with status 'awaiting' renders nothing on the site until its text is filled in and the status is changed to 'ready'. Never fill these with placeholder or invented wording.",
+  "aboutPersonal": {
+    "status": "awaiting",
+    "text": null,
+    "shouldCover": [
+      "The problems I enjoy working on",
+      "What hackathons taught me",
+      "What I want from my next internship"
+    ],
+    "where": "Home page, About section, under the lead paragraph. Rendered by js/script.js."
+  },
+  "betterCallBhaiTestimonial": {
+    "status": "awaiting",
+    "quote": null,
+    "attribution": "Arjun K.",
+    "role": "Owner, Better Call Bhai",
+    "where": "better-call-bhai.html, under the booking screenshots. Built by design/build_cases_v4.py -- re-run it after filling this in.",
+    "rule": "The owner's exact approved words only. Nothing renders until quote is set and status is 'ready'."
+  }
+}
