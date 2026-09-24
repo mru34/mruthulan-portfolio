@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07090E">
   <meta name="description" content="Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. Built with JavaScript, Node.js and MySQL.">
   <link rel="canonical" href="https://mruthulan.com/boss-breaker.html">
@@ -20,8 +20,10 @@
   <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js-on');</script>
   <script src="js/script.js" defer></script>
   <script src="js/analytics.js" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "Boss Breaker", "description": "A full-stack wellness game with challenges, points and boss raids.", "url": "https://mruthulan.com/boss-breaker.html", "author": {"@type": "Person", "name": "Senthil Nathan Mruthulan", "url": "https://mruthulan.com/"}}</script>
 </head>
-<body style="--acc:#A4EC76;--acc-glow:rgba(164,236,118,.26);--acc-tint:rgba(164,236,118,.07)">
+<body data-page="case" data-project="bx" style="--acc:#A4EC76;--acc-glow:rgba(164,236,118,.26);--acc-tint:rgba(164,236,118,.07)">
+  <span id="top" class="anchor-alias" aria-hidden="true"></span>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="field" aria-hidden="true">
@@ -32,14 +34,22 @@
   <header class="site-header">
     <div class="shell nav-wrap">
       <a class="brand" href="index.html">Mruthulan</a>
-      <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
       <nav class="main-nav" id="main-nav" aria-label="Main">
-        <a href="index.html#work">Work</a>
+        <a href="index.html#work" class="is-current">Work</a>
         <a href="index.html#wins">Wins</a>
         <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
-        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+        <a href="index.html#credentials">Credentials</a>
+        <a href="index.html#contact" data-contact-open>Contact</a>
+        <a class="nav-resume-menu" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
       </nav>
+      <div class="nav-tools">
+        <button class="search-button" type="button" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          <span class="search-label">Search</span><kbd class="search-kbd" aria-hidden="true">Ctrl K</kbd>
+        </button>
+        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé <span aria-hidden="true">↗</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
+      </div>
     </div>
   </header>
 
@@ -48,7 +58,7 @@
       <div class="case-hero-glow" aria-hidden="true"></div>
       <div class="shell">
         <div class="case-head" style="padding-top:0">
-          <a class="mono case-back" href="index.html#work" style="margin-bottom:0">← All work</a>
+          <a class="mono case-back" href="index.html#work-bx" style="margin-bottom:0">← All work</a>
           <span class="mono">Case 05 of 06 · A mechanics story</span>
         </div>
         <div class="case-hero-grid">
@@ -60,14 +70,17 @@
             <a class="cta" href="https://github.com/mru34/bedca2" target="_blank" rel="noopener noreferrer">View the code <span aria-hidden="true">↗</span></a>
             </div>
           </div>
-          <div class="case-facts"><div class="case-fact"><span class="case-fact-k">Type</span><span class="case-fact-v">Full-stack build · BED CA2</span></div><div class="case-fact"><span class="case-fact-k">My role</span><span class="case-fact-v">API, database and game logic</span></div><div class="case-fact"><span class="case-fact-k">Built with</span><span class="case-fact-v">JavaScript · Node.js · MySQL</span></div><div class="case-fact"><span class="case-fact-k">Source</span><span class="case-fact-v">github.com/mru34/bedca2</span></div></div>
+          <section class="case-facts" aria-labelledby="glance-title">
+            <h2 class="mono case-facts-title" id="glance-title">At a glance</h2>
+            <dl><div class="case-fact"><dt class="case-fact-k">Role</dt><dd class="case-fact-v">API, database and game logic</dd></div><div class="case-fact"><dt class="case-fact-k">Result</dt><dd class="case-fact-v">Complete full-stack build for the BED CA2 brief</dd></div><div class="case-fact"><dt class="case-fact-k">Stack</dt><dd class="case-fact-v">JavaScript · Node.js · MySQL</dd></div><div class="case-fact"><dt class="case-fact-k">Status</dt><dd class="case-fact-v">Coursework · source on GitHub</dd></div></dl>
+          </section>
         </div>
       </div>
     </section>
 
     <section class="band band-deep"><div class="shell"><p class="mono kicker">The loop</p><h2 class="dsp">Four mechanics, one habit.</h2><div class="ladder"><div class="ladder-rung"><span class="ladder-num">01</span><div><h3>Daily challenges</h3><p>A wellness action is the unit of play. Doing it is how you earn anything.</p></div></div><div class="ladder-rung"><span class="ladder-num">02</span><div><h3>Points</h3><p>Challenges pay out points. The ledger is server-side, so the game cannot be won in the browser.</p></div></div><div class="ladder-rung"><span class="ladder-num">03</span><div><h3>Boss raids</h3><p>Points are spent against a shared target, which is what makes the habit worth keeping up.</p></div></div><div class="ladder-rung"><span class="ladder-num">04</span><div><h3>Progression</h3><p>State persists in a relational schema, so a streak survives a refresh.</p></div></div></div></div></section><section class="band"><div class="shell"><p class="mono kicker">Evidence</p><h2 class="dsp">The build.</h2><div class="evidence"><figure><div class="media ratio-1610" data-media="boss-breaker-shot-1" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 150 100" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="142" height="92" rx="8" stroke-opacity=".9"/><path d="M4 24h142" stroke-opacity=".9"/><circle cx="15" cy="14" r="3"/><rect x="18" y="40" width="60" height="9" rx="4.5" stroke-opacity=".5"/><rect x="18" y="58" width="90" height="9" rx="4.5" stroke-opacity=".35"/></svg></div></div><figcaption class="mono media-caption">Challenges, each worth points</figcaption></figure><figure><div class="media ratio-1610" data-media="boss-breaker-shot-2" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 150 100" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="142" height="92" rx="8" stroke-opacity=".9"/><path d="M4 24h142" stroke-opacity=".9"/><circle cx="15" cy="14" r="3"/><rect x="18" y="40" width="60" height="9" rx="4.5" stroke-opacity=".5"/><rect x="18" y="58" width="90" height="9" rx="4.5" stroke-opacity=".35"/></svg></div></div><figcaption class="mono media-caption">Points, boss HP and inventory in one view</figcaption></figure></div></div></section>
 
-    <section class="band">
+    <section class="band" data-calm>
       <div class="shell">
         <div class="case-role">
           <div class="case-role-k"><p class="mono">My role</p></div>
@@ -76,7 +89,7 @@
       </div>
     </section>
 
-    <section class="band" style="padding-top:0">
+    <section class="band" style="padding-top:0" data-calm>
       <div class="shell">
         <div class="case-role">
           <div class="case-role-k"><p class="mono">Result</p></div>
@@ -85,19 +98,16 @@
       </div>
     </section>
 
-    <section class="case-next" style="--next-acc:#84B6FF">
+    <nav class="case-next" aria-label="More projects" style="--next-acc:#84B6FF">
       <div class="case-next-glow" aria-hidden="true"></div>
       <div class="shell">
-        <div>
-          <p class="mono">Next project</p>
-          <h2 class="dsp" style="margin-top:14px">Loomy</h2>
+        <div class="case-steps">
+          <a class="case-step case-step-prev" href="knowcad.html" rel="prev" data-event="case_open" data-project="kc" style="--step-acc:#AC93FF"><span class="mono case-step-k">Previous project · 04</span><span class="dsp case-step-name">KnowCad</span><span class="case-step-arrow" aria-hidden="true">←</span></a>
+          <a class="case-step case-step-next" href="loomy.html" rel="next" data-event="case_open" data-project="lm" style="--step-acc:#84B6FF"><span class="mono case-step-k">Next project · 06</span><span class="dsp case-step-name">Loomy</span><span class="case-step-arrow" aria-hidden="true">→</span></a>
         </div>
-        <div class="case-next-actions">
-          <a class="cta" href="loomy.html">Open Loomy <span aria-hidden="true">→</span></a>
-          <a class="ghost" href="index.html#work-bx"><span aria-hidden="true">←</span> Back to all work</a>
-        </div>
+        <a class="ghost case-all" href="index.html#work-bx"><span aria-hidden="true">←</span> Back to all work</a>
       </div>
-    </section>
+    </nav>
   </main>
 
   <footer class="site-footer">
@@ -105,7 +115,7 @@
       <span class="mono">Mruthulan · Made in Singapore</span>
       <nav class="footer-nav" aria-label="Footer">
         <a class="mono" href="index.html">Home</a>
-        <a class="mono" href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
+        <span class="footer-mail"><a class="mono" href="mailto:mruthulansenthilnathan@gmail.com?subject=Portfolio%20enquiry">Email</a><button class="mono footer-copy" type="button" data-contact-action="copy">Copy address</button></span>
         <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="mono" href="privacy.html">Privacy</a>

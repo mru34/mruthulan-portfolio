@@ -9,6 +9,7 @@ Nothing in here invents a claim. Where Mruthulan has not supplied wording
 simply not emitted — the page must never show an unfilled slot as content.
 """
 import html
+import json
 import re
 from pathlib import Path
 
@@ -32,8 +33,12 @@ ACC = {
 RESUME = 'assets/Senthil-Nathan-Mruthulan-Resume.pdf'
 SP = ('https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/'
       'information-technology-students-clinch-top-prize-at-sp-innovatedash-2026')
-POST_SP = 'https://www.linkedin.com/feed/update/urn:li:activity:7476489524982857730/'
-POST_AUTODESK = 'https://www.linkedin.com/feed/update/urn:li:activity:7445494743490453504/'
+# The three LinkedIn proof posts, as the short links Mruthulan verified. The
+# home page Wins rows use the same three URLs.
+POST_SP = 'https://lnkd.in/p/dCBs22kx'          # SP InnovateDash / SignalBridge
+POST_DELL = 'https://lnkd.in/p/dZQiUX3z'        # Dell InnovateFest / MEANT
+POST_AUTODESK = 'https://lnkd.in/p/dQW9Pg_v'    # Autodesk AI+ML / KnowCad
+EMAIL = 'mruthulansenthilnathan@gmail.com'
 
 
 # ---------------------------------------------------------------- modules
@@ -152,7 +157,7 @@ def deck(slides, pdf, label):
         f'<span style="transform:rotate(180deg);display:flex">{arrow}</span></button>'
         '</div>'
         f'<p class="deck-count">Slide <b class="deck-now">1</b> / {len(slides)}</p>'
-        f'<a class="ghost deck-open" href="{pdf}" target="_blank" rel="noopener">'
+        f'<a class="ghost deck-open" href="{pdf}" target="_blank" rel="noopener" data-event="deck_open">'
         'Open the full deck (PDF) <span aria-hidden="true">↗</span></a>'
         '<p class="deck-hint">Tap a slide to read it full screen. '
         '<span class="deck-hint-pointer">Arrow keys or a swipe move through the deck once it has focus.</span></p>'
@@ -224,12 +229,13 @@ PROJECTS = [
         'lead': ('A youth worker picks up a conversation that started somewhere else. '
                  'The context does not come with it.'),
         'actions': [('cta', 'https://signalbridge-web.onrender.com/', 'Live product', '↗', True),
-                    ('ghost', POST_SP, 'My LinkedIn post', '↗', True),
+                    ('ghost', POST_SP, 'View my SP InnovateDash post', '↗', True, 'proof_post_click'),
                     ('ghost', SP, 'SP’s feature', '↗', True)],
-        'facts': [('Recognition', 'SP InnovateDash 2026 Champion'),
-                  ('My role', 'Youth-facing experience, API and Discord integrations, automated tests'),
+        'facts': [('Role', 'Youth-facing experience, API and Discord integrations, automated tests'),
+                  ('Result', 'SP InnovateDash 2026 — Champion'),
                   ('Stack', 'Next.js · FastAPI · PostgreSQL'),
-                  ('Brief', 'Singapore Children’s Society')],
+                  ('Partner', 'Brief from Singapore Children’s Society'),
+                  ('Status', 'Live product')],
         'bands': [
             band('The handoff', 'Five moments, and the judgement stays with the worker at every one.',
                  flow([
@@ -258,7 +264,6 @@ PROJECTS = [
                  'honest while the team moved fast.'),
         'result': ('Champion at SP InnovateDash 2026 — and the reason we were at Dell InnovateFest, '
                    'where we built MEANT.'),
-        'next': 'mt',
     },
     {
         'id': 'mt', 'slug': 'meant', 'name': 'MEANT', 'n': 2,
@@ -268,11 +273,13 @@ PROJECTS = [
         'og': 'An on-device communication assistant that keeps AAC users in control of what they say.',
         'chip': 'Dell InnovateFest 2026 — Second runner-up · S$3,000',
         'lead': 'Conversations do not wait, but AAC users need time to answer.',
-        'actions': [('cta', 'index.html#wins', 'See the award', '→', False)],
-        'facts': [('Recognition', 'Second runner-up · S$3,000'),
-                  ('Social partner', 'SPD Ltd, Singapore'),
-                  ('My role', 'UI and UX, the Singaporean TTS voice, and presenting the build'),
-                  ('Principle', 'The user always authors')],
+        'actions': [('cta', POST_DELL, 'View my Dell InnovateFest post', '↗', True, 'proof_post_click'),
+                    ('ghost', 'index.html#win-dell', 'See the award', '→', False)],
+        'facts': [('Role', 'UI and UX, the Singaporean TTS voice, and presenting the build'),
+                  ('Result', 'Dell InnovateFest 2026 — Second runner-up · S$3,000'),
+                  ('Stack', 'On-device AI on a Dell GB10 · Singaporean TTS'),
+                  ('Partner', 'SPD Ltd, Singapore'),
+                  ('Status', 'Competition build · repository private')],
         'bands': [
             band('One turn', 'The whole product is three seconds of a conversation.',
                  decisions([
@@ -299,7 +306,6 @@ PROJECTS = [
         'role': ('I worked on the UI and UX, built the Singaporean TTS voice, and presented the build. '
                  'MEANT is a separate project from SignalBridge, with a different team goal.'),
         'result': 'Dell InnovateFest 2026 second runner-up · S$3,000, built with SPD Ltd.',
-        'next': 'bb',
     },
     {
         'id': 'bb', 'slug': 'better-call-bhai', 'name': 'Better Call Bhai', 'n': 3,
@@ -310,10 +316,11 @@ PROJECTS = [
         'chip': 'Live client site',
         'lead': 'Booking a haircut should not take three messages and a phone call.',
         'actions': [('cta', 'https://bettercalbhai.onrender.com/', 'Visit the site', '↗', True)],
-        'facts': [('Status', 'Live client site'),
-                  ('My role', 'Web design, frontend build and deployment'),
-                  ('Built with', 'HTML · CSS · JavaScript'),
-                  ('Hosting', 'Render')],
+        'facts': [('Role', 'Web design, frontend build and deployment'),
+                  ('Result', 'Replaced WhatsApp back-and-forth with online booking'),
+                  ('Stack', 'HTML · CSS · JavaScript · hosted on Render'),
+                  ('Client', 'A local barber shop in Singapore'),
+                  ('Status', 'Live, taking real bookings')],
         'bands': [
             band('Before and after', 'The whole job was removing a conversation.',
                  compare(('Before — WhatsApp', ['Message the shop to ask what is free.',
@@ -334,7 +341,6 @@ PROJECTS = [
         'role': ('I owned the customer journey, the appointment form, the mobile interface and the '
                  'Render deployment, replacing manual WhatsApp appointment coordination.'),
         'result': 'Live, and in use by a real business.',
-        'next': 'kc',
     },
     {
         'id': 'kc', 'slug': 'knowcad', 'name': 'KnowCad', 'n': 4,
@@ -344,12 +350,12 @@ PROJECTS = [
         'og': 'An AI customer-service co-pilot. Autodesk Singapore AI+ML Hackathon champion.',
         'chip': 'Autodesk Singapore AI+ML Hackathon — Champion',
         'lead': 'Finding the answer took longer than answering the question.',
-        'actions': [('cta', POST_AUTODESK, 'My LinkedIn post', '↗', True),
-                    ('ghost', 'index.html#wins', 'See the award', '→', False)],
-        'facts': [('Recognition', 'Autodesk Singapore AI+ML Hackathon Champion'),
-                  ('My role', 'Retrieval, AI workflow and team delivery'),
+        'actions': [('cta', POST_AUTODESK, 'View my Autodesk hackathon post', '↗', True, 'proof_post_click'),
+                    ('ghost', 'index.html#win-autodesk', 'See the award', '→', False)],
+        'facts': [('Role', 'Retrieval, AI workflow and team delivery'),
+                  ('Result', 'Autodesk Singapore AI+ML Hackathon 2026 — Champion'),
                   ('Approach', 'Retrieval-based answering'),
-                  ('Materials', 'Private — proof is the award and the post')],
+                  ('Status', 'Private — proof is the award and the post')],
         'bands': [
             band('From a pile to an answer', 'Every step throws work away.',
                  funnel([
@@ -368,7 +374,6 @@ PROJECTS = [
         ],
         'role': 'I worked on retrieval, the AI workflow, and getting the team’s work delivered in hackathon time.',
         'result': 'First place at the Autodesk Singapore AI+ML Hackathon, 2026.',
-        'next': 'bx',
     },
     {
         'id': 'bx', 'slug': 'boss-breaker', 'name': 'Boss Breaker', 'n': 5,
@@ -379,10 +384,10 @@ PROJECTS = [
         'chip': 'Full-stack coursework build',
         'lead': 'Wellness habits are easier to keep when they are a game you are winning.',
         'actions': [('cta', 'https://github.com/mru34/bedca2', 'View the code', '↗', True)],
-        'facts': [('Type', 'Full-stack build · BED CA2'),
-                  ('My role', 'API, database and game logic'),
-                  ('Built with', 'JavaScript · Node.js · MySQL'),
-                  ('Source', 'github.com/mru34/bedca2')],
+        'facts': [('Role', 'API, database and game logic'),
+                  ('Result', 'Complete full-stack build for the BED CA2 brief'),
+                  ('Stack', 'JavaScript · Node.js · MySQL'),
+                  ('Status', 'Coursework · source on GitHub')],
         'bands': [
             band('The loop', 'Four mechanics, one habit.',
                  ladder([
@@ -399,7 +404,6 @@ PROJECTS = [
         ],
         'role': 'I built the API, the database schema and the game logic that ties challenges, points and raids together.',
         'result': 'A complete full-stack build for the BED CA2 brief, source on GitHub.',
-        'next': 'lm',
     },
     {
         'id': 'lm', 'slug': 'loomy', 'name': 'Loomy', 'n': 6,
@@ -410,10 +414,10 @@ PROJECTS = [
         'lead': 'Second-hand fashion is social. Most thrifting apps treat it as a transaction.',
         'actions': [('cta', 'https://loomy-copy-eb9f937f.base44.app/Community', 'Open the prototype', '↗', True),
                     ('ghost', '#deck', 'Read the pitch deck', '↓', False)],
-        'facts': [('Type', 'Product concept'),
-                  ('My role', 'User research and product design'),
-                  ('Research', '30+ user interviews'),
-                  ('Output', 'Prototype and pitch deck')],
+        'facts': [('Role', 'User research and product design'),
+                  ('Result', 'Prototype and pitch deck, from 30+ user interviews'),
+                  ('Team', 'Six members'),
+                  ('Status', 'Product concept — not shipped')],
         'bands': [
             band('Research first', 'Thirty conversations before a single screen.',
                  tally(30, 'people aged 15–25 interviewed, before any product was designed')
@@ -440,33 +444,100 @@ PROJECTS = [
                  'pitched. The 30+ interviews behind the concept were the team\'s; the findings '
                  'are what decided the product structure.'),
         'result': 'A prototype and a pitch deck, grounded in more than 30 interviews.',
-        'next': 'sb',
     },
 ]
 
 BY_ID = {p['id']: p for p in PROJECTS}
+for i, proj in enumerate(PROJECTS):
+    proj['next'] = PROJECTS[(i + 1) % len(PROJECTS)]['id']
+    proj['prev'] = PROJECTS[i - 1]['id']
+
+
+def site_header(home=''):
+    """The shared sticky header. `home` is the path to index.html from the
+    page ('' on the home page itself, 'index.html' everywhere else). Case pages
+    belong to Work, so that link carries the current-section mark."""
+    h = home
+    return f"""<header class="site-header">
+    <div class="shell nav-wrap">
+      <a class="brand" href="{h or '#top'}">Mruthulan</a>
+      <nav class="main-nav" id="main-nav" aria-label="Main">
+        <a href="{h}#work" class="is-current">Work</a>
+        <a href="{h}#wins">Wins</a>
+        <a href="{h}#about">About</a>
+        <a href="{h}#credentials">Credentials</a>
+        <a href="{h}#contact" data-contact-open>Contact</a>
+        <a class="nav-resume-menu" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
+      </nav>
+      <div class="nav-tools">
+        <button class="search-button" type="button" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          <span class="search-label">Search</span><kbd class="search-kbd" aria-hidden="true">Ctrl K</kbd>
+        </button>
+        <a class="nav-resume" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé <span aria-hidden="true">↗</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
+      </div>
+    </div>
+  </header>"""
+
+
+def site_footer(home='index.html'):
+    return f"""<footer class="site-footer">
+    <div class="shell footer-inner">
+      <span class="mono">Mruthulan · Made in Singapore</span>
+      <nav class="footer-nav" aria-label="Footer">
+        <a class="mono" href="{home}">Home</a>
+        <span class="footer-mail"><a class="mono" href="mailto:{EMAIL}?subject=Portfolio%20enquiry">Email</a><button class="mono footer-copy" type="button" data-contact-action="copy">Copy address</button></span>
+        <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="mono" href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </footer>"""
+
+
+def neighbour(p, which):
+    """One card of the bottom project navigation."""
+    q = BY_ID[p[which]]
+    label = 'Previous project' if which == 'prev' else 'Next project'
+    arrow = '←' if which == 'prev' else '→'
+    return (f'<a class="case-step case-step-{which}" href="{q["slug"]}.html" rel="{which}" '
+            f'data-event="case_open" data-project="{q["id"]}" style="--step-acc:{ACC[q["id"]][0]}">'
+            f'<span class="mono case-step-k">{label} · {q["n"]:02d}</span>'
+            f'<span class="dsp case-step-name">{html.escape(q["name"])}</span>'
+            f'<span class="case-step-arrow" aria-hidden="true">{arrow}</span></a>')
 
 
 def render(p):
     acc, glow, tint = ACC[p['id']]
-    nxt = BY_ID[p['next']]
-    nxt_acc = ACC[nxt['id']][0]
+    nxt_acc = ACC[p['next']][0]
 
-    actions = '\n            '.join(
-        f'<a class="{kind}" href="{href}"'
-        + (' target="_blank" rel="noopener noreferrer"' if ext else '')
-        + f'>{label} <span aria-hidden="true">{arrow}</span></a>'
-        for kind, href, label, arrow, ext in p['actions'])
+    def action(a):
+        kind, href, label, arrow, ext = a[:5]
+        event = a[5] if len(a) > 5 else None
+        attrs = ' target="_blank" rel="noopener noreferrer"' if ext else ''
+        if event:
+            attrs += f' data-event="{event}" data-project="{p["id"]}"'
+        return f'<a class="{kind}" href="{href}"{attrs}>{label} <span aria-hidden="true">{arrow}</span></a>'
+
+    actions = '\n            '.join(action(a) for a in p['actions'])
 
     facts = ''.join(
-        f'<div class="case-fact"><span class="case-fact-k">{k}</span><span class="case-fact-v">{v}</span></div>'
+        f'<div class="case-fact"><dt class="case-fact-k">{k}</dt><dd class="case-fact-v">{v}</dd></div>'
         for k, v in p['facts'])
 
-    return f'''<!doctype html>
+    ld = {
+        '@context': 'https://schema.org', '@type': 'CreativeWork',
+        'name': p['name'], 'description': p['og'],
+        'url': f"https://mruthulan.com/{p['slug']}.html",
+        'author': {'@type': 'Person', 'name': 'Senthil Nathan Mruthulan', 'url': 'https://mruthulan.com/'},
+    }
+
+    return f"""<!doctype html>
 <html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07090E">
   <meta name="description" content="{html.escape(p['desc'], quote=True)}">
   <link rel="canonical" href="https://mruthulan.com/{p['slug']}.html">
@@ -484,8 +555,10 @@ def render(p):
   <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js-on');</script>
   <script src="js/script.js" defer></script>
   <script src="js/analytics.js" defer></script>
+  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 </head>
-<body style="--acc:{acc};--acc-glow:{glow};--acc-tint:{tint}">
+<body data-page="case" data-project="{p['id']}" style="--acc:{acc};--acc-glow:{glow};--acc-tint:{tint}">
+  <span id="top" class="anchor-alias" aria-hidden="true"></span>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="field" aria-hidden="true">
@@ -493,26 +566,14 @@ def render(p):
     <div class="field-aura"></div>
   </div>
 
-  <header class="site-header">
-    <div class="shell nav-wrap">
-      <a class="brand" href="index.html">Mruthulan</a>
-      <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
-      <nav class="main-nav" id="main-nav" aria-label="Main">
-        <a href="index.html#work">Work</a>
-        <a href="index.html#wins">Wins</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
-        <a class="nav-resume" href="{RESUME}" target="_blank" rel="noopener">Résumé ↗</a>
-      </nav>
-    </div>
-  </header>
+  {site_header('index.html')}
 
   <main id="main">
     <section class="case-hero" aria-labelledby="case-title">
       <div class="case-hero-glow" aria-hidden="true"></div>
       <div class="shell">
         <div class="case-head" style="padding-top:0">
-          <a class="mono case-back" href="index.html#work" style="margin-bottom:0">← All work</a>
+          <a class="mono case-back" href="index.html#work-{p['id']}" style="margin-bottom:0">← All work</a>
           <span class="mono">Case {p['n']:02d} of 06 · {p['kind']}</span>
         </div>
         <div class="case-hero-grid">
@@ -524,14 +585,17 @@ def render(p):
             {actions}
             </div>
           </div>
-          <div class="case-facts">{facts}</div>
+          <section class="case-facts" aria-labelledby="glance-title">
+            <h2 class="mono case-facts-title" id="glance-title">At a glance</h2>
+            <dl>{facts}</dl>
+          </section>
         </div>
       </div>
     </section>
 
     {''.join(p['bands'])}
 
-    <section class="band">
+    <section class="band" data-calm>
       <div class="shell">
         <div class="case-role">
           <div class="case-role-k"><p class="mono">My role</p></div>
@@ -540,7 +604,7 @@ def render(p):
       </div>
     </section>
 
-    <section class="band" style="padding-top:0">
+    <section class="band" style="padding-top:0" data-calm>
       <div class="shell">
         <div class="case-role">
           <div class="case-role-k"><p class="mono">Result</p></div>
@@ -549,40 +613,27 @@ def render(p):
       </div>
     </section>
 
-    <section class="case-next" style="--next-acc:{nxt_acc}">
+    <nav class="case-next" aria-label="More projects" style="--next-acc:{nxt_acc}">
       <div class="case-next-glow" aria-hidden="true"></div>
       <div class="shell">
-        <div>
-          <p class="mono">Next project</p>
-          <h2 class="dsp" style="margin-top:14px">{nxt['name']}</h2>
+        <div class="case-steps">
+          {neighbour(p, 'prev')}
+          {neighbour(p, 'next')}
         </div>
-        <div class="case-next-actions">
-          <a class="cta" href="{nxt['slug']}.html">Open {nxt['name']} <span aria-hidden="true">→</span></a>
-          <a class="ghost" href="index.html#work-{p['id']}"><span aria-hidden="true">←</span> Back to all work</a>
-        </div>
+        <a class="ghost case-all" href="index.html#work-{p['id']}"><span aria-hidden="true">←</span> Back to all work</a>
       </div>
-    </section>
+    </nav>
   </main>
 
-  <footer class="site-footer">
-    <div class="shell footer-inner">
-      <span class="mono">Mruthulan · Made in Singapore</span>
-      <nav class="footer-nav" aria-label="Footer">
-        <a class="mono" href="index.html">Home</a>
-        <a class="mono" href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
-        <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a class="mono" href="privacy.html">Privacy</a>
-      </nav>
-    </div>
-  </footer>
+  {site_footer()}
 </body>
 </html>
-'''
+"""
 
 
-for p in PROJECTS:
-    out = ROOT / f"{p['slug']}.html"
-    text = render(p)
-    out.write_text(text, encoding='utf-8')
-    print(f"wrote {out.name:26} {len(text):6} bytes  ({p['kind']})")
+if __name__ == '__main__':
+    for p in PROJECTS:
+        out = ROOT / f"{p['slug']}.html"
+        text = render(p)
+        out.write_text(text, encoding='utf-8')
+        print(f"wrote {out.name:26} {len(text):6} bytes  ({p['kind']})")

@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07090E">
   <meta name="description" content="Senthil Nathan Mruthulan is a Singapore-based developer. SignalBridge, MEANT, Better Call Bhai, KnowCad, Boss Breaker and Loomy — with my role on each stated plainly.">
   <link rel="canonical" href="https://mruthulan.com/">
@@ -11,6 +11,8 @@
   <meta property="og:description" content="Six builds, two champion titles, one podium finish. Explore the work of Senthil Nathan Mruthulan.">
   <meta property="og:url" content="https://mruthulan.com/">
   <meta property="og:image" content="https://mruthulan.com/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://mruthulan.com/assets/og-card.jpg">
   <title>Mruthulan — Developer &amp; Builder</title>
@@ -21,8 +23,25 @@
   <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js-on');</script>
   <script src="js/script.js" defer></script>
   <script src="js/analytics.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Senthil Nathan Mruthulan",
+    "alternateName": "Mruthulan",
+    "url": "https://mruthulan.com/",
+    "jobTitle": "Software developer and IT student",
+    "affiliation": { "@type": "CollegeOrUniversity", "name": "Singapore Polytechnic" },
+    "address": { "@type": "PostalAddress", "addressCountry": "SG" },
+    "sameAs": [
+      "https://www.linkedin.com/in/senthil-nathan-mruthulan",
+      "https://github.com/mru34"
+    ]
+  }
+  </script>
 </head>
-<body>
+<body data-page="home">
+  <span id="top" class="anchor-alias" aria-hidden="true"></span>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="field" aria-hidden="true">
@@ -30,18 +49,25 @@
     <div class="field-aura"></div>
   </div>
 
-  <header class="site-header" id="top">
+  <header class="site-header">
     <div class="shell nav-wrap">
       <a class="brand" href="#top">Mruthulan</a>
-      <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
       <nav class="main-nav" id="main-nav" aria-label="Main">
-        <a href="#work">Work</a>
-        <a href="#wins">Wins</a>
-        <a href="#about">About</a>
-        <a href="#credentials">Credentials</a>
-        <a href="#contact">Contact</a>
-        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+        <a href="#work" data-section="work">Work</a>
+        <a href="#wins" data-section="wins">Wins</a>
+        <a href="#about" data-section="about">About</a>
+        <a href="#credentials" data-section="credentials">Credentials</a>
+        <a href="#contact" data-section="contact">Contact</a>
+        <a class="nav-resume-menu" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
       </nav>
+      <div class="nav-tools">
+        <button class="search-button" type="button" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          <span class="search-label">Search</span><kbd class="search-kbd" aria-hidden="true">Ctrl K</kbd>
+        </button>
+        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé <span aria-hidden="true">↗</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
+      </div>
     </div>
   </header>
 
@@ -54,68 +80,109 @@
 
       <div class="shell hero-inner">
         <div class="hero-copy">
-          <p class="mono kicker">Singapore · Year 2 · Open to 2026 internships</p>
-          <h1 class="dsp hero-title" id="hero-title">Senthil<br>Nathan<br>Mruthulan</h1>
-          <p class="hero-line">I build software people actually use.</p>
-          <p class="hero-hook">Six builds. One of them is taking bookings for a barber shop in Singapore right now.</p>
-          <div class="hero-actions">
+          <p class="mono kicker enter e1">Singapore · Year 2 · Open to 2026 internships</p>
+          <h1 class="dsp hero-title enter e1" id="hero-title">Senthil<br>Nathan<br>Mruthulan</h1>
+          <p class="hero-line enter e1">I build software people actually use.</p>
+          <p class="hero-hook enter e2">Six builds. One of them is taking bookings for a barber shop in Singapore right now.</p>
+
+          <ul class="proof-strip enter e2" aria-label="Proof at a glance">
+            <li><a href="#wins" style="--p:var(--gold)"><b>3</b><span>hackathon awards</span></a></li>
+            <li><a href="#wins" style="--p:var(--gold)"><b>2</b><span>champion finishes</span></a></li>
+            <li><a href="#win-dell" style="--p:var(--gold)"><b>S$3,000</b><span>prize, Dell InnovateFest</span></a></li>
+            <li><a href="#work-bb" style="--p:#FF8095"><b><i class="live-dot" aria-hidden="true"></i>1</b><span>live client product</span></a></li>
+          </ul>
+
+          <div class="hero-actions enter e3">
             <a class="cta" href="#work">Start with the work <span aria-hidden="true">↓</span></a>
+            <a class="ghost" href="#contact" data-contact-open>Contact me</a>
             <a class="ghost" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
-            <a class="ghost" href="mailto:mruthulansenthilnathan@gmail.com" data-event="contact_click">Email me</a>
           </div>
         </div>
 
-        <!-- Six nodes, one per project, each in that project's accent: the
-             same six colours that light the work rows below. -->
-        <div class="system" aria-hidden="true">
-          <div class="system-layer" data-depth="-20">
-            <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid meet">
-              <defs>
-                <radialGradient id="sys-g"><stop offset="0" stop-color="#5BE1D8" stop-opacity=".40"/><stop offset="1" stop-color="#5BE1D8" stop-opacity="0"/></radialGradient>
-                <linearGradient id="sys-l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FF3EC" stop-opacity=".95"/><stop offset="1" stop-color="#4E6E9E" stop-opacity=".35"/></linearGradient>
-              </defs>
-              <ellipse class="p-pulse" cx="350" cy="300" rx="340" ry="250" fill="url(#sys-g)"/>
-              <g stroke="url(#sys-l)" fill="none" stroke-width="1.9" opacity=".82">
-                <path d="M96 404 C210 300 300 196 402 150"/><path d="M402 150 C520 176 590 250 618 352"/>
-                <path d="M618 352 C560 452 452 496 336 486"/><path d="M336 486 C226 490 140 466 96 404"/>
-                <path d="M96 404 C250 380 330 300 402 150" stroke-opacity=".5"/><path d="M336 486 C420 380 520 372 618 352" stroke-opacity=".5"/>
-                <path d="M402 150 C380 300 356 400 336 486" stroke-opacity=".4"/>
-                <path d="M238 252 C320 300 430 340 512 452" stroke-opacity=".3"/>
-              </g>
-              <path class="p-trace" d="M96 404 C210 300 300 196 402 150 C520 176 590 250 618 352" fill="none" stroke="#EAFFFB" stroke-width="2" stroke-dasharray="52 620" stroke-linecap="round"/>
-            </svg>
+        <!-- The constellation. One node per project, each in that project's
+             accent -- the same six colours that light the work rows below.
+             The drawn layers are decoration; the buttons and the readout are
+             the real controls, and every one of them has a plain link twin in
+             the Work list. -->
+        <div class="system enter e4">
+          <div class="system-stage">
+            <div class="system-layer" data-depth="-20" aria-hidden="true">
+              <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                  <radialGradient id="sys-g"><stop offset="0" stop-color="#5BE1D8" stop-opacity=".40"/><stop offset="1" stop-color="#5BE1D8" stop-opacity="0"/></radialGradient>
+                  <linearGradient id="sys-l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FF3EC" stop-opacity=".95"/><stop offset="1" stop-color="#4E6E9E" stop-opacity=".35"/></linearGradient>
+                </defs>
+                <ellipse class="p-pulse sys-glow" cx="350" cy="300" rx="340" ry="250" fill="url(#sys-g)"/>
+                <g class="sys-links" stroke="url(#sys-l)" fill="none" stroke-width="1.9" opacity=".82">
+                  <path data-link="kc sb" d="M96 404 C210 300 300 196 402 150"/>
+                  <path data-link="sb mt" d="M402 150 C520 176 590 250 618 352"/>
+                  <path data-link="mt bb" d="M618 352 C560 452 452 496 336 486"/>
+                  <path data-link="bb kc" d="M336 486 C226 490 140 466 96 404"/>
+                  <path data-link="kc sb" d="M96 404 C250 380 330 300 402 150" stroke-opacity=".5"/>
+                  <path data-link="bb mt" d="M336 486 C420 380 520 372 618 352" stroke-opacity=".5"/>
+                  <path data-link="sb bb" d="M402 150 C380 300 356 400 336 486" stroke-opacity=".4"/>
+                  <path data-link="lm bx" d="M238 252 C320 300 430 340 512 452" stroke-opacity=".3"/>
+                  <path data-link="lm sb" d="M238 252 C300 204 350 170 402 150" stroke-opacity=".3"/>
+                  <path data-link="bx mt" d="M512 452 C556 424 596 392 618 352" stroke-opacity=".3"/>
+                </g>
+                <path class="p-trace" d="M96 404 C210 300 300 196 402 150 C520 176 590 250 618 352" fill="none" stroke="#EAFFFB" stroke-width="2" stroke-dasharray="52 620" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="system-layer" data-depth="-36">
+              <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <g class="sys-rings" fill="none" stroke-width="2.2">
+                  <circle data-node="sb" cx="402" cy="150" r="20" stroke="#5BE1D8"/>
+                  <circle data-node="mt" cx="618" cy="352" r="15" stroke="#FFB661"/>
+                  <circle data-node="bb" cx="336" cy="486" r="17" stroke="#FF8095"/>
+                  <circle data-node="kc" cx="96"  cy="404" r="16" stroke="#AC93FF"/>
+                  <circle data-node="bx" cx="512" cy="452" r="12" stroke="#A4EC76"/>
+                  <circle data-node="lm" cx="238" cy="252" r="11" stroke="#84B6FF"/>
+                </g>
+                <g>
+                  <circle class="p-spark" cx="402" cy="150" r="5" fill="#5BE1D8"/>
+                  <circle class="p-spark" cx="618" cy="352" r="4" fill="#FFB661" style="animation-delay:1.1s"/>
+                  <circle class="p-spark" cx="336" cy="486" r="4.5" fill="#FF8095" style="animation-delay:2.2s"/>
+                  <circle class="p-spark" cx="96"  cy="404" r="4.5" fill="#AC93FF" style="animation-delay:.6s"/>
+                  <circle class="p-spark" cx="512" cy="452" r="3.5" fill="#A4EC76" style="animation-delay:1.7s"/>
+                  <circle class="p-spark" cx="238" cy="252" r="3.5" fill="#84B6FF" style="animation-delay:2.8s"/>
+                </g>
+              </svg>
+              <div class="nodes" role="group" aria-label="Project constellation: one node per project">
+                <button class="node" type="button" data-node="sb" data-name="SignalBridge" data-result="SP InnovateDash 2026 — Champion" data-href="signalbridge.html" style="--x:57.43%;--y:24.19%;--c:#5BE1D8" aria-pressed="false"><span class="node-tag"><b>01</b><span>SignalBridge</span></span></button>
+                <button class="node" type="button" data-node="mt" data-name="MEANT" data-result="Dell InnovateFest 2026 — Second runner-up · S$3,000" data-href="meant.html" style="--x:88.29%;--y:56.77%;--c:#FFB661" aria-pressed="false"><span class="node-tag tag-left"><b>02</b><span>MEANT</span></span></button>
+                <button class="node" type="button" data-node="bb" data-name="Better Call Bhai" data-result="Live client site, taking real bookings" data-href="better-call-bhai.html" style="--x:48%;--y:78.39%;--c:#FF8095" aria-pressed="false"><span class="node-tag tag-below"><b>03</b><span>Better Call Bhai</span></span></button>
+                <button class="node" type="button" data-node="kc" data-name="KnowCad" data-result="Autodesk Singapore AI+ML — Champion" data-href="knowcad.html" style="--x:13.71%;--y:65.16%;--c:#AC93FF" aria-pressed="false"><span class="node-tag tag-below"><b>04</b><span>KnowCad</span></span></button>
+                <button class="node" type="button" data-node="bx" data-name="Boss Breaker" data-result="Full-stack build — API, database, game logic" data-href="boss-breaker.html" style="--x:73.14%;--y:72.9%;--c:#A4EC76" aria-pressed="false"><span class="node-tag tag-below"><b>05</b><span>Boss Breaker</span></span></button>
+                <button class="node" type="button" data-node="lm" data-name="Loomy" data-result="Product concept from 30+ user interviews" data-href="loomy.html" style="--x:34%;--y:40.65%;--c:#84B6FF" aria-pressed="false"><span class="node-tag tag-left"><b>06</b><span>Loomy</span></span></button>
+              </div>
+            </div>
+            <div class="system-layer" data-depth="-60" aria-hidden="true">
+              <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid meet">
+                <g fill="#CFF8F4" opacity=".9"><circle cx="168" cy="188" r="2"/><circle cx="560" cy="212" r="1.8"/><circle cx="470" cy="556" r="2"/><circle cx="130" cy="520" r="1.7"/><circle cx="650" cy="470" r="1.8"/><circle cx="300" cy="90" r="1.5"/><circle cx="60" cy="300" r="1.5"/></g>
+              </svg>
+            </div>
           </div>
-          <div class="system-layer" data-depth="-36">
-            <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid meet">
-              <g fill="none" stroke-width="2.2">
-                <circle cx="402" cy="150" r="20" stroke="#5BE1D8"/>
-                <circle cx="618" cy="352" r="15" stroke="#FFB661"/>
-                <circle cx="336" cy="486" r="17" stroke="#FF8095"/>
-                <circle cx="96"  cy="404" r="16" stroke="#AC93FF"/>
-                <circle cx="512" cy="452" r="12" stroke="#A4EC76"/>
-                <circle cx="238" cy="252" r="11" stroke="#84B6FF"/>
-              </g>
-              <g>
-                <circle class="p-spark" cx="402" cy="150" r="5" fill="#5BE1D8"/>
-                <circle class="p-spark" cx="618" cy="352" r="4" fill="#FFB661" style="animation-delay:1.1s"/>
-                <circle class="p-spark" cx="336" cy="486" r="4.5" fill="#FF8095" style="animation-delay:2.2s"/>
-                <circle class="p-spark" cx="96"  cy="404" r="4.5" fill="#AC93FF" style="animation-delay:.6s"/>
-                <circle class="p-spark" cx="512" cy="452" r="3.5" fill="#A4EC76" style="animation-delay:1.7s"/>
-                <circle class="p-spark" cx="238" cy="252" r="3.5" fill="#84B6FF" style="animation-delay:2.8s"/>
-              </g>
-            </svg>
-          </div>
-          <div class="system-layer" data-depth="-60">
-            <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid meet">
-              <g fill="#CFF8F4" opacity=".9"><circle cx="168" cy="188" r="2"/><circle cx="560" cy="212" r="1.8"/><circle cx="470" cy="556" r="2"/><circle cx="130" cy="520" r="1.7"/><circle cx="650" cy="470" r="1.8"/><circle cx="300" cy="90" r="1.5"/><circle cx="60" cy="300" r="1.5"/></g>
-            </svg>
+
+          <!-- The readout names what the constellation means before anyone
+               touches it, and carries the second, deliberate action. -->
+          <div class="readout" aria-live="polite">
+            <p class="readout-idle"><span class="mono">Six nodes, six builds</span><span class="readout-hint">Each node is one project, in the colour of its row below. Pick one to see what it became.</span></p>
+            <div class="readout-card" hidden>
+              <p class="mono readout-num"></p>
+              <p class="readout-name"></p>
+              <p class="readout-result"></p>
+              <div class="readout-actions">
+                <a class="readout-open" href="#work" data-event="case_open">Open case study <span aria-hidden="true">→</span></a>
+                <a class="readout-row" href="#work">Find it in the list <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ============================================================= work -->
-    <section class="work" id="work" aria-labelledby="work-title">
+    <section class="work" id="work" aria-labelledby="work-title" data-nav="work">
       <div class="thread" aria-hidden="true"></div>
       <div class="work-ambient" aria-hidden="true"></div>
       <div class="work-ghost" aria-hidden="true">
@@ -133,48 +200,48 @@
             <p class="mono kicker">01 / The work</p>
             <h2 class="dsp" id="work-title">What I built, <br>and what I did on it.</h2>
           </div>
-          <p class="section-aside">My role is on every row. <span class="pointer-hint">Hover or tab a row to light it up; open one for the full story.</span><span class="touch-hint">Open one for the full story.</span></p>
+          <p class="section-aside">My role and the result are on every row. Each one opens the full story.</p>
         </div>
 
-        <a class="work-row" id="work-sb" href="signalbridge.html" data-project="sb" data-event="case_open" style="--row-acc:#5BE1D8;--row-tint:rgba(91,225,216,.07)">
+        <a class="work-row reveal" id="work-sb" href="signalbridge.html" data-project="sb" data-event="case_open" style="--row-acc:#5BE1D8;--row-tint:rgba(91,225,216,.07)">
           <span class="work-num">01</span>
           <span class="work-main"><span class="work-name">SignalBridge</span><span class="work-hook">Youth support that never loses context.</span></span>
-          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v">Youth-facing experience, API and Discord integrations, automated tests</span></span>
+          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v"><span class="role-full">Youth-facing experience, API and Discord integrations, automated tests</span><span class="role-short">Youth-facing UI, API, Discord, tests</span></span></span>
           <span class="work-cell-result"><span class="work-k">Result</span><span class="work-v">SP InnovateDash 2026 — Champion</span></span>
           <span class="work-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="work-row" id="work-mt" href="meant.html" data-project="mt" data-event="case_open" style="--row-acc:#FFB661;--row-tint:rgba(255,182,97,.07)">
+        <a class="work-row reveal" id="work-mt" href="meant.html" data-project="mt" data-event="case_open" style="--row-acc:#FFB661;--row-tint:rgba(255,182,97,.07)">
           <span class="work-num">02</span>
           <span class="work-main"><span class="work-name">MEANT</span><span class="work-hook">Faster AAC replies. The user picks every word.</span></span>
-          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v">UI and UX, the Singaporean TTS voice, and presenting the build</span></span>
+          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v"><span class="role-full">UI and UX, the Singaporean TTS voice, and presenting the build</span><span class="role-short">UI/UX, Singaporean TTS, presenting</span></span></span>
           <span class="work-cell-result"><span class="work-k">Result</span><span class="work-v">Dell InnovateFest 2026 — Second runner-up · S$3,000</span></span>
           <span class="work-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="work-row" id="work-bb" href="better-call-bhai.html" data-project="bb" data-event="case_open" style="--row-acc:#FF8095;--row-tint:rgba(255,128,149,.07)">
+        <a class="work-row reveal" id="work-bb" href="better-call-bhai.html" data-project="bb" data-event="case_open" style="--row-acc:#FF8095;--row-tint:rgba(255,128,149,.07)">
           <span class="work-num">03</span>
           <span class="work-main"><span class="work-name">Better Call Bhai</span><span class="work-hook">Barber bookings, minus the back-and-forth.</span></span>
-          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v">Web design, frontend build and deployment</span></span>
+          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v"><span class="role-full">Web design, frontend build and deployment</span><span class="role-short">Design, frontend, deployment</span></span></span>
           <span class="work-cell-result"><span class="work-k">Result</span><span class="work-v">Live client site</span></span>
           <span class="work-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="work-row" id="work-kc" href="knowcad.html" data-project="kc" data-event="case_open" style="--row-acc:#AC93FF;--row-tint:rgba(172,147,255,.07)">
+        <a class="work-row reveal" id="work-kc" href="knowcad.html" data-project="kc" data-event="case_open" style="--row-acc:#AC93FF;--row-tint:rgba(172,147,255,.07)">
           <span class="work-num">04</span>
           <span class="work-main"><span class="work-name">KnowCad</span><span class="work-hook">Less searching. Better answers.</span></span>
-          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v">Retrieval, AI workflow and team delivery</span></span>
+          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v"><span class="role-full">Retrieval, AI workflow and team delivery</span><span class="role-short">Retrieval and AI workflow</span></span></span>
           <span class="work-cell-result"><span class="work-k">Result</span><span class="work-v">Autodesk Singapore AI+ML — Champion</span></span>
           <span class="work-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="work-row" id="work-bx" href="boss-breaker.html" data-project="bx" data-event="case_open" style="--row-acc:#A4EC76;--row-tint:rgba(164,236,118,.07)">
+        <a class="work-row reveal" id="work-bx" href="boss-breaker.html" data-project="bx" data-event="case_open" style="--row-acc:#A4EC76;--row-tint:rgba(164,236,118,.07)">
           <span class="work-num">05</span>
           <span class="work-main"><span class="work-name">Boss Breaker</span><span class="work-hook">Wellness, played as a game.</span></span>
-          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v">Full-stack build — API, database and game logic</span></span>
+          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v"><span class="role-full">Full-stack build — API, database and game logic</span><span class="role-short">API, database, game logic</span></span></span>
           <span class="work-cell-result"><span class="work-k">Result</span><span class="work-v">Full-stack coursework build</span></span>
           <span class="work-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="work-row" id="work-lm" href="loomy.html" data-project="lm" data-event="case_open" style="--row-acc:#84B6FF;--row-tint:rgba(132,182,255,.07)">
+        <a class="work-row reveal" id="work-lm" href="loomy.html" data-project="lm" data-event="case_open" style="--row-acc:#84B6FF;--row-tint:rgba(132,182,255,.07)">
           <span class="work-num">06</span>
           <span class="work-main"><span class="work-name">Loomy</span><span class="work-hook">Thrifting, with a community attached.</span></span>
-          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v">User research and product design</span></span>
+          <span class="work-cell-role"><span class="work-k">My role</span><span class="work-v"><span class="role-full">User research and product design</span><span class="role-short">User research, product design</span></span></span>
           <span class="work-cell-result"><span class="work-k">Result</span><span class="work-v">30+ user interviews</span></span>
           <span class="work-arrow" aria-hidden="true">→</span>
         </a>
@@ -183,7 +250,7 @@
 
     <!-- ============================================================= wins -->
     <span id="recognition" class="anchor-alias" aria-hidden="true"></span>
-    <section class="wins" id="wins" aria-labelledby="wins-title">
+    <section class="wins" id="wins" aria-labelledby="wins-title" data-nav="wins">
       <div class="wins-light" aria-hidden="true">
         <span class="wins-ray a"></span>
         <span class="wins-ray b"></span>
@@ -195,7 +262,7 @@
           <div>
             <p class="mono kicker">02 / Wins</p>
             <h2 class="dsp" id="wins-title"><em>3 hackathon awards.</em></h2>
-            <p class="wins-lead">Two champions and a second runner-up, all in 2026, across three different projects. Open a row for the photographs and the proof.</p>
+            <p class="wins-lead">Two champion finishes and a second runner-up, all in 2026, across three different projects. Open a row for the photographs and my post about it.</p>
           </div>
           <svg class="wins-seal" width="112" height="112" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="var(--gold)">
             <circle cx="50" cy="50" r="46" stroke-opacity=".5"/>
@@ -205,47 +272,65 @@
           </svg>
         </div>
 
-        <div class="award-item reveal" data-award="sp">
-          <button class="award-head" type="button" aria-expanded="false" aria-controls="award-sp-panel">
-            <span class="award-num">01</span>
-            <span><span class="award-name">SP InnovateDash 2026</span><span class="award-with">With <strong>SignalBridge</strong> — a consent-led youth support platform.</span></span>
-            <span class="award-place"><span class="award-result">Champion</span></span>
-            <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
-          </button>
-          <div class="award-reveal" id="award-sp-panel">
+        <div class="award-item reveal" id="win-sp" data-award="sp">
+          <h3 class="award-h">
+            <button class="award-head" type="button" aria-expanded="false" aria-controls="award-sp-panel">
+              <span class="award-num" aria-hidden="true">01</span>
+              <span><span class="award-name">SP InnovateDash 2026</span><span class="award-with">With <strong>SignalBridge</strong> — a consent-led youth support platform.</span></span>
+              <span class="award-place"><span class="award-result">Champion</span></span>
+              <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
+            </button>
+          </h3>
+          <div class="award-reveal" id="award-sp-panel" role="region" aria-label="SP InnovateDash 2026: photographs and proof">
             <div class="award-reveal-inner">
               <div class="award-photos"><figure><div class="media ratio-32" data-media="win-signalbridge-team"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><circle cx="42" cy="32" r="10"/><circle cx="60" cy="27" r="11.5"/><circle cx="78" cy="32" r="10"/><path d="M26 60c0-9 7-15 16-15s16 6 16 15"/><path d="M44 62c0-10 7-17 16-17s16 7 16 17"/><path d="M62 60c0-9 7-15 16-15s16 6 16 15"/><path d="M14 70h92" stroke-opacity=".3"/></svg></div></div></figure><figure><div class="media ratio-32" data-media="win-signalbridge-award"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><path d="M46 14h28v13a14 14 0 0 1-28 0z"/><path d="M46 17h-9a9 9 0 0 0 9 9"/><path d="M74 17h9a9 9 0 0 1-9 9"/><path d="M60 41v10"/><path d="M50 58h20l3 9H47z"/><circle cx="60" cy="40" r="30" stroke-opacity=".28" stroke-dasharray="3 6"/></svg></div></div></figure></div>
-              <div class="award-proof"><p>The win qualified our team for Dell InnovateFest. Singapore Polytechnic featured the team.</p><a class="award-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7476489524982857730/" target="_blank" rel="noopener noreferrer" data-event="proof_click">Read my LinkedIn post <span aria-hidden="true">↗</span></a><p style="margin-top:16px;margin-bottom:0"><a class="award-inline" href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noopener noreferrer">Singapore Polytechnic’s feature ↗</a></p></div>
+              <div class="award-proof">
+                <p>The win qualified our team for Dell InnovateFest. Singapore Polytechnic featured the team.</p>
+                <a class="award-link" href="https://lnkd.in/p/dCBs22kx" target="_blank" rel="noopener noreferrer" data-event="proof_post_click" data-project="sb">View my SP InnovateDash post <span aria-hidden="true">↗</span></a>
+                <p class="award-more"><a class="award-inline" href="https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026" target="_blank" rel="noopener noreferrer">Singapore Polytechnic’s feature ↗</a><a class="award-inline" href="signalbridge.html" data-event="case_open" data-project="sb">SignalBridge case study →</a></p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="award-item reveal" data-award="dell">
-          <button class="award-head" type="button" aria-expanded="false" aria-controls="award-dell-panel">
-            <span class="award-num">02</span>
-            <span><span class="award-name">Dell InnovateFest 2026</span><span class="award-with">With <strong>MEANT</strong> — an AAC communication assistant, built with SPD Ltd. A separate project from SignalBridge.</span></span>
-            <span class="award-place"><span class="award-result">Second runner-up</span><span class="award-prize">S$3,000 prize</span></span>
-            <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
-          </button>
-          <div class="award-reveal" id="award-dell-panel">
+        <div class="award-item reveal" id="win-dell" data-award="dell">
+          <h3 class="award-h">
+            <button class="award-head" type="button" aria-expanded="false" aria-controls="award-dell-panel">
+              <span class="award-num" aria-hidden="true">02</span>
+              <span><span class="award-name">Dell InnovateFest 2026</span><span class="award-with">With <strong>MEANT</strong> — an AAC communication assistant, built with SPD Ltd.<span class="award-extra"> A separate project from SignalBridge.</span></span></span>
+              <span class="award-place"><span class="award-result">Second runner-up</span><span class="award-prize">S$3,000 prize</span></span>
+              <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
+            </button>
+          </h3>
+          <div class="award-reveal" id="award-dell-panel" role="region" aria-label="Dell InnovateFest 2026: photographs and proof">
             <div class="award-reveal-inner">
               <div class="award-photos"><figure><div class="media ratio-32" data-media="win-meant-handover"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><path d="M46 14h28v13a14 14 0 0 1-28 0z"/><path d="M46 17h-9a9 9 0 0 0 9 9"/><path d="M74 17h9a9 9 0 0 1-9 9"/><path d="M60 41v10"/><path d="M50 58h20l3 9H47z"/><circle cx="60" cy="40" r="30" stroke-opacity=".28" stroke-dasharray="3 6"/></svg></div></div></figure><figure><div class="media ratio-32" data-media="win-meant-team"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><circle cx="42" cy="32" r="10"/><circle cx="60" cy="27" r="11.5"/><circle cx="78" cy="32" r="10"/><path d="M26 60c0-9 7-15 16-15s16 6 16 15"/><path d="M44 62c0-10 7-17 16-17s16 7 16 17"/><path d="M62 60c0-9 7-15 16-15s16 6 16 15"/><path d="M14 70h92" stroke-opacity=".3"/></svg></div></div></figure></div>
-              <div class="award-proof"><p>Representing Singapore Polytechnic at the national final.</p><a class="award-link" href="meant.html" data-event="proof_click">Read the MEANT case study <span aria-hidden="true">→</span></a></div>
+              <div class="award-proof">
+                <p>Representing Singapore Polytechnic at the national final. I presented the build on stage.</p>
+                <a class="award-link" href="https://lnkd.in/p/dZQiUX3z" target="_blank" rel="noopener noreferrer" data-event="proof_post_click" data-project="mt">View my Dell InnovateFest post <span aria-hidden="true">↗</span></a>
+                <p class="award-more"><a class="award-inline" href="meant.html" data-event="case_open" data-project="mt">MEANT case study →</a></p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="award-item reveal" data-award="autodesk">
-          <button class="award-head" type="button" aria-expanded="false" aria-controls="award-autodesk-panel">
-            <span class="award-num">03</span>
-            <span><span class="award-name">Autodesk Singapore AI+ML Hackathon 2026</span><span class="award-with">With <strong>KnowCad</strong> — an AI customer-service co-pilot.</span></span>
-            <span class="award-place"><span class="award-result">Champion</span></span>
-            <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
-          </button>
-          <div class="award-reveal" id="award-autodesk-panel">
+        <div class="award-item reveal" id="win-autodesk" data-award="autodesk">
+          <h3 class="award-h">
+            <button class="award-head" type="button" aria-expanded="false" aria-controls="award-autodesk-panel">
+              <span class="award-num" aria-hidden="true">03</span>
+              <span><span class="award-name">Autodesk Singapore AI+ML Hackathon 2026</span><span class="award-with">With <strong>KnowCad</strong> — an AI customer-service co-pilot.</span></span>
+              <span class="award-place"><span class="award-result">Champion</span></span>
+              <span class="award-toggle" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1v12M1 7h12"/></svg></span>
+            </button>
+          </h3>
+          <div class="award-reveal" id="award-autodesk-panel" role="region" aria-label="Autodesk Singapore AI+ML Hackathon 2026: photographs and proof">
             <div class="award-reveal-inner">
               <div class="award-photos"><figure><div class="media ratio-32" data-media="win-knowcad-champion"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><path d="M46 14h28v13a14 14 0 0 1-28 0z"/><path d="M46 17h-9a9 9 0 0 0 9 9"/><path d="M74 17h9a9 9 0 0 1-9 9"/><path d="M60 41v10"/><path d="M50 58h20l3 9H47z"/><circle cx="60" cy="40" r="30" stroke-opacity=".28" stroke-dasharray="3 6"/></svg></div></div></figure><figure><div class="media ratio-32" data-media="win-knowcad-team"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="var(--gold)" stroke-width="1.1"><circle cx="42" cy="32" r="10"/><circle cx="60" cy="27" r="11.5"/><circle cx="78" cy="32" r="10"/><path d="M26 60c0-9 7-15 16-15s16 6 16 15"/><path d="M44 62c0-10 7-17 16-17s16 7 16 17"/><path d="M62 60c0-9 7-15 16-15s16 6 16 15"/><path d="M14 70h92" stroke-opacity=".3"/></svg></div></div></figure></div>
-              <div class="award-proof"><p>First place, working to a short deadline and presenting the concept to a non-technical audience.</p><a class="award-link" href="https://www.linkedin.com/feed/update/urn:li:activity:7445494743490453504/" target="_blank" rel="noopener noreferrer" data-event="proof_click">Read my LinkedIn post <span aria-hidden="true">↗</span></a></div>
+              <div class="award-proof">
+                <p>First place, working to a short deadline and presenting the concept to a non-technical audience.</p>
+                <a class="award-link" href="https://lnkd.in/p/dQW9Pg_v" target="_blank" rel="noopener noreferrer" data-event="proof_post_click" data-project="kc">View my Autodesk hackathon post <span aria-hidden="true">↗</span></a>
+                <p class="award-more"><a class="award-inline" href="knowcad.html" data-event="case_open" data-project="kc">KnowCad case study →</a></p>
+              </div>
             </div>
           </div>
         </div>
@@ -253,118 +338,123 @@
     </section>
 
     <!-- ============================================================ about -->
-    <section class="about" id="about" aria-labelledby="about-title">
+    <section class="about" id="about" aria-labelledby="about-title" data-nav="about" data-calm>
       <div class="thread" aria-hidden="true"></div>
       <div class="knot" aria-hidden="true" style="top:0;--knot-ring:#10141C"></div>
       <div class="about-glow" aria-hidden="true"></div>
 
       <div class="shell">
         <div class="about-top">
-          <figure class="about-portrait reveal">
-            <div class="media ratio-45" data-media="about-portrait">
-              <div class="media-fallback" aria-hidden="true">
-                <svg viewBox="0 0 120 150" fill="none" stroke="#5BE1D8" stroke-width="1.2">
-                  <circle cx="60" cy="58" r="24" stroke-opacity=".9"/>
-                  <path d="M18 132c0-24 19-38 42-38s42 14 42 38" stroke-opacity=".9"/>
-                  <circle cx="60" cy="58" r="36" stroke-opacity=".35"/>
-                  <circle cx="60" cy="58" r="48" stroke-opacity=".18"/>
-                  <path d="M6 132h108" stroke-opacity=".25"/>
-                </svg>
-              </div>
-            </div>
+          <!-- Only ever a real photograph: with no file in data/media.json
+               this slot removes itself rather than drawing a stand-in. -->
+          <figure class="about-portrait media-optional-wrap reveal">
+            <div class="media ratio-45 media-optional" data-media="about-portrait"></div>
           </figure>
 
-          <div class="about-body reveal">
-            <p class="mono kicker">03 / About</p>
-            <p class="dsp about-statement" id="about-title">I start from the person, <br>not the technology.</p>
-            <p class="about-lead">Then I finish it and put it somewhere real. That is the part most student projects skip, and it is the part I care about.</p>
-            <p class="about-detail">It shows up in what I work on. SignalBridge hands the decision back to the youth worker instead of making it for them. MEANT suggests a reply, but the AAC user picks every word that gets spoken. Better Call Bhai is not a demo — it takes real bookings for a real barber shop.</p>
-            <p class="about-detail">The constraints are usually the interesting part. MEANT had to keep working with the AI layer switched off, because a communication aid that fails closed is not a communication aid. KnowCad’s source material is private, so the work was retrieval rather than the model. Boss Breaker keeps its points ledger on the server, because a game you can win in the browser is not a game.</p>
-            <p class="about-detail">I am partway through a Diploma in Information Technology at Singapore Polytechnic, 2025 to 2028. I do the talking as well as the building: I presented MEANT on stage at the Dell InnovateFest national final, and as class chairman I handle class communications and student outreach, including SP’s Open House 2026.</p>
+          <div class="about-body">
+            <div class="reveal">
+              <p class="mono kicker">03 / About</p>
+              <h2 class="dsp about-statement" id="about-title">I build, test, explain <br>and ship software.</h2>
+              <p class="about-lead">I care about the last mile: whether someone can actually use the result, whether it survives failure, and whether I can explain the decisions clearly.</p>
+            </div>
 
-            <div class="traits">
-              <div class="trait">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="1.6" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>
-                <h3>I test it</h3>
-                <p>On SignalBridge the automated tests were mine. Edge cases are cheaper to find in a repo than to explain on stage.</p>
-              </div>
-              <div class="trait">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="1.6" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            <ul class="proofs reveal" aria-label="How that shows up in the work">
+              <li class="proof" style="--pc:#FF8095">
                 <h3>I ship it</h3>
-                <p>Deployment is not someone else’s job. Better Call Bhai is deployed and taking the shop’s bookings, not sitting in a repo.</p>
-              </div>
-              <div class="trait">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></svg>
-                <h3>I start with people</h3>
-                <p>Loomy began with more than 30 interviews before a single screen was drawn. MEANT was built alongside SPD Ltd, not guessed at.</p>
-              </div>
-            </div>
+                <p>Better Call Bhai is live and taking bookings for a real business.</p>
+                <a href="better-call-bhai.html" data-event="case_open" data-project="bb">Better Call Bhai <span aria-hidden="true">→</span></a>
+              </li>
+              <li class="proof" style="--pc:#FFB661">
+                <h3>I build for constraints</h3>
+                <p>MEANT keeps AAC and typing available even if its AI layer goes down.</p>
+                <a href="meant.html" data-event="case_open" data-project="mt">MEANT <span aria-hidden="true">→</span></a>
+              </li>
+              <li class="proof" style="--pc:#5BE1D8">
+                <h3>I test it</h3>
+                <p>SignalBridge’s automated tests and edge cases were part of my contribution.</p>
+                <a href="signalbridge.html" data-event="case_open" data-project="sb">SignalBridge <span aria-hidden="true">→</span></a>
+              </li>
+              <li class="proof" style="--pc:var(--gold)">
+                <h3>I present it</h3>
+                <p>I presented MEANT at the Dell InnovateFest national final.</p>
+                <a href="#win-dell">The Dell win <span aria-hidden="true">↑</span></a>
+              </li>
+            </ul>
+
+            <p class="looking reveal"><span class="mono">What I’m looking for</span>Open to 2026 software engineering, full-stack and product-focused internships in Singapore, plus selected collaborations.</p>
           </div>
         </div>
 
-        <div class="about-foot reveal">
-          <figure class="media ratio-32 media-optional" data-media="about-candid"></figure>
-          <div>
-            <p class="mono" style="margin-bottom:12px">Tools I’ve worked with</p>
-            <p class="toolkit">JavaScript · HTML &amp; CSS · Java · Python &amp; FastAPI · Node.js · SQL &amp; PostgreSQL · Git · Testing</p>
-            <div class="about-links">
-              <a class="quiet" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-              <a class="quiet" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-              <a class="quiet" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
+        <div class="toolkit reveal" id="toolkit" aria-labelledby="toolkit-title">
+          <h3 class="mono" id="toolkit-title">Tools, grouped by where I’ve used them</h3>
+          <dl class="tool-groups">
+            <div class="tool-group">
+              <dt>Web</dt>
+              <dd><span class="tools">JavaScript · HTML · CSS · Node.js</span><span class="tool-proof">Better Call Bhai, Boss Breaker</span></dd>
             </div>
+            <div class="tool-group">
+              <dt>Backend and data</dt>
+              <dd><span class="tools">Python · FastAPI · SQL · PostgreSQL · Java</span><span class="tool-proof">SignalBridge (FastAPI, PostgreSQL), Boss Breaker (MySQL)</span></dd>
+            </div>
+            <div class="tool-group">
+              <dt>Practice</dt>
+              <dd><span class="tools">Git · automated testing · deployment</span><span class="tool-proof">SignalBridge’s tests, Better Call Bhai on Render</span></dd>
+            </div>
+          </dl>
+          <div class="about-links">
+            <a class="quiet" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            <a class="quiet" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+            <a class="quiet" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
           </div>
         </div>
+
+        <figure class="about-candid media-optional-wrap reveal"><div class="media ratio-32 media-optional" data-media="about-candid"></div></figure>
       </div>
     </section>
 
     <!-- ====================================================== credentials -->
-    <section class="creds" id="credentials" aria-labelledby="creds-title">
+    <section class="creds" id="credentials" aria-labelledby="creds-title" data-nav="credentials" data-calm>
       <div class="thread" aria-hidden="true"></div>
       <div class="knot" aria-hidden="true" style="top:0;--knot-ring:#0A0D13"></div>
       <div class="shell">
-        <div class="section-head reveal" style="margin-bottom:40px">
+        <div class="section-head reveal" style="margin-bottom:36px">
           <div>
             <p class="mono kicker">04 / Credentials</p>
-            <h2 class="dsp" id="creds-title" style="font-size:clamp(36px,4.4vw,62px)">Where I am, <br>and what I turn up for.</h2>
+            <h2 class="dsp creds-title" id="creds-title">Where I study, <br>and what I lead.</h2>
           </div>
         </div>
 
-        <div class="cred reveal">
-          <span class="cred-when">Apr 2025 – May 2028 (expected)</span>
-          <div>
-            <h3>Diploma in Information Technology</h3>
-            <span class="cred-where">Singapore Polytechnic</span>
-          </div>
-        </div>
-        <div class="cred reveal">
-          <span class="cred-when">2026</span>
-          <div>
-            <h3>Representing Singapore Polytechnic</h3>
-            <span class="cred-where">Dell InnovateFest, national final</span>
-            <p>Our SP InnovateDash win sent the team to the national final, where we built MEANT with SPD Ltd.</p>
-          </div>
-        </div>
-        <div class="cred reveal">
-          <span class="cred-when">Student leadership</span>
-          <div>
-            <h3>Secretary, subcommittee</h3>
-            <span class="cred-where">Youth Harmony Chapter, Singapore Polytechnic</span>
-            <p>Coordination, communication and follow-through for student-led activities and community engagement.</p>
-          </div>
-        </div>
-        <div class="cred reveal">
-          <span class="cred-when">Student leadership</span>
-          <div>
-            <h3>Class Chairman and SP ACER</h3>
-            <span class="cred-where">Singapore Polytechnic</span>
-            <p>Class communication and student outreach, including Open House 2026 and First Steps with SP.</p>
-          </div>
-        </div>
+        <ol class="cred-list">
+          <li class="cred reveal">
+            <span class="cred-when">Apr 2025 – May 2028 <span class="cred-note">expected</span></span>
+            <div>
+              <h3>Diploma in Information Technology</h3>
+              <span class="cred-where">Singapore Polytechnic</span>
+              <p>Represented SP at the Dell InnovateFest national final in 2026.</p>
+            </div>
+          </li>
+          <li class="cred reveal">
+            <span class="cred-when">Student leadership</span>
+            <div>
+              <h3>Secretary, subcommittee</h3>
+              <span class="cred-where">Youth Harmony Chapter, Singapore Polytechnic</span>
+              <p>Coordination, communication and follow-through for student-led activities and community engagement.</p>
+            </div>
+          </li>
+          <li class="cred reveal">
+            <span class="cred-when">Student leadership</span>
+            <div>
+              <h3>Class Chairman and SP ACER</h3>
+              <span class="cred-where">Singapore Polytechnic</span>
+              <p>Class communication and student outreach, including Open House 2026 and First Steps with SP.</p>
+            </div>
+          </li>
+        </ol>
       </div>
     </section>
 
     <!-- ========================================================== contact -->
-    <section class="contact" id="contact" aria-labelledby="contact-title">
+    <section class="contact" id="contact" aria-labelledby="contact-title" data-nav="contact">
       <div class="thread" aria-hidden="true" style="bottom:auto;height:210px"></div>
       <div class="beacon" aria-hidden="true"><span class="p-pulse"></span></div>
       <div class="contact-glow" aria-hidden="true"></div>
@@ -372,10 +462,36 @@
         <div class="contact-inner">
           <p class="mono kicker">05 / Contact</p>
           <h2 class="dsp" id="contact-title" style="margin-top:26px">Tell me what <br>you need built.</h2>
-          <p class="contact-lead">Open to software internships and collaborations.</p>
-          <a class="cta contact-mail" href="mailto:mruthulansenthilnathan@gmail.com" data-event="contact_click">mruthulansenthilnathan@gmail.com</a>
+          <p class="contact-lead">Open to software internships and collaborations. Pick whichever way of reaching me works for you.</p>
+
+          <!-- The contact chooser, inline: four routes that each work on their
+               own, so a visitor without a mail app is never left with a button
+               that does nothing. The same chooser opens as a dialog from the
+               hero and from search. -->
+          <div class="chooser" data-chooser>
+            <p class="chooser-address"><span class="mono">Email</span><span class="chooser-email">mruthulansenthilnathan@gmail.com</span></p>
+            <div class="chooser-options">
+              <button class="chooser-option is-primary" type="button" data-contact-action="copy">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>
+                <span><b class="chooser-label">Copy email address</b><span class="chooser-sub">Paste it into any mail app</span></span>
+              </button>
+              <a class="chooser-option" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=mruthulansenthilnathan@gmail.com&amp;su=Portfolio%20enquiry" target="_blank" rel="noopener noreferrer" data-contact-action="gmail">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                <span><b class="chooser-label">Open Gmail compose <span aria-hidden="true">↗</span></b><span class="chooser-sub">Pre-addressed, in a new tab</span></span>
+              </a>
+              <a class="chooser-option" href="mailto:mruthulansenthilnathan@gmail.com?subject=Portfolio%20enquiry" data-contact-action="mail">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16v12H8l-4 4z"/></svg>
+                <span><b class="chooser-label">Open default mail app</b><span class="chooser-sub">Outlook, Apple Mail and the like</span></span>
+              </a>
+              <a class="chooser-option" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer" data-contact-action="linkedin">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg>
+                <span><b class="chooser-label">Message on LinkedIn <span aria-hidden="true">↗</span></b><span class="chooser-sub">senthil-nathan-mruthulan</span></span>
+              </a>
+            </div>
+            <p class="chooser-status" role="status" aria-live="polite"></p>
+          </div>
+
           <div class="contact-links">
-            <a class="ghost" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
             <a class="ghost" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
             <a class="ghost" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
           </div>
@@ -388,7 +504,7 @@
     <div class="shell footer-inner">
       <span class="mono">Mruthulan · Made in Singapore</span>
       <nav class="footer-nav" aria-label="Footer">
-        <a class="mono" href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
+        <span class="footer-mail"><a class="mono" href="mailto:mruthulansenthilnathan@gmail.com?subject=Portfolio%20enquiry">Email</a><button class="mono footer-copy" type="button" data-contact-action="copy">Copy address</button></span>
         <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="mono" href="privacy.html">Privacy</a>
