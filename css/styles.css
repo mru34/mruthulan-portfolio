@@ -1003,6 +1003,24 @@ body.deck-zoomed { overflow: hidden; }
 .media-fallback svg { max-width: 220px; }
 /* one ratio across the supporting row, so the two frames and their captions line up */
 .evidence-feature > .evidence > figure > .media { aspect-ratio: 16 / 10; }
+/* a filled screenshot is a control: it opens full size */
+.media.is-zoomable { cursor: zoom-in; }
+.media.is-zoomable:focus-visible { outline: 2px solid var(--acc); outline-offset: 4px; }
+.zoom-badge {
+  position: absolute; right: 10px; bottom: 10px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px;
+  border-radius: 999px; background: rgba(7, 9, 14, .82); border: 1px solid rgba(255, 255, 255, .16);
+  font-size: 13px; font-weight: 600; color: #fff; pointer-events: none;
+  transition: background .2s var(--ease), border-color .2s var(--ease);
+}
+.media.is-zoomable:hover .zoom-badge { background: rgba(7, 9, 14, .95); border-color: var(--acc); }
+.shot-zoom img { background: transparent; }
+/* screenshots are 16:10, not the deck's 16:9, so the turned short edge is w x 10/16 */
+.shot-zoom.is-turned img { width: min(calc(100vh - 190px), calc((100vw - 40px) * 16 / 10)); }
+.shot-zoom-cap { max-width: 60ch; text-align: center; }
+.evidence-source {
+  margin: 18px auto 0; max-width: 1040px; font-size: 15px; line-height: 1.55; color: var(--dim);
+}
 .evidence-pending {
   margin: 18px auto 0; max-width: 1040px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;

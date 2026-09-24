@@ -53,34 +53,32 @@
     "height": 991
   },
   "signalbridge-shot-1": {
-    "src": null,
-    "alt": "",
-    "caption": null
+    "src": "signalbridge-shot-1.webp",
+    "alt": "SafeNight, the youth-facing chat: a fictional youth, Mira, writes after hours about classmates editing her photos, and SafeNight offers to prepare a note so she does not have to repeat everything tomorrow.",
+    "caption": "SafeNight, the youth-facing conversation — the part I built",
+    "width": 1600,
+    "height": 1000
   },
   "signalbridge-shot-2": {
-    "src": null,
-    "alt": "",
-    "caption": null
-  },
-  "signalbridge-demo": {
-    "src": null,
-    "poster": null,
-    "caption": null
+    "src": "signalbridge-shot-2.webp",
+    "alt": "The worker's handoff brief for the fictional case: consent received, risk level, the key quote, main concern, emotional state and what not to ask again, with buttons to mark it reviewed or escalate.",
+    "caption": "The handoff brief the worker opens next morning",
+    "width": 1600,
+    "height": 1000
   },
   "meant-shot-1": {
-    "src": null,
-    "alt": "",
-    "caption": null
+    "src": "meant-shot-1.webp",
+    "alt": "The MEANT tablet: the partner has asked what they would like to order, and four large reply buttons offer roasted chicken rice, steamed chicken rice, char siew rice and duck rice, with Not these and Edit beneath.",
+    "caption": "They ask; the user picks one of four ranked replies",
+    "width": 1600,
+    "height": 1000
   },
   "meant-shot-2": {
-    "src": null,
-    "alt": "",
-    "caption": null
-  },
-  "meant-demo": {
-    "src": null,
-    "poster": null,
-    "caption": null
+    "src": "meant-shot-2.webp",
+    "alt": "The partner's display showing Give me a moment in large green text after the user pressed Wait.",
+    "caption": "Turn Claim on the partner's screen, holding the conversation open",
+    "width": 1600,
+    "height": 1000
   },
   "better-call-bhai-shot-1": {
     "src": "better-call-bhai-shot-1.webp",
@@ -121,5 +119,19 @@
     "src": null,
     "alt": "",
     "caption": null
+  },
+  "signalbridge-shot-3": {
+    "src": "signalbridge-shot-3.webp",
+    "alt": "The youth-side preview titled Your worker is ready for you, showing the quote, what happened tonight, how she was feeling and what comes next, before anything is shared.",
+    "caption": "What the youth sees before the note is shared",
+    "width": 1600,
+    "height": 1000
+  },
+  "meant-shot-3": {
+    "src": "meant-shot-3.webp",
+    "alt": "The MEANT AAC board of symbol buttons, with the phrase I want help composed in the message bar beside Speak and show.",
+    "caption": "The AAC board — it still works with the AI layer off",
+    "width": 1600,
+    "height": 1000
   }
 }

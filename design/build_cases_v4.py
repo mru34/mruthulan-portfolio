@@ -254,10 +254,10 @@ PROJECTS = [
                  ])),
             band('Evidence', 'What it actually looks like.',
                  evidence_feature(
-                     media('signalbridge-shot-1', 'ratio-1610', 'Youth-facing conversation — the part I built'),
-                     [media('signalbridge-shot-2', 'ratio-1610', 'The handoff brief, before the worker edits it'),
-                      media('signalbridge-demo', 'ratio-169', 'Message → consent → brief, in one take', fallback='play')],
-                     pending='Frames reserved — interface captures and the demo clip are not published yet')),
+                     media('signalbridge-shot-1', 'ratio-1610', 'SafeNight, the youth-facing conversation — the part I built'),
+                     [media('signalbridge-shot-2', 'ratio-1610', 'The handoff brief the worker opens next morning'),
+                      media('signalbridge-shot-3', 'ratio-1610', 'What the youth sees before the note is shared')])
+                 + '<p class="evidence-source">Captured from the running app with its fictional demo data. No real young person appears anywhere.</p>'),
         ],
         'role': ('I built the youth-facing interfaces, the consent and handoff workflows, the API '
                  'and Discord integrations, and the automated tests that kept the handoff logic '
@@ -295,10 +295,10 @@ PROJECTS = [
                  'Singaporean user sound like someone else. Building the Singaporean TTS voice was my '
                  'part of the build, alongside the interface and the demo we presented.</p>'
                  + evidence_feature(
-                     media('meant-shot-1', 'ratio-1610', 'The AAC board and suggestion strip'),
-                     [media('meant-shot-2', 'ratio-1610', 'Turn Claim, holding the conversation open'),
-                      media('meant-demo', 'ratio-169', 'A full turn, spoken', fallback='play')],
-                     pending='Frames reserved — interface captures and the demo clip are not published yet')),
+                     media('meant-shot-1', 'ratio-1610', 'They ask; the user picks one of four ranked replies'),
+                     [media('meant-shot-2', 'ratio-1610', 'Turn Claim on the partner’s screen, holding the conversation open'),
+                      media('meant-shot-3', 'ratio-1610', 'The AAC board — it still works with the AI layer off')])
+                 + '<p class="evidence-source">Captured from the running tablet client with the hawker demo pack. The repository itself stays private.</p>'),
             band('If the AI stops', 'It degrades into something that still works.',
                  '<p class="band-note" style="max-width:700px">If the AI layer goes down, the AAC board '
                  'and typing still work. A communication aid that fails closed is not a communication aid.</p>'),
