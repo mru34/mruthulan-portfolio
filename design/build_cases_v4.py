@@ -337,11 +337,12 @@ PROJECTS = [
                                     'Pick an open slot.',
                                     'Confirm.'])), deep=True),
             band('Evidence', 'The booking flow, end to end.',
-                 evidence([
-                     media('better-call-bhai-shot-1', 'ratio-1610', 'Choosing a service'),
-                     media('better-call-bhai-shot-2', 'ratio-1610', 'Picking an open slot'),
-                     media('better-call-bhai-shot-3', 'ratio-1610', 'Confirmed, with a WhatsApp receipt'),
-                 ])
+                 evidence_feature(
+                     media('better-call-bhai-shot-1', 'ratio-1610', 'The live site, on a laptop and a phone'),
+                     [media('better-call-bhai-shot-2', 'ratio-1610', 'Choosing a service, a day and an open slot'),
+                      media('better-call-bhai-shot-3', 'ratio-1610', 'Confirmed, with a WhatsApp confirmation one tap away')])
+                 + '<p class="evidence-source">Captured from the site’s own code running locally with an empty database, '
+                   'so no customer appears. The struck-through times are test bookings.</p>'
                  + testimonial(OWNER_QUOTE, OWNER_ATTRIBUTION)),
         ],
         'role': ('I owned the customer journey, the appointment form, the mobile interface and the '

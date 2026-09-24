@@ -1583,12 +1583,16 @@ body.deck-zoomed { overflow: hidden; }
   /* ------------------------------------------------------------- about */
   .about-grid {
     grid-template-columns: minmax(0, 1fr) 116px; column-gap: 16px;
-    grid-template-areas: "head head" "text fig" "ideas ideas" "looking looking";
+    grid-template-areas: "head head" "text fig" "personal personal" "ideas ideas" "looking looking";
   }
+  /* the lead sits beside the portrait; the longer personal paragraph runs full width under both */
+  .about-text { display: contents; }
+  .about-lead { grid-area: text; }
+  .about-personal { grid-area: personal; }
   .about-head { margin-bottom: 16px; }
   .about-statement { font-size: clamp(32px, 9.4vw, 38px); max-width: none; margin-top: 16px; }
   .about-lead { margin-top: 0; font-size: 17px; line-height: 1.6; }
-  .about-personal { font-size: 17px; }
+  .about-personal { font-size: 17px; margin-top: 16px; max-width: none; }
   .about-portrait { align-self: start; }
   .about-portrait .media { border-radius: 14px; box-shadow: 0 14px 34px rgba(0, 0, 0, .45); }
   .about-portrait .media::after { border-radius: 14px; }
