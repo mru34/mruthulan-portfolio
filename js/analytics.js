@@ -38,24 +38,50 @@
     const banner = document.createElement('section');
     banner.className = 'analytics-banner';
     banner.setAttribute('aria-label', 'Analytics choice');
-    banner.innerHTML = '<div class="analytics-banner-copy"><strong>Help me improve this site?</strong><p>With your permission, Google Analytics will show me which pages people visit and their approximate location, referral source and device. <a href="privacy.html">Privacy details</a></p></div><div class="analytics-banner-actions"><button type="button" class="analytics-allow">Allow analytics</button><button type="button" class="analytics-deny">No thanks</button></div>';
+    // Two equal buttons: the choice is the visitor's, so neither is dressed up as the answer.
+    banner.innerHTML = '<div class="analytics-banner-copy"><strong>Help me improve this site?</strong><p>Google Analytics would show me which pages get read. <a href="privacy.html">Privacy details</a></p></div><div class="analytics-banner-actions"><button type="button" class="analytics-allow">Allow analytics</button><button type="button" class="analytics-deny">No thanks</button></div>';
     document.body.appendChild(banner);
+    document.documentElement.classList.add('has-consent-prompt');
+    const dismiss = () => {
+      banner.remove();
+      document.documentElement.classList.remove('has-consent-prompt');
+    };
     banner.querySelector('.analytics-allow').addEventListener('click', () => {
       saveChoice('allow');
-      banner.remove();
+      dismiss();
       loadAnalytics();
     });
     banner.querySelector('.analytics-deny').addEventListener('click', () => {
       saveChoice('deny');
-      banner.remove();
+      dismiss();
       if (document.querySelector('script[data-portfolio-analytics]')) window.location.reload();
     });
+  }
+
+  /* On a phone the first screen is the introduction, so the question waits
+     for the visitor to do something -- a small scroll, a tap, a key -- or for
+     a few seconds to pass. Nothing is loaded until they answer either way. */
+  function askWhenReady() {
+    const phone = window.matchMedia('(max-width: 640px)').matches;
+    const privacyPage = !!document.querySelector('#analytics-change');
+    if (!phone || privacyPage) { showChoice(); return; }
+    let asked = false;
+    const ask = () => {
+      if (asked) return;
+      asked = true;
+      window.removeEventListener('scroll', onScroll);
+      showChoice();
+    };
+    const onScroll = () => { if (window.scrollY > 80) ask(); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    ['pointerdown', 'keydown'].forEach((t) => window.addEventListener(t, () => setTimeout(ask, 600), { once: true, passive: true }));
+    setTimeout(ask, 8000);
   }
 
   const currentChoice = choice();
   updateStatus(currentChoice);
   if (currentChoice === 'allow') loadAnalytics();
-  else if (currentChoice !== 'deny') showChoice();
+  else if (currentChoice !== 'deny') askWhenReady();
 
   document.querySelector('#analytics-change')?.addEventListener('click', () => {
     try { localStorage.removeItem(storageKey); } catch { /* Storage may be unavailable. */ }

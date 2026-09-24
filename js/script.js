@@ -811,17 +811,12 @@
       system.addEventListener('pointerleave', () => { overSystem = false; });
     }
 
-    /* A mouse hovers, a finger drags -- pointermove covers both, so a tablet
-       gets the same response as a laptop instead of a still picture. It is
-       rAF-throttled and writes only transforms, so a scroll-drag costs a
-       couple of composited frames. */
-    window.addEventListener('pointermove', (e) => point(e.clientX, e.clientY), { passive: true });
-    if (heroEl) {
-      heroEl.addEventListener('touchmove', (e) => {
-        const t = e.touches[0];
-        if (t) point(t.clientX, t.clientY);
-      }, { passive: true });
-    }
+    /* A mouse or pen is followed as it moves. A finger is not: on a phone a
+       moving finger is almost always a scroll, and the environment should sit
+       still while the reader scrolls. rAF-throttled, transforms only. */
+    window.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'touch') point(e.clientX, e.clientY);
+    }, { passive: true });
 
     /* A tap on open ground: the aura moves there and a ring expands from it.
        Taps on links, buttons and fields are left alone -- those have their own
@@ -836,14 +831,39 @@
       field.appendChild(ring);
     };
 
+    const control = (el) => el.closest && el.closest('a, button, input, select, textarea, label, dialog, [role="button"], .site-header');
+
+    /* A mouse press answers at once. A touch only counts once the finger
+       lifts without having travelled -- a deliberate tap -- so the start of
+       a scroll never sets anything moving, and the browser's pointercancel
+       (fired the moment it takes the gesture for scrolling) stops it dead. */
+    let tap = null;
     document.addEventListener('pointerdown', (e) => {
-      if (e.target.closest && e.target.closest('a, button, input, select, textarea, label, dialog, [role="button"], .site-header')) return;
+      if (e.pointerType === 'touch') {
+        tap = { x: e.clientX, y: e.clientY, t: e.timeStamp, open: !control(e.target) };
+        return;
+      }
+      if (control(e.target)) return;
       point(e.clientX, e.clientY);
       ping(e.clientX, e.clientY);
     }, { passive: true });
+    document.addEventListener('pointermove', (e) => {
+      if (tap && e.pointerType === 'touch' && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 10) tap = null;
+    }, { passive: true });
+    document.addEventListener('pointercancel', () => { tap = null; }, { passive: true });
+    document.addEventListener('pointerup', (e) => {
+      if (!tap || e.pointerType !== 'touch') return;
+      const t = tap;
+      tap = null;
+      if (e.timeStamp - t.t > 600) return;
+      point(t.x, t.y);
+      if (t.open) ping(t.x, t.y);
+    }, { passive: true });
 
+    // On a touch-only device nothing is tied to scrolling: it all holds still.
+    const touchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
     let scrollFrame = 0;
-    window.addEventListener('scroll', () => {
+    if (!touchOnly) window.addEventListener('scroll', () => {
       if (scrollFrame) return;
       scrollFrame = requestAnimationFrame(() => {
         scrollFrame = 0;
@@ -931,7 +951,8 @@
     };
 
     nodes.forEach((node, i) => {
-      node.setAttribute('aria-label', node.dataset.name + ', project ' + (i + 1) + ' of 6');
+      // the visible tag ("01 SignalBridge") leads the name, so voice control can say what it sees
+      node.setAttribute('aria-label', '0' + (i + 1) + ' ' + node.dataset.name + ', project ' + (i + 1) + ' of 6');
       node.tabIndex = i === 0 ? 0 : -1;
       node.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') show(node); });
       node.addEventListener('focus', () => show(node));
@@ -1045,6 +1066,7 @@
       row.addEventListener('focus', on);
       // a tap lights the environment before the navigation happens
       row.addEventListener('pointerdown', on, { passive: true });
+      row.addEventListener('pointercancel', off, { passive: true });
       row.addEventListener('mouseleave', off);
       row.addEventListener('blur', off);
     });
@@ -1162,7 +1184,7 @@
     if (!shotZoom) {
       shotZoom = document.createElement('dialog');
       shotZoom.className = 'deck-zoom shot-zoom';
-      shotZoom.setAttribute('aria-label', 'Screenshot, full size');
+      shotZoom.setAttribute('aria-label', 'Image, full size');
       shotZoom.innerHTML =
         '<button class="deck-zoom-close" type="button" aria-label="Close full size">' + closeIcon + '</button>' +
         '<div class="deck-zoom-frame"><img alt=""></div>' +
@@ -1192,20 +1214,24 @@
 
   function setShotTurn(on) {
     const turn = shotZoom.querySelector('.deck-zoom-turn');
+    const big = shotZoom.querySelector('img');
     shotZoom.classList.toggle('is-turned', on);
     turn.textContent = on ? 'Show upright' : 'Turn sideways';
     turn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    // turned, the long edge runs down the screen and the short edge must still fit across it
+    const ar = (big.naturalWidth && big.naturalHeight) ? big.naturalWidth / big.naturalHeight : 1.6;
+    big.style.width = on ? Math.floor(Math.min(window.innerHeight - 190, (window.innerWidth - 40) * ar)) + 'px' : '';
   }
 
   function wireShotZoom() {
-    document.querySelectorAll('.evidence .media.has-file, .evidence-feature .media.has-file').forEach((slot) => {
+    document.querySelectorAll('.evidence .media.has-file, .evidence-feature .media.has-file, .award-photos .media.has-file').forEach((slot) => {
       const img = slot.querySelector('img');
       if (!img || slot.dataset.zoom) return;
       slot.dataset.zoom = '1';
       slot.classList.add('is-zoomable');
       slot.setAttribute('role', 'button');
       slot.setAttribute('tabindex', '0');
-      slot.setAttribute('aria-label', 'Open full size: ' + img.alt);
+      slot.setAttribute('aria-label', 'Enlarge: ' + img.alt);
       slot.insertAdjacentHTML('beforeend',
         '<span class="zoom-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" ' +
         'stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2M11 8v6M8 11h6"/></svg>' +
@@ -1215,6 +1241,117 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openShot(slot); }
       });
     });
+  }
+
+  /* --------------------------------------------------------- galleries --- */
+  /* On a phone a group of images is a row you swipe, one frame at ~85% of
+     the width with the next one peeking in -- native scrolling and CSS scroll
+     snap, nothing moves on its own. The bar adds Previous / Next and a
+     counter. Above 640px the same markup keeps its normal layout, and
+     without JavaScript the frames simply stack. */
+
+  const chevron = (flip) =>
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'aria-hidden="true"' + (flip ? ' style="transform:rotate(180deg)"' : '') + '><path d="M15 5l-7 7 7 7"/></svg>';
+
+  document.querySelectorAll('[data-gallery]').forEach((el) => {
+    const items = Array.from(el.children).filter((c) => c.tagName === 'FIGURE');
+    if (items.length < 2) return;
+    el.classList.add('gallery');
+    const bar = document.createElement('div');
+    bar.className = 'gallery-bar';
+    bar.innerHTML =
+      '<button class="gallery-btn gallery-prev" type="button" aria-label="Previous image">' + chevron(false) + '</button>' +
+      '<p class="gallery-count mono" aria-live="polite"><span class="sr-only">Image </span><b class="gallery-now">1</b>' +
+      '<span aria-hidden="true"> / </span><span class="sr-only"> of </span>' + items.length + '</p>' +
+      '<button class="gallery-btn gallery-next" type="button" aria-label="Next image">' + chevron(true) + '</button>';
+    el.after(bar);
+    const now = bar.querySelector('.gallery-now');
+    const prevB = bar.querySelector('.gallery-prev');
+    const nextB = bar.querySelector('.gallery-next');
+    let at = 0, frame = 0;
+    const pad = () => parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+    const sync = () => {
+      frame = 0;
+      const x = el.scrollLeft + pad();
+      let best = 0, dist = Infinity;
+      items.forEach((it, i) => { const d = Math.abs(it.offsetLeft - x); if (d < dist) { dist = d; best = i; } });
+      at = best;
+      now.textContent = String(at + 1);
+      prevB.disabled = at === 0;
+      nextB.disabled = at === items.length - 1;
+    };
+    const go = (i) => {
+      const t = items[Math.max(0, Math.min(items.length - 1, i))];
+      el.scrollTo({ left: t.offsetLeft - pad(), behavior: still.matches ? 'instant' : 'smooth' });
+    };
+    el.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(sync); }, { passive: true });
+    prevB.addEventListener('click', () => go(at - 1));
+    nextB.addEventListener('click', () => go(at + 1));
+    // every gallery starts at its first frame: no layout is read until it scrolls
+    prevB.disabled = true;
+  });
+
+  /* ------------------------------------------------------ case strip --- */
+  /* The phone reading bar on a case page. It appears once the hero has
+     scrolled away, carries a thin reading-progress line, and steps aside as
+     the bottom navigation comes into view so it never covers the end. */
+
+  const strip = document.querySelector('.case-strip');
+  const caseHero = document.querySelector('.case-hero');
+  const caseEnd = document.querySelector('.case-next');
+  if (strip && caseHero && caseEnd && 'IntersectionObserver' in window) {
+    strip.hidden = false;
+    const fill = strip.querySelector('.case-strip-progress span');
+    let past = false, end = false, pf = 0;
+    const show = () => strip.classList.toggle('is-shown', past && !end);
+    new IntersectionObserver(([e]) => { past = !e.isIntersecting && e.boundingClientRect.top < 0; show(); }).observe(caseHero);
+    new IntersectionObserver(([e]) => { end = e.isIntersecting || e.boundingClientRect.top < 0; show(); },
+      { rootMargin: '0px 0px 60px 0px' }).observe(caseEnd);
+    const progress = () => {
+      pf = 0;
+      const span = caseEnd.offsetTop - window.innerHeight;
+      const k = span > 0 ? Math.max(0, Math.min(1, window.scrollY / span)) : 1;
+      fill.style.transform = 'scaleX(' + k.toFixed(3) + ')';
+    };
+    window.addEventListener('scroll', () => { if (!pf) pf = requestAnimationFrame(progress); }, { passive: true });
+    requestAnimationFrame(progress);
+  }
+
+  /* ------------------------------------------------- contact options --- */
+  /* On a phone the two routes that always work lead, and the two mail-app
+     routes sit one tap away. Above 640px all four simply show. */
+
+  const moreButton = document.querySelector('.chooser-more');
+  const morePanel = moreButton && document.getElementById(moreButton.getAttribute('aria-controls'));
+  if (moreButton && morePanel) {
+    moreButton.addEventListener('click', () => {
+      const open = moreButton.getAttribute('aria-expanded') !== 'true';
+      moreButton.setAttribute('aria-expanded', String(open));
+      morePanel.classList.toggle('is-open', open);
+    });
+  }
+
+  /* ----------------------------------------------- supplied content --- */
+  /* Words only Mruthulan can write live in data/content.json. An entry
+     renders only when it is marked ready and actually has text; until then
+     its slot stays hidden, so no placeholder wording ever reaches the page. */
+
+  const contentSlots = Array.from(document.querySelectorAll('[data-content]'));
+  if (contentSlots.length) {
+    fetch('data/content.json', { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((c) => {
+        if (!c) return;
+        contentSlots.forEach((slot) => {
+          const e = c[slot.dataset.content];
+          if (e && e.status === 'ready' && typeof e.text === 'string' && e.text.trim()) {
+            slot.textContent = e.text.trim();
+            slot.hidden = false;
+          }
+        });
+      })
+      .catch(() => { /* nothing supplied, nothing shown */ });
   }
 
   /* ------------------------------------------------------------- deck --- */
@@ -1399,20 +1536,31 @@
   });
 
   /* ---------------------------------------------------------- reveals --- */
+  /* Content is never hidden waiting for a script: every block is visible in
+     the markup and stays visible if this never runs. What scrolls into view
+     later gets a short arrival -- a small rise from a softened start -- and
+     anything already on screen at load is simply there. Reduced motion
+     skips it entirely. */
 
   const reveals = Array.from(document.querySelectorAll('.reveal'));
-  if (reveals.length) {
-    if (still.matches || typeof IntersectionObserver !== 'function') {
-      reveals.forEach((el) => el.classList.add('is-in'));
-    } else {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          e.target.classList.add('is-in');
-          observer.unobserve(e.target);
-        });
-      }, { rootMargin: '0px 0px -40px 0px', threshold: 0 });
-      reveals.forEach((el) => observer.observe(el));
-    }
+  if (reveals.length && !still.matches && 'IntersectionObserver' in window) {
+    /* The observer's first report says where each block starts. Anything
+       already on screen, or above it, is left exactly as it is; only blocks
+       that later scroll in get the arrival. No layout is read here. */
+    const reported = new WeakSet();
+    const arrive = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        const el = e.target;
+        if (!reported.has(el)) {
+          reported.add(el);
+          if (e.isIntersecting || e.boundingClientRect.top < 0) { arrive.unobserve(el); return; }
+          return;
+        }
+        if (!e.isIntersecting) return;
+        arrive.unobserve(el);
+        el.classList.add('is-arriving');
+      });
+    }, { rootMargin: '0px 0px -6% 0px' });
+    reveals.forEach((el) => arrive.observe(el));
   }
 })();
