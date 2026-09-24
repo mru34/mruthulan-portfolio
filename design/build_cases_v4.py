@@ -441,11 +441,6 @@ PROJECTS = [
                    'have happened.</p>',
                  note='The deck is the artefact the research produced. It is reproduced here in full, '
                       'and the original PDF is one click away.'),
-            band('The prototype', 'A concept, shown as a concept.',
-                 '<p class="band-note" style="max-width:700px">Loomy is a prototype and a pitch, not a '
-                 'shipped product. The screen below is from the prototype.</p>'
-                 + evidence([media('loomy-prototype-1', 'ratio-1610',
-                                   'Prototype screen — concept, not a shipped product').replace('<figure>', '<figure class="wide">')])),
         ],
         'role': ('I worked on user research and product design, and built the prototype the team '
                  'pitched. The 30+ interviews behind the concept were the team\'s; the findings '
@@ -495,7 +490,7 @@ def site_footer(home='index.html'):
       <nav class="footer-nav" aria-label="Footer">
         <a class="mono" href="{home}">Home</a>
         <span class="footer-mail"><a class="mono" href="mailto:{EMAIL}?subject=Portfolio%20enquiry">Email</a><button class="mono footer-copy" type="button" data-contact-action="copy">Copy address</button></span>
-        <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a class="mono" href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="mono" href="privacy.html">Privacy</a>
       </nav>

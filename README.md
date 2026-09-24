@@ -78,7 +78,7 @@ value in the palette that still clears 6:1 on the section grounds.
 - The MEANT repository is private, so it is linked nowhere; the MEANT case page is that award's proof instead.
 - The KnowCad repository and the Autodesk materials are private, so that case page carries no code button and no product screenshots. Its proof is the award photo, the LinkedIn post and a public description, and the page says why.
 - The Better Call Bhai testimonial is the shop owner's own WhatsApp message, emoji removed and one sentence left out (marked with an ellipsis). `data/content.json` records exactly what was cut. Nothing is reworded.
-- LinkedIn is always `linkedin.com/in/senthil-nathan-mruthulan`.
+- LinkedIn is always `linkedin.com/in/mruthulan`.
 - The three proof posts are the verified short links — SP InnovateDash `lnkd.in/p/dCBs22kx`, Dell InnovateFest `lnkd.in/p/dZQiUX3z`, Autodesk `lnkd.in/p/dQW9Pg_v` — on both the Wins row and the case page, with labels that name the event.
 - Loomy's deck is reproduced in full, and its targets and projected revenue are labelled as projections, never as results.
 
