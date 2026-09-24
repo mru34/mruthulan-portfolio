@@ -414,9 +414,9 @@
     '<a class="chooser-option" href="mailto:' + EMAIL + '?subject=Portfolio%20enquiry" data-contact-action="mail">' +
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16v12H8l-4 4z"/></svg>' +
     '<span><b class="chooser-label">Open default mail app</b><span class="chooser-sub">Outlook, Apple Mail and the like</span></span></a>' +
-    '<a class="chooser-option" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer" data-contact-action="linkedin">' +
+    '<a class="chooser-option" href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-contact-action="linkedin">' +
     '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg>' +
-    '<span><b class="chooser-label">Message on LinkedIn <span aria-hidden="true">↗</span></b><span class="chooser-sub">senthil-nathan-mruthulan</span></span></a>' +
+    '<span><b class="chooser-label">Message on LinkedIn <span aria-hidden="true">↗</span></b><span class="chooser-sub">mruthulan</span></span></a>' +
     '</div><p class="chooser-status" role="status" aria-live="polite"></p></div>';
 
   let contactDialog = null;
@@ -492,7 +492,7 @@
     { id: 'q-ad', type: 'Proof', title: 'Autodesk hackathon post', ctx: 'My LinkedIn post about KnowCad’s win', href: 'https://lnkd.in/p/dQW9Pg_v', ext: true, c: '#F2C97E', kw: 'linkedin post proof knowcad', boost: 5, event: 'proof_post_click', project: 'kc' },
 
     { id: 'l-resume', type: 'Link', title: 'Résumé (PDF)', ctx: 'Opens in a new tab', href: RESUME, ext: true, kw: 'resume cv pdf download', boost: 10, event: 'resume_click' },
-    { id: 'l-linkedin', type: 'Link', title: 'LinkedIn profile', ctx: 'linkedin.com/in/senthil-nathan-mruthulan', href: 'https://www.linkedin.com/in/senthil-nathan-mruthulan', ext: true, kw: 'profile connect message', boost: 10 },
+    { id: 'l-linkedin', type: 'Link', title: 'LinkedIn profile', ctx: 'linkedin.com/in/mruthulan', href: 'https://www.linkedin.com/in/mruthulan/', ext: true, kw: 'profile connect message', boost: 10 },
     { id: 'l-github', type: 'Link', title: 'GitHub', ctx: 'github.com/mru34', href: 'https://github.com/mru34', ext: true, kw: 'code repositories repos source', boost: 10 },
     { id: 'l-deck', type: 'Link', title: 'Loomy pitch deck', ctx: 'Ten slides, readable full screen', href: 'loomy.html#deck', kw: 'slides pitch deck presentation', boost: 10 },
     { id: 'l-privacy', type: 'Link', title: 'Privacy and analytics', ctx: 'How analytics works, and your choice', href: 'privacy.html', kw: 'privacy cookies analytics consent data', boost: 10 },
