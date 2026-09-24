@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07090E">
   <meta name="description" content="MEANT case study: an on-device communication assistant for AAC users. Dell InnovateFest 2026 second runner-up, S$3,000.">
   <link rel="canonical" href="https://mruthulan.com/meant.html">
@@ -20,8 +20,10 @@
   <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js-on');</script>
   <script src="js/script.js" defer></script>
   <script src="js/analytics.js" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "MEANT", "description": "An on-device communication assistant that keeps AAC users in control of what they say.", "url": "https://mruthulan.com/meant.html", "author": {"@type": "Person", "name": "Senthil Nathan Mruthulan", "url": "https://mruthulan.com/"}}</script>
 </head>
-<body style="--acc:#FFB661;--acc-glow:rgba(255,182,97,.28);--acc-tint:rgba(255,182,97,.07)">
+<body data-page="case" data-project="mt" style="--acc:#FFB661;--acc-glow:rgba(255,182,97,.28);--acc-tint:rgba(255,182,97,.07)">
+  <span id="top" class="anchor-alias" aria-hidden="true"></span>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="field" aria-hidden="true">
@@ -32,14 +34,22 @@
   <header class="site-header">
     <div class="shell nav-wrap">
       <a class="brand" href="index.html">Mruthulan</a>
-      <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
       <nav class="main-nav" id="main-nav" aria-label="Main">
-        <a href="index.html#work">Work</a>
+        <a href="index.html#work" class="is-current">Work</a>
         <a href="index.html#wins">Wins</a>
         <a href="index.html#about">About</a>
-        <a href="index.html#contact">Contact</a>
-        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+        <a href="index.html#credentials">Credentials</a>
+        <a href="index.html#contact" data-contact-open>Contact</a>
+        <a class="nav-resume-menu" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
       </nav>
+      <div class="nav-tools">
+        <button class="search-button" type="button" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          <span class="search-label">Search</span><kbd class="search-kbd" aria-hidden="true">Ctrl K</kbd>
+        </button>
+        <a class="nav-resume" href="assets/Senthil-Nathan-Mruthulan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé <span aria-hidden="true">↗</span></a>
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
+      </div>
     </div>
   </header>
 
@@ -48,7 +58,7 @@
       <div class="case-hero-glow" aria-hidden="true"></div>
       <div class="shell">
         <div class="case-head" style="padding-top:0">
-          <a class="mono case-back" href="index.html#work" style="margin-bottom:0">← All work</a>
+          <a class="mono case-back" href="index.html#work-mt" style="margin-bottom:0">← All work</a>
           <span class="mono">Case 02 of 06 · A conversation story</span>
         </div>
         <div class="case-hero-grid">
@@ -57,17 +67,21 @@
             <h1 class="dsp case-title" id="case-title">MEANT</h1>
             <p class="case-lead">Conversations do not wait, but AAC users need time to answer.</p>
             <div class="case-actions">
-            <a class="cta" href="index.html#wins">See the award <span aria-hidden="true">→</span></a>
+            <a class="cta" href="https://lnkd.in/p/dZQiUX3z" target="_blank" rel="noopener noreferrer" data-event="proof_post_click" data-project="mt">View my Dell InnovateFest post <span aria-hidden="true">↗</span></a>
+            <a class="ghost" href="index.html#win-dell">See the award <span aria-hidden="true">→</span></a>
             </div>
           </div>
-          <div class="case-facts"><div class="case-fact"><span class="case-fact-k">Recognition</span><span class="case-fact-v">Second runner-up · S$3,000</span></div><div class="case-fact"><span class="case-fact-k">Social partner</span><span class="case-fact-v">SPD Ltd, Singapore</span></div><div class="case-fact"><span class="case-fact-k">My role</span><span class="case-fact-v">UI and UX, the Singaporean TTS voice, and presenting the build</span></div><div class="case-fact"><span class="case-fact-k">Principle</span><span class="case-fact-v">The user always authors</span></div></div>
+          <section class="case-facts" aria-labelledby="glance-title">
+            <h2 class="mono case-facts-title" id="glance-title">At a glance</h2>
+            <dl><div class="case-fact"><dt class="case-fact-k">Role</dt><dd class="case-fact-v">UI and UX, the Singaporean TTS voice, and presenting the build</dd></div><div class="case-fact"><dt class="case-fact-k">Result</dt><dd class="case-fact-v">Dell InnovateFest 2026 — Second runner-up · S$3,000</dd></div><div class="case-fact"><dt class="case-fact-k">Stack</dt><dd class="case-fact-v">On-device AI on a Dell GB10 · Singaporean TTS</dd></div><div class="case-fact"><dt class="case-fact-k">Partner</dt><dd class="case-fact-v">SPD Ltd, Singapore</dd></div><div class="case-fact"><dt class="case-fact-k">Status</dt><dd class="case-fact-v">Competition build · repository private</dd></div></dl>
+          </section>
         </div>
       </div>
     </section>
 
-    <section class="band band-deep"><div class="shell"><p class="mono kicker">One turn</p><h2 class="dsp">The whole product is three seconds of a conversation.</h2><div class="decisions"><div class="decision"><p class="decision-k">Could have</p><p class="alt">The room moves on</p><p class="decision-k on">I did</p><p class="did">Turn Claim tells the other person an answer is coming, so the conversation holds instead of rolling past.</p></div><div class="decision"><p class="decision-k">Could have</p><p class="alt">A reply is offered</p><p class="decision-k on">I did</p><p class="did">Local context on a Dell GB10 produces timely suggestions. Nothing leaves the device.</p></div><div class="decision"><p class="decision-k">Could have</p><p class="alt">The user authors it</p><p class="decision-k on">I did</p><p class="did">They choose a suggestion, type, or use their AAC board. Nothing is spoken without a tap.</p></div></div></div></section><section class="band"><div class="shell"><p class="mono kicker">The voice</p><h2 class="dsp">It had to sound like it came from here.</h2><p class="band-note" style="max-width:700px">A generic text-to-speech voice makes a Singaporean user sound like someone else. Building the Singaporean TTS voice was my part of the build, alongside the interface and the demo we presented.</p><div class="evidence-feature"><figure class="evidence-lead"><div class="media ratio-1610" data-media="meant-shot-1" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 150 100" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="142" height="92" rx="8" stroke-opacity=".9"/><path d="M4 24h142" stroke-opacity=".9"/><circle cx="15" cy="14" r="3"/><rect x="18" y="40" width="60" height="9" rx="4.5" stroke-opacity=".5"/><rect x="18" y="58" width="90" height="9" rx="4.5" stroke-opacity=".35"/></svg></div></div><figcaption class="mono media-caption">The AAC board and suggestion strip</figcaption></figure><div class="evidence"><figure><div class="media ratio-1610" data-media="meant-shot-2" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 150 100" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="142" height="92" rx="8" stroke-opacity=".9"/><path d="M4 24h142" stroke-opacity=".9"/><circle cx="15" cy="14" r="3"/><rect x="18" y="40" width="60" height="9" rx="4.5" stroke-opacity=".5"/><rect x="18" y="58" width="90" height="9" rx="4.5" stroke-opacity=".35"/></svg></div></div><figcaption class="mono media-caption">Turn Claim, holding the conversation open</figcaption></figure><figure><div class="media ratio-169" data-media="meant-demo" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 90 90" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="45" cy="45" r="30" stroke-opacity=".9"/><path d="M39 33l20 12-20 12z" stroke-opacity=".9"/><circle cx="45" cy="45" r="41" stroke-opacity=".25"/></svg></div></div><figcaption class="mono media-caption">A full turn, spoken</figcaption></figure></div><p class="evidence-pending">Frames reserved — interface captures and the demo clip are not published yet</p></div></div></section><section class="band"><div class="shell"><p class="mono kicker">If the AI stops</p><h2 class="dsp">It degrades into something that still works.</h2><p class="band-note" style="max-width:700px">If the AI layer goes down, the AAC board and typing still work. A communication aid that fails closed is not a communication aid.</p></div></section>
+    <section class="band band-deep"><div class="shell"><p class="mono kicker">One turn</p><h2 class="dsp">The whole product is three seconds of a conversation.</h2><div class="decisions"><div class="decision"><p class="decision-k">Could have</p><p class="alt">The room moves on</p><p class="decision-k on">I did</p><p class="did">Turn Claim tells the other person an answer is coming, so the conversation holds instead of rolling past.</p></div><div class="decision"><p class="decision-k">Could have</p><p class="alt">A reply is offered</p><p class="decision-k on">I did</p><p class="did">Local context on a Dell GB10 produces timely suggestions. Nothing leaves the device.</p></div><div class="decision"><p class="decision-k">Could have</p><p class="alt">The user authors it</p><p class="decision-k on">I did</p><p class="did">They choose a suggestion, type, or use their AAC board. Nothing is spoken without a tap.</p></div></div></div></section><section class="band"><div class="shell"><p class="mono kicker">The voice</p><h2 class="dsp">It had to sound like it came from here.</h2><p class="band-note" style="max-width:700px">A generic text-to-speech voice makes a Singaporean user sound like someone else. Building the Singaporean TTS voice was my part of the build, alongside the interface and the demo we presented.</p><div class="evidence-feature"><figure class="evidence-lead"><div class="media ratio-1610" data-media="meant-shot-1" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 150 100" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="142" height="92" rx="8" stroke-opacity=".9"/><path d="M4 24h142" stroke-opacity=".9"/><circle cx="15" cy="14" r="3"/><rect x="18" y="40" width="60" height="9" rx="4.5" stroke-opacity=".5"/><rect x="18" y="58" width="90" height="9" rx="4.5" stroke-opacity=".35"/></svg></div></div><figcaption class="mono media-caption">They ask; the user picks one of four ranked replies</figcaption></figure><div class="evidence"><figure><div class="media ratio-1610" data-media="meant-shot-2" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 150 100" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="142" height="92" rx="8" stroke-opacity=".9"/><path d="M4 24h142" stroke-opacity=".9"/><circle cx="15" cy="14" r="3"/><rect x="18" y="40" width="60" height="9" rx="4.5" stroke-opacity=".5"/><rect x="18" y="58" width="90" height="9" rx="4.5" stroke-opacity=".35"/></svg></div></div><figcaption class="mono media-caption">Turn Claim on the partner’s screen, holding the conversation open</figcaption></figure><figure><div class="media ratio-1610" data-media="meant-shot-3" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 150 100" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="142" height="92" rx="8" stroke-opacity=".9"/><path d="M4 24h142" stroke-opacity=".9"/><circle cx="15" cy="14" r="3"/><rect x="18" y="40" width="60" height="9" rx="4.5" stroke-opacity=".5"/><rect x="18" y="58" width="90" height="9" rx="4.5" stroke-opacity=".35"/></svg></div></div><figcaption class="mono media-caption">The AAC board — it still works with the AI layer off</figcaption></figure></div></div><p class="evidence-source">Captured from the running tablet client with the hawker demo pack. The repository itself stays private.</p></div></section><section class="band"><div class="shell"><p class="mono kicker">If the AI stops</p><h2 class="dsp">It degrades into something that still works.</h2><p class="band-note" style="max-width:700px">If the AI layer goes down, the AAC board and typing still work. A communication aid that fails closed is not a communication aid.</p></div></section>
 
-    <section class="band">
+    <section class="band" data-calm>
       <div class="shell">
         <div class="case-role">
           <div class="case-role-k"><p class="mono">My role</p></div>
@@ -76,7 +90,7 @@
       </div>
     </section>
 
-    <section class="band" style="padding-top:0">
+    <section class="band" style="padding-top:0" data-calm>
       <div class="shell">
         <div class="case-role">
           <div class="case-role-k"><p class="mono">Result</p></div>
@@ -85,19 +99,16 @@
       </div>
     </section>
 
-    <section class="case-next" style="--next-acc:#FF8095">
+    <nav class="case-next" aria-label="More projects" style="--next-acc:#FF8095">
       <div class="case-next-glow" aria-hidden="true"></div>
       <div class="shell">
-        <div>
-          <p class="mono">Next project</p>
-          <h2 class="dsp" style="margin-top:14px">Better Call Bhai</h2>
+        <div class="case-steps">
+          <a class="case-step case-step-prev" href="signalbridge.html" rel="prev" data-event="case_open" data-project="sb" style="--step-acc:#5BE1D8"><span class="mono case-step-k">Previous project · 01</span><span class="dsp case-step-name">SignalBridge</span><span class="case-step-arrow" aria-hidden="true">←</span></a>
+          <a class="case-step case-step-next" href="better-call-bhai.html" rel="next" data-event="case_open" data-project="bb" style="--step-acc:#FF8095"><span class="mono case-step-k">Next project · 03</span><span class="dsp case-step-name">Better Call Bhai</span><span class="case-step-arrow" aria-hidden="true">→</span></a>
         </div>
-        <div class="case-next-actions">
-          <a class="cta" href="better-call-bhai.html">Open Better Call Bhai <span aria-hidden="true">→</span></a>
-          <a class="ghost" href="index.html#work-mt"><span aria-hidden="true">←</span> Back to all work</a>
-        </div>
+        <a class="ghost case-all" href="index.html#work-mt"><span aria-hidden="true">←</span> Back to all work</a>
       </div>
-    </section>
+    </nav>
   </main>
 
   <footer class="site-footer">
@@ -105,7 +116,7 @@
       <span class="mono">Mruthulan · Made in Singapore</span>
       <nav class="footer-nav" aria-label="Footer">
         <a class="mono" href="index.html">Home</a>
-        <a class="mono" href="mailto:mruthulansenthilnathan@gmail.com">Email</a>
+        <span class="footer-mail"><a class="mono" href="mailto:mruthulansenthilnathan@gmail.com?subject=Portfolio%20enquiry">Email</a><button class="mono footer-copy" type="button" data-contact-action="copy">Copy address</button></span>
         <a class="mono" href="https://www.linkedin.com/in/senthil-nathan-mruthulan" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
         <a class="mono" href="privacy.html">Privacy</a>
