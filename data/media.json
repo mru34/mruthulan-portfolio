@@ -1,9 +1,13 @@
 {
   "about-portrait": {
-    "src": null,
-    "alt": "",
+    "status": "ready",
+    "note": "Mruthulan at Dell InnovateFest 2026, supplied by him. Cropped 4:5; the event lanyard was retouched out at his request.",
+    "src": "about-portrait.webp",
+    "alt": "Mruthulan smiling, in a dark suit, white shirt and red tie",
     "caption": null,
-    "focal": "50% 35%"
+    "focal": "50% 40%",
+    "width": 720,
+    "height": 900
   },
   "about-candid": {
     "src": null,
@@ -82,24 +86,24 @@
   },
   "better-call-bhai-shot-1": {
     "src": "better-call-bhai-shot-1.webp",
-    "alt": "The Better Call Bhai booking form with a service chosen from the shop's menu",
-    "caption": "Choosing a service",
+    "alt": "Better Call Bhai's booking site open in a laptop browser and on a phone: the shop's logo, the line Precision cuts. Premium experience., and a Book Your Chair button.",
+    "caption": "The live site, on a laptop and a phone",
     "width": 1600,
     "height": 1000
   },
   "better-call-bhai-shot-2": {
     "src": "better-call-bhai-shot-2.webp",
-    "alt": "A day's time slots, with the taken ones struck through and one selected",
-    "caption": "Picking an open slot",
+    "alt": "Two phone screens of the booking form: name, service and date filled in, then the day's time slots with booked times struck through and 15:00 selected.",
+    "caption": "Choosing a service, a day and an open slot",
     "width": 1600,
     "height": 1000
   },
   "better-call-bhai-shot-3": {
     "src": "better-call-bhai-shot-3.webp",
-    "alt": "A confirmed booking showing the service, date and time, with a button to open the WhatsApp confirmation. The customer name is outside the frame.",
-    "caption": "Confirmed, with a WhatsApp receipt",
+    "alt": "A phone showing Booking Confirmed with the service, date and time, and an Open WhatsApp Confirmation button.",
+    "caption": "Confirmed, with a WhatsApp confirmation one tap away",
     "width": 1600,
-    "height": 506
+    "height": 1000
   },
   "boss-breaker-shot-1": {
     "src": "boss-breaker-shot-1.webp",
