@@ -192,6 +192,6 @@ Treat these as review targets, not reasons to strip away the creative concept: m
 - [MEANT team repository](https://github.com/King-Shelton/meant-DellInnovateFest)
 - [Boss Breaker / BED CA2 repository](https://github.com/mru34/bedca2)
 - [Singapore Polytechnic SignalBridge feature](https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/information-technology-students-clinch-top-prize-at-sp-innovatedash-2026)
-- [LinkedIn profile](https://www.linkedin.com/in/senthil-nathan-mruthulan)
+- [LinkedIn profile](https://www.linkedin.com/in/mruthulan/)
 
 The pre-cleanup screenshots remain recoverable from Git history if Mruthulan later chooses to use any of them. Do not bring them back into the visible design without approval.
