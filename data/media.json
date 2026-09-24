@@ -1,13 +1,13 @@
 {
   "about-portrait": {
     "status": "ready",
-    "note": "Mruthulan at Dell InnovateFest 2026, supplied by him. Cropped 4:5; the event lanyard was retouched out at his request.",
+    "note": "Mruthulan's headshot, supplied by him. Cropped 4:5.",
     "src": "about-portrait.webp",
-    "alt": "Mruthulan smiling, in a dark suit, white shirt and red tie",
+    "alt": "Portrait of Mruthulan in a dark Singapore Polytechnic blazer, white shirt and red tie",
     "caption": null,
-    "focal": "50% 40%",
-    "width": 720,
-    "height": 900
+    "focal": "50% 35%",
+    "width": 800,
+    "height": 1000
   },
   "about-candid": {
     "src": null,
