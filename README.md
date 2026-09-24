@@ -88,9 +88,11 @@ GitHub Pages publishes the `main` branch from the repository root. The `CNAME` f
 
 ## Analytics
 
-The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**. The choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `search_open`, `search_result_open` (the result's id, never the query), `contact_chooser_open`, `contact_copy_email`, `contact_open_gmail`, `contact_open_mail_app`, `contact_open_linkedin`, `deck_open` and `deck_fullscreen` — no names, email addresses or free text.
+The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**. The choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `search_open`, `search_result_open` (the result's id, never the query), `contact_chooser_open`, `contact_copy_email`, `contact_open_gmail`, `contact_open_mail_app`, `contact_open_linkedin`, `deck_open`, `deck_fullscreen` and `evidence_fullscreen` — no names, email addresses or free text.
 
 ## Photos and media
+
+The SignalBridge and MEANT interface frames were captured from each app running locally — SignalBridge on its fictional seed data, MEANT's tablet client on the hawker demo pack — so no real person appears. Every filled screenshot opens full size on tap (turned sideways on a portrait phone), because a desktop UI shrunk into a phone column is too small to read.
 
 Every image is optional. Slots render a designed fallback by default, so a page with no photos still looks finished. To add one: drop the file in `assets/media/` and name it in `data/media.json`, with its `width` and `height` so the frame takes its final shape before the image loads. See `assets/media/README.md` for the slot list, crops and rules. Nothing about this system is visible on the site itself.
 

@@ -1134,6 +1134,8 @@
           slot.classList.add('has-file');
         });
 
+        wireShotZoom();
+
         /* A frame that is still waiting says so, once per block. The note is
            written into the page so it is there without JavaScript too, and
            removed here the moment every frame in that block has a file. */
@@ -1145,6 +1147,74 @@
         });
       })
       .catch(() => { /* no manifest, or offline: the fallbacks stand. */ });
+  }
+
+  /* ------------------------------------------------------- shot zoom --- */
+  /* An interface screenshot shrunk into a phone column is a picture of text
+     too small to read. Every filled evidence frame opens full size in a
+     modal dialog, where the browser's own pinch-zoom works, and Escape or
+     the close button hands focus back to the frame. */
+
+  let shotZoom = null;
+  function openShot(slot) {
+    const img = slot.querySelector('img');
+    if (!img || !hasDialog) return;
+    if (!shotZoom) {
+      shotZoom = document.createElement('dialog');
+      shotZoom.className = 'deck-zoom shot-zoom';
+      shotZoom.setAttribute('aria-label', 'Screenshot, full size');
+      shotZoom.innerHTML =
+        '<button class="deck-zoom-close" type="button" aria-label="Close full size">' + closeIcon + '</button>' +
+        '<div class="deck-zoom-frame"><img alt=""></div>' +
+        '<div class="deck-zoom-bar"><p class="deck-zoom-count mono shot-zoom-cap"></p>' +
+        '<button class="deck-zoom-turn mono" type="button" hidden></button></div>';
+      document.body.appendChild(shotZoom);
+      const turn = shotZoom.querySelector('.deck-zoom-turn');
+      turn.addEventListener('click', () => setShotTurn(!shotZoom.classList.contains('is-turned')));
+      wireModal(shotZoom);
+      shotZoom.querySelector('.deck-zoom-close').addEventListener('click', () => closeModal(shotZoom));
+      const frame = shotZoom.querySelector('.deck-zoom-frame');
+      frame.addEventListener('click', (e) => { if (e.target === frame) closeModal(shotZoom); });
+    }
+    const big = shotZoom.querySelector('img');
+    big.src = img.currentSrc || img.src;
+    big.alt = img.alt;
+    const cap = slot.closest('figure') && slot.closest('figure').querySelector('.media-caption');
+    shotZoom.querySelector('.shot-zoom-cap').textContent = cap ? cap.textContent : '';
+    // on a portrait phone the long edge of the screen is the useful one
+    const upright = window.innerHeight > window.innerWidth * 1.1;
+    shotZoom.querySelector('.deck-zoom-turn').hidden = !upright;
+    setShotTurn(upright);
+    openModal(shotZoom, slot);
+    shotZoom.querySelector('.deck-zoom-close').focus();
+    track('evidence_fullscreen', { media_id: slot.dataset.media || '' });
+  }
+
+  function setShotTurn(on) {
+    const turn = shotZoom.querySelector('.deck-zoom-turn');
+    shotZoom.classList.toggle('is-turned', on);
+    turn.textContent = on ? 'Show upright' : 'Turn sideways';
+    turn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  function wireShotZoom() {
+    document.querySelectorAll('.evidence .media.has-file, .evidence-feature .media.has-file').forEach((slot) => {
+      const img = slot.querySelector('img');
+      if (!img || slot.dataset.zoom) return;
+      slot.dataset.zoom = '1';
+      slot.classList.add('is-zoomable');
+      slot.setAttribute('role', 'button');
+      slot.setAttribute('tabindex', '0');
+      slot.setAttribute('aria-label', 'Open full size: ' + img.alt);
+      slot.insertAdjacentHTML('beforeend',
+        '<span class="zoom-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" ' +
+        'stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2M11 8v6M8 11h6"/></svg>' +
+        '<span>Enlarge</span></span>');
+      slot.addEventListener('click', () => openShot(slot));
+      slot.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openShot(slot); }
+      });
+    });
   }
 
   /* ------------------------------------------------------------- deck --- */
