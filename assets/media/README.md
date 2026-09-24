@@ -47,7 +47,6 @@ out proportional. Any shape works: nothing will cut a face, an award or readable
 event text. The `3:2` in the markup only shapes the drawn fallback.
 | `<project>-shot-1`, `-shot-2`, `-shot-3` | 16:10 | 1600 × 1000 | Case page evidence. App frame only — no browser chrome, no real names or personal data. |
 | `<project>-demo` | 16:9 | ≤ 8s, muted | Case page. Set `poster` to one of the screenshots; it is used as the still under reduced motion. |
-| `loomy-prototype-1` | 16:10 | 1600 × 1000 | Loomy. Labelled as a prototype screen, not a shipped product. |
 
 Project keys are the case-page slugs: `signalbridge`, `meant`,
 `better-call-bhai`, `boss-breaker`, `loomy`. Better Call Bhai's three shots are
