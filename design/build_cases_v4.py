@@ -658,3 +658,6 @@ if __name__ == '__main__':
         text = render(p)
         out.write_text(text, encoding='utf-8')
         print(f"wrote {out.name:26} {len(text):6} bytes  ({p['kind']})")
+    # the pages just written carry bare css/js links; stamp them like every other page
+    import stamp_assets
+    stamp_assets.main()
