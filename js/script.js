@@ -3,7 +3,7 @@
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
   const EMAIL = 'mruthulansenthilnathan@gmail.com';
-  const RESUME = 'assets/Senthil-Nathan-Mruthulan-Resume.pdf';
+  const RESUME = 'assets/Mruthulan-Senthil-Nathan-Resume.pdf';
   const isHome = document.body.dataset.page === 'home';
   const HOME = isHome ? '' : 'index.html';
   const header = document.querySelector('.site-header');

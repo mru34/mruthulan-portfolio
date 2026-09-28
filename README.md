@@ -112,6 +112,10 @@ The SignalBridge and MEANT interface frames were captured from each app running 
 
 Every image is optional. Slots render a designed fallback by default, so a page with no photos still looks finished. To add one: drop the file in `assets/media/` and name it in `data/media.json`, with its `width` and `height` so the frame takes its final shape before the image loads. See `assets/media/README.md` for the slot list, crops and rules. Nothing about this system is visible on the site itself.
 
+## Résumé
+
+The résumé is Mruthulan's own PDF (the 2026/2027 version). The site publishes a public copy with the phone number taken out of the header line, and nothing else changed, at `assets/Mruthulan-Senthil-Nathan-Resume.pdf`, which is what every link points to. The same file also sits at the old address, `assets/Senthil-Nathan-Mruthulan-Resume.pdf`, so links shared before the name change still open the current résumé. Replace both together. The width audit fails if any PDF in `assets/` contains a phone number.
+
 ## Releasing CSS or JS changes
 
 Every page links its stylesheet and scripts with a content stamp (`css/styles.css?v=90d2e5c7`). GitHub Pages lets browsers keep those files for ten minutes, so without the stamp a visitor who had the site open before a release would get the new page with the old stylesheet and see it half-styled. After changing anything in `css/` or `js/`, run `python design/stamp_assets.py` (the case-page build runs it too) and commit the updated pages.
