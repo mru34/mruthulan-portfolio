@@ -478,6 +478,10 @@
 
     { id: 's-work', type: 'Section', title: 'Work', ctx: 'All six projects, with my role and the result on each', href: HOME + '#work', kw: 'projects portfolio builds case studies', boost: 15 },
     { id: 's-wins', type: 'Section', title: 'Wins', ctx: 'Three hackathon awards in 2026', href: HOME + '#wins', kw: 'awards hackathons prizes champion recognition', boost: 15 },
+    { id: 'x-spin', type: 'Section', title: 'Spin the Build', ctx: 'Let the machine pick one of the six projects', href: HOME + '#spin', c: '#5BE1D8',
+      kw: 'spin random pick surprise discover reel machine choose', boost: 15 },
+    { id: 's-press', type: 'Section', title: 'Press: Tamil Murasu', ctx: 'MEANT featured in Tamil Murasu, 28 September 2026', href: HOME + '#press', c: '#CDBFA6',
+      kw: 'press news newspaper media article featured feature tamil murasu coverage', boost: 15 },
     { id: 's-about', type: 'Section', title: 'About', ctx: 'How I work: ship it, build for constraints, test it, present it', href: HOME + '#about', kw: 'about me bio intro approach looking internship', boost: 15 },
     { id: 's-creds', type: 'Section', title: 'Credentials', ctx: 'Diploma in IT at Singapore Polytechnic, and student leadership', href: HOME + '#credentials',
       kw: 'education diploma singapore polytechnic sp school study leadership class chairman youth harmony acer secretary', boost: 15 },
@@ -490,6 +494,10 @@
     { id: 'q-sp', type: 'Proof', title: 'SP InnovateDash post', ctx: 'My LinkedIn post about SignalBridge’s win', href: 'https://lnkd.in/p/dCBs22kx', ext: true, c: '#F2C97E', kw: 'linkedin post proof signalbridge', boost: 5, event: 'proof_post_click', project: 'sb' },
     { id: 'q-dell', type: 'Proof', title: 'Dell InnovateFest post', ctx: 'My LinkedIn post about MEANT at the national final', href: 'https://lnkd.in/p/dZQiUX3z', ext: true, c: '#F2C97E', kw: 'linkedin post proof meant', boost: 5, event: 'proof_post_click', project: 'mt' },
     { id: 'q-ad', type: 'Proof', title: 'Autodesk hackathon post', ctx: 'My LinkedIn post about KnowCad’s win', href: 'https://lnkd.in/p/dQW9Pg_v', ext: true, c: '#F2C97E', kw: 'linkedin post proof knowcad', boost: 5, event: 'proof_post_click', project: 'kc' },
+
+    { id: 'q-tm', type: 'Proof', title: 'Tamil Murasu article', ctx: 'The feature, in Tamil, on tamilmurasu.com.sg',
+      href: 'https://www.tamilmurasu.com.sg/community/applications-students-using-artificial-intelligence-social-welfare', ext: true, c: '#CDBFA6',
+      kw: 'press news article tamil murasu meant newspaper', boost: 5, event: 'press_article_click', project: 'mt' },
 
     { id: 'l-resume', type: 'Link', title: 'Résumé (PDF)', ctx: 'Opens in a new tab', href: RESUME, ext: true, kw: 'resume cv pdf download', boost: 10, event: 'resume_click' },
     { id: 'l-linkedin', type: 'Link', title: 'LinkedIn profile', ctx: 'linkedin.com/in/mruthulan', href: 'https://www.linkedin.com/in/mruthulan/', ext: true, kw: 'profile connect message', boost: 10 },
@@ -509,7 +517,7 @@
     { id: 'k-test', type: 'Skill', title: 'Automated testing', ctx: 'Practice · SignalBridge’s handoff tests', href: HOME + '#toolkit', kw: 'tests testing qa edge cases', boost: 0 },
     { id: 'k-deploy', type: 'Skill', title: 'Deployment', ctx: 'Practice · Better Call Bhai on Render', href: HOME + '#toolkit', kw: 'deploy hosting render ship shipped', boost: 0 }
   ];
-  const SUGGESTED = ['p-sb', 'p-mt', 'p-bb', 'p-kc', 'p-bx', 'p-lm', 'x-contact', 'l-resume', 's-wins'];
+  const SUGGESTED = ['p-sb', 'p-mt', 'p-bb', 'p-kc', 'p-bx', 'p-lm', 'x-spin', 's-press', 'x-contact', 'l-resume', 's-wins'];
   const TRY = ['AAC', 'barber', 'Autodesk', 'Discord', 'Java', 'résumé'];
 
   const norm = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -752,10 +760,7 @@
   const field = document.querySelector('.field');
   const aura = field && field.querySelector('.field-aura');
   const grid = field && field.querySelector('.field-grid');
-  const heroLayers = Array.from(document.querySelectorAll('.system-layer'));
-  const heroEl = document.querySelector('.hero');
-  const system = document.querySelector('.system');
-  let overSystem = false;
+  const heroLamp = document.querySelector('.hero-lamp');
 
   function tone(colour) {
     if (field) field.style.setProperty('--tone', colour || '');
@@ -765,7 +770,6 @@
     // placed on the first frame: reading the viewport size during start-up
     // would force a full layout before the page has even painted
     let ax = 0, ay = 0;
-    let hx = 0, hy = 0;            // hero-local pointer, -0.5 .. 0.5
     let depth = 0;                 // scroll progress, 0 .. 1
     let frame = 0;
 
@@ -783,33 +787,14 @@
         grid.style.transform = 'translate3d(0,' + (depth * -70).toFixed(1) + 'px,0)';
         grid.style.opacity = (0.16 - depth * 0.05).toFixed(3);
       }
-      // the hero art rides the same pointer, at three different depths
-      heroLayers.forEach((layer) => {
-        const d = parseFloat(layer.dataset.depth) || 0;
-        const x = hx * d;
-        const y = hy * d + depth * d * 1.1;
-        layer.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
-      });
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(draw); };
 
     const point = (clientX, clientY) => {
       ax = clientX;
       ay = clientY;
-      /* Over the constellation the art holds still, so a node never slides
-         away from the pointer that is reaching for it. */
-      if (heroEl && !overSystem) {
-        const box = heroEl.getBoundingClientRect();
-        hx = Math.max(-0.6, Math.min(0.6, (clientX - box.left) / box.width - 0.5));
-        hy = Math.max(-0.6, Math.min(0.6, (clientY - box.top) / box.height - 0.5));
-      }
       schedule();
     };
-
-    if (system) {
-      system.addEventListener('pointerenter', () => { overSystem = true; });
-      system.addEventListener('pointerleave', () => { overSystem = false; });
-    }
 
     /* A mouse or pen is followed as it moves. A finger is not: on a phone a
        moving finger is almost always a scroll, and the environment should sit
@@ -831,7 +816,7 @@
       field.appendChild(ring);
     };
 
-    const control = (el) => el.closest && el.closest('a, button, input, select, textarea, label, dialog, [role="button"], .site-header');
+    const control = (el) => el.closest && el.closest('a, button, input, select, textarea, label, dialog, [role="button"], .site-header, .spin-lever');
 
     /* A mouse press answers at once. A touch only counts once the finger
        lifts without having travelled -- a deliberate tap -- so the start of
@@ -897,85 +882,510 @@
     calm.forEach((el) => calmSpy.observe(el));
   }
 
-  /* ---------------------------------------------------- constellation --- */
-  /* One node per project. Hover or focus previews it in the readout; a click
-     or tap selects it, lights its connections and tints the room; the
-     readout's link is the deliberate second step that opens the case. */
+  /* --------------------------------------------------- spin the build --- */
+  /* Project discovery as a small reel. The Work rows are the one source of
+     truth -- name, hook, role, result, colour and link are read from them --
+     so the machine can never disagree with the list. One spin at a time,
+     never the same project twice running, one transform animation that the
+     compositor runs on its own, and the result stays put (across a visit to
+     the case page and Back, too) until the next spin. */
 
-  if (system) {
-    const nodes = Array.from(system.querySelectorAll('.node'));
-    const links = Array.from(system.querySelectorAll('.sys-links path'));
-    const rings = Array.from(system.querySelectorAll('.sys-rings circle'));
-    const idle = system.querySelector('.readout-idle');
-    const card = system.querySelector('.readout-card');
-    const rNum = system.querySelector('.readout-num');
-    const rName = system.querySelector('.readout-name');
-    const rResult = system.querySelector('.readout-result');
-    const rOpen = system.querySelector('.readout-open');
-    const rRow = system.querySelector('.readout-row');
-    let selected = null;
+  const spinEl = document.querySelector('.spin');
+  if (spinEl) {
+    const machine = spinEl.querySelector('.spin-machine');
+    const win = spinEl.querySelector('.spin-window');
+    const reel = spinEl.querySelector('.spin-reel');
+    const button = spinEl.querySelector('.spin-button');
+    const label = spinEl.querySelector('.spin-button-label');
+    const lever = spinEl.querySelector('.spin-lever');
+    const stage = spinEl.querySelector('.spin-stage');
+    const card = spinEl.querySelector('.spin-card');
+    const live = spinEl.querySelector('.spin-live');
+    const bursts = Array.from(spinEl.querySelectorAll('.spin-burst i'));
+    const cNum = card.querySelector('.spin-card-num span');
+    const cSym = card.querySelector('.spin-card-num use');
+    const cName = card.querySelector('.spin-card-name');
+    const cHook = card.querySelector('.spin-card-hook');
+    const cRole = card.querySelector('.spin-card-role dd');
+    const cResult = card.querySelector('.spin-card-result');
+    const cExplore = card.querySelector('.spin-explore');
+    const cProof = card.querySelector('.spin-proof');
 
-    const show = (node) => {
-      const id = node ? node.dataset.node : null;
-      system.classList.toggle('has-sel', !!id);
-      links.forEach((p) => p.classList.toggle('is-lit', !!id && p.dataset.link.split(' ').includes(id)));
-      rings.forEach((r) => r.classList.toggle('is-sel', r.dataset.node === id));
-      if (!id) {
-        if (idle) idle.hidden = false;
-        if (card) card.hidden = true;
-        if (heroEl) heroEl.style.removeProperty('--lamp');
-        tone(null);
-        return;
+    const text = (root, sel) => {
+      const el = root && root.querySelector(sel);
+      return el ? el.textContent.trim() : '';
+    };
+    const projects = Array.from(spinEl.querySelectorAll('.spin-list li')).map((li, i) => {
+      const link = li.querySelector('a');
+      const row = document.getElementById('work-' + li.dataset.id);
+      return {
+        id: li.dataset.id,
+        n: i + 1,
+        name: text(row, '.work-name') || link.lastChild.textContent.trim(),
+        hook: text(row, '.work-hook'),
+        role: text(row, '.role-full'),
+        result: text(row, '.work-cell-result .work-v'),
+        href: (row || link).getAttribute('href'),
+        colour: (row ? row.style.getPropertyValue('--row-acc') : li.style.getPropertyValue('--c')).trim(),
+        proofHref: li.dataset.proofHref,
+        proofLabel: li.dataset.proofLabel,
+        proofExt: li.hasAttribute('data-proof-ext'),
+        proofEvent: li.dataset.proofEvent || ''
+      };
+    });
+
+    // five laps of the six rows: enough travel for any spin, re-based after each
+    const N = projects.length;
+    const first = Array.from(reel.children);
+    const laps = document.createDocumentFragment();
+    for (let lap = 1; lap < 5; lap++) first.forEach((row) => laps.appendChild(row.cloneNode(true)));
+    reel.appendChild(laps);
+    const rows = Array.from(reel.children);
+
+    let pos = N + 2;            // the same picture as the static reel (row 2 on the line)
+    let current = -1;           // index of the project on show, -1 before the first spin
+    let busy = false, anim = null, fadeTimer = 0, pendingReserve = false, won = null;
+    reel.style.setProperty('--pos', String(pos));
+
+    const KEY = 'spin-last';
+    const remember = (id) => { try { sessionStorage.setItem(KEY, id); } catch (e) { /* storage blocked */ } };
+    const recall = () => { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } };
+
+    // uniform over the projects that are not on show now
+    function pick() {
+      const pool = projects.map((_, i) => i).filter((i) => i !== current);
+      if (window.crypto && crypto.getRandomValues) {
+        const buf = new Uint32Array(1);
+        const limit = Math.floor(0x100000000 / pool.length) * pool.length;
+        do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
+        return pool[buf[0] % pool.length];
       }
-      const c = node.style.getPropertyValue('--c').trim();
-      system.style.setProperty('--sel', c);
-      if (heroEl) heroEl.style.setProperty('--lamp', c);
-      tone(c);
-      if (idle) idle.hidden = true;
-      if (card) card.hidden = false;
-      const n = nodes.indexOf(node) + 1;
-      rNum.textContent = 'Project 0' + n + ' of 06';
-      rName.textContent = node.dataset.name;
-      rResult.textContent = node.dataset.result;
-      rOpen.href = node.dataset.href;
-      rOpen.dataset.project = id;
-      rOpen.setAttribute('aria-label', 'Open the ' + node.dataset.name + ' case study');
-      rRow.href = '#work-' + id;
-      rRow.setAttribute('aria-label', 'Find ' + node.dataset.name + ' in the work list');
-    };
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
 
-    const choose = (node) => {
-      selected = node === selected ? null : node;
-      nodes.forEach((n) => n.setAttribute('aria-pressed', String(n === selected)));
-      show(selected);
-    };
+    function fill(i) {
+      const p = projects[i];
+      cNum.textContent = 'Project 0' + p.n + ' of 06';
+      cSym.setAttribute('href', '#sym-' + p.id);
+      cName.textContent = p.name;
+      cHook.textContent = p.hook;
+      cRole.textContent = p.role;
+      cResult.textContent = p.result;
+      cProof.innerHTML = esc(p.proofLabel) + ' <span aria-hidden="true">' + (p.proofExt ? '↗' : '→') + '</span>';
+    }
 
-    nodes.forEach((node, i) => {
-      // the visible tag ("01 SignalBridge") leads the name, so voice control can say what it sees
-      node.setAttribute('aria-label', '0' + (i + 1) + ' ' + node.dataset.name + ', project ' + (i + 1) + ' of 6');
-      node.tabIndex = i === 0 ? 0 : -1;
-      node.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') show(node); });
-      node.addEventListener('focus', () => show(node));
-      node.addEventListener('click', () => choose(node));
-      node.addEventListener('keydown', (e) => {
-        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-        let to = null;
-        if (step) to = nodes[(i + step + nodes.length) % nodes.length];
-        else if (e.key === 'Home') to = nodes[0];
-        else if (e.key === 'End') to = nodes[nodes.length - 1];
-        else if (e.key === 'Escape' && selected) { choose(selected); return; }
-        if (!to) return;
+    function paint(i) {
+      const p = projects[i];
+      fill(i);
+      spinEl.style.setProperty('--sel', p.colour);
+      cExplore.href = p.href;
+      cExplore.dataset.project = p.id;
+      cExplore.setAttribute('aria-label', 'Explore ' + p.name + ': open the case study');
+      cProof.href = p.proofHref;
+      if (p.proofExt) { cProof.target = '_blank'; cProof.rel = 'noopener noreferrer'; }
+      else { cProof.removeAttribute('target'); cProof.removeAttribute('rel'); }
+      if (p.proofEvent) { cProof.dataset.event = p.proofEvent; cProof.dataset.project = p.id; }
+      else { delete cProof.dataset.event; delete cProof.dataset.project; }
+      card.removeAttribute('aria-hidden');
+      spinEl.classList.add('has-result');
+      if (won) won.classList.remove('is-won');
+      won = rows[pos];
+      won.classList.add('is-won');
+      if (label.textContent !== 'Spin again') label.textContent = 'Spin again';
+    }
+
+    /* The room kept for the result is the tallest of the six cards at this
+       width, so no result ever changes the height of the hero. */
+    function reserve() {
+      if (busy) { pendingReserve = true; return; }
+      spinEl.classList.add('is-measuring');
+      let tallest = 0;
+      projects.forEach((_, i) => { fill(i); tallest = Math.max(tallest, card.offsetHeight); });
+      if (current >= 0) fill(current);
+      spinEl.classList.remove('is-measuring');
+      stage.style.setProperty('--stage-h', Math.ceil(tallest) + 'px');
+    }
+
+    function announce(message) {
+      live.textContent = '';
+      setTimeout(() => { live.textContent = message; }, 60);
+    }
+
+    /* Landing is split over two frames so neither is a long task on a slow
+       phone: first the reel locks (the part the eye is on), then the card,
+       the room's colour and the announcement follow a frame later. */
+    function land(i) {
+      pos = N + i;                                  // the same row one lap in: an invisible re-base
+      reel.style.setProperty('--pos', String(pos));
+      if (anim) { anim.cancel(); anim = null; }
+      spinEl.classList.remove('is-spinning');
+      if (won) won.classList.remove('is-won');
+      won = rows[pos];
+      won.classList.add('is-won');
+      if (!still.matches && win.animate) {
+        win.animate([{ transform: 'scale(.985)' }, { transform: 'none' }], { duration: 280, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        bursts.forEach((line, k) => {
+          const a = 'rotate(' + (k * 45) + 'deg) ';
+          line.animate([
+            { opacity: 0, transform: a + 'translateX(14px) scaleX(.3)' },
+            { opacity: 0.95, offset: 0.3 },
+            { opacity: 0, transform: a + 'translateX(34px) scaleX(1)' }
+          ], { duration: 600, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        });
+      }
+      const settle = () => {
+        paint(i);
+        const p = projects[i];
+        // the room takes the project's colour for a moment; it only ever adds light
+        // (set on the lamp itself: a custom property on the hero would restyle all of it)
+        tone(p.colour);
+        if (heroLamp) heroLamp.style.setProperty('--lamp', p.colour);
+        clearTimeout(fadeTimer);
+        fadeTimer = setTimeout(() => {
+          if (field && field.style.getPropertyValue('--tone') === p.colour) tone(null);
+          if (heroLamp) heroLamp.style.removeProperty('--lamp');
+        }, 2400);
+        announce('Landed on ' + p.name + '. ' + p.result + '.');
+        busy = false;
+        spinEl.classList.remove('is-busy');
+        button.removeAttribute('aria-disabled');
+        if (pendingReserve) { pendingReserve = false; reserve(); }
+      };
+      if (still.matches) settle();
+      else requestAnimationFrame(() => setTimeout(settle, 0));
+    }
+
+    function spin(method) {
+      if (busy) return;
+      busy = true;
+      const next = pick();
+      current = next;
+      remember(projects[next].id);
+      track('spin_result', { project_id: projects[next].id, method });
+      spinEl.classList.add('is-busy');
+      button.setAttribute('aria-disabled', 'true');
+      live.textContent = '';
+      if (won) { won.classList.remove('is-won'); won = null; }
+
+      if (still.matches || !reel.animate) { land(next); return; }
+
+      const from = pos;                             // somewhere in lap two
+      const to = N * 4 + next;                      // lap five: always two full turns or more
+      const R = rows[0].offsetHeight;               // the one layout read, before anything moves
+      const y = (n) => 'translate3d(0,' + (-n * R).toFixed(1) + 'px,0)';
+      spinEl.classList.add('is-spinning');
+      anim = reel.animate([
+        { transform: y(from), easing: 'cubic-bezier(.4,0,.6,1)' },
+        { transform: y(from - 0.14), offset: 0.06, easing: 'cubic-bezier(.3,.4,.3,1)' },
+        { transform: y(to + 0.2), offset: 0.86, easing: 'cubic-bezier(.45,0,.25,1)' },
+        { transform: y(to) }
+      ], { duration: 1400, fill: 'forwards' });
+      let done = false;
+      const finish = () => { if (!done) { done = true; land(next); } };
+      anim.onfinish = finish;
+      // a tab in the background can hold the finish event back; never stay stuck
+      setTimeout(finish, 2600);
+    }
+
+    button.addEventListener('click', () => spin('button'));
+
+    /* The lever: pull it down past halfway, or just click it. Pointer only --
+       the button beside it is the same action for keyboard, switch and
+       screen-reader users. */
+    if (lever) {
+      let drag = null;
+      const setPull = (v) => lever.style.setProperty('--pull', v.toFixed(3));
+      lever.addEventListener('pointerdown', (e) => {
+        if (busy || e.button > 0) return;
+        const travel = parseFloat(getComputedStyle(spinEl).getPropertyValue('--travel')) || 118;
+        drag = { id: e.pointerId, y: e.clientY, travel, pull: 0 };
+        lever.setPointerCapture(e.pointerId);
+        lever.classList.add('is-held');
         e.preventDefault();
-        nodes.forEach((n) => { n.tabIndex = n === to ? 0 : -1; });
-        to.focus();
       });
-    });
-    const group = system.querySelector('.nodes');
-    group.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') show(selected); });
-    // the preview holds while focus moves on to the readout's own links
-    system.addEventListener('focusout', (e) => {
-      if (!system.contains(e.relatedTarget)) show(selected);
-    });
+      lever.addEventListener('pointermove', (e) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        drag.pull = Math.max(0, Math.min(1, (e.clientY - drag.y) / drag.travel));
+        setPull(drag.pull);
+      });
+      const release = (e, cancelled) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const pull = drag.pull;
+        drag = null;
+        lever.classList.remove('is-held');
+        if (cancelled || (pull >= 0.04 && pull <= 0.45)) { setPull(0); return; }
+        if (pull < 0.04) {
+          // a click: the lever gives a short tug of its own
+          setPull(0.8);
+          setTimeout(() => setPull(0), 170);
+        } else {
+          setPull(0);
+        }
+        spin('lever');
+      };
+      lever.addEventListener('pointerup', (e) => release(e, false));
+      lever.addEventListener('pointercancel', (e) => release(e, true));
+    }
+
+    // back from a case page without the page cache: the last result, as it was
+    const saved = projects.findIndex((p) => p.id === recall());
+    if (saved >= 0) {
+      current = saved;
+      pos = N + saved;
+      reel.style.setProperty('--pos', String(pos));
+      paint(saved);
+      spinEl.style.setProperty('--sel', projects[saved].colour);
+    }
+    reserve();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
+    let lastWidth = window.innerWidth, resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      // a phone's toolbar sliding in or out is not a new width
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(reserve, 150);
+    }, { passive: true });
+    spinEl.classList.add('is-live');
+  }
+
+  /* ------------------------------------------------ offscreen, paused --- */
+  /* Looping animations (the Wins light, the contact beacon, the live dot)
+     stop while their section is out of view. */
+
+  if ('IntersectionObserver' in window && !still.matches) {
+    const offscreen = new IntersectionObserver((entries) => {
+      entries.forEach((e) => e.target.classList.toggle('is-off', !e.isIntersecting));
+    }, { rootMargin: '160px 0px' });
+    document.querySelectorAll('main > section, main > nav').forEach((el) => offscreen.observe(el));
+  }
+
+  /* ----------------------------------------------------- press viewer --- */
+  /* The newspaper opens full screen in a modal dialog: zoom with the
+     buttons, + and -, the wheel, a pinch or a double tap, and drag to move
+     around. The page object and the button are plain links to the original
+     file, so without a dialog (or without this script) they simply open it.
+     Nothing is drawn over the page; the controls live in their own bar. */
+
+  const pressLinks = Array.from(document.querySelectorAll('[data-press-open]'));
+  if (pressLinks.length && hasDialog) {
+    const FULL = pressLinks[0].getAttribute('href');
+    const pageImg = document.querySelector('.press-object img');
+    const W = 1776, H = 1416;                     // the original file's own size
+    let viewer = null, vStage, vImg, vLive, bIn, bOut, bReset;
+    let fit = 1, s = 1, x = 0, y = 0, maxS = 3, sw = 0, sh = 0, sl = 0, st = 0;
+    const pointers = new Map();
+    let pinch = null, pan = null, lastTap = 0, zoomSay = 0, wheelEnd = 0;
+
+    const icon = (d) =>
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+
+    function apply() {
+      vImg.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + s.toFixed(4) + ')';
+      const zoomed = s > 1.001;
+      vStage.classList.toggle('can-pan', zoomed);
+      bOut.setAttribute('aria-disabled', String(!zoomed));
+      bReset.setAttribute('aria-disabled', String(!zoomed));
+      bIn.setAttribute('aria-disabled', String(s >= maxS - 0.001));
+    }
+
+    // the page may be dragged only as far as its own edges
+    function clamp() {
+      const ox = Math.max(0, (W * fit * s - sw) / 2);
+      const oy = Math.max(0, (H * fit * s - sh) / 2);
+      x = Math.max(-ox, Math.min(ox, x));
+      y = Math.max(-oy, Math.min(oy, y));
+    }
+
+    // cx, cy: the point to hold still, relative to the stage's centre
+    function zoomTo(next, cx, cy) {
+      next = Math.max(1, Math.min(maxS, next));
+      const k = next / s;
+      x = cx - (cx - x) * k;
+      y = cy - (cy - y) * k;
+      s = next;
+      clamp();
+      apply();
+      clearTimeout(zoomSay);
+      zoomSay = setTimeout(() => { vLive.textContent = s > 1.001 ? 'Zoom ' + Math.round(s * 100) + '%' : 'Whole page'; }, 300);
+    }
+
+    const local = (clientX, clientY) => [clientX - sl - sw / 2, clientY - st - sh / 2];
+
+    function layout() {
+      const box = vStage.getBoundingClientRect();
+      sw = box.width; sh = box.height; sl = box.left; st = box.top;
+      fit = Math.max(0.05, Math.min((sw - 24) / W, (sh - 24) / H));
+      vImg.style.width = (W * fit).toFixed(1) + 'px';
+      vImg.style.height = (H * fit).toFixed(1) + 'px';
+      vImg.style.marginLeft = (-W * fit / 2).toFixed(1) + 'px';
+      vImg.style.marginTop = (-H * fit / 2).toFixed(1) + 'px';
+      // far enough in for small Tamil type to be crisp on any screen
+      maxS = Math.min(8, Math.max(3, 1.5 / fit));
+      s = 1; x = 0; y = 0;
+      apply();
+    }
+
+    function build() {
+      viewer = document.createElement('dialog');
+      viewer.className = 'press-viewer';
+      viewer.setAttribute('aria-labelledby', 'pv-title');
+      viewer.innerHTML =
+        '<div class="pv-bar">' +
+        '<div class="pv-head"><p class="pv-title" id="pv-title">Tamil Murasu · 28 September 2026 · Page 8</p>' +
+        '<p class="pv-hint">Zoom with + and −, the wheel, a pinch or a double tap. Drag to move around.</p></div>' +
+        '<div class="pv-tools">' +
+        '<button class="pv-btn" type="button" data-zoom="out" aria-label="Zoom out">' + icon('<path d="M5 12h14"/>') + '</button>' +
+        '<button class="pv-btn" type="button" data-zoom="in" aria-label="Zoom in">' + icon('<path d="M12 5v14M5 12h14"/>') + '</button>' +
+        '<button class="pv-btn" type="button" data-zoom="reset">' + icon('<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v5h5"/>') +
+        '<span class="pv-btn-text">Reset</span></button>' +
+        '<a class="pv-btn" href="' + FULL + '" target="_blank" rel="noopener">' +
+        icon('<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>') +
+        '<span class="pv-btn-text">Open original</span></a>' +
+        '<button class="pv-btn pv-close" type="button" aria-label="Close the newspaper viewer">' + closeIcon + '</button>' +
+        '</div></div>' +
+        '<div class="pv-stage"><img class="pv-img" alt="" draggable="false"></div>' +
+        '<p class="sr-only" role="status" aria-live="polite"></p>';
+      document.body.appendChild(viewer);
+      wireModal(viewer);
+
+      vStage = viewer.querySelector('.pv-stage');
+      vImg = viewer.querySelector('.pv-img');
+      vLive = viewer.querySelector('[role="status"]');
+      bIn = viewer.querySelector('[data-zoom="in"]');
+      bOut = viewer.querySelector('[data-zoom="out"]');
+      bReset = viewer.querySelector('[data-zoom="reset"]');
+      vImg.alt = pageImg ? pageImg.alt : '';
+      vImg.addEventListener('error', () => {
+        vLive.textContent = 'The page could not be shown here. Use “Open original” to see the file.';
+      });
+      vImg.src = FULL;
+
+      viewer.querySelector('.pv-close').addEventListener('click', () => closeModal(viewer));
+      viewer.querySelector('.pv-tools').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-zoom]');
+        if (!b || b.getAttribute('aria-disabled') === 'true') return;
+        const z = b.dataset.zoom;
+        if (z === 'reset') zoomTo(1, 0, 0);
+        else zoomTo(z === 'in' ? s * 1.5 : s / 1.5, 0, 0);
+      });
+
+      viewer.addEventListener('keydown', (e) => {
+        const k = e.key;
+        // focus cycles through the viewer's own controls and never leaves it
+        if (k === 'Tab') {
+          const stops = Array.from(viewer.querySelectorAll('.pv-btn'));
+          const at = stops.indexOf(document.activeElement);
+          const to = e.shiftKey ? (at <= 0 ? stops.length - 1 : at - 1) : (at === stops.length - 1 ? 0 : at + 1);
+          e.preventDefault();
+          stops[to].focus();
+          return;
+        }
+        let handled = true;
+        if (k === '+' || k === '=') zoomTo(s * 1.5, 0, 0);
+        else if (k === '-' || k === '_') zoomTo(s / 1.5, 0, 0);
+        else if (k === '0') zoomTo(1, 0, 0);
+        else if (k.startsWith('Arrow') && s > 1.001) {
+          const step = 80;
+          if (k === 'ArrowLeft') x += step;
+          else if (k === 'ArrowRight') x -= step;
+          else if (k === 'ArrowUp') y += step;
+          else y -= step;
+          clamp();
+          apply();
+        } else handled = false;
+        if (handled) e.preventDefault();
+      });
+
+      vStage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        vStage.classList.add('is-gesture');
+        const [cx, cy] = local(e.clientX, e.clientY);
+        zoomTo(s * Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.06 : 0.0022)), cx, cy);
+        clearTimeout(wheelEnd);
+        wheelEnd = setTimeout(() => vStage.classList.remove('is-gesture'), 160);
+      }, { passive: false });
+
+      /* One finger (or the mouse) drags; two fingers pinch about their
+         midpoint; a double tap or double click toggles the whole page and a
+         close-up of the spot that was tapped. */
+      vStage.addEventListener('pointerdown', (e) => {
+        vStage.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, [e.clientX, e.clientY]);
+        vStage.classList.add('is-gesture');
+        if (pointers.size === 2) {
+          const [a, b] = Array.from(pointers.values());
+          pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, s };
+          pan = null;
+        } else if (pointers.size === 1) {
+          pan = { px: e.clientX, py: e.clientY, x, y, moved: false };
+        }
+      });
+      vStage.addEventListener('pointermove', (e) => {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.set(e.pointerId, [e.clientX, e.clientY]);
+        if (pinch && pointers.size >= 2) {
+          const [a, b] = Array.from(pointers.values());
+          const [cx, cy] = local((a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
+          zoomTo(pinch.s * Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch.d, cx, cy);
+        } else if (pan) {
+          const dx = e.clientX - pan.px, dy = e.clientY - pan.py;
+          if (Math.abs(dx) + Math.abs(dy) > 6) pan.moved = true;
+          if (s > 1.001 && pan.moved) {
+            x = pan.x + dx;
+            y = pan.y + dy;
+            clamp();
+            apply();
+            vStage.classList.add('is-panning');
+          }
+        }
+      });
+      const lift = (e) => {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.delete(e.pointerId);
+        if (pointers.size < 2) pinch = null;
+        if (pointers.size === 1) {
+          // one finger left after a pinch carries on as a drag, from here
+          const [p] = Array.from(pointers.values());
+          pan = { px: p[0], py: p[1], x, y, moved: true };
+          lastTap = 0;
+          return;
+        }
+        if (pointers.size) return;
+        vStage.classList.remove('is-gesture', 'is-panning');
+        if (e.type === 'pointerup' && pan && !pan.moved) {
+          if (e.timeStamp - lastTap < 330) {
+            lastTap = 0;
+            const [cx, cy] = local(e.clientX, e.clientY);
+            zoomTo(s > 1.001 ? 1 : 2.5, cx, cy);
+          } else {
+            lastTap = e.timeStamp;
+          }
+        } else {
+          lastTap = 0;
+        }
+        pan = null;
+      };
+      vStage.addEventListener('pointerup', lift);
+      vStage.addEventListener('pointercancel', lift);
+    }
+
+    function openViewer(opener) {
+      if (!viewer) build();
+      openModal(viewer, opener);
+      layout();                                   // the stage has its real size now
+      vLive.textContent = '';
+      viewer.querySelector('.pv-close').focus();
+      track('press_viewer_open');
+    }
+
+    window.addEventListener('resize', () => { if (viewer && viewer.open) layout(); }, { passive: true });
+    pressLinks.forEach((link) => link.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;
+      e.preventDefault();
+      openViewer(link);
+    }));
   }
 
   /* ------------------------------------------------------- award rows --- */
