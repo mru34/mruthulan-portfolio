@@ -930,7 +930,8 @@
         proofHref: li.dataset.proofHref,
         proofLabel: li.dataset.proofLabel,
         proofExt: li.hasAttribute('data-proof-ext'),
-        proofEvent: li.dataset.proofEvent || ''
+        proofEvent: li.dataset.proofEvent || '',
+        weight: Math.max(0, Number(li.dataset.weight) || 1)
       };
     });
 
@@ -951,16 +952,28 @@
     const remember = (id) => { try { sessionStorage.setItem(KEY, id); } catch (e) { /* storage blocked */ } };
     const recall = () => { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } };
 
-    // uniform over the projects that are not on show now
-    function pick() {
-      const pool = projects.map((_, i) => i).filter((i) => i !== current);
+    /* Weighted by each project's data-weight, over the projects that are not
+       on show now. A whole number drawn without bias (rejection sampling),
+       then walked along the running total of the weights. */
+    function randomBelow(n) {
       if (window.crypto && crypto.getRandomValues) {
         const buf = new Uint32Array(1);
-        const limit = Math.floor(0x100000000 / pool.length) * pool.length;
+        const limit = Math.floor(0x100000000 / n) * n;
         do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
-        return pool[buf[0] % pool.length];
+        return buf[0] % n;
       }
-      return pool[Math.floor(Math.random() * pool.length)];
+      return Math.floor(Math.random() * n);
+    }
+    function pick() {
+      const pool = projects.map((_, i) => i).filter((i) => i !== current);
+      const total = pool.reduce((sum, i) => sum + projects[i].weight, 0);
+      if (!total) return pool[randomBelow(pool.length)];
+      let r = randomBelow(total);
+      for (const i of pool) {
+        r -= projects[i].weight;
+        if (r < 0) return i;
+      }
+      return pool[pool.length - 1];
     }
 
     function fill(i) {
