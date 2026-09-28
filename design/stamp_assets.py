@@ -18,7 +18,9 @@ ASSETS = ['css/styles.css', 'js/script.js', 'js/analytics.js']
 
 
 def stamps():
-    return {a: hashlib.sha1((ROOT / a).read_bytes()).hexdigest()[:8] for a in ASSETS}
+    # line endings normalised: Git on Windows may check files out with CRLF,
+    # while the site serves the committed LF bytes -- the stamp must not care
+    return {a: hashlib.sha1((ROOT / a).read_bytes().replace(b'\r\n', b'\n')).hexdigest()[:8] for a in ASSETS}
 
 
 def main():
