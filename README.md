@@ -1,6 +1,6 @@
 # Mruthulan's portfolio
 
-Personal portfolio for Senthil Nathan Mruthulan at [mruthulan.com](https://mruthulan.com). It is a static site built with HTML, CSS and JavaScript and hosted on GitHub Pages. No build step.
+Personal portfolio for Mruthulan Senthil Nathan at [mruthulan.com](https://mruthulan.com). It is a static site built with HTML, CSS and JavaScript and hosted on GitHub Pages. No build step.
 
 ## Design
 
