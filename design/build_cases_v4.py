@@ -549,7 +549,7 @@ def render(p):
         '@context': 'https://schema.org', '@type': 'CreativeWork',
         'name': p['name'], 'description': p['og'],
         'url': f"https://mruthulan.com/{p['slug']}.html",
-        'author': {'@type': 'Person', 'name': 'Senthil Nathan Mruthulan', 'url': 'https://mruthulan.com/'},
+        'author': {'@type': 'Person', 'name': 'Mruthulan Senthil Nathan', 'url': 'https://mruthulan.com/'},
     }
 
     return f"""<!doctype html>
