@@ -8,11 +8,11 @@ The site follows the **Signal Lab v3** direction. The hero and the Work section 
 
 - **Header** is sticky on every page and never changes its in-flow height (a sticky bar that shrank would pull the page up under the reader). Over the hero it is transparent and slightly lower; once the page moves it becomes solid ink. The section being read is marked in the nav. On phones it is a compact bar — name, search, menu — and the menu opens as a panel under the bar, with the page underneath inert and still.
 - **Search** is a static command palette (the Search button, `Ctrl K` / `⌘K`, or `/`). It indexes the six projects, the sections, the awards, the proof posts, the tools and the key links, with typo-tolerant matching. No network request, and the query is never recorded.
-- **Hero** is the name, one line, one hook, a four-fact proof strip (each fact links to what backs it up) and the **constellation**: one node per project in that project's colour. Hover or keyboard focus previews a node; a click or tap selects it, lights its connections and tints the room; the readout's "Open case study" is the deliberate second step. Every node has a plain link twin in the Work list.
+- **Hero** is the name, one line, one hook, a four-fact proof strip (each fact links to what backs it up), the actions, and then **Spin the Build**: a small reel of the six projects. The button (or, with a mouse, the lever beside the reel) spins it; it slows, overshoots a touch and locks on one project, the room takes that project's colour for a moment, and a card shows the project, its one line, my role, the result, **Explore project** (its case page) and its proof link. The pick is random (`crypto.getRandomValues`) and never repeats the last result; one spin runs at a time and extra presses are ignored; the result is announced and survives a visit to the case page and Back. The card's content is read from the Work rows, so the two can never disagree, and the room for the card is reserved before the first spin, so a result never moves the page. Under reduced motion the result simply appears. Without JavaScript the same spot is a plain list of the six case-page links.
 - **Work** is the evidence. Six rows, each carrying the role and the result on the row itself, each linking to its own case page. On phones the role collapses to one short line and the result leads. Hovering, tabbing or tapping a row tints the whole environment in that project's colour.
 - **Wins** keeps the dark ground but lights it differently — gold stage light, display-scale placings, a slow shimmer on the headline. Three rows state the exact placing without any interaction; a click, tap or Enter opens one row at a time, with the event photographs and my LinkedIn post, and the page settles so the heading and first photo are in view. Without JavaScript every row is simply open.
-- **About** is a two-sentence introduction, three compact ideas (ship real products; design around users and constraints; communicate through presentations and leadership), what I'm looking for, and the tools grouped by where they were used. The 4:5 portrait is Mruthulan's headshot; if the file is ever removed from `data/media.json` the slot falls back to a designed monogram, never an empty frame.
-- **Credentials** is three entries: the diploma (with one line on representing SP), and two student-leadership roles.
+- **Press** is an editorial interlude, not another award: the Tamil Murasu page of 28 September 2026 (page 8, by Christo Leon), which featured MEANT. Wins' ground warms into it and it cools back into About, with no hard colour edge. The newspaper is a physical object with a small tilt that flattens on hover or focus; it opens a full-screen viewer (zoom buttons, + and −, wheel, pinch, double tap, drag to pan, Reset, "Open original", Close; Escape closes and focus returns). Nothing is ever drawn over the page. The object and button are plain links to the original file, so without the viewer it still opens. The Dell row in Wins and the MEANT case page link to it.
+- **About** is a two-sentence introduction, three compact ideas (ship real products; design around users and constraints; communicate through presentations and leadership), what I'm looking for, the tools grouped by where they were used, and **where I study and what I lead** (the diploma and two student-leadership roles; `#credentials` still lands there). The 4:5 portrait is Mruthulan's headshot; if the file is ever removed from `data/media.json` the slot falls back to a designed monogram, never an empty frame.
 - **Contact** is a chooser, not a single `mailto:` link: copy the address (works everywhere), Gmail compose, the default mail app, or LinkedIn. On a phone, Copy and LinkedIn lead and the two mail-app routes sit under an "Other email options" disclosure. The same chooser opens as a dialog from the hero, the case-page nav and search. The footer keeps a direct email link with a copy button beside it.
 
 Behind all of it sits one fixed **field** layer: an aura that follows the pointer anywhere in the viewport, a depth layer that shifts against the page as you scroll, and a brief ring where you tap open ground. It paints above the section grounds and below every piece of content, and it only ever adds light, so nothing it does can reduce contrast. Under reduced motion no listener is attached at all.
@@ -32,7 +32,7 @@ The phone layout (640px and narrower) is its own composition on the same markup;
 
 ### Motion
 
-Native scrolling only — no scroll-jacking library. The first load is a ~700ms stagger (name and lead, then proof and actions, then the constellation); the name and lead rise without fading, so first paint never waits on an animation. Nothing starts hidden: every block is visible in the markup, and only blocks that later scroll into view get a short arrival from a softened (never blank) start, so a fast scroll or a full-page capture never meets empty space. Moving between the home page and a case page is a short cross-fade through the View Transitions API where supported, with the header held still; other browsers simply navigate. Long passages dim the ambient aura behind them. Under `prefers-reduced-motion: reduce` there is no entrance, no drift, no parallax and no cross-page transition.
+Native scrolling only — no scroll-jacking library. The first load is a ~700ms stagger (name and lead, then proof and actions, then Spin the Build); the name and lead rise without fading, so first paint never waits on an animation. Nothing starts hidden: every block is visible in the markup, and only blocks that later scroll into view get a short arrival from a softened (never blank) start, so a fast scroll or a full-page capture never meets empty space. Moving between the home page and a case page is a short cross-fade through the View Transitions API where supported, with the header held still; other browsers simply navigate. Long passages dim the ambient aura behind them. Under `prefers-reduced-motion: reduce` there is no entrance, no drift, no reel spin (the result simply appears) and no cross-page transition.
 
 The forms are inline SVG plus CSS layers — **no WebGL and no 3D library**. Depth comes from gradients, filters and transforms, so the visuals survive reduced motion, low-powered phones and old browsers.
 
@@ -57,6 +57,7 @@ from under them.
 
 ### Type scale
 
+No visible text is smaller than 16px at any width, the small mono labels included. Body copy runs 18–20px on a wide screen and 17–18px on a phone.
 The hero and the case titles are the only display-scale type. Everything that
 *carries information* — project names, the role and result on each Work row,
 case body copy, award details, captions and links — is sized to be read, not
@@ -84,7 +85,7 @@ value in the palette that still clears 6:1 on the section grounds.
 
 ## Pages
 
-- `index.html` — hero, the work index, wins, about, credentials and contact
+- `index.html` — hero (with Spin the Build), the work index, wins, press, about and contact
 - `signalbridge.html`, `meant.html`, `better-call-bhai.html`, `knowcad.html`, `boss-breaker.html`, `loomy.html` — one case study per project
 - `privacy.html` — analytics information and visitor choice
 - `404.html` — missing page
@@ -99,7 +100,7 @@ GitHub Pages publishes the `main` branch from the repository root. The `CNAME` f
 
 ## Analytics
 
-The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**. The choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `search_open`, `search_result_open` (the result's id, never the query), `contact_chooser_open`, `contact_copy_email`, `contact_open_gmail`, `contact_open_mail_app`, `contact_open_linkedin`, `deck_open`, `deck_fullscreen` and `evidence_fullscreen` — no names, email addresses or free text.
+The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**. The choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `search_open`, `search_result_open` (the result's id, never the query), `contact_chooser_open`, `contact_copy_email`, `contact_open_gmail`, `contact_open_mail_app`, `contact_open_linkedin`, `deck_open`, `deck_fullscreen`, `evidence_fullscreen`, `spin_result` (the project it landed on), `press_article_click` and `press_viewer_open` — no names, email addresses or free text.
 
 ## Supplied words
 
@@ -118,6 +119,10 @@ The six case pages are generated by `design/build_cases_v4.py` — run it from a
 ## The Loomy deck viewer
 
 `assets/deck/loomy-01.jpg` … `loomy-10.jpg` are one-per-page renders of `assets/Loomy-Pitch-Deck.pdf`, shown by the inline viewer on the Loomy case page. The viewer has real previous/next buttons, a slide counter, a live region that announces each change, arrow-key support while it has focus, and a swipe on touch. Tapping a slide opens it full screen in a modal dialog with its own previous/next, arrow keys, swipe, slide count, an optional quarter turn on portrait phones, and Escape returning focus to the slide. Arrow keys outside the viewer are left alone, so the deck never takes the page's scrolling away. Without JavaScript the slides simply stack and stay readable, and the full PDF is always one click away.
+
+## Press images
+
+`assets/media/press/tamil-murasu-2026-09-28-p8.webp` is the page exactly as supplied (1776×1416) and is only loaded by the viewer or its link. The page object uses the `-720` and `-1200` versions through `srcset`. The page and its photographs are Tamil Murasu's (SPH Media), credited on the page and linked to the original article.
 
 ## Assets
 
