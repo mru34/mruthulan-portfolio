@@ -280,7 +280,8 @@ PROJECTS = [
         'chip': 'Dell InnovateFest 2026 — Second runner-up · S$3,000',
         'lead': 'Conversations do not wait, but AAC users need time to answer.',
         'actions': [('cta', POST_DELL, 'View my Dell InnovateFest post', '↗', True, 'proof_post_click'),
-                    ('ghost', 'index.html#win-dell', 'See the award', '→', False)],
+                    ('ghost', 'index.html#win-dell', 'See the award', '→', False),
+                    ('ghost', 'index.html#press', 'Featured in Tamil Murasu', '→', False)],
         'facts': [('Role', 'UI and UX, the Singaporean TTS voice, and presenting the build'),
                   ('Result', 'Dell InnovateFest 2026 — Second runner-up · S$3,000'),
                   ('Stack', 'On-device AI on a Dell GB10 · Singaporean TTS'),
@@ -467,7 +468,6 @@ def site_header(home=''):
         <a href="{h}#work" class="is-current">Work</a>
         <a href="{h}#wins">Wins</a>
         <a href="{h}#about">About</a>
-        <a href="{h}#credentials">Credentials</a>
         <a href="{h}#contact" data-contact-open>Contact</a>
         <a class="nav-resume-menu" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
       </nav>
