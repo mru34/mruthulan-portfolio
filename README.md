@@ -114,7 +114,7 @@ Every image is optional. Slots render a designed fallback by default, so a page 
 
 ## Résumé
 
-The résumé is Mruthulan's own PDF (the 2026/2027 version). The site publishes a public copy with the phone number taken out of the header line, and nothing else changed, at `assets/Mruthulan-Senthil-Nathan-Resume.pdf`, which is what every link points to. The same file also sits at the old address, `assets/Senthil-Nathan-Mruthulan-Resume.pdf`, so links shared before the name change still open the current résumé. Replace both together. The width audit fails if any PDF in `assets/` contains a phone number.
+The résumé is Mruthulan's own PDF (currently the 2027/2028 version). The site publishes a public copy with the phone number taken out of the header line, and nothing else changed, at `assets/Mruthulan-Senthil-Nathan-Resume.pdf`, which is what every link points to. The same file also sits at the old address, `assets/Senthil-Nathan-Mruthulan-Resume.pdf`, so links shared before the name change still open the current résumé. Replace both together. The width audit fails if any PDF in `assets/` contains a phone number.
 
 ## Releasing CSS or JS changes
 
