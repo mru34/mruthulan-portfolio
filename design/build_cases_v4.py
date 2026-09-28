@@ -30,7 +30,7 @@ ACC = {
     'lm': ('#84B6FF', 'rgba(132,182,255,.28)', 'rgba(132,182,255,.07)'),
 }
 
-RESUME = 'assets/Senthil-Nathan-Mruthulan-Resume.pdf'
+RESUME = 'assets/Mruthulan-Senthil-Nathan-Resume.pdf'
 SP = ('https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/'
       'information-technology-students-clinch-top-prize-at-sp-innovatedash-2026')
 # The three LinkedIn proof posts, as the short links Mruthulan verified. The
