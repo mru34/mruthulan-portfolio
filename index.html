@@ -21,7 +21,7 @@
   <link rel="preload" href="assets/fonts/spline-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css?v=90d2e5c7">
   <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js-on');</script>
-  <script src="js/script.js?v=b7725cf2" defer></script>
+  <script src="js/script.js?v=32404422" defer></script>
   <script src="js/analytics.js?v=c569faef" defer></script>
   <script type="application/ld+json">
   {
@@ -109,13 +109,16 @@
             <p class="spin-sub" id="spin-sub"><span class="spin-sub-live">Not sure where to start? Let the machine pick one of my six builds.</span><span class="spin-sub-static">All six builds, one click from their case studies.</span></p>
           </div>
           <div class="spin-body">
+            <!-- data-weight: how often the machine lands on each project. With
+                 the no-repeat rule, 9 for each of the four shipped builds and 4
+                 for KnowCad and Loomy works out at about 80% / 20% of spins. -->
             <ol class="spin-list" aria-label="All six projects">
-            <li data-id="sb" data-proof-href="https://lnkd.in/p/dCBs22kx" data-proof-label="View my SP InnovateDash post" data-proof-ext data-proof-event="proof_post_click" style="--c:#5BE1D8"><a href="signalbridge.html" data-event="case_open" data-project="sb"><svg class="spin-sym" aria-hidden="true"><use href="#sym-sb"/></svg><span class="spin-list-num">01</span> SignalBridge</a></li>
-            <li data-id="mt" data-proof-href="https://lnkd.in/p/dZQiUX3z" data-proof-label="View my Dell InnovateFest post" data-proof-ext data-proof-event="proof_post_click" style="--c:#FFB661"><a href="meant.html" data-event="case_open" data-project="mt"><svg class="spin-sym" aria-hidden="true"><use href="#sym-mt"/></svg><span class="spin-list-num">02</span> MEANT</a></li>
-            <li data-id="bb" data-proof-href="https://bettercalbhai.onrender.com/" data-proof-label="Visit the site" data-proof-ext style="--c:#FF8095"><a href="better-call-bhai.html" data-event="case_open" data-project="bb"><svg class="spin-sym" aria-hidden="true"><use href="#sym-bb"/></svg><span class="spin-list-num">03</span> Better Call Bhai</a></li>
-            <li data-id="kc" data-proof-href="https://lnkd.in/p/dQW9Pg_v" data-proof-label="View my Autodesk hackathon post" data-proof-ext data-proof-event="proof_post_click" style="--c:#AC93FF"><a href="knowcad.html" data-event="case_open" data-project="kc"><svg class="spin-sym" aria-hidden="true"><use href="#sym-kc"/></svg><span class="spin-list-num">04</span> KnowCad</a></li>
-            <li data-id="bx" data-proof-href="https://github.com/mru34/bedca2" data-proof-label="View the code" data-proof-ext style="--c:#A4EC76"><a href="boss-breaker.html" data-event="case_open" data-project="bx"><svg class="spin-sym" aria-hidden="true"><use href="#sym-bx"/></svg><span class="spin-list-num">05</span> Boss Breaker</a></li>
-            <li data-id="lm" data-proof-href="loomy.html#deck" data-proof-label="Read the pitch deck" style="--c:#84B6FF"><a href="loomy.html" data-event="case_open" data-project="lm"><svg class="spin-sym" aria-hidden="true"><use href="#sym-lm"/></svg><span class="spin-list-num">06</span> Loomy</a></li>
+            <li data-id="sb" data-weight="9" data-proof-href="https://lnkd.in/p/dCBs22kx" data-proof-label="View my SP InnovateDash post" data-proof-ext data-proof-event="proof_post_click" style="--c:#5BE1D8"><a href="signalbridge.html" data-event="case_open" data-project="sb"><svg class="spin-sym" aria-hidden="true"><use href="#sym-sb"/></svg><span class="spin-list-num">01</span> SignalBridge</a></li>
+            <li data-id="mt" data-weight="9" data-proof-href="https://lnkd.in/p/dZQiUX3z" data-proof-label="View my Dell InnovateFest post" data-proof-ext data-proof-event="proof_post_click" style="--c:#FFB661"><a href="meant.html" data-event="case_open" data-project="mt"><svg class="spin-sym" aria-hidden="true"><use href="#sym-mt"/></svg><span class="spin-list-num">02</span> MEANT</a></li>
+            <li data-id="bb" data-weight="9" data-proof-href="https://bettercalbhai.onrender.com/" data-proof-label="Visit the site" data-proof-ext style="--c:#FF8095"><a href="better-call-bhai.html" data-event="case_open" data-project="bb"><svg class="spin-sym" aria-hidden="true"><use href="#sym-bb"/></svg><span class="spin-list-num">03</span> Better Call Bhai</a></li>
+            <li data-id="kc" data-weight="4" data-proof-href="https://lnkd.in/p/dQW9Pg_v" data-proof-label="View my Autodesk hackathon post" data-proof-ext data-proof-event="proof_post_click" style="--c:#AC93FF"><a href="knowcad.html" data-event="case_open" data-project="kc"><svg class="spin-sym" aria-hidden="true"><use href="#sym-kc"/></svg><span class="spin-list-num">04</span> KnowCad</a></li>
+            <li data-id="bx" data-weight="9" data-proof-href="https://github.com/mru34/bedca2" data-proof-label="View the code" data-proof-ext style="--c:#A4EC76"><a href="boss-breaker.html" data-event="case_open" data-project="bx"><svg class="spin-sym" aria-hidden="true"><use href="#sym-bx"/></svg><span class="spin-list-num">05</span> Boss Breaker</a></li>
+            <li data-id="lm" data-weight="4" data-proof-href="loomy.html#deck" data-proof-label="Read the pitch deck" style="--c:#84B6FF"><a href="loomy.html" data-event="case_open" data-project="lm"><svg class="spin-sym" aria-hidden="true"><use href="#sym-lm"/></svg><span class="spin-list-num">06</span> Loomy</a></li>
             </ol>
             <div class="spin-machine">
               <div class="spin-top">
