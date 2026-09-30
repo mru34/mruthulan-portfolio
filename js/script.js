@@ -240,10 +240,11 @@
     new IntersectionObserver(([en], o) => { if (en.isIntersecting) { o.disconnect(); layers.forEach(warm); } }, { rootMargin: '600px' }).observe(f);
   });
 
-  /* ---------------------------------------------------------- featured builds: a swipe carousel on phones */
-  const reel = $('[data-track]');
-  if (reel) {
-    const slides = [...reel.children], dots = $$('.feat-dots i'), now = $('[data-slide-now]');
+  /* ---------------------------------------------------------- swipe rows (the awards, on phones) */
+  $$('[data-track]').forEach((row) => {
+    const nav = row.parentElement.querySelector('[data-track-nav]');
+    if (!nav) return;
+    const slides = [...row.children], dots = $$('.track-dots i', nav), now = $('[data-slide-now]', nav);
     let idx = 0;
     const setNow = (n) => {
       idx = n;
@@ -251,51 +252,58 @@
       now.textContent = `${n + 1} / ${slides.length}`;
     };
     setNow(0);
-    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) setNow(slides.indexOf(en.target)); }), { root: reel, threshold: 0.6 });
+    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) setNow(slides.indexOf(en.target)); }), { root: row, threshold: 0.6 });
     slides.forEach((sl) => io.observe(sl));
-    $$('[data-slide]').forEach((b) => b.addEventListener('click', () => {
-      const n = Math.max(0, Math.min(slides.length - 1, idx + +b.dataset.slide));
-      reel.scrollTo({ left: slides[n].offsetLeft - slides[0].offsetLeft, behavior: still() ? 'auto' : 'smooth' });
+    $$('[data-slide]', nav).forEach((btn) => btn.addEventListener('click', () => {
+      const n = Math.max(0, Math.min(slides.length - 1, idx + +btn.dataset.slide));
+      row.scrollTo({ left: slides[n].offsetLeft - slides[0].offsetLeft, behavior: still() ? 'auto' : 'smooth' });
     }));
-  }
-
-  /* ---------------------------------------------------------- awards: each row flips in like a departures board */
-  $$('.aw').forEach((row) => {
-    if (still()) return;
-    const fl = $$('.fl', row);
-    new IntersectionObserver(([en], o) => {
-      if (!en.isIntersecting) return;
-      o.disconnect();
-      fl.forEach((t, k) => { if (t.dataset.ch.trim()) flicker(t, t.dataset.ch, { delay: k * 45, dur: 300, step: 60, flip: 110, each: true, chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }); });
-    }, { threshold: 0.5 }).observe(row);
   });
 
-  /* ---------------------------------------------------------- awards: swipe or step through each event's photos */
-  // Photos sit in a scroll-snap rail, so a phone swipes them natively; the arrows step (and wrap),
-  // the caption and count follow, and only the photo in view is in the Tab order.
-  $$('[data-aw]').forEach((m) => {
-    const rail = $('.aw-rail', m), shots = [...rail.children], cap = $('[data-cap]', m), count = $('[data-count]', m);
+  /* ---------------------------------------------------------- award photos */
+  // Arrows, the arrow keys or a swipe move between an event's photos; a tap opens the viewer.
+  // While a card is in view and nobody is pointing at or using it, its photos move on slowly by
+  // themselves (not with reduced motion); touching a card's photos stops that card for good.
+  $$('[data-gal]').forEach((gal, gi) => {
+    const main = $('.gal-main', gal), shots = $$('.shot', gal);
+    const cap = $('[data-gal-cap]', gal), now = $('[data-gal-now]', gal), live = $('[data-gal-live]', gal);
     if (shots.length < 2) return;
-    let at = 0;
-    const set = (n) => {
-      at = n;
-      cap.textContent = shots[n].dataset.zoom;
-      count.textContent = `${n + 1} / ${shots.length}`;
-      shots.forEach((s, k) => { s.tabIndex = k === n ? 0 : -1; });
+    let i = 0, used = false, over = false, seen = false;
+    const show = (n, quiet) => {
+      const hadFocus = shots.includes(document.activeElement);
+      i = (n + shots.length) % shots.length;
+      shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
+      cap.textContent = shots[i].dataset.zoom;
+      now.textContent = i + 1;
+      if (!quiet) live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
+      if (hadFocus) shots[i].focus();
     };
-    set(0);
-    // the photo in view follows the scroll position; a resize (or turning the phone) keeps the same photo
-    let busy = 0;
-    rail.addEventListener('scroll', () => {
-      if (busy) return;
-      busy = requestAnimationFrame(() => { busy = 0; const n = Math.round(rail.scrollLeft / rail.clientWidth); if (n !== at && shots[n]) set(n); });
-    }, { passive: true });
-    addEventListener('resize', () => { rail.scrollLeft = at * rail.clientWidth; });
-    $$('[data-step]', m).forEach((btn) => btn.addEventListener('click', () => {
-      const n = (at + +btn.dataset.step + shots.length) % shots.length;
-      set(n);
-      rail.scrollTo({ left: n * rail.clientWidth, behavior: still() ? 'auto' : 'smooth' });
-    }));
+    const byHand = (n) => { used = true; show(n); };
+    new IntersectionObserver(([en]) => {
+      seen = en.isIntersecting;
+      if (seen) shots.forEach((sh) => warm($('img', sh)));
+    }, { threshold: 0.5 }).observe(main);
+    $$('[data-gal-step]', gal).forEach((btn) => btn.addEventListener('click', () => byHand(i + +btn.dataset.galStep)));
+    gal.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      byHand(i + (e.key === 'ArrowLeft' ? -1 : 1));
+      e.preventDefault();
+    });
+    gal.addEventListener('pointerenter', () => { over = true; });
+    gal.addEventListener('pointerleave', () => { over = false; });
+    let x0 = null, y0 = 0, swiped = false;
+    main.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { x0 = e.clientX; y0 = e.clientY; used = true; } });
+    main.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { byHand(dx < 0 ? i + 1 : i - 1); swiped = true; setTimeout(() => { swiped = false; }, 60); }
+    });
+    main.addEventListener('pointercancel', () => { x0 = null; });
+    main.addEventListener('click', (e) => { if (swiped) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+    if (still()) return;
+    setTimeout(() => setInterval(() => {
+      if (!used && !over && seen && !document.hidden && !gal.contains(document.activeElement) && !$('[data-viewer]')?.open) show(i + 1, true);
+    }, 5200), gi * 1700);
   });
 
   /* ---------------------------------------------------------- section titles flip in */
@@ -357,7 +365,7 @@
     });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => zone.addEventListener(t, (e) => { if (e.pointerType !== 'mouse') clear(); }));
   };
-  $$('a.zoom, .about > .ph, .deck-stage').forEach((el) => tilt(el));
+  $$('a.zoom, .pcard, .gal-main, .about > .ph, .deck-stage').forEach((el) => tilt(el));
 
   /* ---------------------------------------------------------- buttons */
   // The fill grows from where the pointer came in and leaves toward where it went;
@@ -531,13 +539,6 @@
     c.dataset.busy = '1';
     flicker(c, c.textContent || ' ', { dur: 170, step: 55, flip: 110, each: true, chars: A, done: () => { delete c.dataset.busy; } });
   }));
-  const NUM = ['', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT'];
-  const idle = { name: `${NUM[ids.length] || ids.length} PROJECTS`, type: '', status: 'PRESS SPIN' };
-  let shown = false;
-  new IntersectionObserver(([e], o) => {
-    if (e.isIntersecting && !shown) { shown = true; o.disconnect(); flipAll(idle); }
-  }, { threshold: 0.6 }).observe($('.fids', board));
-
   const spin = $('[data-spin]', board);
   const result = $('[data-result]', board);
   const live = $('[data-spin-live]', board);
@@ -550,16 +551,19 @@
     (window.crypto || window.msCrypto).getRandomValues(r);
     return pool[r[0] % pool.length];
   }
+  const pickCard = (id) => $$('.pcard').forEach((c) => c.toggleAttribute('data-picked', c.dataset.project === id));
   function renderResult(id) {
     const p = data[id];
+    pickCard(id);
+    spin.textContent = 'Spin again';
     result.innerHTML = `<span class="sw" style="--c:${p.c}"></span><span class="nm cn">${esc(p.name)}</span>
       <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Open the case study <span class="ar">→</span></a>
       <p>${esc(p.line)}</p>`;
     if (!still()) { result.classList.remove('in'); void result.offsetWidth; result.classList.add('in'); }
   }
-  spin.addEventListener('click', () => {
+  const go = (byHand) => {
     if (busy) return;
-    busy = true; shown = true;
+    busy = true;
     spin.setAttribute('aria-disabled', 'true');
     const id = pick(); last = id;
     const p = data[id];
@@ -569,21 +573,23 @@
       live.textContent = `Landed on ${p.name}. ${p.line}`;
       busy = false;
       spin.removeAttribute('aria-disabled');
-      track('spin_result', { project: id });
+      if (byHand) track('spin_result', { project: id });
       try { sessionStorage.setItem('spin-last', id); } catch { /* storage may be blocked */ }
     });
-  });
-  // coming back from a case page keeps the last result on the board
-  try {
-    const kept = sessionStorage.getItem('spin-last');
-    if (kept && data[kept]) {
-      last = kept; shown = true;
-      const p = data[kept];
-      for (const [col, word] of Object.entries({ name: p.name, type: p.board[0], status: p.board[1] })) {
-        const w = word.toUpperCase().padEnd(cols[col].length, ' ');
-        cols[col].forEach((c, i) => { c.textContent = w[i] === ' ' ? '' : w[i]; });
-      }
-      renderResult(kept);
+  };
+  spin.addEventListener('click', () => go(true));
+  // coming back from a case page keeps the last result on the board; otherwise it spins once by itself
+  let kept = null;
+  try { kept = sessionStorage.getItem('spin-last'); } catch { /* storage may be blocked */ }
+  if (kept && data[kept]) {
+    last = kept;
+    const p = data[kept];
+    for (const [col, word] of Object.entries({ name: p.name, type: p.board[0], status: p.board[1] })) {
+      const w = word.toUpperCase().padEnd(cols[col].length, ' ');
+      cols[col].forEach((c, i) => { c.textContent = w[i] === ' ' ? '' : w[i]; });
     }
-  } catch { /* storage may be blocked */ }
+    renderResult(kept);
+  } else {
+    setTimeout(() => go(false), still() ? 0 : 900);
+  }
 })();

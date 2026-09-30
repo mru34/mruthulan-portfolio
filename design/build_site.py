@@ -279,7 +279,7 @@ PROJECTS = [
             'still chooses every word, and can drop back to their usual board or typing at any time.'),
         actions=[('View my Dell InnovateFest post ↗', POST_DELL, 'proof_post_click'),
                  ('SP School of Computing’s post ↗', POST_SPSOC_DELL, 'proof_post_click'),
-                 ('Featured in Tamil Murasu →', 'index.html#press', None)],
+                 ('Featured in Tamil Murasu ↓', '#press', None)],
         facts=[('My role', 'UI and UX, the Singaporean TTS voice, and presenting the build'),
                ('Result', 'Second runner-up, polytechnic category · S$3,000'),
                ('Stack', 'On-device AI on a Dell GB10 · Singaporean TTS'),
@@ -500,7 +500,7 @@ def header(home, current=None, prefix=''):
     def nav(sid, label):
         cur = ' aria-current="true"' if current == sid else ''
         return f'<a href="{h}#{sid}" data-nav="{sid}"{cur}>{label}</a>'
-    links = [('featured', 'Work'), ('awards', 'Awards'), ('press', 'Press'), ('about', 'About')]
+    links = [('work', 'Work'), ('awards', 'Awards'), ('about', 'About')]
     solid = '' if not home else ' solid'
     menu = ''.join(f'<a href="{h}#{sid}">{label}</a>' for sid, label in links + [('contact', 'Contact')])
     return f"""<header class="top{solid}" data-top>
@@ -576,15 +576,14 @@ def sechead(sid, title):
             f'<span aria-hidden="true" data-scramble>{e(title)}</span></h2></header>')
 
 
-# ------------------------------------------------------------------ featured builds
+# ------------------------------------------------------------------ what I built, on the case pages
 # Each "What I built" line is backed by the project's repository. Pointing at a line
 # (or tapping it) zooms the real screenshot to that part (r = x, y, w, h as fractions of
 # the image), or, where there is nothing to show on screen, opens a card with the real
 # route, test or table names.
 FEATURED = [
-    dict(pid='sb', kicker='Team build · Dell InnovateDash 2026 champion',
-         does='A youth-support command centre: after-hours messages reach a youth worker with context, and *only with the young person’s consent*.',
-         stack='Next.js · FastAPI · PostgreSQL', frame='browser',
+    dict(pid='sb',
+         frame='browser',
          layers={'chat': 'signalbridge-shot-1', 'consent': 'signalbridge-shot-3'}, first='chat',
          items=[
              ('The youth-facing chat, sign-in and dashboard', dict(t='img', l='chat', r=[0.0, 0.08, 1.0, 0.32])),
@@ -596,10 +595,9 @@ FEATURED = [
                  lines=['def test_discord_thread_conversation_routes_to_safenight()', 'def test_discord_public_intake_falls_back_when_youth_id_missing()'],
                  note='Plus the migrations for Discord user and thread IDs.')),
          ],
-         links=[('Read the case study →', 'signalbridge.html'), ('Code ↗', SIGNALBRIDGE_REPO), ('Open the app ↗', 'https://signalbridge-web.onrender.com/')]),
-    dict(pid='bb', kicker='Solo build · Deployed pilot with a local barbershop',
-         does='Appointment booking for a barbershop: pick a service, a day and an open slot, then *confirm on WhatsApp*.',
-         stack='Node.js · Express · SQLite · Render', frame='device',
+    ),
+    dict(pid='bb',
+         frame='device',
          layers={'flow': 'better-call-bhai-shot-2', 'live': 'better-call-bhai-shot-1'}, first='flow',
          items=[
              ('The booking site customers use', dict(t='img', l='flow', r=[0.17, 0.08, 0.31, 0.92])),
@@ -611,10 +609,9 @@ FEATURED = [
                  note='From the private repository; every commit is mine.')),
              ('Deployed on Render', dict(t='img', l='live', r=[0.0, 0.0, 1.0, 1.0])),
          ],
-         links=[('Read the case study →', 'better-call-bhai.html'), ('Visit the site ↗', 'https://bettercalbhai.onrender.com/')]),
-    dict(pid='bx', kicker='Solo build · Full-stack coursework',
-         does='A wellness game: complete challenges to earn points, then *spend them against a shared boss*.',
-         stack='Node.js · Express · MySQL', frame='browser',
+    ),
+    dict(pid='bx',
+         frame='browser',
          layers={'dash': 'boss-breaker-shot-2'}, first='dash',
          items=[
              ('A nine-page frontend: dashboard, challenges, boss raid, shop, inventory', dict(t='img', l='dash', r=[0.08, 0.0, 0.84, 0.07])),
@@ -628,15 +625,22 @@ FEATURED = [
                  lines=['bcrypt.hash(req.body.password, saltRounds, callback)', 'Authorization: Bearer <token>'],
                  note='bcryptMiddleware.js and jwtMiddleware.js.')),
          ],
-         links=[('Read the case study →', 'boss-breaker.html'), ('Code ↗', 'https://github.com/mru34/bedca2')]),
+    ),
 ]
 
 
-def feature(i, f):
+FEAT_BY_ID = {f['pid']: f for f in FEATURED}
+
+
+def hotspots(f):
+    """The case page's opening picture, with the "What I built" lines beside it."""
     p = BY_ID[f['pid']]
-    layers = ''.join(
-        f'<img class="hs-layer" data-layer="{k}" src="assets/media/{MEDIA[v]["src"]}" width="{MEDIA[v]["width"]}" height="{MEDIA[v]["height"]}" '
-        f'alt="{e(MEDIA[v]["alt"])}"{" data-on" if k == f["first"] else ""} loading="lazy" decoding="async">' for k, v in f['layers'].items())
+    layers = ''
+    for k, v in f['layers'].items():
+        m = MEDIA[v]
+        on = ' data-on fetchpriority="high"' if k == f['first'] else ' loading="lazy"'
+        layers += (f'<img class="hs-layer" data-layer="{k}" src="assets/media/{m["src"]}" width="{m["width"]}" height="{m["height"]}" '
+                   f'alt="{e(m["alt"])}"{on} decoding="async">')
     cards = items = ''
     for k, (label, d) in enumerate(f['items']):
         if d['t'] == 'card':
@@ -648,10 +652,7 @@ def feature(i, f):
         items += (f'<li><button class="hs-item" type="button" aria-pressed="false" data-hs="{e(json.dumps(data, ensure_ascii=False))}">'
                   f'<span class="hs-dot" aria-hidden="true"></span>{e(label)}</button></li>')
     bar = f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>' if f['frame'] == 'browser' else ''
-    ls = ''.join(f'<a class="{"btn solid" if k == 0 else "link"}" href="{h}"{ext(h)}'
-                 f'{" data-event=" + chr(34) + "case_open" + chr(34) + " data-project=" + chr(34) + p["id"] + chr(34) if k == 0 else ""}>{e(t)}</a>'
-                 for k, (t, h) in enumerate(f['links']))
-    return f'''<article class="feat" id="feat-{p['id']}" data-feat style="--c:{p['c']}" aria-roledescription="slide" aria-label="{i} of {len(FEATURED)}: {e(p['name'])}">
+    return f'''<section class="feat feat-case" id="built" data-feat aria-labelledby="built-title">
           <div class="hs-wrap">
             <div class="hs-frame{' is-device' if f['frame'] == 'device' else ''}">{bar}
               <div class="hs-view" aria-hidden="true"><div class="hs-stage">{layers}<span class="hs-spot"></span></div><p class="hs-tag"></p></div>
@@ -659,56 +660,43 @@ def feature(i, f):
             <p class="hs-hint" aria-hidden="true"><span class="fine">Point at a line to see it in the product</span><span class="touch">Tap a line below to see it in the product</span></p>{cards}
           </div>
           <div class="feat-text">
-            <p class="eyebrow">{i:02d} · {e(f['kicker'])}</p>
-            <h3 class="cn" style="view-transition-name:t-{p['id']}">{e(p['name'])}</h3>
-            <p class="does">{emph(f['does'])}</p>
-            <p class="k">What I built</p><ul class="built">{items}</ul>
-            <p class="stack">{e(f['stack'])}</p>
-            <div class="acts">{ls}</div>
+            <h2 class="k" id="built-title">What I built</h2><ul class="built">{items}</ul>
           </div>
-        </article>'''
+        </section>'''
 
 
-# ------------------------------------------------------------------ awards, one card each with a big photo
-# The placing flips in on a board strip; the photos swipe (or step with the arrows) inside the
-# card and open full size in the viewer; the quote is the opening line of my post about it.
+# ------------------------------------------------------------------ awards: three cards
+# Each card: the organisers' logos, the event's photos (arrows, swipe, and a slow advance
+# while nobody is touching them), the placing, the event, the project and my post about it.
 AWARDS = [
-    ('sb', 'win-sp', 'CHAMPION', 'Champion', 'Dell InnovateDash 2026', [], ['dell', 'sp'],
+    ('sb', 'win-sp', 'Champion', 'Dell InnovateDash 2026', [], ['dell', 'sp'],
      ['win-signalbridge-team', 'win-signalbridge-award'], POST_SP),
-    ('mt', 'win-dell', '2ND RUNNER-UP', 'Second runner-up', 'Dell InnovateFest 2026 · polytechnic category', ['S$3,000'], ['dell'],
+    ('mt', 'win-dell', '2nd runner-up', 'Dell InnovateFest 2026 · polytechnic category', ['S$3,000'], ['dell'],
      ['win-meant-handover', 'win-meant-stage', 'win-meant-team'], POST_DELL),
-    ('kc', 'win-autodesk', 'CHAMPION', 'Champion', 'Autodesk Singapore Hackathon 2026', [], ['autodesk'],
+    ('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', [], ['autodesk'],
      ['win-knowcad-champion', 'win-knowcad-team'], POST_AUTODESK),
 ]
 
 
-def award(pid, anchor, board_word, place, event, facts, logos, photos, post):
+def award(pid, anchor, place, event, facts, logos, photos, post):
     p = BY_ID[pid]
-    flaps = ''.join(f'<span class="fl" data-ch="{e(ch)}">{e(ch.strip())}</span>' for ch in board_word)
     org = '<i class="org-sep" aria-hidden="true"></i>'.join(
         f'<img src="assets/logos/{s}" alt="{e(a)}" width="{w}" height="{h}" loading="lazy" decoding="async">' for s, a, w, h in (LOGOS[k] for k in logos))
     shots = ''.join(
-        f'<a class="aw-shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" data-alt="{e(MEDIA[k]["alt"])}" '
-        f'data-group="{anchor}" aria-label="View full size: {e(MEDIA[k]["caption"])}">{pic(k, "(max-width: 860px) 100vw, 58vw", cls="ph")}</a>'
-        for k in photos)
-    many = len(photos) > 1
-    ctl = (f'<div class="aw-ctl"><button class="gal-arrow" type="button" data-step="-1" aria-label="Previous photo">‹</button>'
-           f'<span class="aw-cap" data-cap>{e(MEDIA[photos[0]]["caption"])}</span>'
-           f'<span class="aw-count" data-count>1 / {len(photos)}</span>'
-           f'<button class="gal-arrow" type="button" data-step="1" aria-label="Next photo">›</button></div>') if many else ''
-    fact = ''.join(f'<span class="aw-fact">{e(x)}</span>' for x in facts)
-    quote = PEEKS[post][1]
-    return f'''<article class="aw" id="{anchor}" style="--c:{p['c']}">
-          <header class="aw-strip"><p class="dep-place"><span class="sr-only">{e(place)}</span><span class="flaps-row" aria-hidden="true">{flaps}</span></p><div class="org">{org}</div></header>
-          <div class="aw-body">
-            <figure class="aw-media" data-aw aria-label="Photos: {e(event)}"><div class="aw-rail">{shots}</div>{ctl}</figure>
-            <div class="aw-info">
-              <p class="aw-ev">{e(event)}{f' <span class="aw-facts">{fact}</span>' if fact else ''}</p>
-              <p class="aw-proj"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a></p>
-              <blockquote class="aw-quote"><p>{e(quote)}</p></blockquote>
-              <a class="aw-post link" href="{post}"{ext(post)} data-event="proof_post_click" data-project="{pid}">My LinkedIn post ↗</a>
-            </div>
-          </div>
+        f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" data-alt="{e(MEDIA[k]["alt"])}" '
+        f'data-group="{anchor}"{" data-on" if n == 0 else ""} aria-label="View full size: {e(MEDIA[k]["caption"])}">'
+        f'{pic(k, "(max-width: 860px) 86vw, 30vw", cls="ph")}</a>' for n, k in enumerate(photos))
+    nav = (f'<div class="gal-nav"><button class="gal-arrow" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
+           f'<span class="gal-count" aria-hidden="true"><span data-gal-now>1</span> / {len(photos)}</span>'
+           f'<button class="gal-arrow" type="button" data-gal-step="1" aria-label="Next photo">→</button></div>') if len(photos) > 1 else ''
+    fact = ''.join(f' <span class="fact">{e(x)}</span>' for x in facts)
+    return f'''<article class="win arrive" id="{anchor}" style="--c:{p['c']}">
+          <div class="org">{org}</div>
+          <div class="gal" data-gal><div class="gal-main">{shots}</div><div class="gal-foot"><p class="gal-cap" data-gal-cap>{e(MEDIA[photos[0]]["caption"])}</p>{nav}</div><span class="sr-only" aria-live="polite" data-gal-live></span></div>
+          <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true" data-scramble>{e(place)}</span></h3>
+          <p class="ev">{e(event)}{fact}</p>
+          <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a></p>
+          <div class="links"><a class="link" href="{post}"{ext(post)} data-event="proof_post_click" data-project="{pid}">My LinkedIn post ↗</a></div>
         </article>'''
 
 
@@ -718,10 +706,17 @@ def award(pid, anchor, board_word, place, event, facts, logos, photos, post):
 HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
 
 
-def index_row(k, p):
-    return (f'<li><a class="idx" id="work-{p["id"]}" href="{p["slug"]}.html" style="--c:{p["c"]}" data-event="case_open" data-project="{p["id"]}">'
-            f'<span class="n">{k + 1:02d}</span><span class="nm cn">{e(p["name"])}</span><span class="ty">{e(p["type"])}</span>'
-            f'<span class="ln">{e(p["line"])}</span><span class="ar" aria-hidden="true">→</span></a></li>')
+def project_card(k, p):
+    key = p['cover'][1]
+    big = k < 2
+    sizes = '(max-width: 860px) 100vw, 46vw' if big else '(max-width: 860px) 50vw, 30vw'
+    cls = ' class="big"' if big else ''
+    return (f'<li{cls}><a class="pcard arrive" id="work-{p["id"]}" href="{p["slug"]}.html" style="--c:{p["c"]}" '
+            f'data-project="{p["id"]}" data-event="case_open">'
+            f'<div class="pc-img">{pic(key, sizes, alt="")}</div>'
+            f'<span class="pc-body"><span class="pc-type">{e(p["type"])}</span><span class="nm cn">{e(p["name"])}</span>'
+            f'<span class="pc-line">{e(p["line"])}</span></span>'
+            f'<span class="pc-tag" aria-hidden="true">On the board</span><span class="ar" aria-hidden="true">→</span></a></li>')
 
 
 def board_data():
@@ -739,9 +734,9 @@ def build_home():
           'sameAs': [LINKEDIN, GITHUB]}
     about_personal = f'<p>{e(ABOUT_PERSONAL)}</p>' if ABOUT_PERSONAL else ''
     return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
-                 'Mruthulan Senthil Nathan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Three featured builds with what I built on each, and three hackathon results.',
+                 'Mruthulan Senthil Nathan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Five projects, what I built on each, and three hackathon results.',
                  '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
-                 og_desc='Three featured builds with what I built on each, and three hackathon results.', ld=ld)}
+                 og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld)}
 {body_open('home')}
   {header('')}
 
@@ -750,67 +745,41 @@ def build_home():
       <section class="hero" aria-labelledby="name">
         <p class="eyebrow"><span class="long">Singapore · Year 2 Information Technology, Singapore Polytechnic</span><span class="short">Singapore · Year 2 IT, Singapore Polytechnic</span></p>
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
-        <div class="hero-row">
-          <div>
+        <div class="hero-grid">
+          <section class="board" data-board aria-labelledby="board-title" hidden>
+            <div class="board-head"><h2 class="eyebrow" id="board-title">Now showing</h2><span class="eyebrow">{len(HOME_PROJECTS)} projects</span></div>
+            <div class="fids" aria-hidden="true">
+              <div><span class="lab">Project</span><div class="flaps" data-col="name" data-n="16"></div></div>
+              <div><span class="lab">Type</span><div class="flaps" data-col="type" data-n="16"></div></div>
+              <div><span class="lab">Result</span><div class="flaps status" data-col="status" data-n="16"></div></div>
+            </div>
+            <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result></div></div>
+            <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
+          </section>
+          <div class="hero-intro">
             <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. <em>Every project below names my part.</em></p>
             <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
+            <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
           </div>
-          <div class="acts"><a class="btn solid" href="#featured">See featured work</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
         </div>
         <div data-hero-end aria-hidden="true"></div>
       </section>
     </div>
 
-    <section class="sec wrap feat-sec" id="featured" data-sec="featured" aria-labelledby="featured-title">
-      {sechead('featured-title', 'Featured builds')}
-      <div class="feat-track" data-track aria-roledescription="carousel" aria-label="Featured builds">
-        {''.join(feature(i + 1, f) for i, f in enumerate(FEATURED))}
-      </div>
-      <div class="feat-nav"><button class="gal-arrow" type="button" data-slide="-1" aria-label="Previous build">←</button>
-        <span class="feat-dots" aria-hidden="true">{'<i></i>' * len(FEATURED)}</span><span class="gal-count" data-slide-now aria-live="polite">1 / {len(FEATURED)}</span>
-        <button class="gal-arrow" type="button" data-slide="1" aria-label="Next build">→</button></div>
+    <section class="sec wrap" id="work" data-sec="work" aria-labelledby="work-title">
+      {sechead('work-title', 'Projects')}
+      <ul class="pgrid">{''.join(project_card(k, p) for k, p in enumerate(HOME_PROJECTS))}</ul>
     </section>
 
     <section class="sec wrap" id="awards" data-sec="awards" aria-labelledby="awards-title">
       <span id="results"></span><span id="wins"></span><span id="recognition"></span>
       {sechead('awards-title', 'Awards')}
-      <div class="aw-list">
+      <div class="score" data-track aria-label="Awards">
         {''.join(award(*a) for a in AWARDS)}
       </div>
-    </section>
-
-    <section class="sec wrap" id="work" data-sec="featured" aria-labelledby="work-title">
-      {sechead('work-title', 'All projects')}
-      <div class="idx-grid">
-        <ol class="idx-list">{''.join(index_row(k, p) for k, p in enumerate(HOME_PROJECTS))}</ol>
-        <section class="board" data-board aria-labelledby="board-title" hidden>
-          <div class="board-head"><h3 class="eyebrow" id="board-title">Or let the board choose</h3><button class="btn solid" type="button" data-spin>Spin a project</button></div>
-          <div class="fids" aria-hidden="true">
-            <div><span class="lab">Project</span><div class="flaps" data-col="name" data-n="16"></div></div>
-            <div><span class="lab">Type</span><div class="flaps" data-col="type" data-n="16"></div></div>
-            <div><span class="lab">Status</span><div class="flaps status" data-col="status" data-n="16"></div></div>
-          </div>
-          <div class="result" data-result></div>
-          <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
-        </section>
-      </div>
-    </section>
-
-    <section class="sec wrap" id="press" data-sec="press" aria-labelledby="press-title">
-      <div class="press">
-        <div class="text arrive">
-          <p class="eyebrow">Press · Tamil Murasu</p>
-          <h2 class="cn" id="press-title">Our work made the news.</h2>
-          <p>Tamil Murasu featured MEANT alongside student projects using artificial intelligence for social impact.</p>
-          <div class="acts"><a class="btn" href="{PRESS_ARTICLE}" hreflang="ta" target="_blank" rel="noopener noreferrer" data-event="press_article_click" data-project="mt">Read in Tamil ↗</a></div>
-        </div>
-        <figure class="arrive">
-          <a class="paper-link" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt" aria-label="View the Tamil Murasu page full size">
-            <div class="ph"><img src="assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp" srcset="assets/media/press/tamil-murasu-2026-09-28-p8-720.webp 720w, assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp 1200w" sizes="(max-width: 860px) 100vw, 56vw" width="1776" height="1416" loading="lazy" decoding="async" alt="{e(PRESS_ALT)}"></div>
-          </a>
-          <figcaption>Tamil Murasu, 28 September 2026, page 8. © SPH Media. <span class="hint-fine">Click</span><span class="hint-touch">Tap</span> the page to open it full size.</figcaption>
-        </figure>
-      </div>
+      <div class="track-nav" data-track-nav><button class="gal-arrow" type="button" data-slide="-1" aria-label="Previous award">←</button>
+        <span class="track-dots" aria-hidden="true">{'<i></i>' * len(AWARDS)}</span><span class="gal-count" data-slide-now aria-live="polite">1 / {len(AWARDS)}</span>
+        <button class="gal-arrow" type="button" data-slide="1" aria-label="Next award">→</button></div>
     </section>
 
     <section class="sec wrap" id="about" data-sec="about" aria-labelledby="about-title">
@@ -874,7 +843,9 @@ def build_case(p):
         return f'<a class="btn{" solid" if k == 0 else ""}" href="{e(href)}"{ext(href)}{evattr}>{e(label)}</a>'
     actions = ''.join(action(k, a) for k, a in enumerate(p['actions']))
     facts = ''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in p['facts'])
-    if p['lead']:
+    if p['id'] in FEAT_BY_ID:
+        lead = hotspots(FEAT_BY_ID[p['id']])
+    elif p['lead']:
         key, cap = p['lead']
         lead = (f'<figure class="lead-fig">{zoom(key, "(max-width: 860px) 100vw, 1300px", cap, eager=True)}'
                 f'<figcaption class="cap">{e(cap or MEDIA[key].get("caption") or "")}</figcaption></figure>')
@@ -889,7 +860,7 @@ def build_case(p):
                  og_title=f"{p['name']} — Mruthulan", og_desc=p['og'], ld=ld)}
 {body_open('case', f"--c:{p['c']}")}
   <div class="progress" data-progress aria-hidden="true"></div>
-  {header('index.html', current='featured')}
+  {header('index.html', current='work')}
 
   <main id="main">
     <div class="wrap">
@@ -903,7 +874,7 @@ def build_case(p):
         {lead}
       </header>
 
-      {''.join(p['sections']())}
+      {''.join(p['sections']())}{press_section() if p['id'] == 'mt' else ''}
 
       <nav class="case-nav" aria-label="More projects">
         <a href="{prev['slug']}.html" rel="prev" data-event="case_open" data-project="{prev['id']}"><small>← Previous</small><span class="cn">{e(prev['name'])}</span></a>
@@ -918,6 +889,22 @@ def build_case(p):
 </body>
 </html>
 """
+
+
+def press_section():
+    """Tamil Murasu's page about MEANT, on a newsprint panel."""
+    return sec('In the press', 'Tamil Murasu featured MEANT.', f'''<div class="press press-case">
+          <div class="text">
+            <p>Tamil Murasu featured MEANT alongside student projects using artificial intelligence for social impact.</p>
+            <div class="acts"><a class="btn" href="{PRESS_ARTICLE}" hreflang="ta" target="_blank" rel="noopener noreferrer" data-event="press_article_click" data-project="mt">Read in Tamil ↗</a></div>
+          </div>
+          <figure>
+            <a class="paper-link" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt" aria-label="View the Tamil Murasu page full size">
+              <div class="ph"><img src="assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp" srcset="assets/media/press/tamil-murasu-2026-09-28-p8-720.webp 720w, assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp 1200w" sizes="(max-width: 860px) 100vw, 60vw" width="1776" height="1416" loading="lazy" decoding="async" alt="{e(PRESS_ALT)}"></div>
+            </a>
+            <figcaption>Tamil Murasu, 28 September 2026, page 8. © SPH Media. <span class="hint-fine">Click</span><span class="hint-touch">Tap</span> the page to open it full size.</figcaption>
+          </figure>
+        </div>''', sid='press')
 
 
 # ------------------------------------------------------------------ small pages
