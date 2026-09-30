@@ -260,7 +260,7 @@
   }
 
   /* ---------------------------------------------------------- awards: each row flips in like a departures board */
-  $$('.dep-row').forEach((row) => {
+  $$('.aw').forEach((row) => {
     if (still()) return;
     const fl = $$('.fl', row);
     new IntersectionObserver(([en], o) => {
@@ -268,6 +268,34 @@
       o.disconnect();
       fl.forEach((t, k) => { if (t.dataset.ch.trim()) flicker(t, t.dataset.ch, { delay: k * 45, dur: 300, step: 60, flip: 110, each: true, chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }); });
     }, { threshold: 0.5 }).observe(row);
+  });
+
+  /* ---------------------------------------------------------- awards: swipe or step through each event's photos */
+  // Photos sit in a scroll-snap rail, so a phone swipes them natively; the arrows step (and wrap),
+  // the caption and count follow, and only the photo in view is in the Tab order.
+  $$('[data-aw]').forEach((m) => {
+    const rail = $('.aw-rail', m), shots = [...rail.children], cap = $('[data-cap]', m), count = $('[data-count]', m);
+    if (shots.length < 2) return;
+    let at = 0;
+    const set = (n) => {
+      at = n;
+      cap.textContent = shots[n].dataset.zoom;
+      count.textContent = `${n + 1} / ${shots.length}`;
+      shots.forEach((s, k) => { s.tabIndex = k === n ? 0 : -1; });
+    };
+    set(0);
+    // the photo in view follows the scroll position; a resize (or turning the phone) keeps the same photo
+    let busy = 0;
+    rail.addEventListener('scroll', () => {
+      if (busy) return;
+      busy = requestAnimationFrame(() => { busy = 0; const n = Math.round(rail.scrollLeft / rail.clientWidth); if (n !== at && shots[n]) set(n); });
+    }, { passive: true });
+    addEventListener('resize', () => { rail.scrollLeft = at * rail.clientWidth; });
+    $$('[data-step]', m).forEach((btn) => btn.addEventListener('click', () => {
+      const n = (at + +btn.dataset.step + shots.length) % shots.length;
+      set(n);
+      rail.scrollTo({ left: n * rail.clientWidth, behavior: still() ? 'auto' : 'smooth' });
+    }));
   });
 
   /* ---------------------------------------------------------- section titles flip in */
