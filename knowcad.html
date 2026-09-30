@@ -3,126 +3,88 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#07090E">
-  <meta name="description" content="KnowCad case study: AI knowledge retrieval that won the Autodesk Singapore AI+ML Hackathon in 2026.">
+  <meta name="theme-color" content="#0C0C0D">
+  <meta name="description" content="KnowCad case study: a retrieval-based AI assistant for customer service that won the Autodesk Singapore Hackathon 2026.">
   <link rel="canonical" href="https://mruthulan.com/knowcad.html">
-  <meta property="og:type" content="article">
+  <meta property="og:type" content="website">
   <meta property="og:title" content="KnowCad — Mruthulan">
-  <meta property="og:description" content="An AI customer-service co-pilot. Autodesk Singapore AI+ML Hackathon champion.">
+  <meta property="og:description" content="A retrieval-based AI assistant for customer service. Autodesk Singapore Hackathon 2026 Champion.">
   <meta property="og:url" content="https://mruthulan.com/knowcad.html">
   <meta property="og:image" content="https://mruthulan.com/assets/og-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://mruthulan.com/assets/og-card.jpg">
   <title>KnowCad — Mruthulan</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/spline-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/styles.css?v=525339b6">
-  <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js-on');</script>
-  <script src="js/script.js?v=d749e28a" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..75,700..800&family=Geist:wght@400..600&display=swap">
+  <link rel="stylesheet" href="css/styles.css?v=3d896ce8">
+  <script>document.documentElement.classList.replace('no-js','js-on')</script>
+  <script src="js/script.js?v=670058c8" defer></script>
   <script src="js/analytics.js?v=077c2c41" defer></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "KnowCad", "description": "An AI customer-service co-pilot. Autodesk Singapore AI+ML Hackathon champion.", "url": "https://mruthulan.com/knowcad.html", "author": {"@type": "Person", "name": "Mruthulan Senthil Nathan", "url": "https://mruthulan.com/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CreativeWork", "name": "KnowCad", "description": "A retrieval-based AI assistant for customer service. Autodesk Singapore Hackathon 2026 Champion.", "url": "https://mruthulan.com/knowcad.html", "author": {"@type": "Person", "name": "Mruthulan Senthil Nathan", "url": "https://mruthulan.com/"}}</script>
 </head>
-<body data-page="case" data-project="kc" style="--acc:#AC93FF;--acc-glow:rgba(172,147,255,.28);--acc-tint:rgba(172,147,255,.07)">
-  <span id="top" class="anchor-alias" aria-hidden="true"></span>
+<body data-page="case" style="--c:#9B87FF">
   <a class="skip-link" href="#main">Skip to content</a>
-
-  <div class="field" aria-hidden="true">
-    <div class="field-grid"></div>
-    <div class="field-aura"></div>
-  </div>
-
-  <header class="site-header">
-    <div class="shell nav-wrap">
-      <a class="brand" href="index.html">Mruthulan</a>
-      <nav class="main-nav" id="main-nav" aria-label="Main">
-        <a href="index.html#work" class="is-current">Work</a>
-        <a href="index.html#wins">Wins</a>
-        <a href="index.html#about">About</a>
-        <a href="index.html#contact" data-contact-open>Contact</a>
-        <a class="nav-resume-menu" href="assets/Mruthulan-Senthil-Nathan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a>
-      </nav>
-      <div class="nav-tools">
-        <button class="search-button" type="button" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K /">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
-          <span class="search-label">Search</span><kbd class="search-kbd" aria-hidden="true">Ctrl K</kbd>
-        </button>
-        <a class="nav-resume" href="assets/Mruthulan-Senthil-Nathan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé <span aria-hidden="true">↗</span></a>
-        <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open menu"><span></span><span></span></button>
+  <div id="top"></div>
+  <div class="progress" data-progress aria-hidden="true"></div>
+  <header class="top solid" data-top>
+    <div class="wrap top-in">
+      <a class="logo cn" href="index.html#top">Mruthulan</a>
+      <nav class="nav" aria-label="Main"><a href="index.html#results" data-nav="results">Results</a><a href="index.html#work" data-nav="work" aria-current="true">Work</a><a href="index.html#press" data-nav="press">Press</a><a href="index.html#about" data-nav="about">About</a><span class="nav-ink" aria-hidden="true"></span></nav>
+      <div class="top-acts">
+        <a class="btn resume" href="assets/Mruthulan-Senthil-Nathan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
+        <a class="btn solid contact-btn" href="index.html#contact">Contact</a>
+        <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
+    <nav class="menu" id="menu" aria-label="Menu" hidden><a href="index.html#results">Results</a><a href="index.html#work">Work</a><a href="index.html#press">Press</a><a href="index.html#about">About</a><a href="index.html#contact">Contact</a><a href="assets/Mruthulan-Senthil-Nathan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a></nav>
   </header>
 
   <main id="main">
-    <section class="case-hero" aria-labelledby="case-title">
-      <div class="case-hero-glow" aria-hidden="true"></div>
-      <div class="shell">
-        <div class="case-head" style="padding-top:0">
-          <a class="mono case-back" href="index.html#work-kc" style="margin-bottom:0">← All work</a>
-          <span class="mono">Case 04 of 06 · A retrieval story</span>
-        </div>
-        <div class="case-hero-grid">
-          <div class="case-hero-main">
-            <span class="chip">Autodesk Singapore AI+ML Hackathon — Champion</span>
-            <h1 class="dsp case-title" id="case-title">KnowCad</h1>
-            <p class="case-lead">Finding the answer took longer than answering the question.</p>
-            <div class="case-actions">
-            <a class="cta" href="https://lnkd.in/p/dQW9Pg_v" target="_blank" rel="noopener noreferrer" data-event="proof_post_click" data-project="kc">View my Autodesk hackathon post <span aria-hidden="true">↗</span></a>
-            <a class="ghost" href="index.html#win-autodesk">See the award <span aria-hidden="true">→</span></a>
-            </div>
-          </div>
-          <section class="case-facts" aria-labelledby="glance-title">
-            <h2 class="mono case-facts-title" id="glance-title">At a glance</h2>
-            <dl><div class="case-fact"><dt class="case-fact-k">Role</dt><dd class="case-fact-v">Retrieval, AI workflow and team delivery</dd></div><div class="case-fact"><dt class="case-fact-k">Result</dt><dd class="case-fact-v">Autodesk Singapore AI+ML Hackathon 2026 — Champion</dd></div><div class="case-fact"><dt class="case-fact-k">Approach</dt><dd class="case-fact-v">Retrieval-based answering</dd></div><div class="case-fact"><dt class="case-fact-k">Status</dt><dd class="case-fact-v">Private — proof is the award and the post</dd></div></dl>
-          </section>
-        </div>
-      </div>
-    </section>
+    <div class="wrap">
+      <header class="case-top">
+        <p class="crumb"><a class="link" href="index.html#work-kc">← All work</a><span>04 of 06</span><span>Autodesk Singapore Hackathon 2026 · Champion</span></p>
+        <h1 class="case-title cn" style="view-transition-name:t-kc;--len:7">KnowCad</h1>
+        <p class="case-hl">A retrieval-based AI assistant for customer service.</p>
+        <p class="case-st">Finding the answer took longer than answering the question. KnowCad was built by a mixed team at the Autodesk Singapore Hackathon 2026: the Autodesk engineers led the code, and I built and delivered the presentation. It uses retrieval-augmented generation (RAG), which looks up the relevant documents before it answers.</p>
+        <div class="acts"><a class="btn solid" href="https://lnkd.in/p/dQW9Pg_v" target="_blank" rel="noopener noreferrer" data-event="proof_post_click" data-project="kc">View my Autodesk hackathon post ↗</a></div>
+        <dl class="facts"><div><dt>My role</dt><dd>Built and delivered the presentation</dd></div><div><dt>Result</dt><dd>Autodesk Singapore Hackathon 2026 — Champion</dd></div><div><dt>Approach</dt><dd>Retrieval-augmented generation (RAG)</dd></div><div><dt>Status</dt><dd>Private: the proof is the award and my post</dd></div></dl>
+        <figure class="lead-fig"><a class="zoom" href="assets/media/win-knowcad-champion.webp" data-zoom="Champion, announced on the night" data-alt="Team members on a stage holding small trophies while a photographer takes the shot, in front of a screen reading 2026 AI Hackathon, Winners — Champion, KnowCAD Intellicase." aria-label="View full size: Champion, announced on the night"><div class="ph"><img src="assets/media/win-knowcad-champion.webp" srcset="assets/media/win-knowcad-champion-800.webp 800w, assets/media/win-knowcad-champion.webp 1179w" sizes="(max-width: 860px) 100vw, 1300px" width="1179" height="705" alt="Team members on a stage holding small trophies while a photographer takes the shot, in front of a screen reading 2026 AI Hackathon, Winners — Champion, KnowCAD Intellicase." decoding="async" fetchpriority="high"></div></a><figcaption class="cap">Champion, announced on the night</figcaption></figure>
+      </header>
 
-    <nav class="case-strip" aria-label="Case study navigation" hidden><span class="case-strip-progress" aria-hidden="true"><span></span></span><a class="case-strip-work" href="index.html#work-kc"><span aria-hidden="true">←</span> Work</a><a class="case-strip-prev" href="better-call-bhai.html" data-event="case_open" data-project="bb" aria-label="Previous project: Better Call Bhai"><span aria-hidden="true">‹</span></a><span class="case-strip-count"><span class="sr-only">Project </span>04<span aria-hidden="true"> / </span><span class="sr-only"> of </span>06</span><a class="case-strip-next" href="boss-breaker.html" data-event="case_open" data-project="bx" aria-label="Next project: Boss Breaker">Next <span aria-hidden="true">→</span></a></nav>
+      <section class="cs"><div class="cs-head"><p class="eyebrow">From a pile to an answer</p><h2 class="cn">Every step throws work away.</h2></div><div class="cs-body"><ol class="steps"><li><b>Everything</b><span>Technical knowledge spread across long documents, none of it indexed by the question you actually have.</span></li><li><b>What is relevant</b><span>Retrieval narrows the set to the passages that bear on the question.</span></li><li><b>The answer</b><span>One answer, with the source behind it and a human still reviewing the decision, not a list of places the answer might be.</span></li></ol></div></section><section class="cs"><div class="cs-head"><p class="eyebrow">Proof</p><h2 class="cn">What I can show, and why that is all.</h2></div><div class="cs-body"><p>The repository and the Autodesk materials are private, so there are no product screenshots on this page and no link to the code. What is public is the result, the post I wrote at the time, and the description above.</p><div class="shots"><figure><a class="zoom" href="assets/media/win-knowcad-team.webp" data-zoom="The team, with the trophies" data-alt="Four team members in Autodesk Singapore Hackathon 2026 shirts, each holding a small Champion trophy, in front of the event screen." aria-label="View full size: The team, with the trophies"><div class="ph"><img src="assets/media/win-knowcad-team.webp" srcset="assets/media/win-knowcad-team-800.webp 800w, assets/media/win-knowcad-team.webp 1321w" sizes="(max-width: 860px) 100vw, 44vw" width="1321" height="991" alt="Four team members in Autodesk Singapore Hackathon 2026 shirts, each holding a small Champion trophy, in front of the event screen." decoding="async" loading="lazy"></div></a><figcaption class="cap">The team, with the trophies</figcaption></figure></div></div></section>
+      <section class="cs"><div class="cs-head"><p class="eyebrow">My role</p><h2 class="cn">What I did on it.</h2></div><div class="cs-body"><p>I built and delivered the presentation. The Autodesk engineers on the team led the code.</p></div></section>
+      <section class="cs"><div class="cs-head"><p class="eyebrow">Result</p><h2 class="cn">What happened.</h2></div><div class="cs-body"><p>First place at the Autodesk Singapore Hackathon 2026.</p></div></section>
 
-    <section class="band band-deep"><div class="shell"><p class="mono kicker">From a pile to an answer</p><h2 class="dsp">Every step throws work away.</h2><div class="funnel"><div class="funnel-step"><h3>Everything</h3><p>Technical knowledge spread across long documents, none of it indexed by the question you actually have.</p></div><div class="funnel-step"><h3>What is relevant</h3><p>Retrieval narrows the set to the passages that bear on the question.</p></div><div class="funnel-step"><h3>The answer</h3><p>One answer, with the source behind it and a human still reviewing the decision — not a list of places the answer might be.</p></div></div></div></section><section class="band"><div class="shell"><p class="mono kicker">Proof</p><h2 class="dsp">What I can show, and why that is all.</h2><p class="band-note" style="max-width:700px">The repository and the Autodesk materials are private, so there are no product screenshots on this page and no link to the code. What is public is the result, the write-up I posted at the time, and the description above.</p><div class="evidence"><figure class="proof-photo"><div class="media ratio-32" data-media="win-knowcad-champion" style="color:var(--acc)"><div class="media-fallback" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M46 14h28v13a14 14 0 0 1-28 0z"/><path d="M46 17h-9a9 9 0 0 0 9 9"/><path d="M74 17h9a9 9 0 0 1-9 9"/><path d="M60 41v10"/><path d="M50 58h20l3 9H47z"/><circle cx="60" cy="40" r="30" stroke-opacity=".28" stroke-dasharray="3 6"/></svg></div></div></figure></div></div></section>
-
-    <section class="band" data-calm>
-      <div class="shell">
-        <div class="case-role">
-          <div class="case-role-k"><p class="mono">My role</p></div>
-          <div><p>I worked on retrieval, the AI workflow, and getting the team’s work delivered in hackathon time.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="band" style="padding-top:0" data-calm>
-      <div class="shell">
-        <div class="case-role">
-          <div class="case-role-k"><p class="mono">Result</p></div>
-          <div><p>First place at the Autodesk Singapore AI+ML Hackathon, 2026.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <nav class="case-next" aria-label="More projects" style="--next-acc:#A4EC76">
-      <div class="case-next-glow" aria-hidden="true"></div>
-      <div class="shell">
-        <div class="case-steps">
-          <a class="case-step case-step-prev" href="better-call-bhai.html" rel="prev" data-event="case_open" data-project="bb" style="--step-acc:#FF8095"><span class="mono case-step-k">Previous project · 03</span><span class="dsp case-step-name">Better Call Bhai</span><span class="case-step-arrow" aria-hidden="true">←</span></a>
-          <a class="case-step case-step-next" href="boss-breaker.html" rel="next" data-event="case_open" data-project="bx" style="--step-acc:#A4EC76"><span class="mono case-step-k">Next project · 05</span><span class="dsp case-step-name">Boss Breaker</span><span class="case-step-arrow" aria-hidden="true">→</span></a>
-        </div>
-        <a class="ghost case-all" href="index.html#work-kc"><span aria-hidden="true">←</span> Back to all work</a>
-      </div>
-    </nav>
+      <nav class="case-nav" aria-label="More projects">
+        <a href="better-call-bhai.html" rel="prev" data-event="case_open" data-project="bb"><small>← Previous</small><span class="cn">Better Call Bhai</span></a>
+        <a class="all link" href="index.html#work-kc">All work</a>
+        <a class="next" href="boss-breaker.html" rel="next" data-event="case_open" data-project="bx"><small>Next →</small><span class="cn">Boss Breaker</span></a>
+      </nav>
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="shell footer-inner">
-      <span class="mono">Mruthulan · Made in Singapore</span>
-      <nav class="footer-nav" aria-label="Footer">
-        <a class="mono" href="index.html">Home</a>
-        <span class="footer-mail"><a class="mono" href="mailto:mruthulansenthilnathan@gmail.com?subject=Portfolio%20enquiry">Email</a><button class="mono footer-copy" type="button" data-contact-action="copy">Copy address</button></span>
-        <a class="mono" href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a class="mono" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a class="mono" href="privacy.html">Privacy</a>
+  <footer class="wrap">
+    <div class="foot">
+      <span>Senthil Nathan Mruthulan · Singapore</span>
+      <nav aria-label="Footer">
+        <a href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="#top">Back to top ↑</a>
       </nav>
     </div>
   </footer>
+  <nav class="tabbar" aria-label="Quick links"><a href="index.html#work">Work</a><a href="assets/Mruthulan-Senthil-Nathan-Resume.pdf" target="_blank" rel="noopener" data-event="resume_click">Résumé</a><a href="index.html#contact">Contact</a></nav>
+  <dialog class="viewer" data-viewer aria-labelledby="vw-title">
+    <div class="vw-bar">
+      <div class="vw-title"><span id="vw-title" data-vw-title>Full size</span><small class="vw-hint">Scroll or pinch to zoom · drag to move · double-click to zoom in</small></div>
+      <div class="vw-ctl"><button type="button" data-z="out" aria-label="Zoom out">−</button><output data-zl>100%</output><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="reset">Reset</button><a href="#" data-vw-original target="_blank" rel="noopener noreferrer">Original ↗</a><button type="button" class="close" data-close>Close</button></div>
+    </div>
+    <div class="vw-stage" data-stage><img alt="" draggable="false"></div>
+  </dialog>
 </body>
 </html>
