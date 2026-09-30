@@ -30,6 +30,16 @@ MAILTO = f'mailto:{EMAIL}?subject=Portfolio%20enquiry'
 POST_SP = 'https://lnkd.in/p/dCBs22kx'        # SP InnovateDash / SignalBridge
 POST_DELL = 'https://lnkd.in/p/dZQiUX3z'      # Dell InnovateFest / MEANT
 POST_AUTODESK = 'https://lnkd.in/p/dQW9Pg_v'  # Autodesk hackathon / KnowCad
+POST_SPSOC_DELL = 'https://lnkd.in/p/daCVQd3v'  # SP School of Computing on MEANT at Dell InnovateFest
+# The opening line of each post, word for word (emoji left out), shown on hover.
+PEEKS = {
+    POST_SP: ('Mruthulan Senthil Nathan', 'Back-to-back hackathon wins.'),
+    POST_DELL: ('Mruthulan Senthil Nathan', 'We won $3,000 in 10 minutes. At least, that’s what it looked like.'),
+    POST_AUTODESK: ('Mruthulan Senthil Nathan', 'I’m really excited to share that my team and I were named '
+                    'Champions of the Autodesk Singapore Hackathon 2026!'),
+    POST_SPSOC_DELL: ('SP School of Computing', 'On 18 September, Team MEANT from Singapore Polytechnic’s SP School '
+                      'of Computing stood on stage at the National Gallery Singapore to present their work…'),
+}
 SP_FEATURE = ('https://www.sp.edu.sg/courses/schools/soc/happenings/detail/soc-happenings/'
               'information-technology-students-clinch-top-prize-at-sp-innovatedash-2026')
 PRESS_ARTICLE = ('https://www.tamilmurasu.com.sg/community/'
@@ -50,6 +60,15 @@ def e(s):
 
 def ext(href):
     return ' target="_blank" rel="noopener noreferrer"' if href.startswith('http') else ''
+
+
+def peek(href):
+    """A small preview of a LinkedIn post, shown when the link is hovered or focused."""
+    if href not in PEEKS:
+        return ''
+    who, line = PEEKS[href]
+    return (f'<span class="peek" aria-hidden="true"><span class="peek-who">{e(who)} · LinkedIn</span>'
+            f'<span class="peek-line">“{e(line)}”</span><span class="peek-go">Open the post ↗</span></span>')
 
 
 # ------------------------------------------------------------------ images
@@ -89,20 +108,22 @@ def pic(key, sizes, eager=False, alt=None, cls='ph', fit_style=''):
 
 
 def cover(p, sizes='(max-width: 860px) 100vw, 50vw'):
-    """A project cover: the real screenshot or photo, composed on the project's
-    colour so the six read as one set."""
+    """A project cover: the whole picture, never cropped, in a clean frame on a soft
+    surface with a faint glow in the project's colour. Screenshots sit in a slim
+    browser window; the mockup, the photo and the deck slide get the frame alone."""
     kind, what = p['cover']
-    if kind == 'deck':
-        slides = ''.join(
-            f'<img class="slide s{i}" src="assets/deck/{src}" width="1655" height="931" alt="" loading="lazy" decoding="async">'
-            for i, src in enumerate(what))
-        return f'<div class="cover cover-deck" data-id="{p["id"]}" style="--c:{p["c"]}">{slides}</div>'
-    m = MEDIA[what]
-    src = f"assets/media/{m['src']}"
-    small = ROOT / 'assets' / 'media' / (Path(m['src']).stem + '-800.webp')
-    srcset = f' srcset="assets/media/{small.name} 800w, {src} {m["width"]}w" sizes="{sizes}"' if small.exists() else ''
+    if kind == 'slide':
+        img = f'<img src="assets/deck/{what}" width="1655" height="931" alt="" loading="lazy" decoding="async">'
+    else:
+        m = MEDIA[what]
+        src = f"assets/media/{m['src']}"
+        small = ROOT / 'assets' / 'media' / (Path(m['src']).stem + '-800.webp')
+        srcset = f' srcset="assets/media/{small.name} 800w, {src} {m["width"]}w" sizes="{sizes}"' if small.exists() else ''
+        img = f'<img src="{src}"{srcset} width="{m["width"]}" height="{m["height"]}" alt="" loading="lazy" decoding="async">'
+    bar = (f'<span class="frame-bar"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
+           if kind == 'browser' else '')
     return (f'<div class="cover cover-{kind}" data-id="{p["id"]}" style="--c:{p["c"]}">'
-            f'<img src="{src}"{srcset} width="{m["width"]}" height="{m["height"]}" alt="" loading="lazy" decoding="async"></div>')
+            f'<span class="frame">{bar}{img}</span></div>')
 
 
 def zoom(key, sizes, caption=None, eager=False, cls='ph', project=None):
@@ -218,7 +239,7 @@ PROJECTS = [
         result='SP InnovateDash 2026 — Champion',
         event='SP InnovateDash 2026 · Champion',
         proof=('View my SP InnovateDash post ↗', POST_SP, 'proof_post_click'),
-        preview='signalbridge-shot-1', cover=('inset', 'signalbridge-shot-1'),
+        preview='signalbridge-shot-1', cover=('browser', 'signalbridge-shot-1'),
         desc=('SignalBridge case study: a consent-led youth support platform that won SP InnovateDash '
               '2026. The handoff, the decisions and my role on the build.'),
         og='A consent-led youth support platform. SP InnovateDash 2026 Champion.',
@@ -257,14 +278,14 @@ PROJECTS = [
                  'InnovateFest, where we built MEANT.'),
     ),
     dict(
-        id='mt', slug='meant', name='MEANT', type='Hackathon', c='#FFB000',
+        id='mt', slug='meant', name='MEANT', type='Hackathon', c='#4DA3FF',
         board=('HACKATHON', '2ND RUNNER-UP'),
         line='Real-time reply suggestions for AAC users. The user picks every word.',
         role='UI and UX, the Singaporean TTS voice, presenting the build',
         result='Dell InnovateFest 2026 — Second runner-up · S$3,000',
         event='Dell InnovateFest 2026 · Second runner-up',
         proof=('View my Dell InnovateFest post ↗', POST_DELL, 'proof_post_click'),
-        preview='meant-shot-1', cover=('inset', 'meant-shot-1'),
+        preview='meant-shot-1', cover=('browser', 'meant-shot-1'),
         desc=('MEANT case study: an on-device communication assistant for AAC users. Dell InnovateFest '
               '2026 second runner-up, S$3,000.'),
         og='An on-device communication assistant that keeps AAC users in control of what they say.',
@@ -308,7 +329,7 @@ PROJECTS = [
         result='Deployed pilot',
         event='Client build · Deployed pilot',
         proof=('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None),
-        preview='better-call-bhai-shot-1', cover=('full', 'better-call-bhai-shot-1'),
+        preview='better-call-bhai-shot-1', cover=('device', 'better-call-bhai-shot-1'),
         desc=('Better Call Bhai case study: an appointment booking site for a local barbershop, deployed '
               'on Render and in a pilot with the shop.'),
         og='An appointment booking site for a local barbershop, in a pilot with the shop.',
@@ -346,7 +367,7 @@ PROJECTS = [
         result='Autodesk Singapore Hackathon 2026 — Champion',
         event='Autodesk Singapore Hackathon 2026 · Champion',
         proof=('View my Autodesk hackathon post ↗', POST_AUTODESK, 'proof_post_click'),
-        preview='win-knowcad-champion', cover=('full', 'win-knowcad-champion'),
+        preview='win-knowcad-champion', cover=('photo', 'win-knowcad-champion'),
         desc=('KnowCad case study: a retrieval-based AI assistant for customer service that won the '
               'Autodesk Singapore Hackathon 2026.'),
         og='A retrieval-based AI assistant for customer service. Autodesk Singapore Hackathon 2026 Champion.',
@@ -383,7 +404,7 @@ PROJECTS = [
         result='Full-stack coursework build',
         event='BED CA2 coursework',
         proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
-        preview='boss-breaker-shot-2', cover=('inset', 'boss-breaker-shot-2'),
+        preview='boss-breaker-shot-2', cover=('browser', 'boss-breaker-shot-2'),
         desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
               'Built with JavaScript, Node.js and MySQL.'),
         og='A full-stack wellness game with challenges, points and boss raids.',
@@ -416,7 +437,7 @@ PROJECTS = [
         result='Research and a pitch deck',
         event='Product concept',
         proof=('Read the pitch deck →', 'loomy.html#deck', None),
-        preview=None, cover=('deck', ['loomy-01.jpg', 'loomy-05.jpg', 'loomy-03.jpg']),
+        preview=None, cover=('slide', 'loomy-01.jpg'),
         desc='Loomy case study: a social thrifting product concept, researched by a team of six and pitched with a deck.',
         og='A social thrifting concept, researched by a team of six and pitched with a deck.',
         hl='Thrifting, with a community attached.',
@@ -512,7 +533,7 @@ def header(home, current=None, prefix=''):
 def footer(home='', prefix=''):
     return f"""<footer class="wrap">
     <div class="foot">
-      <span>Mruthulan Senthil Nathan · Singapore</span>
+      <span><b>Mruthulan Senthil Nathan</b> · Singapore</span>
       <nav aria-label="Footer">
         <a href="{GITHUB}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         <a href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a>
@@ -579,19 +600,25 @@ def gallery(group, photos, sizes):
         dots = '<span class="dots" aria-hidden="true">' + ''.join(
             f'<i{" data-on" if i == 0 else ""}></i>' for i in range(n)) + '</span>'
     cap = e(MEDIA[photos[0]]['caption'])
-    return (f'<div class="gal" data-gal><div class="gal-main" data-tilt>{shots}{nav}</div>'
-            f'<div class="gal-foot"><p class="gal-cap" data-gal-cap aria-live="polite">{cap}</p>{dots}</div></div>')
+    auto = ''
+    if n > 1:
+        auto = ('<button class="gal-pause" type="button" data-gal-pause aria-pressed="false" '
+                'aria-label="Pause the photos"><span aria-hidden="true"></span></button>'
+                '<span class="gal-timer" data-gal-timer aria-hidden="true"></span>')
+    return (f'<div class="gal" data-gal><div class="gal-main" data-tilt>{shots}{nav}{auto}</div>'
+            f'<div class="gal-foot"><p class="gal-cap" data-gal-cap>{cap}</p>{dots}</div>'
+            f'<span class="sr-only" aria-live="polite" data-gal-live></span></div>')
 
 
 def win(pid, anchor, place, event, project, photos, links, logo):
     p = BY_ID[pid]
     src, alt, w, h = LOGOS[logo]
-    ls = ''.join(f'<a class="link{" muted" if i else ""}" href="{href}"{ext(href)}{ev}>{e(label)}</a>'
+    ls = ''.join(f'<a class="link{" muted" if i else ""}{" has-peek" if href in PEEKS else ""}" href="{href}"{ext(href)}{ev}>{e(label)}{peek(href)}</a>'
                  for i, (label, href, ev) in enumerate(links))
     return f"""<article class="win arrive" id="{anchor}">
             <div class="org"><img src="assets/logos/{src}" alt="{e(alt)}" width="{w}" height="{h}" loading="lazy" decoding="async"></div>
             {gallery(anchor, photos, '(max-width: 860px) 100vw, 30vw')}
-            <h3 class="cn">{e(place)}</h3>
+            <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true" data-scramble>{e(place)}</span></h3>
             <p class="ev">{e(event)}</p>
             <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}">{e(project)}</a></p>
             <div class="links">{ls}</div>
@@ -602,13 +629,14 @@ def work_row(p):
     img = f'<div class="row-img" aria-hidden="true">{cover(p, "(max-width: 860px) 100vw, 1px")}</div>'
     label, href, ev = p['proof']
     evattr = f' data-event="{ev}" data-project="{p["id"]}"' if ev else ''
-    return f"""<li class="row arrive" id="work-{p['id']}" data-id="{p['id']}" data-caption="{e(p['name'])} · {e(p['type'])}" style="--c:{p['c']}">
+    n = f"{PROJECTS.index(p) + 1:02d} / {len(PROJECTS):02d}"
+    return f"""<li class="row arrive" id="work-{p['id']}" data-id="{p['id']}" data-n="{n}" data-caption="{e(p['name'])} · {e(p['type'])}" style="--c:{p['c']}">
             {img}
             <span class="ty"><i class="sw"></i>{e(p['type'])}</span>
             <h3 class="cn" style="view-transition-name:t-{p['id']}">{e(p['name'])}</h3>
             <p class="ln">{e(p['line'])}</p>
             <dl><dt>My role</dt><dd>{e(p['role'])}</dd><dt>Result</dt><dd>{e(p['result'])}</dd></dl>
-            <div class="links"><a class="link row-link" href="{p['slug']}.html" data-event="case_open" data-project="{p['id']}">Read the case study <span class="ar">→</span></a><a class="link muted" href="{href}"{ext(href)}{evattr}>{e(label)}</a></div>
+            <div class="links"><a class="link row-link" href="{p['slug']}.html" data-event="case_open" data-project="{p['id']}">Read the case study <span class="ar">→</span></a><a class="link muted{' has-peek' if href in PEEKS else ''}" href="{href}"{ext(href)}{evattr}>{e(label)}{peek(href)}</a></div>
           </li>"""
 
 
@@ -665,6 +693,7 @@ def build_home():
                 ('Singapore Polytechnic’s feature ↗', SP_FEATURE, '')], 'sp')}
           {win('mt', 'win-dell', 'Second runner-up', 'Dell InnovateFest 2026 · S$3,000', 'MEANT · polytechnic category', ['win-meant-handover', 'win-meant-stage', 'win-meant-team'],
                [('View my Dell InnovateFest post ↗', POST_DELL, ' data-event="proof_post_click" data-project="mt"'),
+                ('SP School of Computing’s post ↗', POST_SPSOC_DELL, ' data-event="proof_post_click" data-project="mt"'),
                 ('Featured in Tamil Murasu ↓', '#press', '')], 'dell')}
           {win('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', 'KnowCad', ['win-knowcad-champion', 'win-knowcad-team'],
                [('View my Autodesk hackathon post ↗', POST_AUTODESK, ' data-event="proof_post_click" data-project="kc"')], 'autodesk')}
@@ -686,7 +715,7 @@ def build_home():
     <section class="sec wrap" id="work" data-sec="work" aria-labelledby="work-title">
       <header class="sechead"><h2 class="cn" id="work-title">Work</h2><p>Six projects, with my part in each</p></header>
       <div class="work-grid">
-        <figure class="preview" aria-hidden="true"><div class="pv-frame" data-pv>{preview_imgs()}</div><figcaption><i class="sw" data-pv-sw></i><span data-pv-cap></span></figcaption></figure>
+        <figure class="preview" aria-hidden="true"><div class="pv-frame" data-pv>{preview_imgs()}</div><figcaption><i class="sw" data-pv-sw></i><span data-pv-cap></span><span class="pv-n" data-pv-n></span></figcaption></figure>
         <ol class="rows" data-rows>
           {''.join(work_row(p) for p in PROJECTS)}
         </ol>
@@ -713,40 +742,55 @@ def build_home():
     </section>
 
     <section class="sec wrap" id="about" data-sec="about" aria-labelledby="about-title">
+      <header class="sechead"><h2 class="cn" id="about-title">About</h2><p>Who I am, where I study, what I use</p></header>
       <div class="about">
-        {pic('about-portrait', '(max-width: 860px) 220px, 260px', cls='ph arrive')}
+        {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait arrive')}
         <div class="text arrive">
-          <h2 class="cn" id="about-title">About</h2>
           <p class="lead">I care about the last mile: whether someone can actually use the result, whether it survives failure, and whether I can explain the decisions clearly.</p>
           {about_personal}
+          <p class="where"><i aria-hidden="true"></i>Singapore · Year 2 Information Technology, Singapore Polytechnic</p>
         </div>
-        <div class="contact arrive" id="contact">
-          <h2 class="cn">Contact</h2>
-          <p class="mail" data-mail>{EMAIL}</p>
+      </div>
+      <div class="about-cards" id="credentials">
+        <article class="acard arrive">
+          <h3 class="eyebrow">Study</h3>
+          <b>Diploma in Information Technology</b>
+          <span class="sub">Singapore Polytechnic · Apr 2025 – May 2028 (expected)</span>
+          <p>Represented SP at the Dell InnovateFest national final in 2026.</p>
+        </article>
+        <article class="acard arrive">
+          <h3 class="eyebrow">Leadership</h3>
+          <ul>
+            <li><b>Secretary, subcommittee</b><span class="sub">Youth Harmony Chapter, Singapore Polytechnic</span><p>Coordination, communication and follow-through for student-led activities and community engagement.</p></li>
+            <li><b>Class Chairman and SP ACER</b><span class="sub">Singapore Polytechnic</span><p>Class communication and student outreach, including Open House 2026 and First Steps with SP.</p></li>
+          </ul>
+        </article>
+        <article class="acard acard-wide arrive">
+          <h3 class="eyebrow">Tools, and where I used them</h3>
+          <dl class="tools">
+            <div><dt>Web</dt><dd><span class="chips"><span>JavaScript</span><span>HTML</span><span>CSS</span><span>Node.js</span></span><span class="sub">Better Call Bhai, Boss Breaker</span></dd></div>
+            <div><dt>Backend and data</dt><dd><span class="chips"><span>Python</span><span>FastAPI</span><span>SQL</span><span>PostgreSQL</span><span>Java</span></span><span class="sub">SignalBridge (FastAPI, PostgreSQL), Boss Breaker (MySQL)</span></dd></div>
+            <div><dt>Practice</dt><dd><span class="chips"><span>Git</span><span>Automated testing</span><span>Deployment</span></span><span class="sub">SignalBridge’s tests, Better Call Bhai on Render</span></dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="talk" id="contact" data-sec="contact" aria-labelledby="contact-title">
+      <div class="wrap talk-in">
+        <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
+        <h2 class="cn arrive" id="contact-title">Let’s talk.</h2>
+        <div class="mail-row">
+          <a class="mail-big" href="{e(MAILTO)}" data-mail data-event="contact_open_mail_app">{EMAIL}</a>
           <button class="btn solid" type="button" data-copy="{EMAIL}">Copy email address</button>
+        </div>
+        <div class="acts">
           <a class="btn" href="{e(GMAIL)}" target="_blank" rel="noopener noreferrer" data-event="contact_open_gmail">Write in Gmail ↗</a>
           <a class="btn" href="{e(MAILTO)}" data-event="contact_open_mail_app">Open my mail app</a>
           <a class="btn" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">Message me on LinkedIn ↗</a>
-          <p class="status" role="status" aria-live="polite" data-copy-status></p>
+          <a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
         </div>
-      </div>
-      <div class="facts-grid arrive" id="credentials">
-        <div>
-          <h3 class="eyebrow">Where I study, and what I lead</h3>
-          <ol class="creds">
-            <li><span class="when">Apr 2025 – May 2028 (expected)</span><div><b>Diploma in Information Technology</b><span>Singapore Polytechnic</span></div><p>Represented SP at the Dell InnovateFest national final in 2026.</p></li>
-            <li><span class="when">Student leadership</span><div><b>Secretary, subcommittee</b><span>Youth Harmony Chapter, Singapore Polytechnic</span></div><p>Coordination, communication and follow-through for student-led activities and community engagement.</p></li>
-            <li><span class="when">Student leadership</span><div><b>Class Chairman and SP ACER</b><span>Singapore Polytechnic</span></div><p>Class communication and student outreach, including Open House 2026 and First Steps with SP.</p></li>
-          </ol>
-        </div>
-        <div>
-          <h3 class="eyebrow">Tools, grouped by where I’ve used them</h3>
-          <dl class="tools">
-            <div><dt>Web</dt><dd><span class="t-list">JavaScript · HTML · CSS · Node.js</span><span class="t-proof">Better Call Bhai, Boss Breaker</span></dd></div>
-            <div><dt>Backend and data</dt><dd><span class="t-list">Python · FastAPI · SQL · PostgreSQL · Java</span><span class="t-proof">SignalBridge (FastAPI, PostgreSQL), Boss Breaker (MySQL)</span></dd></div>
-            <div><dt>Practice</dt><dd><span class="t-list">Git · automated testing · deployment</span><span class="t-proof">SignalBridge’s tests, Better Call Bhai on Render</span></dd></div>
-          </dl>
-        </div>
+        <p class="status" role="status" aria-live="polite" data-copy-status></p>
       </div>
     </section>
   </main>
