@@ -324,17 +324,12 @@
     }, { threshold: 0.8 }).observe(el);
   });
 
-  /* ---------------------------------------------------------- tilt and glare */
-  // Pictures lean toward the mouse with a soft light; on touch they tilt toward the finger while pressed.
+  /* ---------------------------------------------------------- tilt */
+  // Pictures lean toward the mouse; on touch they tilt toward the finger while pressed.
   const tilt = (el, zone = el) => {
     el.setAttribute('data-tilt', '');
-    // The lean and the light are written straight onto the frame and one small
-    // glare element; custom properties would be inherited, making the browser
-    // restyle everything inside the frame on every move.
-    const glare = document.createElement('span');
-    glare.className = 'glare';
-    glare.setAttribute('aria-hidden', 'true');
-    el.appendChild(glare);
+    // The lean is written straight onto the frame; custom properties would be inherited,
+    // making the browser restyle everything inside the frame on every move.
     let raf = 0, box = null, sx = 0, sy = 0;
     const set = (x, y, amp) => {
       if (!box) { box = el.getBoundingClientRect(); sx = scrollX; sy = scrollY; }
@@ -343,7 +338,6 @@
       const px = Math.min(1, Math.max(0, (x - left) / box.width)), py = Math.min(1, Math.max(0, (y - top) / box.height));
       const m = Math.min(amp, 2600 / box.width); // big pictures lean less
       el.style.transform = `perspective(1000px) rotateX(${((0.5 - py) * 2 * m).toFixed(2)}deg) rotateY(${((px - 0.5) * 2 * m).toFixed(2)}deg)`;
-      glare.style.transform = `translate(${(px * 100).toFixed(1)}%, ${(py * 100).toFixed(1)}%)`;
       return true;
     };
     const clear = () => {

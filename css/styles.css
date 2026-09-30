@@ -221,7 +221,8 @@ p{margin:0}
 .pc-shot{position:relative;aspect-ratio:16/10;overflow:hidden}
 .pc-shot .ph,.pc-print .ph{position:absolute;inset:0;border-radius:0;background:none}
 .pc-shot img,.pc-print img{transform:scale(var(--z,1));transform-origin:var(--x,50%) var(--y,50%);transition:transform .8s var(--ease)}
-.pcard.is-big .pc-shot{aspect-ratio:16/10}
+.pc-stage.is-whole{padding-bottom:clamp(18px,2.2vw,30px)}
+.pc-stage.is-whole .pc-frame{border-radius:10px;box-shadow:0 0 0 1px rgba(255,255,255,.2),0 18px 50px rgba(0,0,0,.5)}
 .pc-stage.is-award{padding-bottom:14px}
 .pc-photo{margin:0;padding:0 6px}
 /* the award photo sits like a print, white-bordered, with its label and caption, so it never reads as a product screenshot */
@@ -236,6 +237,8 @@ p{margin:0}
 .pc-facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;margin:6px 0 4px;padding-top:12px;border-top:1px solid var(--hair)}
 .pc-k{font-size:16px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--c);padding-top:1px;white-space:nowrap}
 .pc-v{font-size:16px;line-height:1.45;color:var(--soft)}
+.pmore .pc-facts{grid-template-columns:1fr;gap:2px}
+.pmore .pc-v + .pc-k{margin-top:8px}
 .pc-go{margin-top:auto;padding-top:8px;font-weight:600;display:inline-flex;gap:8px;align-items:center;min-height:44px;width:fit-content}
 .pc-go .ar{transition:transform .25s var(--ease)}
 .pc-tag{position:absolute;z-index:3;top:12px;left:12px;padding:6px 10px;border-radius:99px;background:var(--c);color:#0C0C0D;font:600 16px/1 var(--body);opacity:0;transform:translateY(-6px);transition:opacity .35s,transform .45s var(--ease)}
@@ -384,11 +387,9 @@ p{margin:0}
 .no-js .deck-slide{position:static;opacity:1}
 .no-js .deck-bar .btn{display:none}
 
-/* ------------------------------------------------------------- tilt and glare */
+/* ------------------------------------------------------------- tilt */
 [data-tilt]{transform:perspective(1000px);transition:transform .6s var(--ease),scale .2s var(--ease)}
 [data-tilt].tilting{transition:transform .12s linear,scale .2s var(--ease);will-change:transform}
-[data-tilt] > .glare{position:absolute;left:-50%;top:-50%;width:100%;height:100%;z-index:2;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.2),rgba(255,255,255,0) 55%);opacity:0;transition:opacity .4s}
-[data-tilt].tilting > .glare{opacity:1;will-change:transform,opacity}
 [data-tilt].pressing{scale:.985}
 .zoom[data-tilt]{position:relative;overflow:hidden}
 
@@ -525,3 +526,29 @@ p{margin:0}
 }
 [data-page="home"] .logo:focus-visible{opacity:1;transform:none}
 .no-js [data-copy]{display:none}
+
+/* ------------------------------------------------------------- laptops and up: a larger scale */
+@media (min-width:861px){
+  body{font-size:19px}
+  .logo{font-size:28px}
+  .nav{font-size:17px;gap:32px}
+  .btn{min-height:52px;padding:0 22px;font-size:17px}
+  .eyebrow,.seeking,.fids .lab,.result p,.pc-type,.pc-k,.gal-cap,.win .links,.crumb,.facts dt,.note,.cap,.press figcaption,.foot,.talk .status{font-size:17px}
+  .tiles{--tw:clamp(24px,min(calc((100vw - 2 * var(--gutter) - 44px) / 9),max(5.4vw,34px)),84px)}
+  .hero{padding-top:clamp(28px,3.4vw,52px)}
+  .hero .tiles{margin-top:16px}
+  .hero-grid{margin-top:clamp(20px,2.4vw,30px)}
+  .fids{gap:12px}
+  .flaps span{font-size:clamp(18px,1.6vw,26px)}
+  .lede{font-size:clamp(30px,2.9vw,46px)}
+  .sechead h2{font-size:clamp(64px,7.2vw,104px)}
+  .pcard .nm{font-size:clamp(34px,2.9vw,44px)}
+  .pcard.is-big .nm{font-size:clamp(44px,4vw,60px)}
+  .pc-line{font-size:19px}
+  .pc-v,.win .ev,.facts dd{font-size:18px}
+  .win h3{font-size:clamp(34px,3.4vw,52px)}
+  .acard b{font-size:21px}
+  .acard .sub,.acard p{font-size:17.5px}
+  .case-hl{font-size:clamp(30px,3vw,44px)}
+  .cs-head h2{font-size:clamp(38px,4vw,58px)}
+}
