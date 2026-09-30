@@ -379,8 +379,8 @@ PROJECTS = [
         ],
     ),
     dict(
-        id='bx', slug='boss-breaker', name='Boss Breaker', type='Coursework', c='#F06A43',
-        board=('COURSEWORK', 'COMPLETED'),
+        id='bx', slug='boss-breaker', name='Boss Breaker', type='Solo build', c='#F06A43',
+        board=('SOLO BUILD', 'COMPLETED'),
         line='Wellness challenges, played as a boss fight.',
         role='Solo build: frontend, API, database and game logic',
         result='Full-stack coursework build',
@@ -706,17 +706,58 @@ def award(pid, anchor, place, event, facts, logos, photos, post):
 HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
 
 
-def project_card(k, p):
-    key = p['cover'][1]
-    big = k < 2
-    sizes = '(max-width: 860px) 100vw, 46vw' if big else '(max-width: 860px) 50vw, 30vw'
-    cls = ' class="big"' if big else ''
-    return (f'<li{cls}><a class="pcard arrive" id="work-{p["id"]}" href="{p["slug"]}.html" style="--c:{p["c"]}" '
-            f'data-project="{p["id"]}" data-event="case_open">'
-            f'<div class="pc-img">{pic(key, sizes, alt="")}</div>'
+# The homepage cards. Each "part" is checked against the case study and the repository:
+#   SignalBridge: my commits to the public repository (chat and consent screens, conversation routes,
+#     the Discord intake and its tests).
+#   Boss Breaker: the public repository, where every commit is mine.
+#   Better Call Bhai: the private repository, where every commit is mine (server.js, SQLite, Render).
+#   MEANT: the private repository's team table credits me with client and demo engineering (the PWA,
+#     accessibility, the booth); the audio and TTS are credited to a teammate, so they are not claimed here.
+#   KnowCad: the case study (the Autodesk engineers led the code; I built and delivered the presentation).
+# Pictures are never edited: a card shows a crop of the real screenshot (zoom z around the point x, y).
+CARDS = {
+    'sb': dict(img='signalbridge-shot-3', frame='browser', z=1.55, x=50, y=40,
+               part='The youth-facing chat and consent step, their API routes, and the Discord intake with its tests.',
+               out=('Result', 'Champion, Dell InnovateDash 2026. Brief from Singapore Children’s Society.')),
+    'bx': dict(img='boss-breaker-shot-1', frame='browser', z=1.5, x=12, y=8,
+               part='Built it alone: the frontend, the Express API, the MySQL database and the game logic.',
+               out=('Result', 'A complete full-stack app for the BED CA2 coursework brief. Source on GitHub.')),
+    'bb': dict(img='better-call-bhai-shot-2', frame='device', z=1.3, x=50, y=22,
+               part='Built it alone: the booking site, its Node/Express API and SQLite database, and the deploy on Render.',
+               out=('Status', 'Live on Render, in a pilot with the shop.')),
+    'mt': dict(img='meant-shot-1', frame='device', z=1.25, x=10, y=40,
+               part='The tablet app’s interface and accessibility, and the demo at the booth.',
+               out=('Result', 'Second runner-up, Dell InnovateFest 2026, polytechnic category. S$3,000.')),
+    'kc': dict(img='win-knowcad-champion', frame='award', z=1.0, x=50, y=35,
+               part='Built and delivered the presentation. The Autodesk engineers led the code.',
+               out=('Result', 'Champion, Autodesk Singapore Hackathon 2026.')),
+}
+FEATURED_CARDS = ['sb', 'bx']
+MORE_CARDS = ['bb', 'mt', 'kc']
+
+
+def project_card(pid, big):
+    p, d = BY_ID[pid], CARDS[pid]
+    m = MEDIA[d['img']]
+    sizes = '(max-width: 860px) 100vw, 46vw' if big else '(max-width: 860px) 100vw, 30vw'
+    shot = pic(d['img'], sizes, alt=m['alt'] if d['frame'] == 'award' else '', cls='ph')
+    crop = f'--z:{d["z"]};--x:{d["x"]}%;--y:{d["y"]}%'
+    if d['frame'] == 'award':
+        stage = (f'<div class="pc-stage is-award"><figure class="pc-photo" style="{crop}"><div class="pc-print">{shot}'
+                 f'<span class="pc-chip">Award photo</span></div><figcaption>{e(m["caption"])}. The product is private.</figcaption></figure></div>')
+    else:
+        bar = (f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
+               if d['frame'] == 'browser' else '')
+        stage = f'<div class="pc-stage"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot">{shot}</div></div></div>'
+    k, v = d['out']
+    return (f'<li><a class="pcard{" is-big" if big else ""} arrive" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}" '
+            f'data-project="{pid}" data-event="case_open">{stage}'
             f'<span class="pc-body"><span class="pc-type">{e(p["type"])}</span><span class="nm cn">{e(p["name"])}</span>'
-            f'<span class="pc-line">{e(p["line"])}</span></span>'
-            f'<span class="pc-tag" aria-hidden="true">On the board</span><span class="ar" aria-hidden="true">→</span></a></li>')
+            f'<span class="pc-line">{e(p["line"])}</span>'
+            f'<span class="pc-facts"><span class="pc-k">My part</span><span class="pc-v">{e(d["part"])}</span>'
+            f'<span class="pc-k">{e(k)}</span><span class="pc-v">{e(v)}</span></span>'
+            f'<span class="pc-go">Open the case study <span class="ar" aria-hidden="true">→</span></span></span>'
+            f'<span class="pc-tag" aria-hidden="true">On the board</span></a></li>')
 
 
 def board_data():
@@ -768,7 +809,8 @@ def build_home():
 
     <section class="sec wrap" id="work" data-sec="work" aria-labelledby="work-title">
       {sechead('work-title', 'Projects')}
-      <ul class="pgrid">{''.join(project_card(k, p) for k, p in enumerate(HOME_PROJECTS))}</ul>
+      <ul class="pgrid pfeat">{''.join(project_card(pid, True) for pid in FEATURED_CARDS)}</ul>
+      <ul class="pgrid pmore">{''.join(project_card(pid, False) for pid in MORE_CARDS)}</ul>
     </section>
 
     <section class="sec wrap" id="awards" data-sec="awards" aria-labelledby="awards-title">
