@@ -145,14 +145,93 @@
   }
 
   /* ---------------------------------------------------------- result galleries */
+  // Arrows on the photo, arrow keys, or a swipe on touch; a tap still opens the viewer.
   $$('[data-gal]').forEach((gal) => {
-    const shots = $$('.shot', gal), thumbs = $$('[data-thumb]', gal), cap = $('[data-gal-cap]', gal);
-    thumbs.forEach((t) => t.addEventListener('click', () => {
-      const i = +t.dataset.thumb;
+    const main = $('.gal-main', gal), shots = $$('.shot', gal), dots = $$('.dots i', gal);
+    const cap = $('[data-gal-cap]', gal), now = $('[data-gal-now]', gal);
+    if (shots.length < 2) return;
+    let i = 0;
+    const show = (n) => {
+      const hadFocus = shots.includes(document.activeElement);
+      i = (n + shots.length) % shots.length;
       shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
-      thumbs.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+      dots.forEach((d, k) => d.toggleAttribute('data-on', k === i));
       cap.textContent = shots[i].dataset.zoom;
-    }));
+      now.textContent = i + 1;
+      if (hadFocus) shots[i].focus();
+    };
+    $$('[data-gal-step]', gal).forEach((b) => b.addEventListener('click', () => show(i + +b.dataset.galStep)));
+    gal.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      show(i + (e.key === 'ArrowLeft' ? -1 : 1));
+      e.preventDefault();
+    });
+    let x0 = null, y0 = 0, swiped = false;
+    main.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { x0 = e.clientX; y0 = e.clientY; } });
+    main.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { show(dx < 0 ? i + 1 : i - 1); swiped = true; setTimeout(() => { swiped = false; }, 60); }
+    });
+    main.addEventListener('pointercancel', () => { x0 = null; });
+    main.addEventListener('click', (e) => { if (swiped) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+  });
+
+  /* ---------------------------------------------------------- tilt and glare */
+  // Pictures lean toward the mouse with a soft light; on touch they tilt toward the finger while pressed.
+  const tilt = (el, zone = el) => {
+    el.setAttribute('data-tilt', '');
+    let raf = 0;
+    const set = (x, y, amp) => {
+      const r = el.getBoundingClientRect();
+      if (!r.width) return false;
+      const px = Math.min(1, Math.max(0, (x - r.left) / r.width)), py = Math.min(1, Math.max(0, (y - r.top) / r.height));
+      const m = Math.min(amp, 2600 / r.width); // big pictures lean less
+      el.style.setProperty('--ry', `${((px - 0.5) * 2 * m).toFixed(2)}deg`);
+      el.style.setProperty('--rx', `${((0.5 - py) * 2 * m).toFixed(2)}deg`);
+      el.style.setProperty('--gx', `${(px * 100).toFixed(1)}%`);
+      el.style.setProperty('--gy', `${(py * 100).toFixed(1)}%`);
+      return true;
+    };
+    const clear = () => {
+      cancelAnimationFrame(raf);
+      el.classList.remove('tilting', 'pressing');
+      el.style.setProperty('--rx', '0deg');
+      el.style.setProperty('--ry', '0deg');
+    };
+    zone.addEventListener('pointermove', (e) => {
+      if (still() || e.pointerType !== 'mouse') return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => { if (set(e.clientX, e.clientY, 7)) el.classList.add('tilting'); });
+    });
+    zone.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') clear(); });
+    zone.addEventListener('pointerdown', (e) => {
+      if (still() || e.pointerType === 'mouse') return;
+      if (set(e.clientX, e.clientY, 5)) el.classList.add('tilting', 'pressing');
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => zone.addEventListener(t, (e) => { if (e.pointerType !== 'mouse') clear(); }));
+  };
+  $$('.gal-main, .pv-frame, a.zoom, .about > .ph, .deck-stage').forEach((el) => tilt(el));
+  $$('.row').forEach((row) => { const c = $('.row-img .cover', row); if (c) tilt(c, row); });
+
+  /* ---------------------------------------------------------- buttons */
+  // The fill grows from where the pointer came in and leaves toward where it went;
+  // with a mouse the button leans a few pixels toward it.
+  $$('.btn').forEach((b) => {
+    const at = (e) => {
+      const r = b.getBoundingClientRect();
+      b.style.setProperty('--mx', `${(e.clientX - r.left).toFixed(0)}px`);
+      b.style.setProperty('--my', `${(e.clientY - r.top).toFixed(0)}px`);
+    };
+    let home = null;
+    b.addEventListener('pointerenter', (e) => { at(e); home = b.getBoundingClientRect(); });
+    b.addEventListener('pointerdown', at);
+    b.addEventListener('pointermove', (e) => {
+      if (still() || e.pointerType !== 'mouse' || !home) return;
+      const dx = e.clientX - (home.left + home.width / 2), dy = e.clientY - (home.top + home.height / 2);
+      b.style.translate = `${(dx * 0.16).toFixed(1)}px ${(dy * 0.3).toFixed(1)}px`;
+    });
+    b.addEventListener('pointerleave', (e) => { at(e); home = null; b.style.translate = ''; });
   });
 
   /* ---------------------------------------------------------- newspaper magnifier */
@@ -254,28 +333,29 @@
   if (page !== 'home') return;
 
   /* ---------------------------------------------------------- home: the name board */
-  const nameBtn = $('[data-name-flip]');
-  if (nameBtn) {
-    const orders = [['SENTHIL', 'NATHAN', 'MRUTHULAN'], ['MRUTHULAN', 'SENTHIL', 'NATHAN']];
-    let flipped = false;
-    nameBtn.addEventListener('click', () => {
-      flipped = !flipped;
-      const words = orders[flipped ? 1 : 0];
-      nameBtn.innerHTML = words.map((w) => `<span class="w" aria-hidden="true">${[...w].map((ch) => `<span class="t">${ch}</span>`).join('')}</span>`).join('');
-      if (!still()) {
-        $$('.t', nameBtn).forEach((t, i) => {
-          const final = t.textContent;
-          t.style.animationDelay = `${i * 28}ms`;
-          t.classList.add('f');
-          let n = 0;
-          const spinT = setInterval(() => {
-            if (++n > 3 + (i % 5)) { clearInterval(spinT); t.textContent = final; return; }
-            t.textContent = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.random() * 26 | 0];
-          }, 45);
-        });
-      }
-      nameBtn.setAttribute('aria-pressed', String(flipped));
-      nameBtn.setAttribute('aria-label', flipped ? 'Flip my name back to Senthil Nathan Mruthulan' : 'Flip my name to Mruthulan Senthil Nathan');
+  // The name never changes. A tile flickers under the mouse and lands back on its
+  // letter; a tap or click ripples the whole name out from that tile.
+  const nameEl = $('[data-name]');
+  if (nameEl) {
+    const L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const cells = $$('.t', nameEl);
+    const flick = (t, delay = 0) => {
+      if (still() || t.dataset.busy) return;
+      t.dataset.busy = '1';
+      setTimeout(() => {
+        t.classList.remove('f'); void t.offsetWidth; t.classList.add('f');
+        let n = 0;
+        const iv = setInterval(() => {
+          if (++n > 4) { clearInterval(iv); t.textContent = t.dataset.ch; delete t.dataset.busy; return; }
+          t.textContent = L[Math.random() * 26 | 0];
+        }, 45);
+      }, delay);
+    };
+    cells.forEach((t) => t.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') flick(t); }));
+    nameEl.addEventListener('pointerdown', (e) => {
+      const hit = e.target.closest('.t');
+      const i0 = hit ? cells.indexOf(hit) : 0;
+      cells.forEach((t, i) => { if (t !== hit || e.pointerType !== 'mouse') flick(t, Math.abs(i - i0) * 28); });
     });
   }
 
@@ -313,7 +393,13 @@
     pvCap.textContent = row.dataset.caption;
   }
   const rowObs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) showRow(e.target); }), { rootMargin: '-45% 0px -50% 0px' });
-  $$('.row', rows).forEach((r) => { rowObs.observe(r); r.addEventListener('focusin', () => showRow(r)); });
+  const wide = matchMedia('(min-width: 861px)');
+  $$('.row', rows).forEach((r) => {
+    rowObs.observe(r);
+    r.addEventListener('focusin', () => showRow(r));
+    // pointing at a project shows its cover at once
+    r.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && wide.matches) showRow(r); });
+  });
   // leaving the list upwards restores the calm state
   new IntersectionObserver(([e]) => { if (!e.isIntersecting && e.boundingClientRect.top > 0) rows.classList.remove('live'); }).observe(rows);
 
@@ -329,6 +415,7 @@
     c.textContent = ch === ' ' ? '' : ch;
     if (!still()) { c.classList.remove('f'); void c.offsetWidth; c.classList.add('f'); }
   };
+  let flipping = 0;
   function flipAll(words, done) {
     const jobs = []; let k = 0;
     for (const [col, word] of Object.entries(words)) {
@@ -338,14 +425,28 @@
     }
     if (still() || document.hidden) { jobs.forEach(([c, ch]) => put(c, ch)); if (done) done(); return; }
     let n = 0; const t0 = performance.now();
+    flipping++;
     jobs.forEach(([c, ch, idx]) => {
       const stop = t0 + 260 + idx * 26;
       const t = setInterval(() => {
-        if (performance.now() >= stop) { clearInterval(t); put(c, ch); if (++n === jobs.length && done) done(); }
-        else put(c, A[Math.random() * A.length | 0]);
+        if (performance.now() >= stop) {
+          clearInterval(t); put(c, ch);
+          if (++n === jobs.length) { flipping--; if (done) done(); }
+        } else put(c, A[Math.random() * A.length | 0]);
       }, 60);
     });
   }
+  // a flap flickers under the mouse and lands back on what it showed
+  Object.values(cols).flat().forEach((c) => c.addEventListener('pointerenter', (e) => {
+    if (e.pointerType !== 'mouse' || flipping || still() || c.dataset.busy) return;
+    const keep = c.textContent;
+    c.dataset.busy = '1';
+    let n = 0;
+    const iv = setInterval(() => {
+      if (++n > 3 || flipping) { clearInterval(iv); if (!flipping) put(c, keep || ' '); delete c.dataset.busy; return; }
+      put(c, A[Math.random() * A.length | 0]);
+    }, 55);
+  }));
   const idle = { name: 'SIX PROJECTS', type: '', status: 'PRESS SPIN' };
   let shown = false;
   new IntersectionObserver(([e], o) => {

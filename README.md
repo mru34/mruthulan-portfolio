@@ -6,8 +6,8 @@ Personal portfolio for Senthil Nathan Mruthulan at [mruthulan.com](https://mruth
 
 One dark ground, off-white type, condensed display letters (Archivo) and body text in Geist. The signature is a split-flap departures board. Project colour appears only in small marks and on the project in focus.
 
-- **Header** is sticky on every page. On the home page the name is spelled out in flap tiles in the hero (press it and the tiles flip to "Mruthulan Senthil Nathan" and back), and the small "MRUTHULAN" mark slides into the header once the hero has scrolled past. The section being read is underlined in the navigation. On phones the header is the name and a Menu button, and a bottom bar keeps Work, Résumé and Contact under the thumb.
-- **Results** come first: the three hackathon results, each with every event photo in a small gallery (thumbnails switch the photo; tap to enlarge and step through them), the placing, the project and the LinkedIn proof post. Each result is stated once on the page.
+- **Header** is sticky on every page. On the home page the name, always "Mruthulan Senthil Nathan", is spelled out in flap tiles in the hero: a tile flickers under the mouse and lands back on its letter, and a tap ripples the whole name. The small "MRUTHULAN" mark slides into the header once the hero has scrolled past. The section being read is underlined in the navigation. On phones the header is the name and a Menu button, and a bottom bar keeps Work, Résumé and Contact under the thumb.
+- **Results** come first: the three hackathon results, each under the organiser's logo (Singapore Polytechnic, Dell Technologies, Autodesk; the official files in `assets/logos/`, shown in white, linking nowhere), with every event photo in a gallery (arrows on the photo, arrow keys, or a swipe on touch; a count and dots show where you are; tap to enlarge and step through them), the placing, the project and the LinkedIn proof post. Each result is stated once on the page.
 - **Now showing** is Spin the Build as a departures board: PROJECT · TYPE · STATUS. Pressing the button or the board itself spins it. The board flips to "SIX PROJECTS" when it first comes into view. Spin a project flips every letter and lands on a random project, never the same one twice in a row; extra presses during a spin are ignored. The result panel reserves its space, so nothing moves when it fills. The last result is kept for the session, so coming back from a case page shows it again. Screen readers hear where it landed. Without JavaScript the board is not shown; the Work list below has every project.
 - **Work** lists the six projects with my role and the result on each; the whole row opens the case study. Each project has a cover: its real screenshot set on the project's colour (Better Call Bhai and KnowCad use their own full image; Loomy fans out three deck pages). On desktop the cover stays in view on the left and follows the project being read; the others dim. On phones each project shows its own cover.
 - **Press** is the Tamil Murasu page of 28 September 2026 (page 8, by Christo Leon), which featured MEANT, on its own newsprint-coloured panel; the rest of the page stays dark. With a mouse, a magnifier follows the pointer over the page. A click or tap opens it in a full-screen viewer (buttons, wheel, pinch, double-click, drag, arrow keys, Reset, Original, Close; Escape closes and focus returns). Nothing is drawn over the newspaper.
@@ -16,7 +16,11 @@ One dark ground, off-white type, condensed display letters (Archivo) and body te
 
 ### Motion
 
-Native scrolling only (in-page links glide to their section). Motion follows the scroll position and never hides content: sections arrive from a softened state, photos drift slightly inside their frames, and the hero name eases away as you scroll past. Moving between the home page and a case page uses cross-document view transitions where the browser supports them: the project name travels into the case title. Under `prefers-reduced-motion: reduce` all of this is off, and the board lands instantly.
+Native scrolling only (in-page links glide to their section). Motion follows the scroll position and never hides content: sections arrive from a softened state, photos drift slightly inside their frames, and the hero name eases away as you scroll past. Moving between the home page and a case page uses cross-document view transitions where the browser supports them: the project name travels into the case title.
+
+The page answers the pointer. Photos, project covers, case-page screenshots, the portrait and the Loomy deck tilt toward the mouse with a soft glare; on touch they tilt toward the finger while pressed. Buttons lean a few pixels toward the mouse and fill with colour from the side the pointer came in (outline buttons fill white, solid ones with the project's colour or amber). The newspaper lifts off its panel under the mouse; it only moves and scales, never rotates, so the magnifier stays exact. Flaps on the departures board flicker under the mouse, and pointing at a project in Work shows its cover straight away.
+
+Under `prefers-reduced-motion: reduce` all of this is off (only colour changes remain), and the board lands instantly.
 
 ### Rules the design depends on
 
@@ -27,6 +31,7 @@ Native scrolling only (in-page links glide to their section). Motion follows the
 - The Better Call Bhai testimonial is the owner's own WhatsApp message, emoji removed and one sentence left out, marked with an ellipsis (`data/content.json` records what was cut).
 - Loomy's deck is reproduced in full, and its targets and revenue figure are labelled as projections.
 - The phone number on the résumé is never published.
+- The organisers' logos only name where each event was held: no links, no suggestion of endorsement.
 - No visible reading text is smaller than 16px.
 
 ## Editing and rebuilding

@@ -512,7 +512,7 @@ def header(home, current=None, prefix=''):
 def footer(home='', prefix=''):
     return f"""<footer class="wrap">
     <div class="foot">
-      <span>Senthil Nathan Mruthulan · Singapore</span>
+      <span>Mruthulan Senthil Nathan · Singapore</span>
       <nav aria-label="Footer">
         <a href="{GITHUB}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         <a href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a>
@@ -548,36 +548,48 @@ def tiles(text):
     for w in text.split():
         cells = ''
         for ch in w:
-            cells += f'<span class="t" style="--i:{i}">{ch}</span>'
+            cells += f'<span class="t" style="--i:{i}" data-ch="{ch}">{ch}</span>'
             i += 1
         words.append(f'<span class="w" aria-hidden="true">{cells}</span>')
     return ''.join(words)
 
 
+# The organiser's logo sits on each result. Official files, shown in white; they
+# name where the event was held and link nowhere. (file, alt, width, height)
+LOGOS = {
+    'sp': ('sp.png', 'Singapore Polytechnic', 136, 30),
+    'dell': ('dell.svg', 'Dell Technologies', 169, 22),
+    'autodesk': ('autodesk.svg', 'Autodesk', 166, 17),
+}
+
+
 def gallery(group, photos, sizes):
-    """Every photo of one result: one shown, thumbnails to switch, tap to enlarge."""
+    """Every photo of one result: one shown, arrows (or a swipe) to move, tap to enlarge."""
+    n = len(photos)
     shots = ''.join(
         f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" '
         f'data-alt="{e(MEDIA[k]["alt"])}" data-group="{group}"{" data-on" if i == 0 else ""} '
         f'aria-label="View full size: {e(MEDIA[k]["caption"])}">{pic(k, sizes, cls="ph")}</a>'
         for i, k in enumerate(photos))
-    thumbs = ''
-    if len(photos) > 1:
-        thumbs = '<div class="thumbs">' + ''.join(
-            f'<button type="button" data-thumb="{i}" aria-pressed="{str(i == 0).lower()}" '
-            f'aria-label="Show photo {i + 1} of {len(photos)}: {e(MEDIA[k]["caption"])}">'
-            f'<img src="assets/media/{MEDIA[k]["src"]}" alt="" loading="lazy" decoding="async"></button>'
-            for i, k in enumerate(photos)) + '</div>'
+    nav = dots = ''
+    if n > 1:
+        nav = (f'<button class="gal-arrow prev" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
+               f'<button class="gal-arrow next" type="button" data-gal-step="1" aria-label="Next photo">→</button>'
+               f'<span class="gal-count" aria-hidden="true"><span data-gal-now>1</span> / {n}</span>')
+        dots = '<span class="dots" aria-hidden="true">' + ''.join(
+            f'<i{" data-on" if i == 0 else ""}></i>' for i in range(n)) + '</span>'
     cap = e(MEDIA[photos[0]]['caption'])
-    return (f'<div class="gal" data-gal><div class="gal-main">{shots}</div>'
-            f'<p class="gal-cap" data-gal-cap>{cap}</p>{thumbs}</div>')
+    return (f'<div class="gal" data-gal><div class="gal-main" data-tilt>{shots}{nav}</div>'
+            f'<div class="gal-foot"><p class="gal-cap" data-gal-cap aria-live="polite">{cap}</p>{dots}</div></div>')
 
 
-def win(pid, anchor, place, event, project, photos, links):
+def win(pid, anchor, place, event, project, photos, links, logo):
     p = BY_ID[pid]
+    src, alt, w, h = LOGOS[logo]
     ls = ''.join(f'<a class="link{" muted" if i else ""}" href="{href}"{ext(href)}{ev}>{e(label)}</a>'
                  for i, (label, href, ev) in enumerate(links))
     return f"""<article class="win arrive" id="{anchor}">
+            <div class="org"><img src="assets/logos/{src}" alt="{e(alt)}" width="{w}" height="{h}" loading="lazy" decoding="async"></div>
             {gallery(anchor, photos, '(max-width: 860px) 100vw, 30vw')}
             <h3 class="cn">{e(place)}</h3>
             <p class="ev">{e(event)}</p>
@@ -622,9 +634,9 @@ def build_home():
           'address': {'@type': 'PostalAddress', 'addressCountry': 'SG'},
           'sameAs': [LINKEDIN, GITHUB]}
     about_personal = f'<p>{e(ABOUT_PERSONAL)}</p>' if ABOUT_PERSONAL else ''
-    return f"""{head('Mruthulan — Developer & Builder',
-                 'Senthil Nathan Mruthulan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Three hackathon results, six projects, and my role on each stated plainly.',
-                 '', og_title='Mruthulan — Developer & Builder',
+    return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
+                 'Mruthulan Senthil Nathan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Three hackathon results, six projects, and my role on each stated plainly.',
+                 '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
                  og_desc='Three hackathon results, six projects, and my role on each stated plainly.', ld=ld)}
 {body_open('home')}
   {header('')}
@@ -633,8 +645,7 @@ def build_home():
     <div class="wrap">
       <section class="hero" aria-labelledby="name">
         <p class="eyebrow"><span class="long">Singapore · Year 2 Information Technology, Singapore Polytechnic</span><span class="short">Singapore · Year 2 IT, Singapore Polytechnic</span></p>
-        <h1 class="sr-only" id="name">Senthil Nathan Mruthulan</h1>
-        <button class="tiles" type="button" data-name-flip aria-pressed="false" aria-label="Flip my name to Mruthulan Senthil Nathan">{tiles('SENTHIL NATHAN MRUTHULAN')}</button>
+        <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
         <div class="hero-row">
           <div>
             <p class="lede">I build full-stack products and prototypes, and I can show you exactly which parts were mine.</p>
@@ -651,12 +662,12 @@ def build_home():
         <div class="score">
           {win('sb', 'win-sp', 'Champion', 'SP InnovateDash 2026', 'SignalBridge', ['win-signalbridge-team', 'win-signalbridge-award'],
                [('View my SP InnovateDash post ↗', POST_SP, ' data-event="proof_post_click" data-project="sb"'),
-                ('Singapore Polytechnic’s feature ↗', SP_FEATURE, '')])}
+                ('Singapore Polytechnic’s feature ↗', SP_FEATURE, '')], 'sp')}
           {win('mt', 'win-dell', 'Second runner-up', 'Dell InnovateFest 2026 · S$3,000', 'MEANT · polytechnic category', ['win-meant-handover', 'win-meant-stage', 'win-meant-team'],
                [('View my Dell InnovateFest post ↗', POST_DELL, ' data-event="proof_post_click" data-project="mt"'),
-                ('Featured in Tamil Murasu ↓', '#press', '')])}
+                ('Featured in Tamil Murasu ↓', '#press', '')], 'dell')}
           {win('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', 'KnowCad', ['win-knowcad-champion', 'win-knowcad-team'],
-               [('View my Autodesk hackathon post ↗', POST_AUTODESK, ' data-event="proof_post_click" data-project="kc"')])}
+               [('View my Autodesk hackathon post ↗', POST_AUTODESK, ' data-event="proof_post_click" data-project="kc"')], 'autodesk')}
         </div>
       </section>
 
