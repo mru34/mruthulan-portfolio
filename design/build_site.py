@@ -30,6 +30,7 @@ MAILTO = f'mailto:{EMAIL}?subject=Portfolio%20enquiry'
 POST_SP = 'https://lnkd.in/p/dCBs22kx'        # Dell InnovateDash at SP / SignalBridge
 POST_DELL = 'https://lnkd.in/p/dZQiUX3z'      # Dell InnovateFest / MEANT
 POST_AUTODESK = 'https://lnkd.in/p/dQW9Pg_v'  # Autodesk hackathon / KnowCad
+SIGNALBRIDGE_REPO = 'https://github.com/mru34/signalbridge'
 POST_SPSOC_DELL = 'https://lnkd.in/p/daCVQd3v'  # SP School of Computing on MEANT at Dell InnovateFest
 # The opening line of each post, word for word (emoji left out), shown on hover.
 PEEKS = {
@@ -175,17 +176,18 @@ def steps(items):
         f'<li><b>{e(k)}</b><span>{e(t)}</span></li>' for k, t in items) + '</ol>'
 
 
-def decisions(items):
-    return '<div class="duo">' + ''.join(
-        f'<div class="card"><p class="k">Could have</p><p>{e(alt)}</p>'
-        f'<p class="k on">I did</p><p>{e(did)}</p></div>' for alt, did in items) + '</div>'
-
-
 def compare(before, after):
     def card(title, items):
         return (f'<div class="card"><h3>{e(title)}</h3><ul>'
                 + ''.join(f'<li>{e(x)}</li>' for x in items) + '</ul></div>')
     return '<div class="duo">' + card(*before) + card(*after) + '</div>'
+
+
+def built(items, source):
+    """What I built, as short cards, each backed by the project's repository; the
+    source line says where the evidence lives."""
+    cards = ''.join(f'<div class="card"><h3>{e(t)}</h3><p>{e(d)}</p></div>' for t, d in items)
+    return f'<div class="duo">{cards}</div><p class="note">{e(source)}</p>'
 
 
 def shots(keys, sizes='(max-width: 860px) 100vw, 44vw'):
@@ -235,7 +237,7 @@ PROJECTS = [
         id='sb', slug='signalbridge', name='SignalBridge', type='Hackathon', c='#2BC4BC',
         board=('HACKATHON', 'CHAMPION'),
         line='Youth support that keeps the context and asks before anything is shared.',
-        role='Youth-facing UI, API and Discord integrations, automated tests',
+        role='Youth-facing chat and consent flow, its API routes, the Discord integration',
         result='Dell InnovateDash 2026 — Champion',
         event='Dell InnovateDash 2026 · Champion',
         proof=('View my Dell InnovateDash post ↗', POST_SP, 'proof_post_click'),
@@ -248,34 +250,38 @@ PROJECTS = [
             'not come with it. SignalBridge is a cloud-native, AI-assisted youth-support command centre '
             'built around support conversations, human handoff and consent.'),
         actions=[('Open the app ↗', 'https://signalbridge-web.onrender.com/', None),
+                 ('Code on GitHub ↗', SIGNALBRIDGE_REPO, None),
                  ('View my Dell InnovateDash post ↗', POST_SP, 'proof_post_click'),
                  ('SP’s feature ↗', SP_FEATURE, None)],
-        facts=[('My role', 'Youth-facing experience, API and Discord integrations, automated tests'),
+        facts=[('My role', 'The youth-facing chat and consent flow, their API routes, and the Discord integration with its tests'),
                ('Result', 'Dell InnovateDash 2026 — Champion'),
+               ('Team', 'Four Year 2 IT students'),
                ('Stack', 'Next.js · FastAPI · PostgreSQL'),
                ('Partner', 'Brief from Singapore Children’s Society')],
         lead=('signalbridge-shot-1', None),
         sections=lambda: [
             sec('The handoff', 'Five moments, and the judgement stays with the worker at every one.', steps([
-                ('Message', 'A young person writes in, out of hours, to whoever is on shift.'),
-                ('Signal', 'The system flags risk signals in the thread. It does not act on them.'),
-                ('Consent', 'Nothing is passed on until consent is explicit.'),
-                ('Brief', 'AI drafts the handoff summary. The worker edits, approves or discards it.'),
-                ('Worker', 'The next shift opens with context instead of a cold thread.')])),
-            sec('Decisions I made', 'Two calls that were mine to make.', decisions([
-                ('Ship the demo path only, because it was a competition.',
-                 'Wrote the automated tests around the handoff logic.'),
-                ('Ask the young person to install one more app.',
-                 'Built the Discord integration, so the conversation stayed where it already was.')])),
+                ('Message', 'A young person writes to SafeNight after hours, on the web, Telegram or Discord.'),
+                ('Signal', 'Fixed rules flag the risk before any AI is involved. A model can improve the wording, never lower the risk.'),
+                ('Consent', 'Nothing is passed on until the young person agrees to the note.'),
+                ('Brief', 'SignalBridge drafts a structured handoff brief: context, risk, a key quote and a suggested first response.'),
+                ('Worker', 'The next morning the worker opens the brief instead of a cold thread, and decides what happens next.')])),
+            sec('My part', 'The side a young person sees, and one more way in.', built([
+                ('SafeNight chat', 'The youth-facing Next.js screens: sign-in, the chat, the dashboard and past notes, '
+                                   'connected to the FastAPI backend through conversation routes I added.'),
+                ('Consent before anything moves', 'The handoff preview, where the young person reads the note their '
+                                                  'worker will receive and agrees before it is shared.'),
+                ('SafeNight on Discord', 'A Discord bot, so SafeNight can be reached from an app young people already '
+                                         'use: direct messages, or a thread of their own kept as one conversation.'),
+                ('Tests for the Discord intake', 'Automated tests that a thread message reaches SafeNight, and that a '
+                                                 'public message without a youth ID still opens a case a worker can see.')],
+                'From my commits to the public SignalBridge repository. The backend, AI and deployment were '
+                'teammates’ work.')),
             sec('Evidence', 'What it actually looks like.',
                 shots(['signalbridge-shot-2', 'signalbridge-shot-3'])
-                + note('Captured from the running app with its fictional demo data. No real young person appears anywhere.')),
+                + note('Captured from the running app with its fictional demo data. No real young person appears anywhere.')
+                + note('Singapore Polytechnic’s feature calls the same event SP InnovateDash 2026.')),
         ],
-        my_role=('I built the youth-facing interfaces, the consent and handoff workflows, the API and '
-                 'Discord integrations, and the automated tests that kept the handoff logic honest while '
-                 'the team moved fast.'),
-        outcome=('Champion at Dell InnovateDash 2026, and the result that took our team to Dell '
-                 'InnovateFest, where we built MEANT.'),
     ),
     dict(
         id='mt', slug='meant', name='MEANT', type='Hackathon', c='#4DA3FF',
@@ -315,11 +321,18 @@ PROJECTS = [
             sec('If the AI stops', 'It degrades into something that still works.',
                 para('If the AI layer goes down, the AAC board and typing still work. A communication aid '
                      'that fails closed is not a communication aid.')),
+            sec('My part', 'The screens a person actually uses, and a demo that could not stall.', built([
+                ('Boards you can read at a glance', 'Coloured the AAC boards and gave each word a picture by what '
+                                                    'kind of word it is, using an openly licensed symbol set.'),
+                ('No dead ends', 'Search across the whole AAC vocabulary, so a wrong prediction never leaves '
+                                 'the user stuck.'),
+                ('Setup that fits the person', 'Setup-wizard steps, including the screen ruler and the microphone '
+                                               'permission, so the prompt comes during setup, not mid-conversation.'),
+                ('A demo that could not stall', 'Scripted the turn we played on stage, and fixed the gaps that '
+                                                'could stop it: a stuck mic button, a silent send, a camera that '
+                                                'showed only a black box.')],
+                'From my commits to the MEANT repository, which is private, so this is described without code.')),
         ],
-        my_role=('I worked on the UI and UX, built the Singaporean TTS voice, and presented the build on '
-                 'stage. MEANT is a separate project from SignalBridge, with a different team goal.'),
-        outcome=('Second runner-up in the polytechnic category at Dell InnovateFest 2026, with a S$3,000 '
-                 'prize, built with SPD Ltd. Tamil Murasu later featured the project.'),
     ),
     dict(
         id='bb', slug='better-call-bhai', name='Better Call Bhai', type='Client build', c='#E3B53A',
@@ -354,10 +367,6 @@ PROJECTS = [
                        'customer appears. The struck-through times are test bookings.')
                 + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
         ],
-        my_role=('I owned the customer journey, the appointment form, the mobile interface and the Render '
-                 'deployment, built to replace manual WhatsApp appointment coordination.'),
-        outcome=('Deployed on Render and in a pilot with the shop. The owner’s own reaction is quoted '
-                 'above.'),
     ),
     dict(
         id='kc', slug='knowcad', name='KnowCad', type='Hackathon', c='#9B87FF',
@@ -393,14 +402,12 @@ PROJECTS = [
                      'post I wrote at the time, and the description above.')
                 + shots(['win-knowcad-team'])),
         ],
-        my_role=('I built and delivered the presentation. The Autodesk engineers on the team led the code.'),
-        outcome='First place at the Autodesk Singapore Hackathon 2026.',
     ),
     dict(
         id='bx', slug='boss-breaker', name='Boss Breaker', type='Coursework', c='#F06A43',
         board=('COURSEWORK', 'COMPLETED'),
         line='Wellness challenges, played as a boss fight.',
-        role='API, database and game logic',
+        role='Solo build: frontend, API, database and game logic',
         result='Full-stack coursework build',
         event='BED CA2 coursework',
         proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
@@ -413,21 +420,29 @@ PROJECTS = [
             'full-stack coursework build for the BED CA2 brief: users complete wellness challenges to earn '
             'points, then spend them against a shared boss.'),
         actions=[('View the code ↗', 'https://github.com/mru34/bedca2', None)],
-        facts=[('My role', 'API, database and game logic'),
+        facts=[('My role', 'Built it alone: frontend, API, database and game logic'),
                ('Result', 'Complete full-stack build for the BED CA2 brief'),
                ('Stack', 'JavaScript · Node.js · MySQL'),
                ('Status', 'Coursework · source on GitHub')],
         lead=('boss-breaker-shot-2', None),
         sections=lambda: [
             sec('The loop', 'Four mechanics, one habit.', steps([
-                ('Daily challenges', 'A wellness action is the unit of play. Doing it is how you earn anything.'),
-                ('Points', 'Challenges pay out points. The ledger is server-side, so the game cannot be won in the browser.'),
-                ('Boss raids', 'Points are spent against a shared target, which is what makes the habit worth keeping up.'),
-                ('Progression', 'State persists in a relational schema, so a streak survives a refresh.')])),
-            sec('Evidence', 'The build.', shots(['boss-breaker-shot-1'])),
+                ('Challenges', 'A wellness action is the unit of play. Doing it is how you earn anything.'),
+                ('Points', 'Challenges pay out points. They are added on the server, so the game cannot be won in the browser.'),
+                ('Boss raids', 'Points are spent against a shared boss, with a leaderboard of damage dealt.'),
+                ('Progression', 'Points, items and the boss’s HP live in MySQL, so progress survives a refresh.')])),
+            sec('In the code', 'Rules the browser cannot bend.', built([
+                ('Points are earned on the server', 'Completing a challenge adds its points in the API, never in '
+                                                    'the page.'),
+                ('Damage has rules', 'A hit is the challenge’s points times any active item multiplier, plus a '
+                                     'flat bonus. Items bought in the shop apply to the next completion.'),
+                ('Accounts done properly', 'Passwords are hashed with bcrypt, and every protected request '
+                                           'carries a JWT.'),
+                ('Runs on an empty database', 'Its nine tables are created at start-up if they are missing, so '
+                                              'the app runs against a fresh MySQL database.')],
+                'From the public repository, where every commit is mine.')
+                + shots(['boss-breaker-shot-1'])),
         ],
-        my_role='I built the API, the database schema and the game logic that ties challenges, points and raids together.',
-        outcome='A complete full-stack build for the BED CA2 brief, with the source on GitHub.',
     ),
     dict(
         id='lm', slug='loomy', name='Loomy', type='Concept', c='#3DBB7A',
@@ -462,9 +477,6 @@ PROJECTS = [
                   'is a concept, and none of those numbers have happened.</p>',
                 sid=None),
         ],
-        my_role=('The deck credits me as the team’s prototype designer. The 30+ interviews behind the '
-                 'concept were the team’s research.'),
-        outcome='A pitch deck grounded in more than 30 interviews.',
     ),
 ]
 BY_ID = {p['id']: p for p in PROJECTS}
@@ -585,28 +597,22 @@ LOGOS = {
 
 
 def gallery(group, photos, sizes):
-    """Every photo of one result: one shown, arrows (or a swipe) to move, tap to enlarge."""
+    """Every photo of one result: one shown and still; Previous / Next under it (or a
+    swipe, or the arrow keys) to move; tap to enlarge."""
     n = len(photos)
     shots = ''.join(
         f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" '
         f'data-alt="{e(MEDIA[k]["alt"])}" data-group="{group}"{" data-on" if i == 0 else ""} '
         f'aria-label="View full size: {e(MEDIA[k]["caption"])}">{pic(k, sizes, cls="ph")}</a>'
         for i, k in enumerate(photos))
-    nav = dots = ''
+    nav = ''
     if n > 1:
-        nav = (f'<button class="gal-arrow prev" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
-               f'<button class="gal-arrow next" type="button" data-gal-step="1" aria-label="Next photo">→</button>'
-               f'<span class="gal-count" aria-hidden="true"><span data-gal-now>1</span> / {n}</span>')
-        dots = '<span class="dots" aria-hidden="true">' + ''.join(
-            f'<i{" data-on" if i == 0 else ""}></i>' for i in range(n)) + '</span>'
+        nav = (f'<div class="gal-nav"><button class="gal-arrow" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
+               f'<span class="gal-count" aria-hidden="true"><span data-gal-now>1</span> / {n}</span>'
+               f'<button class="gal-arrow" type="button" data-gal-step="1" aria-label="Next photo">→</button></div>')
     cap = e(MEDIA[photos[0]]['caption'])
-    auto = ''
-    if n > 1:
-        auto = ('<button class="gal-pause" type="button" data-gal-pause aria-pressed="false" '
-                'aria-label="Pause the photos"><span aria-hidden="true"></span></button>'
-                '<span class="gal-timer" data-gal-timer aria-hidden="true"></span>')
-    return (f'<div class="gal" data-gal><div class="gal-main" data-tilt>{shots}{nav}{auto}</div>'
-            f'<div class="gal-foot"><p class="gal-cap" data-gal-cap>{cap}</p>{dots}</div>'
+    return (f'<div class="gal" data-gal><div class="gal-main" data-tilt>{shots}</div>'
+            f'<div class="gal-foot"><p class="gal-cap" data-gal-cap>{cap}</p>{nav}</div>'
             f'<span class="sr-only" aria-live="polite" data-gal-live></span></div>')
 
 
@@ -678,7 +684,7 @@ def build_home():
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
         <div class="hero-row">
           <div>
-            <p class="lede">I build full-stack products and prototypes, and I can show you exactly which parts were mine.</p>
+            <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. Every project below names my part.</p>
             <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
           </div>
           <div class="acts"><a class="btn solid" href="#work">See the work</a><a class="btn" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a></div>
@@ -845,8 +851,6 @@ def build_case(p):
       </header>
 
       {''.join(p['sections']())}
-      {sec('My role', 'What I did on it.', para(p['my_role']))}
-      {sec('Result', 'What happened.', para(p['outcome']))}
 
       <nav class="case-nav" aria-label="More projects">
         <a href="{prev['slug']}.html" rel="prev" data-event="case_open" data-project="{prev['id']}"><small>← Previous</small><span class="cn">{e(prev['name'])}</span></a>
