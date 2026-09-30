@@ -13,6 +13,7 @@ Mruthulan's own answers. Where wording is still unconfirmed it is left out
 rather than guessed.
 """
 import html
+import re
 import json
 from pathlib import Path
 
@@ -51,7 +52,8 @@ PRESS_ALT = ('Tamil Murasu, page 8, 28 September 2026: a feature headlined in Ta
              'ties with two others, one seated in a wheelchair. Right photo: a university team beside '
              'their Bloom Up project screen. Below, five columns of Tamil text.')
 FONTS = ('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..75,700..800'
-         '&family=Geist:wght@400..600&display=swap')
+         '&family=Bricolage+Grotesque:opsz,wght@12..96,500..700'
+         '&family=Geist:wght@400..600&family=JetBrains+Mono:wght@400..500&display=swap')
 
 
 def e(s):
@@ -62,13 +64,9 @@ def ext(href):
     return ' target="_blank" rel="noopener noreferrer"' if href.startswith('http') else ''
 
 
-def peek(href):
-    """A small preview of a LinkedIn post, shown when the link is hovered or focused."""
-    if href not in PEEKS:
-        return ''
-    who, line = PEEKS[href]
-    return (f'<span class="peek" aria-hidden="true"><span class="peek-who">{e(who)} · LinkedIn</span>'
-            f'<span class="peek-line">“{e(line)}”</span><span class="peek-go">Open the post ↗</span></span>')
+def emph(s):
+    """Escape, then turn *this* into the gold emphasis (weight and colour, never italics)."""
+    return re.sub(r'\*(.+?)\*', r'<strong>\1</strong>', e(s))
 
 
 # ------------------------------------------------------------------ images
@@ -585,7 +583,7 @@ def sechead(sid, title):
 # route, test or table names.
 FEATURED = [
     dict(pid='sb', kicker='Team build · Dell InnovateDash 2026 champion',
-         does='A youth-support command centre: after-hours messages reach a youth worker with context, and only with the young person’s consent.',
+         does='A youth-support command centre: after-hours messages reach a youth worker with context, and *only with the young person’s consent*.',
          stack='Next.js · FastAPI · PostgreSQL', frame='browser',
          layers={'chat': 'signalbridge-shot-1', 'consent': 'signalbridge-shot-3'}, first='chat',
          items=[
@@ -600,7 +598,7 @@ FEATURED = [
          ],
          links=[('Read the case study →', 'signalbridge.html'), ('Code ↗', SIGNALBRIDGE_REPO), ('Open the app ↗', 'https://signalbridge-web.onrender.com/')]),
     dict(pid='bb', kicker='Solo build · Deployed pilot with a local barbershop',
-         does='Appointment booking for a barbershop: pick a service, a day and an open slot, then confirm on WhatsApp.',
+         does='Appointment booking for a barbershop: pick a service, a day and an open slot, then *confirm on WhatsApp*.',
          stack='Node.js · Express · SQLite · Render', frame='device',
          layers={'flow': 'better-call-bhai-shot-2', 'live': 'better-call-bhai-shot-1'}, first='flow',
          items=[
@@ -615,7 +613,7 @@ FEATURED = [
          ],
          links=[('Read the case study →', 'better-call-bhai.html'), ('Visit the site ↗', 'https://bettercalbhai.onrender.com/')]),
     dict(pid='bx', kicker='Solo build · Full-stack coursework',
-         does='A wellness game: complete challenges to earn points, then spend them against a shared boss.',
+         does='A wellness game: complete challenges to earn points, then *spend them against a shared boss*.',
          stack='Node.js · Express · MySQL', frame='browser',
          layers={'dash': 'boss-breaker-shot-2'}, first='dash',
          items=[
@@ -663,7 +661,7 @@ def feature(i, f):
           <div class="feat-text">
             <p class="eyebrow">{i:02d} · {e(f['kicker'])}</p>
             <h3 class="cn" style="view-transition-name:t-{p['id']}">{e(p['name'])}</h3>
-            <p class="does">{e(f['does'])}</p>
+            <p class="does">{emph(f['does'])}</p>
             <p class="k">What I built</p><ul class="built">{items}</ul>
             <p class="stack">{e(f['stack'])}</p>
             <div class="acts">{ls}</div>
@@ -671,35 +669,46 @@ def feature(i, f):
         </article>'''
 
 
-# ------------------------------------------------------------------ awards, as a departures board
+# ------------------------------------------------------------------ awards, one card each with a big photo
+# The placing flips in on a board strip; the photos swipe (or step with the arrows) inside the
+# card and open full size in the viewer; the quote is the opening line of my post about it.
 AWARDS = [
-    ('sb', 'win-sp', 'CHAMPION', 'Champion', 'Dell InnovateDash 2026', ['dell', 'sp'], ['win-signalbridge-team', 'win-signalbridge-award'],
-     ('My post ↗', POST_SP)),
-    ('mt', 'win-dell', '2ND RUNNER-UP', 'Second runner-up', 'Dell InnovateFest 2026 · polytechnic category · S$3,000', ['dell'],
-     ['win-meant-handover', 'win-meant-stage', 'win-meant-team'], ('My post ↗', POST_DELL)),
-    ('kc', 'win-autodesk', 'CHAMPION', 'Champion', 'Autodesk Singapore Hackathon 2026', ['autodesk'], ['win-knowcad-champion', 'win-knowcad-team'],
-     ('My post ↗', POST_AUTODESK)),
+    ('sb', 'win-sp', 'CHAMPION', 'Champion', 'Dell InnovateDash 2026', [], ['dell', 'sp'],
+     ['win-signalbridge-team', 'win-signalbridge-award'], POST_SP),
+    ('mt', 'win-dell', '2ND RUNNER-UP', 'Second runner-up', 'Dell InnovateFest 2026 · polytechnic category', ['S$3,000'], ['dell'],
+     ['win-meant-handover', 'win-meant-stage', 'win-meant-team'], POST_DELL),
+    ('kc', 'win-autodesk', 'CHAMPION', 'Champion', 'Autodesk Singapore Hackathon 2026', [], ['autodesk'],
+     ['win-knowcad-champion', 'win-knowcad-team'], POST_AUTODESK),
 ]
 
 
-def dep_row(pid, anchor, board_word, place, event, logos, photos, proof):
+def award(pid, anchor, board_word, place, event, facts, logos, photos, post):
     p = BY_ID[pid]
     flaps = ''.join(f'<span class="fl" data-ch="{e(ch)}">{e(ch.strip())}</span>' for ch in board_word)
     org = '<i class="org-sep" aria-hidden="true"></i>'.join(
         f'<img src="assets/logos/{s}" alt="{e(a)}" width="{w}" height="{h}" loading="lazy" decoding="async">' for s, a, w, h in (LOGOS[k] for k in logos))
-    m = MEDIA[photos[0]]
-    thumb = (f'<a class="dep-thumb zoom" href="assets/media/{m["src"]}" data-zoom="{e(m["caption"])}" data-alt="{e(m["alt"])}" data-group="{anchor}" '
-             f'aria-label="View the {len(photos)} photos: {e(event)}">{pic(photos[0], "(max-width: 860px) 104px, 150px", cls="ph")}</a>'
-             f'<span class="dep-count">{len(photos)} photos</span>')
-    extra = ''.join(f'<a hidden href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" data-alt="{e(MEDIA[k]["alt"])}" data-group="{anchor}"></a>'
-                    for k in photos[1:])
-    label, href = proof
-    return f'''<article class="dep-row" id="{anchor}">
-          <div class="dep-place"><span class="sr-only">{e(place)}</span><span class="flaps-row" aria-hidden="true">{flaps}</span></div>
-          <div class="dep-ev"><div class="org">{org}</div><p>{e(event)}</p></div>
-          <p class="dep-proj"><a class="link" href="{p['slug']}.html" style="--c:{p['c']}" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a></p>
-          <div class="dep-photo">{thumb}{extra}</div>
-          <p class="dep-proof"><a class="link has-peek" href="{href}"{ext(href)} data-event="proof_post_click" data-project="{pid}">{e(label)}{peek(href)}</a></p>
+    shots = ''.join(
+        f'<a class="aw-shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" data-alt="{e(MEDIA[k]["alt"])}" '
+        f'data-group="{anchor}" aria-label="View full size: {e(MEDIA[k]["caption"])}">{pic(k, "(max-width: 860px) 100vw, 58vw", cls="ph")}</a>'
+        for k in photos)
+    many = len(photos) > 1
+    ctl = (f'<div class="aw-ctl"><button class="gal-arrow" type="button" data-step="-1" aria-label="Previous photo">‹</button>'
+           f'<span class="aw-cap" data-cap>{e(MEDIA[photos[0]]["caption"])}</span>'
+           f'<span class="aw-count" data-count>1 / {len(photos)}</span>'
+           f'<button class="gal-arrow" type="button" data-step="1" aria-label="Next photo">›</button></div>') if many else ''
+    fact = ''.join(f'<span class="aw-fact">{e(x)}</span>' for x in facts)
+    quote = PEEKS[post][1]
+    return f'''<article class="aw" id="{anchor}" style="--c:{p['c']}">
+          <header class="aw-strip"><p class="dep-place"><span class="sr-only">{e(place)}</span><span class="flaps-row" aria-hidden="true">{flaps}</span></p><div class="org">{org}</div></header>
+          <div class="aw-body">
+            <figure class="aw-media" data-aw aria-label="Photos: {e(event)}"><div class="aw-rail">{shots}</div>{ctl}</figure>
+            <div class="aw-info">
+              <p class="aw-ev">{e(event)}{f' <span class="aw-facts">{fact}</span>' if fact else ''}</p>
+              <p class="aw-proj"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a></p>
+              <blockquote class="aw-quote"><p>{e(quote)}</p></blockquote>
+              <a class="aw-post link" href="{post}"{ext(post)} data-event="proof_post_click" data-project="{pid}">My LinkedIn post ↗</a>
+            </div>
+          </div>
         </article>'''
 
 
@@ -743,7 +752,7 @@ def build_home():
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
         <div class="hero-row">
           <div>
-            <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. Every project below names my part.</p>
+            <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. <em>Every project below names my part.</em></p>
             <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
           </div>
           <div class="acts"><a class="btn solid" href="#featured">See featured work</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
@@ -765,9 +774,8 @@ def build_home():
     <section class="sec wrap" id="awards" data-sec="awards" aria-labelledby="awards-title">
       <span id="results"></span><span id="wins"></span><span id="recognition"></span>
       {sechead('awards-title', 'Awards')}
-      <div class="dep">
-        <div class="dep-head" aria-hidden="true"><span>Result</span><span>Event</span><span>Project</span><span>Photos</span><span>Proof</span></div>
-        {''.join(dep_row(*a) for a in AWARDS)}
+      <div class="aw-list">
+        {''.join(award(*a) for a in AWARDS)}
       </div>
     </section>
 
@@ -810,7 +818,7 @@ def build_home():
       <div class="about">
         {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait arrive')}
         <div class="text arrive">
-          <p class="lead">I care about the last mile: whether someone can actually use the result, whether it survives failure, and whether I can explain the decisions clearly.</p>
+          <p class="lead">I care about the last mile: whether someone can actually use the result, <em>whether it survives failure</em>, and whether I can explain the decisions clearly.</p>
           {about_personal}
         </div>
       </div>
