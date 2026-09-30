@@ -27,7 +27,7 @@ LINKEDIN = 'https://www.linkedin.com/in/mruthulan/'
 GITHUB = 'https://github.com/mru34'
 GMAIL = f'https://mail.google.com/mail/?view=cm&fs=1&to={EMAIL}&su=Portfolio%20enquiry'
 MAILTO = f'mailto:{EMAIL}?subject=Portfolio%20enquiry'
-POST_SP = 'https://lnkd.in/p/dCBs22kx'        # SP InnovateDash / SignalBridge
+POST_SP = 'https://lnkd.in/p/dCBs22kx'        # Dell InnovateDash at SP / SignalBridge
 POST_DELL = 'https://lnkd.in/p/dZQiUX3z'      # Dell InnovateFest / MEANT
 POST_AUTODESK = 'https://lnkd.in/p/dQW9Pg_v'  # Autodesk hackathon / KnowCad
 POST_SPSOC_DELL = 'https://lnkd.in/p/daCVQd3v'  # SP School of Computing on MEANT at Dell InnovateFest
@@ -236,22 +236,22 @@ PROJECTS = [
         board=('HACKATHON', 'CHAMPION'),
         line='Youth support that keeps the context and asks before anything is shared.',
         role='Youth-facing UI, API and Discord integrations, automated tests',
-        result='SP InnovateDash 2026 — Champion',
-        event='SP InnovateDash 2026 · Champion',
-        proof=('View my SP InnovateDash post ↗', POST_SP, 'proof_post_click'),
+        result='Dell InnovateDash 2026 — Champion',
+        event='Dell InnovateDash 2026 · Champion',
+        proof=('View my Dell InnovateDash post ↗', POST_SP, 'proof_post_click'),
         preview='signalbridge-shot-1', cover=('browser', 'signalbridge-shot-1'),
-        desc=('SignalBridge case study: a consent-led youth support platform that won SP InnovateDash '
+        desc=('SignalBridge case study: a consent-led youth support platform that won Dell InnovateDash '
               '2026. The handoff, the decisions and my role on the build.'),
-        og='A consent-led youth support platform. SP InnovateDash 2026 Champion.',
+        og='A consent-led youth support platform. Dell InnovateDash 2026 Champion.',
         hl='Youth support that keeps the context, and asks before anything is shared.',
         st=('A youth worker picks up a conversation that started somewhere else, and the context does '
             'not come with it. SignalBridge is a cloud-native, AI-assisted youth-support command centre '
             'built around support conversations, human handoff and consent.'),
         actions=[('Open the app ↗', 'https://signalbridge-web.onrender.com/', None),
-                 ('View my SP InnovateDash post ↗', POST_SP, 'proof_post_click'),
+                 ('View my Dell InnovateDash post ↗', POST_SP, 'proof_post_click'),
                  ('SP’s feature ↗', SP_FEATURE, None)],
         facts=[('My role', 'Youth-facing experience, API and Discord integrations, automated tests'),
-               ('Result', 'SP InnovateDash 2026 — Champion'),
+               ('Result', 'Dell InnovateDash 2026 — Champion'),
                ('Stack', 'Next.js · FastAPI · PostgreSQL'),
                ('Partner', 'Brief from Singapore Children’s Society')],
         lead=('signalbridge-shot-1', None),
@@ -274,7 +274,7 @@ PROJECTS = [
         my_role=('I built the youth-facing interfaces, the consent and handoff workflows, the API and '
                  'Discord integrations, and the automated tests that kept the handoff logic honest while '
                  'the team moved fast.'),
-        outcome=('Champion at SP InnovateDash 2026, and the result that took our team to Dell '
+        outcome=('Champion at Dell InnovateDash 2026, and the result that took our team to Dell '
                  'InnovateFest, where we built MEANT.'),
     ),
     dict(
@@ -575,7 +575,7 @@ def tiles(text):
     return ''.join(words)
 
 
-# The organiser's logo sits on each result. Official files, shown in white; they
+# The organisers' logos sit on each result (Dell InnovateDash was held at SP, so it shows both). Official files, shown in white; they
 # name where the event was held and link nowhere. (file, alt, width, height)
 LOGOS = {
     'sp': ('sp.png', 'Singapore Polytechnic', 136, 30),
@@ -610,13 +610,15 @@ def gallery(group, photos, sizes):
             f'<span class="sr-only" aria-live="polite" data-gal-live></span></div>')
 
 
-def win(pid, anchor, place, event, project, photos, links, logo):
+def win(pid, anchor, place, event, project, photos, links, logos):
     p = BY_ID[pid]
-    src, alt, w, h = LOGOS[logo]
+    org = '<i class="org-sep" aria-hidden="true"></i>'.join(
+        f'<img src="assets/logos/{src}" alt="{e(alt)}" width="{w}" height="{h}" loading="lazy" decoding="async">'
+        for src, alt, w, h in (LOGOS[k] for k in logos))
     ls = ''.join(f'<a class="link{" muted" if i else ""}{" has-peek" if href in PEEKS else ""}" href="{href}"{ext(href)}{ev}>{e(label)}{peek(href)}</a>'
                  for i, (label, href, ev) in enumerate(links))
     return f"""<article class="win arrive" id="{anchor}">
-            <div class="org"><img src="assets/logos/{src}" alt="{e(alt)}" width="{w}" height="{h}" loading="lazy" decoding="async"></div>
+            <div class="org">{org}</div>
             {gallery(anchor, photos, '(max-width: 860px) 100vw, 30vw')}
             <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true" data-scramble>{e(place)}</span></h3>
             <p class="ev">{e(event)}</p>
@@ -688,15 +690,15 @@ def build_home():
         <span id="wins"></span><span id="recognition"></span>
         <h2 class="eyebrow" id="results-title">Results · three hackathons, three projects</h2>
         <div class="score">
-          {win('sb', 'win-sp', 'Champion', 'SP InnovateDash 2026', 'SignalBridge', ['win-signalbridge-team', 'win-signalbridge-award'],
-               [('View my SP InnovateDash post ↗', POST_SP, ' data-event="proof_post_click" data-project="sb"'),
-                ('Singapore Polytechnic’s feature ↗', SP_FEATURE, '')], 'sp')}
+          {win('sb', 'win-sp', 'Champion', 'Dell InnovateDash 2026', 'SignalBridge', ['win-signalbridge-team', 'win-signalbridge-award'],
+               [('View my Dell InnovateDash post ↗', POST_SP, ' data-event="proof_post_click" data-project="sb"'),
+                ('Singapore Polytechnic’s feature ↗', SP_FEATURE, '')], ['dell', 'sp'])}
           {win('mt', 'win-dell', 'Second runner-up', 'Dell InnovateFest 2026 · S$3,000', 'MEANT · polytechnic category', ['win-meant-handover', 'win-meant-stage', 'win-meant-team'],
                [('View my Dell InnovateFest post ↗', POST_DELL, ' data-event="proof_post_click" data-project="mt"'),
                 ('SP School of Computing’s post ↗', POST_SPSOC_DELL, ' data-event="proof_post_click" data-project="mt"'),
-                ('Featured in Tamil Murasu ↓', '#press', '')], 'dell')}
+                ('Featured in Tamil Murasu ↓', '#press', '')], ['dell'])}
           {win('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', 'KnowCad', ['win-knowcad-champion', 'win-knowcad-team'],
-               [('View my Autodesk hackathon post ↗', POST_AUTODESK, ' data-event="proof_post_click" data-project="kc"')], 'autodesk')}
+               [('View my Autodesk hackathon post ↗', POST_AUTODESK, ' data-event="proof_post_click" data-project="kc"')], ['autodesk'])}
         </div>
       </section>
 
