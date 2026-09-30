@@ -489,11 +489,11 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <meta property="og:title" content="{e(og_title or title)}">
   <meta property="og:description" content="{e(og_desc or desc)}">
   <meta property="og:url" content="{canonical}">
-  <meta property="og:image" content="{SITE}/assets/og-card.jpg?v=night">
+  <meta property="og:image" content="{SITE}/assets/og-card.jpg?v=night2">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{SITE}/assets/og-card.jpg?v=night">
+  <meta name="twitter:image" content="{SITE}/assets/og-card.jpg?v=night2">
   <title>{e(title)}</title>
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
