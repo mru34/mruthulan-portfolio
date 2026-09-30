@@ -132,5 +132,12 @@
     "caption": "The AAC board — it still works with the AI layer off",
     "width": 1600,
     "height": 1000
+  },
+  "win-meant-stage": {
+    "src": "win-meant-stage.webp",
+    "alt": "The MEANT team and event officials on the Dell InnovateFest stage, under a screen reading Dell InnovateFest 2026, Polytechnic, 2nd Runner-up.",
+    "caption": "The result on the big screen",
+    "width": 1321,
+    "height": 991
   }
 }

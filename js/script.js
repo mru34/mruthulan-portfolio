@@ -48,7 +48,8 @@
     const zl = $('[data-zl]', viewer);
     const title = $('[data-vw-title]', viewer);
     const original = $('[data-vw-original]', viewer);
-    let s = 1, tx = 0, ty = 0, bw = 0, bh = 0, opener = null;
+    const prevBtn = $('[data-vw-prev]', viewer), nextBtn = $('[data-vw-next]', viewer), count = $('[data-vw-count]', viewer);
+    let s = 1, tx = 0, ty = 0, bw = 0, bh = 0, opener = null, set = [], at = 0;
     const MAX = 5;
     const layout = () => {
       const W = stage.clientWidth - 32, H = stage.clientHeight - 32;
@@ -71,24 +72,42 @@
     const reset = () => { layout(); s = 1; tx = 0; ty = 0; apply(); };
     const centre = () => { const r = stage.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
 
-    document.addEventListener('click', (e) => {
-      const a = e.target.closest('a[data-zoom]');
-      if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
-      e.preventDefault();
-      opener = a;
+    const load = (a) => {
       title.textContent = a.dataset.zoom || 'Full size';
       original.href = a.href;
       img.alt = a.dataset.alt || '';
       img.onload = reset;
       img.src = a.href;
-      viewer.showModal();
       if (img.complete && img.naturalWidth) reset();
+      const many = set.length > 1;
+      [prevBtn, nextBtn, count].forEach((el) => { el.hidden = !many; });
+      if (many) count.textContent = `${at + 1} / ${set.length}`;
+    };
+    const step = (d) => { if (set.length > 1) { at = (at + d + set.length) % set.length; load(set[at]); } };
+    prevBtn.addEventListener('click', () => step(-1));
+    nextBtn.addEventListener('click', () => step(1));
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[data-zoom]');
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      opener = a.closest('[data-gal]') ? $('.shot[data-on]', a.closest('[data-gal]')) || a : a;
+      set = a.dataset.group ? $$(`a[data-zoom][data-group="${a.dataset.group}"]`) : [a];
+      at = Math.max(0, set.indexOf(a));
+      viewer.showModal();
+      load(a);
       $('[data-close]', viewer).focus();
       if (a.dataset.viewEvent) track(a.dataset.viewEvent, a.dataset.project ? { project: a.dataset.project } : undefined);
     });
     addEventListener('resize', () => { if (viewer.open) reset(); });
-    $('[data-close]', viewer).addEventListener('click', () => viewer.close());
-    viewer.addEventListener('close', () => { img.removeAttribute('src'); if (opener) opener.focus(); });
+    // Close ourselves (button and Escape) so focus always returns to what opened the viewer.
+    const closeViewer = () => {
+      if (viewer.open) viewer.close();
+      img.removeAttribute('src');
+      if (opener) { const o = opener; opener = null; o.focus(); }
+    };
+    $('[data-close]', viewer).addEventListener('click', closeViewer);
+    viewer.addEventListener('cancel', (e) => { e.preventDefault(); closeViewer(); });
+    viewer.addEventListener('close', closeViewer);
     $$('[data-z]', viewer).forEach((b) => b.addEventListener('click', () => {
       const [cx, cy] = centre();
       if (b.dataset.z === 'in') zoomAt(s * 1.4, cx, cy);
@@ -115,6 +134,7 @@
       if (e.key === '+' || e.key === '=') zoomAt(s * 1.4, cx, cy);
       else if (e.key === '-') zoomAt(s / 1.4, cx, cy);
       else if (e.key === '0') reset();
+      else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && s <= 1 && set.length > 1) { step(e.key === 'ArrowLeft' ? -1 : 1); e.preventDefault(); }
       else if (e.key.startsWith('Arrow') && s > 1) {
         const d = 60;
         if (e.key === 'ArrowLeft') tx += d; if (e.key === 'ArrowRight') tx -= d;
@@ -123,6 +143,42 @@
       }
     });
   }
+
+  /* ---------------------------------------------------------- result galleries */
+  $$('[data-gal]').forEach((gal) => {
+    const shots = $$('.shot', gal), thumbs = $$('[data-thumb]', gal), cap = $('[data-gal-cap]', gal);
+    thumbs.forEach((t) => t.addEventListener('click', () => {
+      const i = +t.dataset.thumb;
+      shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
+      thumbs.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+      cap.textContent = shots[i].dataset.zoom;
+    }));
+  });
+
+  /* ---------------------------------------------------------- newspaper magnifier */
+  // Mouse and pen only: on touch, a tap opens the full-screen viewer (pinch to zoom there).
+  $$('[data-loupe]').forEach((paper) => {
+    const lens = $('.loupe', paper), pic = $('img', paper), Z = 2.6;
+    // fetch the sharp page before the pointer arrives; until then the lens uses the copy on screen
+    new IntersectionObserver(([en], o) => { if (en.isIntersecting) { new Image().src = paper.href; o.disconnect(); } }, { rootMargin: '600px' }).observe(paper);
+    const on = (e) => {
+      if (e.pointerType === 'touch') return;
+      lens.style.backgroundImage = `url("${paper.href}"), url("${pic.currentSrc || pic.src}")`;
+      const r = pic.getBoundingClientRect(), pr = paper.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      if (x < 0 || y < 0 || x > r.width || y > r.height) { paper.classList.remove('looking'); return; }
+      const lw = lens.offsetWidth;
+      lens.style.left = `${e.clientX - pr.left}px`;
+      lens.style.top = `${e.clientY - pr.top}px`;
+      const size = `${r.width * Z}px ${r.height * Z}px`, pos = `${-(x * Z - lw / 2)}px ${-(y * Z - lw / 2)}px`;
+      lens.style.backgroundSize = `${size}, ${size}`;
+      lens.style.backgroundPosition = `${pos}, ${pos}`;
+      paper.classList.add('looking');
+    };
+    paper.addEventListener('pointermove', on);
+    paper.addEventListener('pointerenter', on);
+    paper.addEventListener('pointerleave', () => paper.classList.remove('looking'));
+  });
 
   /* ---------------------------------------------------------- contact */
   $$('[data-copy]').forEach((btn) => {
@@ -197,6 +253,32 @@
 
   if (page !== 'home') return;
 
+  /* ---------------------------------------------------------- home: the name board */
+  const nameBtn = $('[data-name-flip]');
+  if (nameBtn) {
+    const orders = [['SENTHIL', 'NATHAN', 'MRUTHULAN'], ['MRUTHULAN', 'SENTHIL', 'NATHAN']];
+    let flipped = false;
+    nameBtn.addEventListener('click', () => {
+      flipped = !flipped;
+      const words = orders[flipped ? 1 : 0];
+      nameBtn.innerHTML = words.map((w) => `<span class="w" aria-hidden="true">${[...w].map((ch) => `<span class="t">${ch}</span>`).join('')}</span>`).join('');
+      if (!still()) {
+        $$('.t', nameBtn).forEach((t, i) => {
+          const final = t.textContent;
+          t.style.animationDelay = `${i * 28}ms`;
+          t.classList.add('f');
+          let n = 0;
+          const spinT = setInterval(() => {
+            if (++n > 3 + (i % 5)) { clearInterval(spinT); t.textContent = final; return; }
+            t.textContent = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.random() * 26 | 0];
+          }, 45);
+        });
+      }
+      nameBtn.setAttribute('aria-pressed', String(flipped));
+      nameBtn.setAttribute('aria-label', flipped ? 'Flip my name back to Senthil Nathan Mruthulan' : 'Flip my name to Mruthulan Senthil Nathan');
+    });
+  }
+
   /* ---------------------------------------------------------- home: header */
   const heroEnd = $('[data-hero-end]');
   new IntersectionObserver(([e]) => {
@@ -215,10 +297,9 @@
   const secObs = new IntersectionObserver((es) => es.forEach((e) => {
     if (!e.isIntersecting) return;
     mark(e.target.dataset.sec);
-    body.classList.toggle('paper', e.target.dataset.sec === 'press');
   }), { rootMargin: '-45% 0px -50% 0px' });
   $$('[data-sec]').forEach((s) => secObs.observe(s));
-  addEventListener('scroll', () => { if (scrollY < 200) { mark(null); body.classList.remove('paper'); } }, { passive: true });
+  addEventListener('scroll', () => { if (scrollY < 200) mark(null); }, { passive: true });
 
   /* ---------------------------------------------------------- home: work preview */
   const rows = $('[data-rows]');
@@ -227,7 +308,7 @@
   function showRow(row) {
     rows.classList.add('live');
     $$('.row', rows).forEach((r) => r.toggleAttribute('data-on', r === row));
-    $$('img', pv).forEach((i) => i.toggleAttribute('data-on', i.dataset.id === row.dataset.id));
+    $$('[data-id]', pv).forEach((c) => c.toggleAttribute('data-on', c.dataset.id === row.dataset.id));
     pvSw.style.setProperty('--c', row.style.getPropertyValue('--c'));
     pvCap.textContent = row.dataset.caption;
   }
@@ -274,6 +355,7 @@
   const spin = $('[data-spin]', board);
   const result = $('[data-result]', board);
   const live = $('[data-spin-live]', board);
+  $('.fids', board).addEventListener('click', () => spin.click());
   let last = null, busy = false;
   // Picks never repeat the previous project; extra presses during a spin are ignored.
   function pick() {
