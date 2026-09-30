@@ -13,6 +13,7 @@ Mruthulan's own answers. Where wording is still unconfirmed it is left out
 rather than guessed.
 """
 import html
+import re
 import json
 from pathlib import Path
 
@@ -25,7 +26,6 @@ RESUME = 'assets/Mruthulan-Senthil-Nathan-Resume.pdf'
 EMAIL = 'mruthulansenthilnathan@gmail.com'
 LINKEDIN = 'https://www.linkedin.com/in/mruthulan/'
 GITHUB = 'https://github.com/mru34'
-GMAIL = f'https://mail.google.com/mail/?view=cm&fs=1&to={EMAIL}&su=Portfolio%20enquiry'
 MAILTO = f'mailto:{EMAIL}?subject=Portfolio%20enquiry'
 POST_SP = 'https://lnkd.in/p/dCBs22kx'        # Dell InnovateDash at SP / SignalBridge
 POST_DELL = 'https://lnkd.in/p/dZQiUX3z'      # Dell InnovateFest / MEANT
@@ -52,7 +52,8 @@ PRESS_ALT = ('Tamil Murasu, page 8, 28 September 2026: a feature headlined in Ta
              'ties with two others, one seated in a wheelchair. Right photo: a university team beside '
              'their Bloom Up project screen. Below, five columns of Tamil text.')
 FONTS = ('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..75,700..800'
-         '&family=Geist:wght@400..600&display=swap')
+         '&family=Bricolage+Grotesque:opsz,wght@12..96,500..700'
+         '&family=Geist:wght@400..600&family=JetBrains+Mono:wght@400..500&display=swap')
 
 
 def e(s):
@@ -63,13 +64,9 @@ def ext(href):
     return ' target="_blank" rel="noopener noreferrer"' if href.startswith('http') else ''
 
 
-def peek(href):
-    """A small preview of a LinkedIn post, shown when the link is hovered or focused."""
-    if href not in PEEKS:
-        return ''
-    who, line = PEEKS[href]
-    return (f'<span class="peek" aria-hidden="true"><span class="peek-who">{e(who)} · LinkedIn</span>'
-            f'<span class="peek-line">“{e(line)}”</span><span class="peek-go">Open the post ↗</span></span>')
+def emph(s):
+    """Escape, then turn *this* into the gold emphasis (weight and colour, never italics)."""
+    return re.sub(r'\*(.+?)\*', r'<strong>\1</strong>', e(s))
 
 
 # ------------------------------------------------------------------ images
@@ -106,25 +103,6 @@ def pic(key, sizes, eager=False, alt=None, cls='ph', fit_style=''):
     style = f' style="{fit_style}"' if fit_style else ''
     return (f'<div class="{cls}"><img src="{src}"{srcset} width="{m["width"]}" height="{m["height"]}" '
             f'alt="{a}" decoding="async"{load}{style}></div>')
-
-
-def cover(p, sizes='(max-width: 860px) 100vw, 50vw'):
-    """A project cover: the whole picture, never cropped, in a clean frame on a soft
-    surface with a faint glow in the project's colour. Screenshots sit in a slim
-    browser window; the mockup, the photo and the deck slide get the frame alone."""
-    kind, what = p['cover']
-    if kind == 'slide':
-        img = f'<img src="assets/deck/{what}" width="1655" height="931" alt="" loading="lazy" decoding="async">'
-    else:
-        m = MEDIA[what]
-        src = f"assets/media/{m['src']}"
-        small = ROOT / 'assets' / 'media' / (Path(m['src']).stem + '-800.webp')
-        srcset = f' srcset="assets/media/{small.name} 800w, {src} {m["width"]}w" sizes="{sizes}"' if small.exists() else ''
-        img = f'<img src="{src}"{srcset} width="{m["width"]}" height="{m["height"]}" alt="" loading="lazy" decoding="async">'
-    bar = (f'<span class="frame-bar"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
-           if kind == 'browser' else '')
-    return (f'<div class="cover cover-{kind}" data-id="{p["id"]}" style="--c:{p["c"]}">'
-            f'<span class="frame">{bar}{img}</span></div>')
 
 
 def zoom(key, sizes, caption=None, eager=False, cls='ph', project=None):
@@ -300,7 +278,8 @@ PROJECTS = [
             'compose a reply. MEANT listens to the conversation and prepares a few likely replies. The user '
             'still chooses every word, and can drop back to their usual board or typing at any time.'),
         actions=[('View my Dell InnovateFest post ↗', POST_DELL, 'proof_post_click'),
-                 ('Featured in Tamil Murasu →', 'index.html#press', None)],
+                 ('SP School of Computing’s post ↗', POST_SPSOC_DELL, 'proof_post_click'),
+                 ('Featured in Tamil Murasu ↓', '#press', None)],
         facts=[('My role', 'UI and UX, the Singaporean TTS voice, and presenting the build'),
                ('Result', 'Second runner-up, polytechnic category · S$3,000'),
                ('Stack', 'On-device AI on a Dell GB10 · Singaporean TTS'),
@@ -371,7 +350,7 @@ PROJECTS = [
     dict(
         id='kc', slug='knowcad', name='KnowCad', type='Hackathon', c='#9B87FF',
         board=('HACKATHON', 'CHAMPION'),
-        line='A retrieval-based AI assistant for customer service. Code and Autodesk materials are private.',
+        line='A retrieval-based AI assistant for customer service.',
         role='Built and delivered the presentation',
         result='Autodesk Singapore Hackathon 2026 — Champion',
         event='Autodesk Singapore Hackathon 2026 · Champion',
@@ -396,16 +375,12 @@ PROJECTS = [
                 ('Everything', 'Technical knowledge spread across long documents, none of it indexed by the question you actually have.'),
                 ('What is relevant', 'Retrieval narrows the set to the passages that bear on the question.'),
                 ('The answer', 'One answer, with the source behind it and a human still reviewing the decision, not a list of places the answer might be.')])),
-            sec('Proof', 'What I can show, and why that is all.',
-                para('The repository and the Autodesk materials are private, so there are no product '
-                     'screenshots on this page and no link to the code. What is public is the result, the '
-                     'post I wrote at the time, and the description above.')
-                + shots(['win-knowcad-team'])),
+            sec('Proof', 'The result, and the team behind it.', shots(['win-knowcad-team'])),
         ],
     ),
     dict(
-        id='bx', slug='boss-breaker', name='Boss Breaker', type='Coursework', c='#F06A43',
-        board=('COURSEWORK', 'COMPLETED'),
+        id='bx', slug='boss-breaker', name='Boss Breaker', type='Solo build', c='#F06A43',
+        board=('SOLO BUILD', 'COMPLETED'),
         line='Wellness challenges, played as a boss fight.',
         role='Solo build: frontend, API, database and game logic',
         result='Full-stack coursework build',
@@ -525,7 +500,7 @@ def header(home, current=None, prefix=''):
     def nav(sid, label):
         cur = ' aria-current="true"' if current == sid else ''
         return f'<a href="{h}#{sid}" data-nav="{sid}"{cur}>{label}</a>'
-    links = [('results', 'Results'), ('work', 'Work'), ('press', 'Press'), ('about', 'About')]
+    links = [('work', 'Work'), ('awards', 'Awards'), ('about', 'About')]
     solid = '' if not home else ' solid'
     menu = ''.join(f'<a href="{h}#{sid}">{label}</a>' for sid, label in links + [('contact', 'Contact')])
     return f"""<header class="top{solid}" data-top>
@@ -553,8 +528,7 @@ def footer(home='', prefix=''):
         <a href="#top">Back to top ↑</a>
       </nav>
     </div>
-  </footer>
-  <nav class="tabbar" aria-label="Quick links"><a href="{home}#work">Work</a><a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé</a><a href="{home}#contact">Contact</a></nav>"""
+  </footer>"""
 
 
 VIEWER = """<dialog class="viewer" data-viewer aria-labelledby="vw-title">
@@ -596,69 +570,202 @@ LOGOS = {
 }
 
 
-def gallery(group, photos, sizes):
-    """Every photo of one result: one shown and still; Previous / Next under it (or a
-    swipe, or the arrow keys) to move; tap to enlarge."""
-    n = len(photos)
-    shots = ''.join(
-        f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" '
-        f'data-alt="{e(MEDIA[k]["alt"])}" data-group="{group}"{" data-on" if i == 0 else ""} '
-        f'aria-label="View full size: {e(MEDIA[k]["caption"])}">{pic(k, sizes, cls="ph")}</a>'
-        for i, k in enumerate(photos))
-    nav = ''
-    if n > 1:
-        nav = (f'<div class="gal-nav"><button class="gal-arrow" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
-               f'<span class="gal-count" aria-hidden="true"><span data-gal-now>1</span> / {n}</span>'
-               f'<button class="gal-arrow" type="button" data-gal-step="1" aria-label="Next photo">→</button></div>')
-    cap = e(MEDIA[photos[0]]['caption'])
-    return (f'<div class="gal" data-gal><div class="gal-main" data-tilt>{shots}</div>'
-            f'<div class="gal-foot"><p class="gal-cap" data-gal-cap>{cap}</p>{nav}</div>'
-            f'<span class="sr-only" aria-live="polite" data-gal-live></span></div>')
+def sechead(sid, title):
+    """A section title that spells itself out like the board when it arrives."""
+    return (f'<header class="sechead"><h2 class="cn" id="{sid}"><span class="sr-only">{e(title)}</span>'
+            f'<span aria-hidden="true" data-scramble>{e(title)}</span></h2></header>')
 
 
-def win(pid, anchor, place, event, project, photos, links, logos):
+# ------------------------------------------------------------------ what I built, on the case pages
+# Each "What I built" line is backed by the project's repository. Pointing at a line
+# (or tapping it) zooms the real screenshot to that part (r = x, y, w, h as fractions of
+# the image), or, where there is nothing to show on screen, opens a card with the real
+# route, test or table names.
+FEATURED = [
+    dict(pid='sb',
+         frame='browser',
+         layers={'chat': 'signalbridge-shot-1', 'consent': 'signalbridge-shot-3'}, first='chat',
+         items=[
+             ('The youth-facing chat, sign-in and dashboard', dict(t='img', l='chat', r=[0.0, 0.08, 1.0, 0.32])),
+             ('The consent step: the young person previews the note before it is shared', dict(t='img', l='consent', r=[0.24, 0.1, 0.52, 0.56])),
+             ('FastAPI routes that connect the chat to the backend', dict(t='card', f='services/api/app/routes/conversations.py',
+                 lines=['GET   /youth/conversation', 'POST  /conversations/{conversation_id}/messages', 'POST  /handoffs/consent'],
+                 note='From my commit d1d654e. The team later reorganised the backend.')),
+             ('The Discord integration, with tests for its intake', dict(t='card', f='services/api/tests/test_production_alpha.py',
+                 lines=['def test_discord_thread_conversation_routes_to_safenight()', 'def test_discord_public_intake_falls_back_when_youth_id_missing()'],
+                 note='Plus the migrations for Discord user and thread IDs.')),
+         ],
+    ),
+    dict(pid='bb',
+         frame='device',
+         layers={'flow': 'better-call-bhai-shot-2', 'live': 'better-call-bhai-shot-1'}, first='flow',
+         items=[
+             ('The booking site customers use', dict(t='img', l='flow', r=[0.17, 0.08, 0.31, 0.92])),
+             ('Server-side rules: no past dates, and each slot can only be booked once', dict(t='img', l='flow', r=[0.55, 0.36, 0.26, 0.5],
+                 tag='Taken slots are struck through; a second booking gets “That time slot is already booked.”')),
+             ('A Node/Express API on SQLite, with the shop’s admin page', dict(t='card', f='server.js',
+                 lines=['GET/POST/PATCH/DELETE  /api/services', 'POST  /api/bookings        GET  /api/bookings', 'PATCH /api/bookings/:id/status', 'GET   /api/slots',
+                        'CREATE UNIQUE INDEX idx_bookings_date_time ON bookings(date, time)'],
+                 note='From the private repository; every commit is mine.')),
+             ('Deployed on Render', dict(t='img', l='live', r=[0.0, 0.0, 1.0, 1.0])),
+         ],
+    ),
+    dict(pid='bx',
+         frame='browser',
+         layers={'dash': 'boss-breaker-shot-2'}, first='dash',
+         items=[
+             ('A nine-page frontend: dashboard, challenges, boss raid, shop, inventory', dict(t='img', l='dash', r=[0.08, 0.0, 0.84, 0.07])),
+             ('Points and boss damage worked out on the server', dict(t='img', l='dash', r=[0.1, 0.12, 0.8, 0.24],
+                 tag='damage = challenge.points × item multiplier + bonus_damage')),
+             ('An Express API and a nine-table MySQL schema created at start-up', dict(t='card', f='src/configure/initTables.js',
+                 lines=['User · WellnessChallenge · UserCompletion', 'Item · Inventory · UserEffect', 'Boss · BossDamageLog · Review',
+                        'CREATE TABLE IF NOT EXISTS …  (runs on an empty database)'],
+                 note='From the public repository; every commit is mine.')),
+             ('bcrypt-hashed passwords and JWT-protected routes', dict(t='card', f='src/middleware',
+                 lines=['bcrypt.hash(req.body.password, saltRounds, callback)', 'Authorization: Bearer <token>'],
+                 note='bcryptMiddleware.js and jwtMiddleware.js.')),
+         ],
+    ),
+]
+
+
+FEAT_BY_ID = {f['pid']: f for f in FEATURED}
+
+
+def hotspots(f):
+    """The case page's opening picture, with the "What I built" lines beside it."""
+    p = BY_ID[f['pid']]
+    layers = ''
+    for k, v in f['layers'].items():
+        m = MEDIA[v]
+        on = ' data-on fetchpriority="high"' if k == f['first'] else ' loading="lazy"'
+        layers += (f'<img class="hs-layer" data-layer="{k}" src="assets/media/{m["src"]}" width="{m["width"]}" height="{m["height"]}" '
+                   f'alt="{e(m["alt"])}"{on} decoding="async">')
+    cards = items = ''
+    for k, (label, d) in enumerate(f['items']):
+        if d['t'] == 'card':
+            lines = ''.join(f'<code>{e(x)}</code>' for x in d['lines'])
+            cards += (f'<div class="hs-card" data-card="{k}"><p class="hs-file">{e(d["f"])}</p>{lines}'
+                      f'<p class="hs-note">{e(d["note"])}</p></div>')
+        data = {k2: v for k2, v in d.items() if k2 in ('t', 'l', 'r', 'tag')}
+        data['i'] = k
+        items += (f'<li><button class="hs-item" type="button" aria-pressed="false" data-hs="{e(json.dumps(data, ensure_ascii=False))}">'
+                  f'<span class="hs-dot" aria-hidden="true"></span>{e(label)}</button></li>')
+    bar = f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>' if f['frame'] == 'browser' else ''
+    return f'''<section class="feat feat-case" id="built" data-feat aria-labelledby="built-title">
+          <div class="hs-wrap">
+            <div class="hs-frame{' is-device' if f['frame'] == 'device' else ''}">{bar}
+              <div class="hs-view" aria-hidden="true"><div class="hs-stage">{layers}<span class="hs-spot"></span></div><p class="hs-tag"></p></div>
+            </div>
+            <p class="hs-hint" aria-hidden="true"><span class="fine">Point at a line to see it in the product</span><span class="touch">Tap a line below to see it in the product</span></p>{cards}
+          </div>
+          <div class="feat-text">
+            <h2 class="k" id="built-title">What I built</h2><ul class="built">{items}</ul>
+          </div>
+        </section>'''
+
+
+# ------------------------------------------------------------------ awards: three cards
+# Each card: the organisers' logos, the event's photos (arrows, swipe, and a slow advance
+# while nobody is touching them), the placing, the event, the project and my post about it.
+AWARDS = [
+    ('sb', 'win-sp', 'Champion', 'Dell InnovateDash 2026', [], ['dell', 'sp'],
+     ['win-signalbridge-team', 'win-signalbridge-award'], POST_SP),
+    ('mt', 'win-dell', '2nd runner-up', 'Dell InnovateFest 2026 · polytechnic category', ['S$3,000'], ['dell'],
+     ['win-meant-handover', 'win-meant-stage', 'win-meant-team'], POST_DELL),
+    ('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', [], ['autodesk'],
+     ['win-knowcad-champion', 'win-knowcad-team'], POST_AUTODESK),
+]
+
+
+def award(pid, anchor, place, event, facts, logos, photos, post):
     p = BY_ID[pid]
     org = '<i class="org-sep" aria-hidden="true"></i>'.join(
-        f'<img src="assets/logos/{src}" alt="{e(alt)}" width="{w}" height="{h}" loading="lazy" decoding="async">'
-        for src, alt, w, h in (LOGOS[k] for k in logos))
-    ls = ''.join(f'<a class="link{" muted" if i else ""}{" has-peek" if href in PEEKS else ""}" href="{href}"{ext(href)}{ev}>{e(label)}{peek(href)}</a>'
-                 for i, (label, href, ev) in enumerate(links))
-    return f"""<article class="win arrive" id="{anchor}">
-            <div class="org">{org}</div>
-            {gallery(anchor, photos, '(max-width: 860px) 100vw, 30vw')}
-            <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true" data-scramble>{e(place)}</span></h3>
-            <p class="ev">{e(event)}</p>
-            <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}">{e(project)}</a></p>
-            <div class="links">{ls}</div>
-          </article>"""
+        f'<img src="assets/logos/{s}" alt="{e(a)}" width="{w}" height="{h}" loading="lazy" decoding="async">' for s, a, w, h in (LOGOS[k] for k in logos))
+    shots = ''.join(
+        f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" data-alt="{e(MEDIA[k]["alt"])}" '
+        f'data-group="{anchor}"{" data-on" if n == 0 else ""} aria-label="View full size: {e(MEDIA[k]["caption"])}">'
+        f'{pic(k, "(max-width: 860px) 86vw, 30vw", cls="ph")}</a>' for n, k in enumerate(photos))
+    nav = (f'<div class="gal-nav"><button class="gal-arrow" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
+           f'<span class="gal-count" aria-hidden="true"><span data-gal-now>1</span> / {len(photos)}</span>'
+           f'<button class="gal-arrow" type="button" data-gal-step="1" aria-label="Next photo">→</button></div>') if len(photos) > 1 else ''
+    fact = ''.join(f' <span class="fact">{e(x)}</span>' for x in facts)
+    return f'''<article class="win arrive" id="{anchor}" style="--c:{p['c']}">
+          <div class="org">{org}</div>
+          <div class="gal" data-gal><div class="gal-main">{shots}</div><div class="gal-foot"><p class="gal-cap" data-gal-cap>{e(MEDIA[photos[0]]["caption"])}</p>{nav}</div><span class="sr-only" aria-live="polite" data-gal-live></span></div>
+          <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true" data-scramble>{e(place)}</span></h3>
+          <p class="ev">{e(event)}{fact}</p>
+          <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a></p>
+          <div class="links"><a class="link" href="{post}"{ext(post)} data-event="proof_post_click" data-project="{pid}">My LinkedIn post ↗</a></div>
+        </article>'''
 
 
-def work_row(p):
-    img = f'<div class="row-img" aria-hidden="true">{cover(p, "(max-width: 860px) 100vw, 1px")}</div>'
-    label, href, ev = p['proof']
-    evattr = f' data-event="{ev}" data-project="{p["id"]}"' if ev else ''
-    n = f"{PROJECTS.index(p) + 1:02d} / {len(PROJECTS):02d}"
-    return f"""<li class="row arrive" id="work-{p['id']}" data-id="{p['id']}" data-n="{n}" data-caption="{e(p['name'])} · {e(p['type'])}" style="--c:{p['c']}">
-            {img}
-            <span class="ty"><i class="sw"></i>{e(p['type'])}</span>
-            <h3 class="cn" style="view-transition-name:t-{p['id']}">{e(p['name'])}</h3>
-            <p class="ln">{e(p['line'])}</p>
-            <dl><dt>My role</dt><dd>{e(p['role'])}</dd><dt>Result</dt><dd>{e(p['result'])}</dd></dl>
-            <div class="links"><a class="link row-link" href="{p['slug']}.html" data-event="case_open" data-project="{p['id']}">Read the case study <span class="ar">→</span></a><a class="link muted{' has-peek' if href in PEEKS else ''}" href="{href}"{ext(href)}{evattr}>{e(label)}{peek(href)}</a></div>
-          </li>"""
+# ------------------------------------------------------------------ the project list and the board
+# Loomy is a concept with a pitch deck and no build, so it stays off the homepage; its case
+# page is still reachable from the other case pages.
+HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
 
 
-def preview_imgs():
-    return ''.join(cover(p, '(max-width: 860px) 1px, 50vw') for p in PROJECTS)
+# The homepage cards. Each "part" is checked against the case study and the repository:
+#   SignalBridge: my commits to the public repository (chat and consent screens, conversation routes,
+#     the Discord intake and its tests).
+#   Boss Breaker: the public repository, where every commit is mine.
+#   Better Call Bhai: the private repository, where every commit is mine (server.js, SQLite, Render).
+#   MEANT: the private repository's team table credits me with client and demo engineering (the PWA,
+#     accessibility, the booth); the audio and TTS are credited to a teammate, so they are not claimed here.
+#   KnowCad: the case study (the Autodesk engineers led the code; I built and delivered the presentation).
+# Pictures are never edited: a card shows the whole screenshot (z=1) or a crop of it (zoom z around the
+# point x, y), and the image it loads is large enough for that zoom, so the crop is never enlarged.
+CARDS = {
+    'sb': dict(img='signalbridge-shot-3', frame='browser', z=1, x=50, y=50,
+               part='The youth-facing chat and consent step, their API routes, and the Discord intake with its tests.',
+               out=('Result', 'Champion, Dell InnovateDash 2026. Brief from Singapore Children’s Society.')),
+    'bx': dict(img='boss-breaker-shot-1', frame='browser', z=1, x=50, y=50,
+               part='Built it alone: the frontend, the Express API, the MySQL database and the game logic.',
+               out=('Result', 'A complete full-stack app for the BED CA2 coursework brief. Source on GitHub.')),
+    'bb': dict(img='better-call-bhai-shot-2', frame='device', z=1.3, x=50, y=22,
+               part='Built it alone: the booking site, its Node/Express API and SQLite database, and the deploy on Render.',
+               out=('Status', 'Live on Render, in a pilot with the shop.')),
+    'mt': dict(img='meant-shot-1', frame='device', z=1.25, x=10, y=40,
+               part='The tablet app’s interface and accessibility, and the demo at the booth.',
+               out=('Result', 'Second runner-up, Dell InnovateFest 2026, polytechnic category. S$3,000.')),
+    'kc': dict(img='win-knowcad-champion', frame='award', z=1.0, x=50, y=35,
+               part='Built and delivered the presentation. The Autodesk engineers led the code.',
+               out=('Result', 'Champion, Autodesk Singapore Hackathon 2026.')),
+}
+FEATURED_CARDS = ['sb', 'bx']
+MORE_CARDS = ['bb', 'mt', 'kc']
+
+
+def project_card(pid, big):
+    p, d = BY_ID[pid], CARDS[pid]
+    m = MEDIA[d['img']]
+    z = d['z']
+    sizes = f'(max-width: 860px) {round(100 * z)}vw, {round((46 if big else 30) * z)}vw'
+    shot = pic(d['img'], sizes, alt=m['alt'] if d['frame'] == 'award' else '', cls='ph')
+    crop = f'--z:{d["z"]};--x:{d["x"]}%;--y:{d["y"]}%'
+    if d['frame'] == 'award':
+        stage = (f'<div class="pc-stage is-award"><figure class="pc-photo" style="{crop}"><div class="pc-print">{shot}'
+                 f'<span class="pc-chip">Award photo</span></div><figcaption>{e(m["caption"])}. The product is private.</figcaption></figure></div>')
+    else:
+        bar = (f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
+               if d['frame'] == 'browser' else '')
+        whole = ' is-whole' if z == 1 else ''
+        stage = f'<div class="pc-stage{whole}"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot">{shot}</div></div></div>'
+    k, v = d['out']
+    return (f'<li><a class="pcard{" is-big" if big else ""} arrive" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}" '
+            f'data-project="{pid}" data-event="case_open">{stage}'
+            f'<span class="pc-body"><span class="pc-type">{e(p["type"])}</span><span class="nm cn">{e(p["name"])}</span>'
+            f'<span class="pc-line">{e(p["line"])}</span>'
+            f'<span class="pc-facts"><span class="pc-k">My part</span><span class="pc-v">{e(d["part"])}</span>'
+            f'<span class="pc-k">{e(k)}</span><span class="pc-v">{e(v)}</span></span>'
+            f'<span class="pc-go">Open the case study <span class="ar" aria-hidden="true">→</span></span></span>'
+            f'<span class="pc-tag" aria-hidden="true">On the board</span></a></li>')
 
 
 def board_data():
-    d = {}
-    for p in PROJECTS:
-        label, href, ev = p['proof']
-        d[p['id']] = dict(name=p['name'], type=p['type'], line=p['line'], role=p['role'],
-                          result=p['result'], c=p['c'], board=list(p['board']),
-                          href=f"{p['slug']}.html", proof=label, proofHref=href, proofEvent=ev or 'outbound_click')
+    d = {p['id']: dict(name=p['name'], type=p['type'], line=p['line'], c=p['c'], board=list(p['board']),
+                       href=f"{p['slug']}.html") for p in HOME_PROJECTS}
     return json.dumps(d, ensure_ascii=False).replace('</', '<\\/')
 
 
@@ -671,9 +778,9 @@ def build_home():
           'sameAs': [LINKEDIN, GITHUB]}
     about_personal = f'<p>{e(ABOUT_PERSONAL)}</p>' if ABOUT_PERSONAL else ''
     return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
-                 'Mruthulan Senthil Nathan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Three hackathon results, six projects, and my role on each stated plainly.',
+                 'Mruthulan Senthil Nathan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Five projects, what I built on each, and three hackathon results.',
                  '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
-                 og_desc='Three hackathon results, six projects, and my role on each stated plainly.', ld=ld)}
+                 og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld)}
 {body_open('home')}
   {header('')}
 
@@ -682,81 +789,51 @@ def build_home():
       <section class="hero" aria-labelledby="name">
         <p class="eyebrow"><span class="long">Singapore · Year 2 Information Technology, Singapore Polytechnic</span><span class="short">Singapore · Year 2 IT, Singapore Polytechnic</span></p>
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
-        <div class="hero-row">
-          <div>
-            <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. Every project below names my part.</p>
+        <div class="hero-grid">
+          <section class="board" data-board aria-labelledby="board-title" hidden>
+            <div class="board-head"><h2 class="eyebrow" id="board-title">Now showing</h2><span class="eyebrow">{len(HOME_PROJECTS)} projects</span></div>
+            <div class="fids" aria-hidden="true">
+              <div><span class="lab">Project</span><div class="flaps" data-col="name" data-n="16"></div></div>
+              <div><span class="lab">Type</span><div class="flaps" data-col="type" data-n="16"></div></div>
+              <div><span class="lab">Result</span><div class="flaps status" data-col="status" data-n="16"></div></div>
+            </div>
+            <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result></div></div>
+            <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
+          </section>
+          <div class="hero-intro">
+            <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. <em>Every project below names my part.</em></p>
             <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
+            <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
           </div>
-          <div class="acts"><a class="btn solid" href="#work">See the work</a><a class="btn" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a></div>
         </div>
         <div data-hero-end aria-hidden="true"></div>
-      </section>
-
-      <section id="results" data-sec="results" aria-labelledby="results-title">
-        <span id="wins"></span><span id="recognition"></span>
-        <h2 class="eyebrow" id="results-title">Results · three hackathons, three projects</h2>
-        <div class="score">
-          {win('sb', 'win-sp', 'Champion', 'Dell InnovateDash 2026', 'SignalBridge', ['win-signalbridge-team', 'win-signalbridge-award'],
-               [('View my Dell InnovateDash post ↗', POST_SP, ' data-event="proof_post_click" data-project="sb"'),
-                ('Singapore Polytechnic’s feature ↗', SP_FEATURE, '')], ['dell', 'sp'])}
-          {win('mt', 'win-dell', 'Second runner-up', 'Dell InnovateFest 2026 · S$3,000', 'MEANT · polytechnic category', ['win-meant-handover', 'win-meant-stage', 'win-meant-team'],
-               [('View my Dell InnovateFest post ↗', POST_DELL, ' data-event="proof_post_click" data-project="mt"'),
-                ('SP School of Computing’s post ↗', POST_SPSOC_DELL, ' data-event="proof_post_click" data-project="mt"'),
-                ('Featured in Tamil Murasu ↓', '#press', '')], ['dell'])}
-          {win('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', 'KnowCad', ['win-knowcad-champion', 'win-knowcad-team'],
-               [('View my Autodesk hackathon post ↗', POST_AUTODESK, ' data-event="proof_post_click" data-project="kc"')], ['autodesk'])}
-        </div>
-      </section>
-
-      <section class="board" data-board data-sec="results" aria-labelledby="board-title" hidden>
-        <div class="board-head"><h2 class="eyebrow" id="board-title">Now showing</h2><button class="btn solid" type="button" data-spin>Spin a project</button></div>
-        <div class="fids" aria-hidden="true">
-          <div><span class="lab">Project</span><div class="flaps" data-col="name" data-n="16"></div></div>
-          <div><span class="lab">Type</span><div class="flaps" data-col="type" data-n="10"></div></div>
-          <div><span class="lab">Status</span><div class="flaps status" data-col="status" data-n="13"></div></div>
-        </div>
-        <div class="result" data-result><span class="sw" style="--c:#444"></span><div><span class="k">Can’t choose?</span><p>Press Spin. The board lands on one of six projects, and its details appear here. All six are also listed under Work.</p></div></div>
-        <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
       </section>
     </div>
 
     <section class="sec wrap" id="work" data-sec="work" aria-labelledby="work-title">
-      <header class="sechead"><h2 class="cn" id="work-title">Work</h2><p>Six projects, with my part in each</p></header>
-      <div class="work-grid">
-        <figure class="preview" aria-hidden="true"><div class="pv-frame" data-pv>{preview_imgs()}</div><figcaption><i class="sw" data-pv-sw></i><span data-pv-cap></span><span class="pv-n" data-pv-n></span></figcaption></figure>
-        <ol class="rows" data-rows>
-          {''.join(work_row(p) for p in PROJECTS)}
-        </ol>
-      </div>
+      {sechead('work-title', 'Projects')}
+      <ul class="pgrid pfeat">{''.join(project_card(pid, True) for pid in FEATURED_CARDS)}</ul>
+      <ul class="pgrid pmore">{''.join(project_card(pid, False) for pid in MORE_CARDS)}</ul>
     </section>
 
-    <section class="sec wrap" id="press" data-sec="press" aria-labelledby="press-title">
-      <div class="press">
-        <div class="text arrive">
-          <p class="eyebrow">Press · Tamil Murasu</p>
-          <h2 class="cn" id="press-title">Our work made the news.</h2>
-          <p>Tamil Murasu featured MEANT alongside student projects using artificial intelligence for social impact.</p>
-          <p class="meta">28 September 2026 · Page 8 · By Christo Leon</p>
-          <div class="acts"><a class="btn solid" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt">Open the full page</a><a class="btn" href="{PRESS_ARTICLE}" hreflang="ta" target="_blank" rel="noopener noreferrer" data-event="press_article_click" data-project="mt">Read in Tamil ↗</a></div>
-        </div>
-        <figure class="arrive">
-          <a class="paper-link" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt" data-loupe aria-label="View the Tamil Murasu page full size">
-            <span class="loupe" aria-hidden="true"></span>
-            <div class="ph"><img src="assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp" srcset="assets/media/press/tamil-murasu-2026-09-28-p8-720.webp 720w, assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp 1200w" sizes="(max-width: 860px) 100vw, 56vw" width="1776" height="1416" loading="lazy" decoding="async" alt="{e(PRESS_ALT)}"></div>
-          </a>
-          <figcaption>Tamil Murasu, 28 September 2026, page 8. Page and photographs © SPH Media. <span class="hint-fine">Move over the page to magnify it; click to open it full size.</span><span class="hint-touch">Tap the page to open it full size, then pinch to zoom.</span></figcaption>
-        </figure>
+    <section class="sec wrap" id="awards" data-sec="awards" aria-labelledby="awards-title">
+      <span id="results"></span><span id="wins"></span><span id="recognition"></span>
+      {sechead('awards-title', 'Awards')}
+      <div class="score" data-track aria-label="Awards">
+        {''.join(award(*a) for a in AWARDS)}
       </div>
+      <div class="track-nav" data-track-nav><button class="gal-arrow" type="button" data-slide="-1" aria-label="Previous award">←</button>
+        <span class="track-dots" aria-hidden="true">{'<i></i>' * len(AWARDS)}</span><span class="gal-count" data-slide-now aria-live="polite">1 / {len(AWARDS)}</span>
+        <button class="gal-arrow" type="button" data-slide="1" aria-label="Next award">→</button></div>
     </section>
 
     <section class="sec wrap" id="about" data-sec="about" aria-labelledby="about-title">
-      <header class="sechead"><h2 class="cn" id="about-title">About</h2><p>Who I am, where I study, what I use</p></header>
+      {sechead('about-title', 'About')}
       <div class="about">
         {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait arrive')}
         <div class="text arrive">
-          <p class="lead">I care about the last mile: whether someone can actually use the result, whether it survives failure, and whether I can explain the decisions clearly.</p>
+          <p class="lead">I care about the last mile: whether someone can actually use the result, <em>whether it survives failure</em>, and whether I can explain the decisions clearly.</p>
           {about_personal}
-          <p class="where"><i aria-hidden="true"></i>Singapore · Year 2 Information Technology, Singapore Polytechnic</p>
         </div>
       </div>
       <div class="about-cards" id="credentials">
@@ -764,7 +841,6 @@ def build_home():
           <h3 class="eyebrow">Study</h3>
           <b>Diploma in Information Technology</b>
           <span class="sub">Singapore Polytechnic · Apr 2025 – May 2028 (expected)</span>
-          <p>Represented SP at the Dell InnovateFest national final in 2026.</p>
         </article>
         <article class="acard arrive">
           <h3 class="eyebrow">Leadership</h3>
@@ -773,28 +849,17 @@ def build_home():
             <li><b>Class Chairman and SP ACER</b><span class="sub">Singapore Polytechnic</span><p>Class communication and student outreach, including Open House 2026 and First Steps with SP.</p></li>
           </ul>
         </article>
-        <article class="acard acard-wide arrive">
-          <h3 class="eyebrow">Tools, and where I used them</h3>
-          <dl class="tools">
-            <div><dt>Web</dt><dd><span class="chips"><span>JavaScript</span><span>HTML</span><span>CSS</span><span>Node.js</span></span><span class="sub">Better Call Bhai, Boss Breaker</span></dd></div>
-            <div><dt>Backend and data</dt><dd><span class="chips"><span>Python</span><span>FastAPI</span><span>SQL</span><span>PostgreSQL</span><span>Java</span></span><span class="sub">SignalBridge (FastAPI, PostgreSQL), Boss Breaker (MySQL)</span></dd></div>
-            <div><dt>Practice</dt><dd><span class="chips"><span>Git</span><span>Automated testing</span><span>Deployment</span></span><span class="sub">SignalBridge’s tests, Better Call Bhai on Render</span></dd></div>
-          </dl>
-        </article>
       </div>
     </section>
 
     <section class="talk" id="contact" data-sec="contact" aria-labelledby="contact-title">
       <div class="wrap talk-in">
-        <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
-        <h2 class="cn arrive" id="contact-title">Let’s talk.</h2>
+        <h2 class="cn" id="contact-title"><span class="sr-only">Let’s talk.</span><span aria-hidden="true" data-scramble>Let’s talk.</span></h2>
         <div class="mail-row">
           <a class="mail-big" href="{e(MAILTO)}" data-mail data-event="contact_open_mail_app">{EMAIL}</a>
           <button class="btn solid" type="button" data-copy="{EMAIL}">Copy email address</button>
         </div>
         <div class="acts">
-          <a class="btn" href="{e(GMAIL)}" target="_blank" rel="noopener noreferrer" data-event="contact_open_gmail">Write in Gmail ↗</a>
-          <a class="btn" href="{e(MAILTO)}" data-event="contact_open_mail_app">Open my mail app</a>
           <a class="btn" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">Message me on LinkedIn ↗</a>
           <a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
         </div>
@@ -823,12 +888,16 @@ def build_case(p):
         return f'<a class="btn{" solid" if k == 0 else ""}" href="{e(href)}"{ext(href)}{evattr}>{e(label)}</a>'
     actions = ''.join(action(k, a) for k, a in enumerate(p['actions']))
     facts = ''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in p['facts'])
-    if p['lead']:
+    if p['id'] in FEAT_BY_ID:
+        lead = hotspots(FEAT_BY_ID[p['id']])
+    elif p['lead']:
         key, cap = p['lead']
         lead = (f'<figure class="lead-fig">{zoom(key, "(max-width: 860px) 100vw, 1300px", cap, eager=True)}'
                 f'<figcaption class="cap">{e(cap or MEDIA[key].get("caption") or "")}</figcaption></figure>')
     else:
         lead = ''
+    # back to the project's row in the list (Loomy is not on the homepage, so back to the list)
+    back = f"index.html#work-{p['id']}" if p in HOME_PROJECTS else 'index.html#work'
     ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['name'],
           'description': p['og'], 'url': f"{SITE}/{p['slug']}.html",
           'author': {'@type': 'Person', 'name': 'Mruthulan Senthil Nathan', 'url': f'{SITE}/'}}
@@ -841,7 +910,7 @@ def build_case(p):
   <main id="main">
     <div class="wrap">
       <header class="case-top">
-        <p class="crumb"><a class="link" href="index.html#work-{p['id']}">← All work</a><span>{i + 1:02d} of {len(PROJECTS):02d}</span><span>{e(p['event'])}</span></p>
+        <p class="crumb"><a class="link" href="{back}">← All work</a><span>{i + 1:02d} of {len(PROJECTS):02d}</span><span>{e(p['event'])}</span></p>
         <h1 class="case-title cn" style="view-transition-name:t-{p['id']};--len:{max(len(w) for w in p['name'].split())}">{e(p['name'])}</h1>
         <p class="case-hl">{e(p['hl'])}</p>
         <p class="case-st">{e(p['st'])}</p>
@@ -850,11 +919,11 @@ def build_case(p):
         {lead}
       </header>
 
-      {''.join(p['sections']())}
+      {''.join(p['sections']())}{press_section() if p['id'] == 'mt' else ''}
 
       <nav class="case-nav" aria-label="More projects">
         <a href="{prev['slug']}.html" rel="prev" data-event="case_open" data-project="{prev['id']}"><small>← Previous</small><span class="cn">{e(prev['name'])}</span></a>
-        <a class="all link" href="index.html#work-{p['id']}">All work</a>
+        <a class="all link" href="{back}">All work</a>
         <a class="next" href="{nxt['slug']}.html" rel="next" data-event="case_open" data-project="{nxt['id']}"><small>Next →</small><span class="cn">{e(nxt['name'])}</span></a>
       </nav>
     </div>
@@ -865,6 +934,22 @@ def build_case(p):
 </body>
 </html>
 """
+
+
+def press_section():
+    """Tamil Murasu's page about MEANT, on a newsprint panel."""
+    return sec('In the press', 'Tamil Murasu featured MEANT.', f'''<div class="press press-case">
+          <div class="text">
+            <p>Tamil Murasu featured MEANT alongside student projects using artificial intelligence for social impact.</p>
+            <div class="acts"><a class="btn" href="{PRESS_ARTICLE}" hreflang="ta" target="_blank" rel="noopener noreferrer" data-event="press_article_click" data-project="mt">Read in Tamil ↗</a></div>
+          </div>
+          <figure>
+            <a class="paper-link" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt" aria-label="View the Tamil Murasu page full size">
+              <div class="ph"><img src="assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp" srcset="assets/media/press/tamil-murasu-2026-09-28-p8-720.webp 720w, assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp 1200w" sizes="(max-width: 860px) 100vw, 60vw" width="1776" height="1416" loading="lazy" decoding="async" alt="{e(PRESS_ALT)}"></div>
+            </a>
+            <figcaption>Tamil Murasu, 28 September 2026, page 8. © SPH Media. <span class="hint-fine">Click</span><span class="hint-touch">Tap</span> the page to open it full size.</figcaption>
+          </figure>
+        </div>''', sid='press')
 
 
 # ------------------------------------------------------------------ small pages
