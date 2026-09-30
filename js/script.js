@@ -183,53 +183,29 @@
   }
 
   /* ---------------------------------------------------------- result galleries */
-  // Arrows on the photo, arrow keys, or a swipe on touch; a tap still opens the viewer.
-  // While a gallery is on screen its photos move on by themselves: a thin timer runs
-  // along the bottom and the next photo shows when it ends. Hovering or focusing
-  // pauses it, the pause button stops it, and using the arrows or a swipe stops it
-  // for good. With reduced motion nothing moves by itself.
-  $$('[data-gal]').forEach((gal, gi) => {
-    const main = $('.gal-main', gal), shots = $$('.shot', gal), dots = $$('.dots i', gal);
+  // Photos stay still. Previous / Next under the photo, the arrow keys, or a swipe on
+  // touch move between them; a tap still opens the full-size viewer.
+  $$('[data-gal]').forEach((gal) => {
+    const main = $('.gal-main', gal), shots = $$('.shot', gal);
     const cap = $('[data-gal-cap]', gal), now = $('[data-gal-now]', gal), live = $('[data-gal-live]', gal);
-    const pause = $('[data-gal-pause]', gal), timer = $('[data-gal-timer]', gal);
     if (shots.length < 2) return;
     let i = 0;
-    const show = (n, byHand) => {
+    const show = (n) => {
       const hadFocus = shots.includes(document.activeElement);
       i = (n + shots.length) % shots.length;
       shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
-      dots.forEach((d, k) => d.toggleAttribute('data-on', k === i));
       cap.textContent = shots[i].dataset.zoom;
       now.textContent = i + 1;
-      if (byHand) live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
+      live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
       if (hadFocus) shots[i].focus();
     };
-    const restart = () => { gal.classList.remove('auto'); void timer.offsetWidth; gal.classList.add('auto'); };
-    const stop = () => {
-      gal.classList.remove('auto');
-      pause.setAttribute('aria-pressed', 'true');
-      pause.setAttribute('aria-label', 'Play the photos');
-    };
-    const play = () => {
-      pause.setAttribute('aria-pressed', 'false');
-      pause.setAttribute('aria-label', 'Pause the photos');
-      restart();
-    };
-    const byHand = (n) => { stop(); show(n, true); };
     new IntersectionObserver(([en], o) => {
       if (en.isIntersecting) { o.disconnect(); shots.forEach((sh) => warm($('img', sh))); }
     }, { rootMargin: '400px' }).observe(main);
-    if (!still()) {
-      gal.style.setProperty('--gal-delay', `${gi * 1.8}s`); // the three galleries take turns
-      gal.classList.add('auto');
-      timer.addEventListener('animationend', () => { gal.style.setProperty('--gal-delay', '0s'); show(i + 1); restart(); });
-      new IntersectionObserver(([en]) => gal.classList.toggle('running', en.isIntersecting), { threshold: 0.6 }).observe(main);
-    }
-    pause.addEventListener('click', () => (pause.getAttribute('aria-pressed') === 'true' ? play() : stop()));
-    $$('[data-gal-step]', gal).forEach((b) => b.addEventListener('click', () => byHand(i + +b.dataset.galStep)));
+    $$('[data-gal-step]', gal).forEach((b) => b.addEventListener('click', () => show(i + +b.dataset.galStep)));
     gal.addEventListener('keydown', (e) => {
       if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      byHand(i + (e.key === 'ArrowLeft' ? -1 : 1));
+      show(i + (e.key === 'ArrowLeft' ? -1 : 1));
       e.preventDefault();
     });
     let x0 = null, y0 = 0, swiped = false;
@@ -237,7 +213,7 @@
     main.addEventListener('pointerup', (e) => {
       if (x0 === null) return;
       const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
-      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { byHand(dx < 0 ? i + 1 : i - 1); swiped = true; setTimeout(() => { swiped = false; }, 60); }
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { show(dx < 0 ? i + 1 : i - 1); swiped = true; setTimeout(() => { swiped = false; }, 60); }
     });
     main.addEventListener('pointercancel', () => { x0 = null; });
     main.addEventListener('click', (e) => { if (swiped) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
