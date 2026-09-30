@@ -88,6 +88,23 @@ def pic(key, sizes, eager=False, alt=None, cls='ph', fit_style=''):
             f'alt="{a}" decoding="async"{load}{style}></div>')
 
 
+def cover(p, sizes='(max-width: 860px) 100vw, 50vw'):
+    """A project cover: the real screenshot or photo, composed on the project's
+    colour so the six read as one set."""
+    kind, what = p['cover']
+    if kind == 'deck':
+        slides = ''.join(
+            f'<img class="slide s{i}" src="assets/deck/{src}" width="1655" height="931" alt="" loading="lazy" decoding="async">'
+            for i, src in enumerate(what))
+        return f'<div class="cover cover-deck" data-id="{p["id"]}" style="--c:{p["c"]}">{slides}</div>'
+    m = MEDIA[what]
+    src = f"assets/media/{m['src']}"
+    small = ROOT / 'assets' / 'media' / (Path(m['src']).stem + '-800.webp')
+    srcset = f' srcset="assets/media/{small.name} 800w, {src} {m["width"]}w" sizes="{sizes}"' if small.exists() else ''
+    return (f'<div class="cover cover-{kind}" data-id="{p["id"]}" style="--c:{p["c"]}">'
+            f'<img src="{src}"{srcset} width="{m["width"]}" height="{m["height"]}" alt="" loading="lazy" decoding="async"></div>')
+
+
 def zoom(key, sizes, caption=None, eager=False, cls='ph', project=None):
     """A picture that opens full size in the viewer (or as the file, without script)."""
     m = MEDIA[key]
@@ -201,7 +218,7 @@ PROJECTS = [
         result='SP InnovateDash 2026 — Champion',
         event='SP InnovateDash 2026 · Champion',
         proof=('View my SP InnovateDash post ↗', POST_SP, 'proof_post_click'),
-        preview='signalbridge-shot-1',
+        preview='signalbridge-shot-1', cover=('inset', 'signalbridge-shot-1'),
         desc=('SignalBridge case study: a consent-led youth support platform that won SP InnovateDash '
               '2026. The handoff, the decisions and my role on the build.'),
         og='A consent-led youth support platform. SP InnovateDash 2026 Champion.',
@@ -247,7 +264,7 @@ PROJECTS = [
         result='Dell InnovateFest 2026 — Second runner-up · S$3,000',
         event='Dell InnovateFest 2026 · Second runner-up',
         proof=('View my Dell InnovateFest post ↗', POST_DELL, 'proof_post_click'),
-        preview='meant-shot-1',
+        preview='meant-shot-1', cover=('inset', 'meant-shot-1'),
         desc=('MEANT case study: an on-device communication assistant for AAC users. Dell InnovateFest '
               '2026 second runner-up, S$3,000.'),
         og='An on-device communication assistant that keeps AAC users in control of what they say.',
@@ -291,7 +308,7 @@ PROJECTS = [
         result='Deployed pilot',
         event='Client build · Deployed pilot',
         proof=('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None),
-        preview='better-call-bhai-shot-1',
+        preview='better-call-bhai-shot-1', cover=('full', 'better-call-bhai-shot-1'),
         desc=('Better Call Bhai case study: an appointment booking site for a local barbershop, deployed '
               'on Render and in a pilot with the shop.'),
         og='An appointment booking site for a local barbershop, in a pilot with the shop.',
@@ -329,7 +346,7 @@ PROJECTS = [
         result='Autodesk Singapore Hackathon 2026 — Champion',
         event='Autodesk Singapore Hackathon 2026 · Champion',
         proof=('View my Autodesk hackathon post ↗', POST_AUTODESK, 'proof_post_click'),
-        preview='win-knowcad-champion',
+        preview='win-knowcad-champion', cover=('full', 'win-knowcad-champion'),
         desc=('KnowCad case study: a retrieval-based AI assistant for customer service that won the '
               'Autodesk Singapore Hackathon 2026.'),
         og='A retrieval-based AI assistant for customer service. Autodesk Singapore Hackathon 2026 Champion.',
@@ -366,7 +383,7 @@ PROJECTS = [
         result='Full-stack coursework build',
         event='BED CA2 coursework',
         proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
-        preview='boss-breaker-shot-2',
+        preview='boss-breaker-shot-2', cover=('inset', 'boss-breaker-shot-2'),
         desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
               'Built with JavaScript, Node.js and MySQL.'),
         og='A full-stack wellness game with challenges, points and boss raids.',
@@ -396,20 +413,19 @@ PROJECTS = [
         board=('CONCEPT', 'PITCH DECK'),
         line='A social thrifting app concept to cut clothing waste.',
         role='Prototype designer',
-        result='Prototype and pitch deck',
+        result='Research and a pitch deck',
         event='Product concept',
         proof=('Read the pitch deck →', 'loomy.html#deck', None),
-        preview=None,
-        desc='Loomy case study: a social thrifting product concept, researched by a team of six and pitched with a prototype and deck.',
-        og='A social thrifting concept, researched by a team of six and pitched with a prototype and deck.',
+        preview=None, cover=('deck', ['loomy-01.jpg', 'loomy-05.jpg', 'loomy-03.jpg']),
+        desc='Loomy case study: a social thrifting product concept, researched by a team of six and pitched with a deck.',
+        og='A social thrifting concept, researched by a team of six and pitched with a deck.',
         hl='Thrifting, with a community attached.',
         st=('Second-hand fashion is social, but most thrifting apps treat it as a transaction. Loomy is a '
             'social thrifting app concept to reduce clothing waste. Our team of six researched it, then '
-            'turned it into a prototype and a pitch deck.'),
-        actions=[('Open the prototype ↗', 'https://loomy-copy-eb9f937f.base44.app/Community', None),
-                 ('Read the pitch deck ↓', '#deck', None)],
+            'turned the findings into a pitch deck.'),
+        actions=[('Read the pitch deck ↓', '#deck', None)],
         facts=[('My role', 'Prototype designer'),
-               ('Result', 'Prototype and pitch deck'),
+               ('Result', 'Research and a pitch deck'),
                ('Team', 'Six members'),
                ('Status', 'Product concept, not shipped')],
         lead=None,
@@ -425,9 +441,9 @@ PROJECTS = [
                   'is a concept, and none of those numbers have happened.</p>',
                 sid=None),
         ],
-        my_role=('I was the team’s prototype designer and built the prototype we pitched. The 30+ '
-                 'interviews behind the concept were the team’s research.'),
-        outcome='A prototype and a pitch deck, grounded in more than 30 interviews.',
+        my_role=('The deck credits me as the team’s prototype designer. The 30+ interviews behind the '
+                 'concept were the team’s research.'),
+        outcome='A pitch deck grounded in more than 30 interviews.',
     ),
 ]
 BY_ID = {p['id']: p for p in PROJECTS}
@@ -511,7 +527,7 @@ def footer(home='', prefix=''):
 VIEWER = """<dialog class="viewer" data-viewer aria-labelledby="vw-title">
     <div class="vw-bar">
       <div class="vw-title"><span id="vw-title" data-vw-title>Full size</span><small class="vw-hint">Scroll or pinch to zoom · drag to move · double-click to zoom in</small></div>
-      <div class="vw-ctl"><button type="button" data-z="out" aria-label="Zoom out">−</button><output data-zl>100%</output><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="reset">Reset</button><a href="#" data-vw-original target="_blank" rel="noopener noreferrer">Original ↗</a><button type="button" class="close" data-close>Close</button></div>
+      <div class="vw-ctl"><button type="button" data-vw-prev aria-label="Previous photo" hidden>←</button><output data-vw-count hidden></output><button type="button" data-vw-next aria-label="Next photo" hidden>→</button><button type="button" data-z="out" aria-label="Zoom out">−</button><output data-zl>100%</output><button type="button" data-z="in" aria-label="Zoom in">+</button><button type="button" data-z="reset">Reset</button><a href="#" data-vw-original target="_blank" rel="noopener noreferrer">Original ↗</a><button type="button" class="close" data-close>Close</button></div>
     </div>
     <div class="vw-stage" data-stage><img alt="" draggable="false"></div>
   </dialog>"""
@@ -538,13 +554,31 @@ def tiles(text):
     return ''.join(words)
 
 
-def win(pid, anchor, place, event, project, photo, links):
+def gallery(group, photos, sizes):
+    """Every photo of one result: one shown, thumbnails to switch, tap to enlarge."""
+    shots = ''.join(
+        f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" '
+        f'data-alt="{e(MEDIA[k]["alt"])}" data-group="{group}"{" data-on" if i == 0 else ""} '
+        f'aria-label="View full size: {e(MEDIA[k]["caption"])}">{pic(k, sizes, cls="ph")}</a>'
+        for i, k in enumerate(photos))
+    thumbs = ''
+    if len(photos) > 1:
+        thumbs = '<div class="thumbs">' + ''.join(
+            f'<button type="button" data-thumb="{i}" aria-pressed="{str(i == 0).lower()}" '
+            f'aria-label="Show photo {i + 1} of {len(photos)}: {e(MEDIA[k]["caption"])}">'
+            f'<img src="assets/media/{MEDIA[k]["src"]}" alt="" loading="lazy" decoding="async"></button>'
+            for i, k in enumerate(photos)) + '</div>'
+    cap = e(MEDIA[photos[0]]['caption'])
+    return (f'<div class="gal" data-gal><div class="gal-main">{shots}</div>'
+            f'<p class="gal-cap" data-gal-cap>{cap}</p>{thumbs}</div>')
+
+
+def win(pid, anchor, place, event, project, photos, links):
     p = BY_ID[pid]
-    m = MEDIA[photo]
     ls = ''.join(f'<a class="link{" muted" if i else ""}" href="{href}"{ext(href)}{ev}>{e(label)}</a>'
                  for i, (label, href, ev) in enumerate(links))
     return f"""<article class="win arrive" id="{anchor}">
-            <a class="shot" href="assets/media/{m['src']}" data-zoom="{e(m['caption'])}" data-alt="{e(m['alt'])}" aria-label="View full size: {e(m['caption'])}">{pic(photo, '(max-width: 860px) 112px, 30vw', cls='ph par')}</a>
+            {gallery(anchor, photos, '(max-width: 860px) 100vw, 30vw')}
             <h3 class="cn">{e(place)}</h3>
             <p class="ev">{e(event)}</p>
             <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}">{e(project)}</a></p>
@@ -553,10 +587,7 @@ def win(pid, anchor, place, event, project, photo, links):
 
 
 def work_row(p):
-    img = pic(p['preview'], '(max-width: 860px) 100vw, 1px', cls='ph row-img') if p['preview'] else ''
-    if not p['preview']:
-        img = (f'<div class="ph row-img"><img src="assets/deck/loomy-01.jpg" width="1655" height="931" '
-               f'alt="" loading="lazy" decoding="async" style="object-fit:contain;background:#fff"></div>')
+    img = f'<div class="row-img" aria-hidden="true">{cover(p, "(max-width: 860px) 100vw, 1px")}</div>'
     label, href, ev = p['proof']
     evattr = f' data-event="{ev}" data-project="{p["id"]}"' if ev else ''
     return f"""<li class="row arrive" id="work-{p['id']}" data-id="{p['id']}" data-caption="{e(p['name'])} · {e(p['type'])}" style="--c:{p['c']}">
@@ -565,19 +596,12 @@ def work_row(p):
             <h3 class="cn" style="view-transition-name:t-{p['id']}">{e(p['name'])}</h3>
             <p class="ln">{e(p['line'])}</p>
             <dl><dt>My role</dt><dd>{e(p['role'])}</dd><dt>Result</dt><dd>{e(p['result'])}</dd></dl>
-            <div class="links"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{p['id']}">Read the case study <span class="ar">→</span></a><a class="link muted" href="{href}"{ext(href)}{evattr}>{e(label)}</a></div>
+            <div class="links"><a class="link row-link" href="{p['slug']}.html" data-event="case_open" data-project="{p['id']}">Read the case study <span class="ar">→</span></a><a class="link muted" href="{href}"{ext(href)}{evattr}>{e(label)}</a></div>
           </li>"""
 
 
 def preview_imgs():
-    out = []
-    for p in PROJECTS:
-        if p['preview']:
-            m = MEDIA[p['preview']]
-            out.append(f'<img src="assets/media/{m["src"]}" data-id="{p["id"]}" alt="" loading="lazy" decoding="async">')
-        else:
-            out.append(f'<img src="assets/deck/loomy-01.jpg" data-id="{p["id"]}" alt="" loading="lazy" decoding="async" style="object-fit:contain;background:#fff">')
-    return ''.join(out)
+    return ''.join(cover(p, '(max-width: 860px) 1px, 50vw') for p in PROJECTS)
 
 
 def board_data():
@@ -609,7 +633,8 @@ def build_home():
     <div class="wrap">
       <section class="hero" aria-labelledby="name">
         <p class="eyebrow"><span class="long">Singapore · Year 2 Information Technology, Singapore Polytechnic</span><span class="short">Singapore · Year 2 IT, Singapore Polytechnic</span></p>
-        <h1 class="tiles" id="name" aria-label="Senthil Nathan Mruthulan">{tiles('SENTHIL NATHAN MRUTHULAN')}</h1>
+        <h1 class="sr-only" id="name">Senthil Nathan Mruthulan</h1>
+        <button class="tiles" type="button" data-name-flip aria-pressed="false" aria-label="Flip my name to Mruthulan Senthil Nathan">{tiles('SENTHIL NATHAN MRUTHULAN')}</button>
         <div class="hero-row">
           <div>
             <p class="lede">I build full-stack products and prototypes, and I can show you exactly which parts were mine.</p>
@@ -624,13 +649,13 @@ def build_home():
         <span id="wins"></span><span id="recognition"></span>
         <h2 class="eyebrow" id="results-title">Results · three hackathons, three projects</h2>
         <div class="score">
-          {win('sb', 'win-sp', 'Champion', 'SP InnovateDash 2026', 'SignalBridge', 'win-signalbridge-team',
+          {win('sb', 'win-sp', 'Champion', 'SP InnovateDash 2026', 'SignalBridge', ['win-signalbridge-team', 'win-signalbridge-award'],
                [('View my SP InnovateDash post ↗', POST_SP, ' data-event="proof_post_click" data-project="sb"'),
                 ('Singapore Polytechnic’s feature ↗', SP_FEATURE, '')])}
-          {win('mt', 'win-dell', 'Second runner-up', 'Dell InnovateFest 2026 · S$3,000', 'MEANT · polytechnic category', 'win-meant-handover',
+          {win('mt', 'win-dell', 'Second runner-up', 'Dell InnovateFest 2026 · S$3,000', 'MEANT · polytechnic category', ['win-meant-handover', 'win-meant-stage', 'win-meant-team'],
                [('View my Dell InnovateFest post ↗', POST_DELL, ' data-event="proof_post_click" data-project="mt"'),
                 ('Featured in Tamil Murasu ↓', '#press', '')])}
-          {win('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', 'KnowCad', 'win-knowcad-team',
+          {win('kc', 'win-autodesk', 'Champion', 'Autodesk Singapore Hackathon 2026', 'KnowCad', ['win-knowcad-champion', 'win-knowcad-team'],
                [('View my Autodesk hackathon post ↗', POST_AUTODESK, ' data-event="proof_post_click" data-project="kc"')])}
         </div>
       </section>
@@ -667,10 +692,11 @@ def build_home():
           <div class="acts"><a class="btn solid" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt">Open the full page</a><a class="btn" href="{PRESS_ARTICLE}" hreflang="ta" target="_blank" rel="noopener noreferrer" data-event="press_article_click" data-project="mt">Read in Tamil ↗</a></div>
         </div>
         <figure class="arrive">
-          <a class="paper-link" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt" aria-label="View the Tamil Murasu page full size">
+          <a class="paper-link" href="{PRESS_FULL}" data-zoom="{PRESS_TITLE}" data-alt="{e(PRESS_ALT)}" data-view-event="press_viewer_open" data-project="mt" data-loupe aria-label="View the Tamil Murasu page full size">
+            <span class="loupe" aria-hidden="true"></span>
             <div class="ph"><img src="assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp" srcset="assets/media/press/tamil-murasu-2026-09-28-p8-720.webp 720w, assets/media/press/tamil-murasu-2026-09-28-p8-1200.webp 1200w" sizes="(max-width: 860px) 100vw, 56vw" width="1776" height="1416" loading="lazy" decoding="async" alt="{e(PRESS_ALT)}"></div>
           </a>
-          <figcaption>Tamil Murasu, 28 September 2026, page 8. Page and photographs © SPH Media.</figcaption>
+          <figcaption>Tamil Murasu, 28 September 2026, page 8. Page and photographs © SPH Media. <span class="hint-fine">Move over the page to magnify it; click to open it full size.</span><span class="hint-touch">Tap the page to open it full size, then pinch to zoom.</span></figcaption>
         </figure>
       </div>
     </section>
