@@ -11,6 +11,44 @@
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
+  /* ---------------------------------------------------------- smooth-motion helpers */
+  // One flap turn, handed to the compositor (no class toggling, no forced layout).
+  const FLIP = [{ transform: 'rotateX(75deg)', filter: 'brightness(1.8)' }, { transform: 'none', filter: 'none' }];
+  const flap = (el, ms) => { if (!still() && el.animate) el.animate(FLIP, { duration: ms, easing: 'ease-out' }); };
+  // Every flickering letter (the name, the board, a hovered flap) is advanced by one
+  // loop tied to the screen's refresh, so a whole board costs one update per frame.
+  const jobs = new Set();
+  let loop = 0;
+  const pump = () => {
+    const now = performance.now();
+    for (const j of jobs) {
+      if (now < j.start) continue;
+      if (now >= j.stop) {
+        j.el.textContent = j.final === ' ' ? '' : j.final;
+        if (j.flip) flap(j.el, j.flip);
+        jobs.delete(j);
+        if (j.done) j.done();
+      } else if (now >= j.next) {
+        j.el.textContent = j.chars[Math.random() * j.chars.length | 0];
+        if (j.flip && (j.each || j.next === j.start)) flap(j.el, j.flip);
+        j.next = now + j.step;
+      }
+    }
+    loop = jobs.size ? requestAnimationFrame(pump) : 0;
+  };
+  const flicker = (el, final, o) => {
+    const start = performance.now() + (o.delay || 0);
+    jobs.add({ el, final, start, next: start, stop: start + o.dur, step: o.step, flip: o.flip, each: o.each, chars: o.chars, done: o.done });
+    if (!loop) loop = requestAnimationFrame(pump);
+  };
+  // Decode a picture before it is shown, so a crossfade never waits on a large image.
+  const warm = (img) => {
+    if (!img || !img.decode) return;
+    img.loading = 'eager';
+    const go = () => img.decode().catch(() => {});
+    if (img.complete) go(); else img.addEventListener('load', go, { once: true });
+  };
+
   /* ---------------------------------------------------------- analytics */
   // analytics.js defines window.gtag only after the visitor opts in.
   function track(name, params) {
@@ -178,6 +216,9 @@
       restart();
     };
     const byHand = (n) => { stop(); show(n, true); };
+    new IntersectionObserver(([en], o) => {
+      if (en.isIntersecting) { o.disconnect(); shots.forEach((sh) => warm($('img', sh))); }
+    }, { rootMargin: '400px' }).observe(main);
     if (!still()) {
       gal.style.setProperty('--gal-delay', `${gi * 1.8}s`); // the three galleries take turns
       gal.classList.add('auto');
@@ -224,28 +265,35 @@
   // Pictures lean toward the mouse with a soft light; on touch they tilt toward the finger while pressed.
   const tilt = (el, zone = el) => {
     el.setAttribute('data-tilt', '');
-    let raf = 0;
+    // The lean and the light are written straight onto the frame and one small
+    // glare element; custom properties would be inherited, making the browser
+    // restyle everything inside the frame on every move.
+    const glare = document.createElement('span');
+    glare.className = 'glare';
+    glare.setAttribute('aria-hidden', 'true');
+    el.appendChild(glare);
+    let raf = 0, box = null, sx = 0, sy = 0;
     const set = (x, y, amp) => {
-      const r = el.getBoundingClientRect();
-      if (!r.width) return false;
-      const px = Math.min(1, Math.max(0, (x - r.left) / r.width)), py = Math.min(1, Math.max(0, (y - r.top) / r.height));
-      const m = Math.min(amp, 2600 / r.width); // big pictures lean less
-      el.style.setProperty('--ry', `${((px - 0.5) * 2 * m).toFixed(2)}deg`);
-      el.style.setProperty('--rx', `${((0.5 - py) * 2 * m).toFixed(2)}deg`);
-      el.style.setProperty('--gx', `${(px * 100).toFixed(1)}%`);
-      el.style.setProperty('--gy', `${(py * 100).toFixed(1)}%`);
+      if (!box) { box = el.getBoundingClientRect(); sx = scrollX; sy = scrollY; }
+      if (!box.width) return false;
+      const left = box.left - (scrollX - sx), top = box.top - (scrollY - sy);
+      const px = Math.min(1, Math.max(0, (x - left) / box.width)), py = Math.min(1, Math.max(0, (y - top) / box.height));
+      const m = Math.min(amp, 2600 / box.width); // big pictures lean less
+      el.style.transform = `perspective(1000px) rotateX(${((0.5 - py) * 2 * m).toFixed(2)}deg) rotateY(${((px - 0.5) * 2 * m).toFixed(2)}deg)`;
+      glare.style.transform = `translate(${(px * 100).toFixed(1)}%, ${(py * 100).toFixed(1)}%)`;
       return true;
     };
     const clear = () => {
       cancelAnimationFrame(raf);
+      box = null;
       el.classList.remove('tilting', 'pressing');
-      el.style.setProperty('--rx', '0deg');
-      el.style.setProperty('--ry', '0deg');
+      el.style.transform = '';
     };
     zone.addEventListener('pointermove', (e) => {
       if (still() || e.pointerType !== 'mouse') return;
+      const x = e.clientX, y = e.clientY;
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => { if (set(e.clientX, e.clientY, 7)) el.classList.add('tilting'); });
+      raf = requestAnimationFrame(() => { if (set(x, y, 7)) el.classList.add('tilting'); });
     });
     zone.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') clear(); });
     zone.addEventListener('pointerdown', (e) => {
@@ -266,15 +314,16 @@
       b.style.setProperty('--mx', `${(e.clientX - r.left).toFixed(0)}px`);
       b.style.setProperty('--my', `${(e.clientY - r.top).toFixed(0)}px`);
     };
-    let home = null;
+    let home = null, raf = 0;
     b.addEventListener('pointerenter', (e) => { at(e); home = b.getBoundingClientRect(); });
     b.addEventListener('pointerdown', at);
     b.addEventListener('pointermove', (e) => {
       if (still() || e.pointerType !== 'mouse' || !home) return;
       const dx = e.clientX - (home.left + home.width / 2), dy = e.clientY - (home.top + home.height / 2);
-      b.style.translate = `${(dx * 0.16).toFixed(1)}px ${(dy * 0.3).toFixed(1)}px`;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => { b.style.translate = `${(dx * 0.16).toFixed(1)}px ${(dy * 0.3).toFixed(1)}px`; });
     });
-    b.addEventListener('pointerleave', (e) => { at(e); home = null; b.style.translate = ''; });
+    b.addEventListener('pointerleave', (e) => { cancelAnimationFrame(raf); at(e); home = null; b.style.translate = ''; });
   });
 
   /* ---------------------------------------------------------- newspaper magnifier */
@@ -283,23 +332,32 @@
     const lens = $('.loupe', paper), pic = $('img', paper), Z = 2.6;
     // fetch the sharp page before the pointer arrives; until then the lens uses the copy on screen
     new IntersectionObserver(([en], o) => { if (en.isIntersecting) { new Image().src = paper.href; o.disconnect(); } }, { rootMargin: '600px' }).observe(paper);
-    const on = (e) => {
-      if (e.pointerType === 'touch') return;
-      lens.style.backgroundImage = `url("${paper.href}"), url("${pic.currentSrc || pic.src}")`;
+    let raf = 0, lw = 0, size = '';
+    const draw = (cx, cy) => {
+      // read first, then write, so the browser never has to lay out mid-frame
       const r = pic.getBoundingClientRect(), pr = paper.getBoundingClientRect();
-      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const x = cx - r.left, y = cy - r.top;
       if (x < 0 || y < 0 || x > r.width || y > r.height) { paper.classList.remove('looking'); return; }
-      const lw = lens.offsetWidth;
-      lens.style.left = `${e.clientX - pr.left}px`;
-      lens.style.top = `${e.clientY - pr.top}px`;
-      const size = `${r.width * Z}px ${r.height * Z}px`, pos = `${-(x * Z - lw / 2)}px ${-(y * Z - lw / 2)}px`;
-      lens.style.backgroundSize = `${size}, ${size}`;
+      if (!lw) {
+        lw = lens.offsetWidth;
+        lens.style.backgroundImage = `url("${paper.href}"), url("${pic.currentSrc || pic.src}")`;
+      }
+      const sz = `${(r.width * Z).toFixed(1)}px ${(r.height * Z).toFixed(1)}px`;
+      if (sz !== size) { size = sz; lens.style.backgroundSize = `${sz}, ${sz}`; }
+      const pos = `${(-(x * Z - lw / 2)).toFixed(1)}px ${(-(y * Z - lw / 2)).toFixed(1)}px`;
       lens.style.backgroundPosition = `${pos}, ${pos}`;
+      lens.style.translate = `${(cx - pr.left).toFixed(1)}px ${(cy - pr.top).toFixed(1)}px`;
       paper.classList.add('looking');
     };
+    const on = (e) => {
+      if (e.pointerType === 'touch') return;
+      const cx = e.clientX, cy = e.clientY;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => draw(cx, cy));
+    };
     paper.addEventListener('pointermove', on);
-    paper.addEventListener('pointerenter', on);
-    paper.addEventListener('pointerleave', () => paper.classList.remove('looking'));
+    paper.addEventListener('pointerenter', (e) => { lw = 0; on(e); });
+    paper.addEventListener('pointerleave', () => { cancelAnimationFrame(raf); paper.classList.remove('looking'); });
   });
 
   /* ---------------------------------------------------------- contact */
@@ -357,12 +415,17 @@
   /* ---------------------------------------------------------- case pages */
   if (page === 'case') {
     const progress = $('[data-progress]');
-    const onScroll = () => {
-      const h = document.documentElement.scrollHeight - innerHeight;
-      progress.style.transform = `scaleX(${h > 0 ? Math.min(1, scrollY / h) : 0})`;
-    };
-    addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    // Where the browser can tie the bar to the scroll itself (styles.css), script stays out of it.
+    const native = !still() && window.CSS && CSS.supports('animation-timeline: scroll()');
+    if (!native) {
+      let raf = 0;
+      const onScroll = () => {
+        const h = document.documentElement.scrollHeight - innerHeight;
+        progress.style.transform = `scaleX(${h > 0 ? Math.min(1, scrollY / h) : 0})`;
+      };
+      addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(onScroll); }, { passive: true });
+      onScroll();
+    }
     // Embedded previews keep the outer scroll position; bring a freshly opened
     // case page to its top. Back and forward are left alone.
     try {
@@ -385,14 +448,7 @@
     const flick = (t, delay = 0) => {
       if (still() || t.dataset.busy) return;
       t.dataset.busy = '1';
-      setTimeout(() => {
-        t.classList.remove('f'); void t.offsetWidth; t.classList.add('f');
-        let n = 0;
-        const iv = setInterval(() => {
-          if (++n > 4) { clearInterval(iv); t.textContent = t.dataset.ch; delete t.dataset.busy; return; }
-          t.textContent = L[Math.random() * 26 | 0];
-        }, 45);
-      }, delay);
+      flicker(t, t.dataset.ch, { delay, dur: 200, step: 45, flip: 220, chars: L, done: () => { delete t.dataset.busy; } });
     };
     cells.forEach((t) => t.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') flick(t); }));
     nameEl.addEventListener('pointerdown', (e) => {
@@ -414,7 +470,7 @@
     $$('[data-nav]', bar).forEach((a) => {
       if (a.dataset.nav === id) { a.setAttribute('aria-current', 'true'); hit = a; } else a.removeAttribute('aria-current');
     });
-    if (hit && hit.offsetWidth) { ink.style.opacity = 1; ink.style.width = hit.offsetWidth + 'px'; ink.style.transform = `translateX(${hit.offsetLeft}px)`; }
+    if (hit && hit.offsetWidth) { ink.style.opacity = 1; ink.style.transform = `translateX(${hit.offsetLeft}px) scaleX(${hit.offsetWidth / 100})`; }
     else ink.style.opacity = 0;
   }
   const secObs = new IntersectionObserver((es) => es.forEach((e) => {
@@ -428,6 +484,9 @@
   const rows = $('[data-rows]');
   const pv = $('[data-pv]');
   const pvSw = $('[data-pv-sw]'), pvCap = $('[data-pv-cap]'), pvN = $('[data-pv-n]');
+  new IntersectionObserver(([en], o) => {
+    if (en.isIntersecting && getComputedStyle(pv).display !== 'none') { o.disconnect(); $$('img', pv).forEach(warm); }
+  }, { rootMargin: '600px' }).observe(rows);
   function showRow(row) {
     rows.classList.add('live');
     $$('.row', rows).forEach((r) => r.toggleAttribute('data-on', r === row));
@@ -455,41 +514,28 @@
   const cols = {};
   $$('[data-col]', board).forEach((f) => { f.innerHTML = '<span></span>'.repeat(+f.dataset.n); cols[f.dataset.col] = [...f.children]; });
   const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const put = (c, ch) => {
-    c.textContent = ch === ' ' ? '' : ch;
-    if (!still()) { c.classList.remove('f'); void c.offsetWidth; c.classList.add('f'); }
-  };
+  const put = (c, ch) => { c.textContent = ch === ' ' ? '' : ch; };
   let flipping = 0;
   function flipAll(words, done) {
-    const jobs = []; let k = 0;
+    const cells = []; let k = 0;
     for (const [col, word] of Object.entries(words)) {
-      const cells = cols[col];
-      const w = word.toUpperCase().padEnd(cells.length, ' ').slice(0, cells.length);
-      cells.forEach((c, i) => jobs.push([c, w[i], k++]));
+      const row = cols[col];
+      const w = word.toUpperCase().padEnd(row.length, ' ').slice(0, row.length);
+      row.forEach((c, i) => cells.push([c, w[i], k++]));
     }
-    if (still() || document.hidden) { jobs.forEach(([c, ch]) => put(c, ch)); if (done) done(); return; }
-    let n = 0; const t0 = performance.now();
+    if (still() || document.hidden) { cells.forEach(([c, ch]) => put(c, ch)); if (done) done(); return; }
+    let left = cells.length;
     flipping++;
-    jobs.forEach(([c, ch, idx]) => {
-      const stop = t0 + 260 + idx * 26;
-      const t = setInterval(() => {
-        if (performance.now() >= stop) {
-          clearInterval(t); put(c, ch);
-          if (++n === jobs.length) { flipping--; if (done) done(); }
-        } else put(c, A[Math.random() * A.length | 0]);
-      }, 60);
-    });
+    cells.forEach(([c, ch, idx]) => flicker(c, ch, {
+      dur: 260 + idx * 26, step: 60, flip: 110, each: true, chars: A,
+      done: () => { if (--left === 0) { flipping--; if (done) done(); } },
+    }));
   }
   // a flap flickers under the mouse and lands back on what it showed
   Object.values(cols).flat().forEach((c) => c.addEventListener('pointerenter', (e) => {
     if (e.pointerType !== 'mouse' || flipping || still() || c.dataset.busy) return;
-    const keep = c.textContent;
     c.dataset.busy = '1';
-    let n = 0;
-    const iv = setInterval(() => {
-      if (++n > 3 || flipping) { clearInterval(iv); if (!flipping) put(c, keep || ' '); delete c.dataset.busy; return; }
-      put(c, A[Math.random() * A.length | 0]);
-    }, 55);
+    flicker(c, c.textContent || ' ', { dur: 170, step: 55, flip: 110, each: true, chars: A, done: () => { delete c.dataset.busy; } });
   }));
   const idle = { name: 'SIX PROJECTS', type: '', status: 'PRESS SPIN' };
   let shown = false;
