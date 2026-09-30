@@ -182,45 +182,96 @@
     });
   }
 
-  /* ---------------------------------------------------------- result galleries */
-  // Photos stay still. Previous / Next under the photo, the arrow keys, or a swipe on
-  // touch move between them; a tap still opens the full-size viewer.
-  $$('[data-gal]').forEach((gal) => {
-    const main = $('.gal-main', gal), shots = $$('.shot', gal);
-    const cap = $('[data-gal-cap]', gal), now = $('[data-gal-now]', gal), live = $('[data-gal-live]', gal);
-    if (shots.length < 2) return;
-    let i = 0;
-    const show = (n) => {
-      const hadFocus = shots.includes(document.activeElement);
-      i = (n + shots.length) % shots.length;
-      shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
-      cap.textContent = shots[i].dataset.zoom;
-      now.textContent = i + 1;
-      live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
-      if (hadFocus) shots[i].focus();
+  /* ---------------------------------------------------------- featured builds: linked hotspots */
+  // Pointing at (or tapping) a "What I built" line zooms the real screenshot to that part,
+  // or, where there is nothing on screen to show, opens a card with the real route, test or
+  // table names. With reduced motion the view changes without moving.
+  const fine = matchMedia('(hover: hover)');
+  $$('[data-feat]').forEach((f) => {
+    const view = $('.hs-view', f), stage = $('.hs-stage', f), spot = $('.hs-spot', f), tag = $('.hs-tag', f);
+    const layers = $$('.hs-layer', f), cards = $$('.hs-card', f), items = $$('.hs-item', f);
+    const first = (layers.find((l) => l.hasAttribute('data-on')) || layers[0]).dataset.layer;
+    let current = null;
+    const showLayer = (name) => layers.forEach((l) => l.toggleAttribute('data-on', l.dataset.layer === name));
+    const reset = () => {
+      current = null;
+      f.classList.remove('active');
+      items.forEach((i) => i.setAttribute('aria-pressed', 'false'));
+      showLayer(first);
+      stage.style.transform = '';
+      view.classList.remove('spotlit', 'carded');
+      cards.forEach((c) => c.removeAttribute('data-on'));
+      tag.removeAttribute('data-on');
     };
-    new IntersectionObserver(([en], o) => {
-      if (en.isIntersecting) { o.disconnect(); shots.forEach((sh) => warm($('img', sh))); }
-    }, { rootMargin: '400px' }).observe(main);
-    $$('[data-gal-step]', gal).forEach((b) => b.addEventListener('click', () => show(i + +b.dataset.galStep)));
-    gal.addEventListener('keydown', (e) => {
-      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      show(i + (e.key === 'ArrowLeft' ? -1 : 1));
-      e.preventDefault();
+    const activate = (it) => {
+      const d = JSON.parse(it.dataset.hs);
+      current = it;
+      f.classList.add('active');
+      items.forEach((i) => i.setAttribute('aria-pressed', String(i === it)));
+      cards.forEach((c) => c.toggleAttribute('data-on', +c.dataset.card === d.i));
+      if (d.t === 'img') {
+        showLayer(d.l);
+        const [x, y, w, h] = d.r;
+        const s = Math.max(1, Math.min(2.4, 0.84 / Math.max(w, h)));
+        // keep the zoomed picture covering the frame
+        const cx = Math.min(Math.max(x + w / 2, 0.5 / s), 1 - 0.5 / s), cy = Math.min(Math.max(y + h / 2, 0.5 / s), 1 - 0.5 / s);
+        stage.style.transform = `scale(${s.toFixed(3)}) translate(${((0.5 - cx) * 100).toFixed(2)}%, ${((0.5 - cy) * 100).toFixed(2)}%)`;
+        stage.style.setProperty('--s', s.toFixed(3));
+        Object.assign(spot.style, { left: `${x * 100}%`, top: `${y * 100}%`, width: `${w * 100}%`, height: `${h * 100}%` });
+        view.classList.toggle('spotlit', w < 0.99 || h < 0.99);
+        view.classList.remove('carded');
+        tag.textContent = d.tag || '';
+        tag.toggleAttribute('data-on', !!d.tag);
+      } else {
+        showLayer(first);
+        stage.style.transform = '';
+        view.classList.remove('spotlit');
+        view.classList.add('carded');
+        tag.removeAttribute('data-on');
+      }
+    };
+    items.forEach((it) => {
+      it.addEventListener('mouseenter', () => { if (fine.matches) activate(it); });
+      it.addEventListener('focus', () => activate(it));
+      it.addEventListener('click', () => (current === it && !fine.matches ? reset() : activate(it)));
     });
-    let x0 = null, y0 = 0, swiped = false;
-    main.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { x0 = e.clientX; y0 = e.clientY; } });
-    main.addEventListener('pointerup', (e) => {
-      if (x0 === null) return;
-      const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
-      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { show(dx < 0 ? i + 1 : i - 1); swiped = true; setTimeout(() => { swiped = false; }, 60); }
-    });
-    main.addEventListener('pointercancel', () => { x0 = null; });
-    main.addEventListener('click', (e) => { if (swiped) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+    f.addEventListener('mouseleave', () => { if (fine.matches) reset(); });
+    f.addEventListener('focusout', (e) => { if (!f.contains(e.relatedTarget)) reset(); });
+    new IntersectionObserver(([en], o) => { if (en.isIntersecting) { o.disconnect(); layers.forEach(warm); } }, { rootMargin: '600px' }).observe(f);
   });
 
-  /* ---------------------------------------------------------- placings flip in */
-  // The placing spells itself out like the board the first time it comes into view.
+  /* ---------------------------------------------------------- featured builds: a swipe carousel on phones */
+  const reel = $('[data-track]');
+  if (reel) {
+    const slides = [...reel.children], dots = $$('.feat-dots i'), now = $('[data-slide-now]');
+    let idx = 0;
+    const setNow = (n) => {
+      idx = n;
+      dots.forEach((d, k) => d.toggleAttribute('data-on', k === n));
+      now.textContent = `${n + 1} / ${slides.length}`;
+    };
+    setNow(0);
+    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) setNow(slides.indexOf(en.target)); }), { root: reel, threshold: 0.6 });
+    slides.forEach((sl) => io.observe(sl));
+    $$('[data-slide]').forEach((b) => b.addEventListener('click', () => {
+      const n = Math.max(0, Math.min(slides.length - 1, idx + +b.dataset.slide));
+      reel.scrollTo({ left: slides[n].offsetLeft - slides[0].offsetLeft, behavior: still() ? 'auto' : 'smooth' });
+    }));
+  }
+
+  /* ---------------------------------------------------------- awards: each row flips in like a departures board */
+  $$('.dep-row').forEach((row) => {
+    if (still()) return;
+    const fl = $$('.fl', row);
+    new IntersectionObserver(([en], o) => {
+      if (!en.isIntersecting) return;
+      o.disconnect();
+      fl.forEach((t, k) => { if (t.dataset.ch.trim()) flicker(t, t.dataset.ch, { delay: k * 45, dur: 300, step: 60, flip: 110, each: true, chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' }); });
+    }, { threshold: 0.5 }).observe(row);
+  });
+
+  /* ---------------------------------------------------------- section titles flip in */
+  // Section titles spell themselves out like the board the first time they come into view.
   $$('[data-scramble]').forEach((el) => {
     if (still()) return;
     const word = el.textContent, L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -278,8 +329,7 @@
     });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => zone.addEventListener(t, (e) => { if (e.pointerType !== 'mouse') clear(); }));
   };
-  $$('.gal-main, .pv-frame, a.zoom, .about > .ph, .deck-stage').forEach((el) => tilt(el));
-  $$('.row').forEach((row) => { const c = $('.row-img .cover', row); if (c) tilt(c, row); });
+  $$('a.zoom, .about > .ph, .deck-stage').forEach((el) => tilt(el));
 
   /* ---------------------------------------------------------- buttons */
   // The fill grows from where the pointer came in and leaves toward where it went;
@@ -300,40 +350,6 @@
       raf = requestAnimationFrame(() => { b.style.translate = `${(dx * 0.16).toFixed(1)}px ${(dy * 0.3).toFixed(1)}px`; });
     });
     b.addEventListener('pointerleave', (e) => { cancelAnimationFrame(raf); at(e); home = null; b.style.translate = ''; });
-  });
-
-  /* ---------------------------------------------------------- newspaper magnifier */
-  // Mouse and pen only: on touch, a tap opens the full-screen viewer (pinch to zoom there).
-  $$('[data-loupe]').forEach((paper) => {
-    const lens = $('.loupe', paper), pic = $('img', paper), Z = 2.6;
-    // fetch the sharp page before the pointer arrives; until then the lens uses the copy on screen
-    new IntersectionObserver(([en], o) => { if (en.isIntersecting) { new Image().src = paper.href; o.disconnect(); } }, { rootMargin: '600px' }).observe(paper);
-    let raf = 0, lw = 0, size = '';
-    const draw = (cx, cy) => {
-      // read first, then write, so the browser never has to lay out mid-frame
-      const r = pic.getBoundingClientRect(), pr = paper.getBoundingClientRect();
-      const x = cx - r.left, y = cy - r.top;
-      if (x < 0 || y < 0 || x > r.width || y > r.height) { paper.classList.remove('looking'); return; }
-      if (!lw) {
-        lw = lens.offsetWidth;
-        lens.style.backgroundImage = `url("${paper.href}"), url("${pic.currentSrc || pic.src}")`;
-      }
-      const sz = `${(r.width * Z).toFixed(1)}px ${(r.height * Z).toFixed(1)}px`;
-      if (sz !== size) { size = sz; lens.style.backgroundSize = `${sz}, ${sz}`; }
-      const pos = `${(-(x * Z - lw / 2)).toFixed(1)}px ${(-(y * Z - lw / 2)).toFixed(1)}px`;
-      lens.style.backgroundPosition = `${pos}, ${pos}`;
-      lens.style.translate = `${(cx - pr.left).toFixed(1)}px ${(cy - pr.top).toFixed(1)}px`;
-      paper.classList.add('looking');
-    };
-    const on = (e) => {
-      if (e.pointerType === 'touch') return;
-      const cx = e.clientX, cy = e.clientY;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => draw(cx, cy));
-    };
-    paper.addEventListener('pointermove', on);
-    paper.addEventListener('pointerenter', (e) => { lw = 0; on(e); });
-    paper.addEventListener('pointerleave', () => { cancelAnimationFrame(raf); paper.classList.remove('looking'); });
   });
 
   /* ---------------------------------------------------------- contact */
@@ -456,32 +472,6 @@
   $$('[data-sec]').forEach((s) => secObs.observe(s));
   addEventListener('scroll', () => { if (scrollY < 200) mark(null); }, { passive: true });
 
-  /* ---------------------------------------------------------- home: work preview */
-  const rows = $('[data-rows]');
-  const pv = $('[data-pv]');
-  const pvSw = $('[data-pv-sw]'), pvCap = $('[data-pv-cap]'), pvN = $('[data-pv-n]');
-  new IntersectionObserver(([en], o) => {
-    if (en.isIntersecting && getComputedStyle(pv).display !== 'none') { o.disconnect(); $$('img', pv).forEach(warm); }
-  }, { rootMargin: '600px' }).observe(rows);
-  function showRow(row) {
-    rows.classList.add('live');
-    $$('.row', rows).forEach((r) => r.toggleAttribute('data-on', r === row));
-    $$('[data-id]', pv).forEach((c) => c.toggleAttribute('data-on', c.dataset.id === row.dataset.id));
-    pvSw.style.setProperty('--c', row.style.getPropertyValue('--c'));
-    pvCap.textContent = row.dataset.caption;
-    pvN.textContent = row.dataset.n;
-  }
-  const rowObs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) showRow(e.target); }), { rootMargin: '-45% 0px -50% 0px' });
-  const wide = matchMedia('(min-width: 861px)');
-  $$('.row', rows).forEach((r) => {
-    rowObs.observe(r);
-    r.addEventListener('focusin', () => showRow(r));
-    // pointing at a project shows its cover at once
-    r.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && wide.matches) showRow(r); });
-  });
-  // leaving the list upwards restores the calm state
-  new IntersectionObserver(([e]) => { if (!e.isIntersecting && e.boundingClientRect.top > 0) rows.classList.remove('live'); }).observe(rows);
-
   /* ---------------------------------------------------------- home: departures board */
   const board = $('[data-board]');
   const data = JSON.parse($('#projects-data').textContent);
@@ -513,7 +503,8 @@
     c.dataset.busy = '1';
     flicker(c, c.textContent || ' ', { dur: 170, step: 55, flip: 110, each: true, chars: A, done: () => { delete c.dataset.busy; } });
   }));
-  const idle = { name: 'SIX PROJECTS', type: '', status: 'PRESS SPIN' };
+  const NUM = ['', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT'];
+  const idle = { name: `${NUM[ids.length] || ids.length} PROJECTS`, type: '', status: 'PRESS SPIN' };
   let shown = false;
   new IntersectionObserver(([e], o) => {
     if (e.isIntersecting && !shown) { shown = true; o.disconnect(); flipAll(idle); }
@@ -533,12 +524,9 @@
   }
   function renderResult(id) {
     const p = data[id];
-    const ext = /^https?:/.test(p.proofHref) ? ' target="_blank" rel="noopener noreferrer"' : '';
-    result.innerHTML = `<span class="sw" style="--c:${p.c}"></span>
-      <div><span class="k">${esc(p.type)}</span><h3 class="nm cn">${esc(p.name)}</h3><p>${esc(p.line)}</p></div>
-      <p><span class="k">My role</span>${esc(p.role)}</p>
-      <p><span class="k">Result</span>${esc(p.result)}</p>
-      <div class="links"><a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Explore project <span class="ar">→</span></a><a class="link muted" href="${esc(p.proofHref)}"${ext} data-event="${p.proofEvent}" data-project="${id}">${esc(p.proof)}</a></div>`;
+    result.innerHTML = `<span class="sw" style="--c:${p.c}"></span><span class="nm cn">${esc(p.name)}</span>
+      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Open the case study <span class="ar">→</span></a>
+      <p>${esc(p.line)}</p>`;
     if (!still()) { result.classList.remove('in'); void result.offsetWidth; result.classList.add('in'); }
   }
   spin.addEventListener('click', () => {
