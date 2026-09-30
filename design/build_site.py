@@ -714,12 +714,13 @@ HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
 #   MEANT: the private repository's team table credits me with client and demo engineering (the PWA,
 #     accessibility, the booth); the audio and TTS are credited to a teammate, so they are not claimed here.
 #   KnowCad: the case study (the Autodesk engineers led the code; I built and delivered the presentation).
-# Pictures are never edited: a card shows a crop of the real screenshot (zoom z around the point x, y).
+# Pictures are never edited: a card shows the whole screenshot (z=1) or a crop of it (zoom z around the
+# point x, y), and the image it loads is large enough for that zoom, so the crop is never enlarged.
 CARDS = {
-    'sb': dict(img='signalbridge-shot-3', frame='browser', z=1.55, x=50, y=40,
+    'sb': dict(img='signalbridge-shot-3', frame='browser', z=1, x=50, y=50,
                part='The youth-facing chat and consent step, their API routes, and the Discord intake with its tests.',
                out=('Result', 'Champion, Dell InnovateDash 2026. Brief from Singapore Children’s Society.')),
-    'bx': dict(img='boss-breaker-shot-1', frame='browser', z=1.5, x=12, y=8,
+    'bx': dict(img='boss-breaker-shot-1', frame='browser', z=1, x=50, y=50,
                part='Built it alone: the frontend, the Express API, the MySQL database and the game logic.',
                out=('Result', 'A complete full-stack app for the BED CA2 coursework brief. Source on GitHub.')),
     'bb': dict(img='better-call-bhai-shot-2', frame='device', z=1.3, x=50, y=22,
@@ -739,7 +740,8 @@ MORE_CARDS = ['bb', 'mt', 'kc']
 def project_card(pid, big):
     p, d = BY_ID[pid], CARDS[pid]
     m = MEDIA[d['img']]
-    sizes = '(max-width: 860px) 100vw, 46vw' if big else '(max-width: 860px) 100vw, 30vw'
+    z = d['z']
+    sizes = f'(max-width: 860px) {round(100 * z)}vw, {round((46 if big else 30) * z)}vw'
     shot = pic(d['img'], sizes, alt=m['alt'] if d['frame'] == 'award' else '', cls='ph')
     crop = f'--z:{d["z"]};--x:{d["x"]}%;--y:{d["y"]}%'
     if d['frame'] == 'award':
@@ -748,7 +750,8 @@ def project_card(pid, big):
     else:
         bar = (f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
                if d['frame'] == 'browser' else '')
-        stage = f'<div class="pc-stage"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot">{shot}</div></div></div>'
+        whole = ' is-whole' if z == 1 else ''
+        stage = f'<div class="pc-stage{whole}"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot">{shot}</div></div></div>'
     k, v = d['out']
     return (f'<li><a class="pcard{" is-big" if big else ""} arrive" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}" '
             f'data-project="{pid}" data-event="case_open">{stage}'
