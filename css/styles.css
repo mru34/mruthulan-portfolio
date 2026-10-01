@@ -534,11 +534,15 @@ p{margin:0}
   .nav{font-size:17px;gap:32px}
   .btn{min-height:52px;padding:0 22px;font-size:17px}
   .eyebrow,.seeking,.fids .lab,.result p,.pc-type,.pc-k,.gal-cap,.win .links,.crumb,.facts dt,.note,.cap,.press figcaption,.foot,.talk .status{font-size:17px}
-  .tiles{--tw:clamp(24px,min(calc((100vw - 2 * var(--gutter) - 44px) / 9),max(5.4vw,34px)),84px)}
-  .hero{padding-top:clamp(20px,2.4vw,36px)}
-  .hero .tiles{margin-top:14px}
-  .hero-grid{margin:clamp(16px,1.8vw,24px) 0 clamp(16px,1.8vw,24px)}
-  #work.sec{padding-top:clamp(64px,6.6vw,96px)} /* the hero hands over to Projects a little sooner */
+  /* a compact hero, so Projects starts on the first screen of a laptop */
+  .tiles{--tw:clamp(24px,min(calc((100vw - 2 * var(--gutter) - 44px) / 9),max(4.6vw,34px)),70px);row-gap:clamp(8px,.7vw,10px)}
+  .hero{padding-top:clamp(14px,1.3vw,20px)}
+  .hero .tiles{margin-top:10px}
+  .hero-grid{margin:clamp(14px,1.4vw,20px) 0 0}
+  .hero-grid > .board{grid-column:1;grid-row:1} /* the intro comes first in the page (phones read it first); here the board sits left */
+  .hero-grid > .hero-intro{grid-column:2;grid-row:1}
+  #work.sec{padding-top:clamp(40px,3.6vw,56px)}
+  #work .sechead{margin-bottom:20px}
   .fids{gap:12px}
   .flaps span{font-size:clamp(18px,1.6vw,26px)}
   .lede{font-size:clamp(30px,2.9vw,46px)}
@@ -552,4 +556,15 @@ p{margin:0}
   .acard .sub,.acard p{font-size:17.5px}
   .case-hl{font-size:clamp(30px,3vw,44px)}
   .cs-head h2{font-size:clamp(38px,4vw,58px)}
+}
+/* wide laptops: each board label sits beside its row, and the board takes a little more width so the flaps keep their size */
+@media (min-width:1280px){
+  .hero-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);column-gap:clamp(40px,4vw,64px)}
+  .board{gap:10px}
+  .fids{padding:14px 16px;gap:8px}
+  .fids > div{display:flex;align-items:center;gap:12px}
+  .fids .lab{flex:none;width:5em;margin:0}
+  .fids .flaps{flex:1;min-width:0}
+  .fids .flaps span{aspect-ratio:3/4}
+  .lede{font-size:clamp(30px,2.6vw,40px)}
 }
