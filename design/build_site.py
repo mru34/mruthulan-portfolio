@@ -90,6 +90,17 @@ def make_derivatives():
     return made
 
 
+def poster(key, width=400):
+    """A small copy of a screenshot, inlined in the page, painted behind the real image so the
+    frame shows the product from the first paint instead of an empty box while the file loads."""
+    import base64, io
+    from PIL import Image
+    buf = io.BytesIO()
+    with Image.open(ROOT / 'assets' / 'media' / MEDIA[key]['src']) as im:
+        im.convert('RGB').resize((width, round(im.height * width / im.width)), Image.LANCZOS).save(buf, 'WEBP', quality=45, method=6)
+    return 'data:image/webp;base64,' + base64.b64encode(buf.getvalue()).decode()
+
+
 def pic(key, sizes, eager=False, alt=None, cls='ph', fit_style=''):
     """A picture from data/media.json with its real size, so nothing shifts."""
     m = MEDIA[key]
@@ -316,7 +327,7 @@ PROJECTS = [
     dict(
         id='bb', slug='better-call-bhai', name='Better Call Bhai', type='Client build', c='#E3B53A',
         board=('CLIENT', 'PILOT'),
-        line='Appointment booking for a local barbershop. Deployed, and in a pilot with the shop.',
+        line='Appointment booking for a local barbershop.',
         role='Web design, frontend build and deployment',
         result='Deployed pilot',
         event='Client build · Deployed pilot',
@@ -716,21 +727,22 @@ HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
 #   KnowCad: the case study (the Autodesk engineers led the code; I built and delivered the presentation).
 # Pictures are never edited: a card shows the whole screenshot (z=1) or a crop of it (zoom z around the
 # point x, y), and the image it loads is large enough for that zoom, so the crop is never enlarged.
+# poster=True inlines a small copy of the screenshot behind it, so the frame is never empty while it loads.
 CARDS = {
-    'sb': dict(img='signalbridge-shot-3', frame='browser', z=1, x=50, y=50,
-               part='The youth-facing chat and consent step, their API routes, and the Discord intake with its tests.',
+    'sb': dict(img='signalbridge-shot-3', frame='browser', z=1, x=50, y=50, poster=True,
+               part='Youth chat and consent screens, their API routes, and the Discord intake with tests.',
                out=('Result', 'Champion, Dell InnovateDash 2026. Brief from Singapore Children’s Society.')),
     'bx': dict(img='boss-breaker-shot-1', frame='browser', z=1, x=50, y=50,
-               part='Built it alone: the frontend, the Express API, the MySQL database and the game logic.',
+               part='Solo: frontend, Express API, MySQL database and game logic.',
                out=('Result', 'A complete full-stack app for the BED CA2 coursework brief. Source on GitHub.')),
     'bb': dict(img='better-call-bhai-shot-2', frame='device', z=1.3, x=50, y=22,
-               part='Built it alone: the booking site, its Node/Express API and SQLite database, and the deploy on Render.',
+               part='Solo: booking site, Node/Express API, SQLite database and Render deploy.',
                out=('Status', 'Live on Render, in a pilot with the shop.')),
     'mt': dict(img='meant-shot-1', frame='device', z=1.25, x=10, y=40,
-               part='The tablet app’s interface and accessibility, and the demo at the booth.',
+               part='Tablet app interface, accessibility and the booth demo.',
                out=('Result', 'Second runner-up, Dell InnovateFest 2026, polytechnic category. S$3,000.')),
     'kc': dict(img='win-knowcad-champion', frame='award', z=1.0, x=50, y=35,
-               part='Built and delivered the presentation. The Autodesk engineers led the code.',
+               part='Built and delivered the presentation. Autodesk engineers led the code.',
                out=('Result', 'Champion, Autodesk Singapore Hackathon 2026.')),
 }
 FEATURED_CARDS = ['sb', 'bx']
@@ -751,7 +763,9 @@ def project_card(pid, big):
         bar = (f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
                if d['frame'] == 'browser' else '')
         whole = ' is-whole' if z == 1 else ''
-        stage = f'<div class="pc-stage{whole}"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot">{shot}</div></div></div>'
+        # the poster is the whole screenshot, so it is only used on cards that show it whole
+        under = f' style="background-image:url({poster(d["img"])})"' if d.get('poster') and z == 1 else ''
+        stage = f'<div class="pc-stage{whole}"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot"{under}>{shot}</div></div></div>'
     k, v = d['out']
     return (f'<li><a class="pcard{" is-big" if big else ""} arrive" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}" '
             f'data-project="{pid}" data-event="case_open">{stage}'
