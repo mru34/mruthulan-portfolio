@@ -804,6 +804,11 @@ def build_home():
         <p class="eyebrow"><span class="long">Singapore · Year 2 Information Technology, Singapore Polytechnic</span><span class="short">Singapore · Year 2 IT, Singapore Polytechnic</span></p>
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
         <div class="hero-grid">
+          <div class="hero-intro">
+            <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. <em>Every project below names my part.</em></p>
+            <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
+            <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
+          </div>
           <section class="board" data-board aria-labelledby="board-title" hidden>
             <div class="board-head"><h2 class="eyebrow" id="board-title">Now showing</h2><span class="eyebrow">{len(HOME_PROJECTS)} projects</span></div>
             <div class="fids" aria-hidden="true">
@@ -814,11 +819,6 @@ def build_home():
             <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result></div></div>
             <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
           </section>
-          <div class="hero-intro">
-            <p class="lede">I build full-stack products, from the interface people use to the API and database behind it. <em>Every project below names my part.</em></p>
-            <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
-            <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
-          </div>
         </div>
         <div data-hero-end aria-hidden="true"></div>
       </section>
