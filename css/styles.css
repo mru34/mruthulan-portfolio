@@ -218,7 +218,7 @@ p{margin:0}
 .pc-stage{padding:clamp(18px,2.2vw,30px) clamp(18px,2.2vw,30px) 0;background:radial-gradient(120% 95% at 50% 0%,color-mix(in srgb,var(--c) 30%,#141418),#101012 72%);border-bottom:1px solid var(--hair)}
 .pc-frame{position:relative;border-radius:10px 10px 0 0;overflow:hidden;background:#0E0E10;box-shadow:0 0 0 1px rgba(255,255,255,.2),0 -6px 40px rgba(0,0,0,.45);container-type:inline-size}
 .pc-frame.is-device{border-radius:10px 10px 0 0;background:#0B0B0D}
-.pc-shot{position:relative;aspect-ratio:16/10;overflow:hidden}
+.pc-shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:center/cover no-repeat} /* a poster, where set, shows until the screenshot paints */
 .pc-shot .ph,.pc-print .ph{position:absolute;inset:0;border-radius:0;background:none}
 .pc-shot img,.pc-print img{transform:scale(var(--z,1));transform-origin:var(--x,50%) var(--y,50%);transition:transform .8s var(--ease)}
 .pc-stage.is-whole{padding-bottom:clamp(18px,2.2vw,30px)}
@@ -535,9 +535,10 @@ p{margin:0}
   .btn{min-height:52px;padding:0 22px;font-size:17px}
   .eyebrow,.seeking,.fids .lab,.result p,.pc-type,.pc-k,.gal-cap,.win .links,.crumb,.facts dt,.note,.cap,.press figcaption,.foot,.talk .status{font-size:17px}
   .tiles{--tw:clamp(24px,min(calc((100vw - 2 * var(--gutter) - 44px) / 9),max(5.4vw,34px)),84px)}
-  .hero{padding-top:clamp(28px,3.4vw,52px)}
-  .hero .tiles{margin-top:16px}
-  .hero-grid{margin-top:clamp(20px,2.4vw,30px)}
+  .hero{padding-top:clamp(20px,2.4vw,36px)}
+  .hero .tiles{margin-top:14px}
+  .hero-grid{margin:clamp(16px,1.8vw,24px) 0 clamp(16px,1.8vw,24px)}
+  #work.sec{padding-top:clamp(64px,6.6vw,96px)} /* the hero hands over to Projects a little sooner */
   .fids{gap:12px}
   .flaps span{font-size:clamp(18px,1.6vw,26px)}
   .lede{font-size:clamp(30px,2.9vw,46px)}
