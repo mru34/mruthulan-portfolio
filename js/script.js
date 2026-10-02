@@ -536,7 +536,7 @@
     pickCard(id);
     spin.textContent = 'Spin again';
     result.innerHTML = `<span class="sw" style="--c:${p.c}"></span>
-      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Open the case study <span class="ar">→</span></a>`;
+      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Case study <span class="ar">→</span></a>`;
     if (!still()) { result.classList.remove('in'); void result.offsetWidth; result.classList.add('in'); }
   }
   const go = (byHand) => {

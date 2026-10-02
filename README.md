@@ -63,7 +63,7 @@ GitHub Pages publishes the `main` branch from the repository root. The `CNAME` f
 
 ## Analytics
 
-The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The tag loads only after a visitor selects **Allow analytics**; the choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `spin_result` (the project it landed on, when the visitor spins), `press_viewer_open`, `press_article_click`, `deck_open`, `contact_copy_email`, `contact_open_mail_app` and `contact_open_linkedin`. No names, email addresses or free text are sent.
+The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The question appears as a slim bar once a visitor scrolls into the page, and the tag loads only after they choose **Yes**; the choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `spin_result` (the project it landed on, when the visitor spins), `press_viewer_open`, `press_article_click`, `deck_open`, `contact_copy_email`, `contact_open_mail_app` and `contact_open_linkedin`. No names, email addresses or free text are sent.
 
 ## Fonts
 

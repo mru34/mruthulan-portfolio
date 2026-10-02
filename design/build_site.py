@@ -723,7 +723,7 @@ def flaps(col, word, n=16):
 def board_result(p):
     """What the board says under the flaps; the script writes the same markup after each spin."""
     return (f'<span class="sw" style="--c:{p["c"]}"></span>'
-            f'<a class="link" href="{p["slug"]}.html" data-event="case_open" data-project="{p["id"]}">Open the case study <span class="ar">→</span></a>')
+            f'<a class="link" href="{p["slug"]}.html" data-event="case_open" data-project="{p["id"]}">Case study <span class="ar">→</span></a>')
 
 
 def board_data():
@@ -750,31 +750,31 @@ def build_home():
   <main id="main">
     <div class="wrap">
       <section class="hero" aria-labelledby="name">
-        <p class="eyebrow"><span class="long">Singapore · Year 2 Information Technology, Singapore Polytechnic</span><span class="short">Singapore · Year 2 IT, Singapore Polytechnic</span></p>
+        <p class="eyebrow">Year 2 IT · Singapore Polytechnic</p>
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
-        <div class="hero-grid">
-          <div class="hero-intro">
-            <p class="lede">I build full-stack products, from the interface people use <em>to the API and database behind it.</em></p>
-            <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
-            <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
-          </div>
-          <section class="board" data-board data-first="{HOME_PROJECTS[0]['id']}" aria-labelledby="board-title">
-            <div class="board-head"><h2 class="eyebrow" id="board-title">Now showing</h2></div>
-            <div class="fids" aria-hidden="true">
-              <div><span class="lab">Project</span>{flaps('name', HOME_PROJECTS[0]['name'])}</div>
-              <div><span class="lab">Type</span>{flaps('type', HOME_PROJECTS[0]['board'][0])}</div>
-              <div><span class="lab">Result</span>{flaps('status', HOME_PROJECTS[0]['board'][1])}</div>
-            </div>
-            <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result>{board_result(HOME_PROJECTS[0])}</div></div>
-            <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
-          </section>
+        <div class="hero-intro">
+          <p class="lede">I build full-stack products, from the interface people use <em>to the API and database behind it.</em></p>
+          <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
+          <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
         </div>
         <div data-hero-end aria-hidden="true"></div>
       </section>
     </div>
 
     <section class="sec wrap" id="work" data-sec="work" aria-labelledby="work-title">
-      {sechead('work-title', 'Projects')}
+      <div class="work-top">
+        {sechead('work-title', 'Projects')}
+        <section class="board" data-board data-first="{HOME_PROJECTS[0]['id']}" aria-labelledby="board-title">
+          <div class="board-head"><h3 class="eyebrow" id="board-title">Now showing</h3></div>
+          <div class="fids" aria-hidden="true">
+            <div><span class="lab">Project</span>{flaps('name', HOME_PROJECTS[0]['name'])}</div>
+            <div><span class="lab">Type</span>{flaps('type', HOME_PROJECTS[0]['board'][0])}</div>
+            <div><span class="lab">Result</span>{flaps('status', HOME_PROJECTS[0]['board'][1])}</div>
+          </div>
+          <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result>{board_result(HOME_PROJECTS[0])}</div></div>
+          <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
+        </section>
+      </div>
       <ul class="pgrid pfeat">{''.join(project_card(pid, True) for pid in FEATURED_CARDS)}</ul>
       <ul class="pgrid pmore">{''.join(project_card(pid, False) for pid in MORE_CARDS)}</ul>
     </section>
@@ -848,18 +848,13 @@ def build_case(p):
     more = ''.join(more_link(*a) for a in p.get('more', []))
     more = f'<p class="more-links"><span>More</span>{more}</p>' if more else ''
     facts =''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in p['facts'])
-    if p['id'] in FEAT_BY_ID:
-        lead = hotspots(FEAT_BY_ID[p['id']])
-    elif p['lead']:
-        key, cap = p['lead']
-        lead = (f'<figure class="lead-fig">{zoom(key, "(max-width: 860px) 100vw, 1300px", cap, eager=True)}'
-                f'<figcaption class="cap">{e(cap or MEDIA[key].get("caption") or "")}</figcaption></figure>')
-    else:
-        lead = ''
-    if p.get('scene'):  # the whole product, framed in devices, opens the page (made by portfolio-tools/card-shots)
-        key = p['scene']
-        lead = (f'<figure class="lead-fig scene-fig">{zoom(key, "(max-width: 860px) 100vw, 1300px", MEDIA[key]["caption"], eager=True)}'
-                f'<figcaption class="cap">{e(MEDIA[key]["caption"])}</figcaption></figure>') + lead
+    # the page opens on a picture: the whole product framed in devices (made by portfolio-tools/card-shots),
+    # or the project's lead photo; the facts follow it, then the interactive What I built
+    built = hotspots(FEAT_BY_ID[p['id']]) if p['id'] in FEAT_BY_ID else ''
+    key, cap = (p['scene'], None) if p.get('scene') else (p['lead'] or (None, None))
+    cap = cap or (MEDIA[key].get('caption') or '' if key else '')
+    picture =(f'<figure class="lead-fig{" scene-fig" if p.get("scene") else ""}">{zoom(key, "(max-width: 860px) 100vw, 1300px", cap, eager=True)}'
+               f'<figcaption class="cap">{e(cap)}</figcaption></figure>') if key else ''
     # back to the project's row in the list (Loomy is not on the homepage, so back to the list)
     back = f"index.html#work-{p['id']}" if p in HOME_PROJECTS else 'index.html#work'
     ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['name'],
@@ -874,13 +869,14 @@ def build_case(p):
   <main id="main">
     <div class="wrap">
       <header class="case-top">
-        <p class="crumb"><a class="link" href="{back}">← All work</a><span>{i + 1:02d} of {len(PROJECTS):02d}</span><span>{e(p['event'])}</span></p>
+        <p class="crumb"><a class="link" href="{back}">← All work</a><span class="crumb-ev">{e(p['event'])}</span></p>
         <h1 class="case-title cn" style="view-transition-name:t-{p['id']};--len:{max(len(w) for w in p['name'].split())}">{e(p['name'])}</h1>
         <p class="case-hl">{e(p['hl'])}</p>
         <p class="case-st">{e(p['st'])}</p>
         <div class="acts">{actions}</div>
+        {picture}
         <dl class="facts">{facts}</dl>
-        {lead}
+        {built}
       </header>
 
       {''.join(p['sections']())}{press_section() if p['id'] == 'mt' else ''}
@@ -927,7 +923,7 @@ def build_privacy():
     <div class="text-page">
       <p class="crumb"><a class="link" href="index.html">← Back to the portfolio</a></p>
       <h1 class="cn">A simple choice about analytics.</h1>
-      <p class="lead">This portfolio loads Google Analytics 4 only when you choose “Allow analytics”. It helps me understand which work people read and how they find the site.</p>
+      <p class="lead">This portfolio loads Google Analytics 4 only when you answer “Yes” to the analytics question. It helps me understand which work people read and how they find the site.</p>
       <section>
         <h2 class="cn">What is measured</h2>
         <p>Google Analytics may collect page views, approximate location, referral source, browser and device information, and interactions such as outbound clicks, which project you open, which project the board lands on, and whether you used the contact options. Nothing you type is sent. It uses cookies or similar browser identifiers. I use aggregate reports to improve the site, and I do not ask you to create an account here.</p>

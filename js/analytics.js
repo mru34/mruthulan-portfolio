@@ -39,7 +39,7 @@
     banner.className = 'analytics-banner';
     banner.setAttribute('aria-label', 'Analytics choice');
     // Two equal buttons: the choice is the visitor's, so neither is dressed up as the answer.
-    banner.innerHTML = '<div class="analytics-banner-copy"><strong>Help me improve this site?</strong><p>Google Analytics would show me which pages get read. <a href="privacy.html">Privacy details</a></p></div><div class="analytics-banner-actions"><button type="button" class="analytics-allow">Allow analytics</button><button type="button" class="analytics-deny">No thanks</button></div>';
+    banner.innerHTML = '<p>Allow Google Analytics? <a href="privacy.html">What it collects</a></p><div class="analytics-banner-actions"><button type="button" class="analytics-allow">Yes</button><button type="button" class="analytics-deny">No</button></div>';
     document.body.appendChild(banner);
     document.documentElement.classList.add('has-consent-prompt');
     const dismiss = () => {
@@ -58,24 +58,17 @@
     });
   }
 
-  /* On a phone the first screen is the introduction, so the question waits
-     for the visitor to do something -- a small scroll, a tap, a key -- or for
-     a few seconds to pass. Nothing is loaded until they answer either way. */
+  /* The first screen is the introduction, so the question waits until the visitor
+     scrolls into the page (on the privacy page it is the point, so it shows at once).
+     Nothing is loaded until they answer yes. */
   function askWhenReady() {
-    const phone = window.matchMedia('(max-width: 640px)').matches;
-    const privacyPage = !!document.querySelector('#analytics-change');
-    if (!phone || privacyPage) { showChoice(); return; }
-    let asked = false;
-    const ask = () => {
-      if (asked) return;
-      asked = true;
+    if (document.querySelector('#analytics-change')) { showChoice(); return; }
+    const onScroll = () => {
+      if (window.scrollY < 240) return;
       window.removeEventListener('scroll', onScroll);
       showChoice();
     };
-    const onScroll = () => { if (window.scrollY > 80) ask(); };
     window.addEventListener('scroll', onScroll, { passive: true });
-    ['pointerdown', 'keydown'].forEach((t) => window.addEventListener(t, () => setTimeout(ask, 600), { once: true, passive: true }));
-    setTimeout(ask, 8000);
   }
 
   const currentChoice = choice();
