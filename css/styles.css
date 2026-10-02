@@ -231,11 +231,6 @@ p{margin:0}
 .pc-stage.is-whole{padding-bottom:clamp(18px,2.2vw,30px)}
 .pc-stage.is-whole .pc-frame{border-radius:10px;box-shadow:0 0 0 1px rgba(255,255,255,.2),0 18px 50px rgba(0,0,0,.5)}
 .pc-stage.is-award{padding-bottom:14px}
-/* Sections below the hero are laid out as they near the screen, so the first frame only lays out the hero.
-   The sizes are their measured heights, so the scrollbar barely moves when they render. */
-#work,#awards,#about,#contact{content-visibility:auto}
-#work{contain-intrinsic-size:auto 1650px}#awards{contain-intrinsic-size:auto 850px}#about{contain-intrinsic-size:auto 1150px}#contact{contain-intrinsic-size:auto 520px}
-@media (max-width:640px){#work{contain-intrinsic-size:auto 3300px}#about{contain-intrinsic-size:auto 1700px}}
 .pc-stage.is-scene{padding:0;background:#0D0D0F} /* the picture carries its own backdrop and devices */
 .pc-photo{margin:0;padding:0 6px}
 /* the award photo sits like a print, white-bordered, with its label and caption, so it never reads as a product screenshot */
@@ -515,7 +510,7 @@ p{margin:0}
 
 /* ------------------------------------------------------------- motion (only when wanted) */
 @media (prefers-reduced-motion: no-preference){
-  html{scroll-behavior:smooth}
+  html.loaded{scroll-behavior:smooth} /* not while the page loads: a jump to /#about then lands instantly and stays put as the page settles */
   @view-transition{navigation:auto}
   ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}
