@@ -306,24 +306,6 @@
     }, 5200), gi * 1700);
   });
 
-  /* ---------------------------------------------------------- section titles flip in */
-  // Section titles spell themselves out like the board the first time they come into view.
-  $$('[data-scramble]').forEach((el) => {
-    if (still()) return;
-    const word = el.textContent, L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    new IntersectionObserver(([en], o) => {
-      if (!en.isIntersecting) return;
-      o.disconnect();
-      let f = 0;
-      const iv = setInterval(() => {
-        const done = Math.floor(f / 2);
-        el.textContent = [...word].map((ch, k) => (k < done || ch === ' ' || ch === '-' ? ch : L[Math.random() * 26 | 0])).join('');
-        if (done >= word.length) { clearInterval(iv); el.textContent = word; }
-        f++;
-      }, 32);
-    }, { threshold: 0.8 }).observe(el);
-  });
-
   /* ---------------------------------------------------------- tilt */
   // Pictures lean toward the mouse; on touch they tilt toward the finger while pressed.
   const tilt = (el, zone = el) => {
@@ -536,7 +518,7 @@
   const result = $('[data-result]', board);
   const live = $('[data-spin-live]', board);
   $('.fids', board).addEventListener('click', () => spin.click());
-  // the page arrives showing the first project, so the opening spin lands somewhere else
+  // the page arrives showing the first project, so the first spin lands somewhere else
   let last = board.dataset.first || null, busy = false;
   // Picks never repeat the previous project; extra presses during a spin are ignored.
   function pick() {
@@ -572,7 +554,7 @@
     });
   };
   spin.addEventListener('click', () => go(true));
-  // coming back from a case page keeps the last result on the board; otherwise it spins once by itself
+  // the page arrives showing the first project; coming back from a case page keeps the last result instead
   let kept = null;
   try { kept = sessionStorage.getItem('spin-last'); } catch { /* storage may be blocked */ }
   if (kept && data[kept]) {
@@ -583,7 +565,5 @@
       cols[col].forEach((c, i) => { c.textContent = w[i] === ' ' ? '' : w[i]; });
     }
     renderResult(kept);
-  } else {
-    setTimeout(() => go(false), still() ? 0 : 250);
   }
 })();
