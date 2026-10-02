@@ -51,9 +51,6 @@ PRESS_ALT = ('Tamil Murasu, page 8, 28 September 2026: a feature headlined in Ta
              'community with AI’. Left photo: the Singapore Polytechnic MEANT team in blazers and red '
              'ties with two others, one seated in a wheelchair. Right photo: a university team beside '
              'their Bloom Up project screen. Below, five columns of Tamil text.')
-FONTS = ('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..75,700..800'
-         '&family=Bricolage+Grotesque:opsz,wght@12..96,500..700'
-         '&family=Geist:wght@400..600&family=JetBrains+Mono:wght@400..500&display=swap')
 
 
 def e(s):
@@ -494,9 +491,7 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <meta name="twitter:image" content="{SITE}/assets/og-card.jpg?v=night2">
   <title>{e(title)}</title>
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="{FONTS}">
+  <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{prefix}css/styles.css">
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script src="{prefix}js/script.js" defer></script>
@@ -582,9 +577,9 @@ LOGOS = {
 
 
 def sechead(sid, title):
-    """A section title that spells itself out like the board when it arrives."""
+    """A section title in the board lettering."""
     return (f'<header class="sechead"><h2 class="cn" id="{sid}"><span class="sr-only">{e(title)}</span>'
-            f'<span aria-hidden="true" data-scramble>{e(title)}</span></h2></header>')
+            f'<span aria-hidden="true">{e(title)}</span></h2></header>')
 
 
 # ------------------------------------------------------------------ what I built, on the case pages
@@ -704,7 +699,7 @@ def award(pid, anchor, place, event, facts, logos, photos, post):
     return f'''<article class="win arrive" id="{anchor}" style="--c:{p['c']}">
           <div class="org">{org}</div>
           <div class="gal" data-gal><div class="gal-main">{shots}</div><div class="gal-foot"><p class="gal-cap" data-gal-cap>{e(MEDIA[photos[0]]["caption"])}</p>{nav}</div><span class="sr-only" aria-live="polite" data-gal-live></span></div>
-          <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true" data-scramble>{e(place)}</span></h3>
+          <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true">{e(place)}</span></h3>
           <p class="ev">{e(event)}{fact}</p>
           <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a></p>
           <div class="links"><a class="link" href="{post}"{ext(post)} data-event="proof_post_click" data-project="{pid}">My LinkedIn post ↗</a></div>
@@ -769,7 +764,8 @@ def project_card(pid, big):
         under = f' style="background-image:url({poster(d["img"])})"' if d.get('poster') and z == 1 else ''
         stage = f'<div class="pc-stage{whole}"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot"{under}>{shot}</div></div></div>'
     k, v = d['out']
-    return (f'<li><a class="pcard{" is-big" if big else ""} arrive" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}" '
+    picked = ' data-picked' if pid == HOME_PROJECTS[0]['id'] else ''  # the project the board opens on
+    return (f'<li><a class="pcard{" is-big" if big else ""}" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}"{picked} '
             f'data-project="{pid}" data-event="case_open">{stage}'
             f'<span class="pc-body"><span class="pc-type">{e(p["type"])}</span><span class="nm cn">{e(p["name"])}</span>'
             f'<span class="pc-line">{e(p["line"])}</span>'
@@ -785,6 +781,13 @@ def flaps(col, word, n=16):
     w = word.upper().ljust(n)[:n]
     return f'<div class="flaps{" status" if col == "status" else ""}" data-col="{col}" data-n="{n}">' + ''.join(
         f'<span>{e(ch) if ch != " " else ""}</span>' for ch in w) + '</div>'
+
+
+def board_result(p):
+    """What the board says under the flaps; the script writes the same markup after each spin."""
+    return (f'<span class="sw" style="--c:{p["c"]}"></span><span class="nm cn">{e(p["name"])}</span>'
+            f'<a class="link" href="{p["slug"]}.html" data-event="case_open" data-project="{p["id"]}">Open the case study <span class="ar">→</span></a>'
+            f'<p>{e(p["line"])}</p>')
 
 
 def board_data():
@@ -826,7 +829,7 @@ def build_home():
               <div><span class="lab">Type</span>{flaps('type', HOME_PROJECTS[0]['board'][0])}</div>
               <div><span class="lab">Result</span>{flaps('status', HOME_PROJECTS[0]['board'][1])}</div>
             </div>
-            <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result></div></div>
+            <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result>{board_result(HOME_PROJECTS[0])}</div></div>
             <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
           </section>
         </div>
@@ -878,7 +881,7 @@ def build_home():
 
     <section class="talk" id="contact" data-sec="contact" aria-labelledby="contact-title">
       <div class="wrap talk-in">
-        <h2 class="cn" id="contact-title"><span class="sr-only">Let’s talk.</span><span aria-hidden="true" data-scramble>Let’s talk.</span></h2>
+        <h2 class="cn" id="contact-title"><span class="sr-only">Let’s talk.</span><span aria-hidden="true">Let’s talk.</span></h2>
         <div class="mail-row">
           <a class="mail-big" href="{e(MAILTO)}" data-mail data-event="contact_open_mail_app">{EMAIL}</a>
           <button class="btn solid" type="button" data-copy="{EMAIL}">Copy email address</button>
@@ -999,7 +1002,7 @@ def build_privacy():
       </section>
       <section>
         <h2 class="cn">Fonts</h2>
-        <p>The typefaces are served by Google Fonts, so your browser requests them from Google when a page loads. Google’s font service does not set cookies.</p>
+        <p>The typefaces are served from this site, so loading a page makes no request to a font service.</p>
       </section>
       <section>
         <h2 class="cn">More information</h2>
