@@ -271,15 +271,13 @@
   // themselves (not with reduced motion); touching a card's photos stops that card for good.
   $$('[data-gal]').forEach((gal, gi) => {
     const main = $('.gal-main', gal), shots = $$('.shot', gal);
-    const cap = $('[data-gal-cap]', gal), now = $('[data-gal-now]', gal), live = $('[data-gal-live]', gal);
+    const live = $('[data-gal-live]', gal);
     if (shots.length < 2) return;
     let i = 0, used = false, over = false, seen = false;
     const show = (n, quiet) => {
       const hadFocus = shots.includes(document.activeElement);
       i = (n + shots.length) % shots.length;
       shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
-      cap.textContent = shots[i].dataset.zoom;
-      now.textContent = i + 1;
       if (!quiet) live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
       if (hadFocus) shots[i].focus();
     };
@@ -537,9 +535,8 @@
     const p = data[id];
     pickCard(id);
     spin.textContent = 'Spin again';
-    result.innerHTML = `<span class="sw" style="--c:${p.c}"></span><span class="nm cn">${esc(p.name)}</span>
-      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Open the case study <span class="ar">→</span></a>
-      <p>${esc(p.line)}</p>`;
+    result.innerHTML = `<span class="sw" style="--c:${p.c}"></span>
+      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Open the case study <span class="ar">→</span></a>`;
     if (!still()) { result.classList.remove('in'); void result.offsetWidth; result.classList.add('in'); }
   }
   const go = (byHand) => {
