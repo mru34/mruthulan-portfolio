@@ -112,7 +112,7 @@ p{margin:0}
 .board{display:grid;gap:12px}
 .board-foot{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;min-height:48px}
 .board-foot .result{flex:1;min-width:0}
-.board[hidden]{display:none}
+.no-js .board{display:none} /* the spin needs the script */
 .board-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .board-head .eyebrow{color:var(--grey)}
 .board-head h2.eyebrow{color:var(--gold)}
@@ -224,6 +224,7 @@ p{margin:0}
 .pc-stage.is-whole{padding-bottom:clamp(18px,2.2vw,30px)}
 .pc-stage.is-whole .pc-frame{border-radius:10px;box-shadow:0 0 0 1px rgba(255,255,255,.2),0 18px 50px rgba(0,0,0,.5)}
 .pc-stage.is-award{padding-bottom:14px}
+.pc-stage.is-scene{padding:0;background:#0D0D0F} /* the picture carries its own backdrop and devices */
 .pc-photo{margin:0;padding:0 6px}
 /* the award photo sits like a print, white-bordered, with its label and caption, so it never reads as a product screenshot */
 .pc-print{position:relative;aspect-ratio:2/1;border-radius:4px;overflow:hidden;box-shadow:0 0 0 6px #F2F2F2,0 18px 40px rgba(0,0,0,.5)}
@@ -506,21 +507,21 @@ p{margin:0}
   @view-transition{navigation:auto}
   ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}
-  .tiles .t{animation:tile-in .45s var(--ease) backwards;animation-delay:calc(var(--i) * 32ms + 120ms)}
+  .tiles .t{animation:tile-in .38s var(--ease) backwards;animation-delay:calc(var(--i) * 14ms)}
   @supports (animation-timeline: scroll()){
     .progress{animation:read linear both;animation-timeline:scroll(root block)}
   }
   @supports (animation-timeline: view()){
     .hero .tiles{animation:name-out linear both;animation-timeline:view();animation-range:exit 0% exit 100%;transform-origin:0 100%}
     .par img{scale:1.14;animation:drift linear both;animation-timeline:view();animation-range:cover 0% cover 100%}
-    .arrive{animation:arrive linear backwards;animation-timeline:view();animation-range:entry 0% entry 55%}
+    .arrive{animation:arrive linear backwards;animation-timeline:view();animation-range:entry 0% entry 35%}
   }
 }
 @keyframes tile-in{from{transform:rotateX(-92deg);filter:brightness(1.7)}to{transform:none}}
 @keyframes name-out{to{transform:translateY(-10%) scale(.93);opacity:.12}}
 @keyframes drift{from{transform:translateY(-6%)}to{transform:translateY(6%)}}
 @keyframes read{to{transform:scaleX(1)}}
-@keyframes arrive{from{opacity:.35;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes arrive{from{opacity:.8;transform:translateY(20px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
