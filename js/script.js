@@ -465,6 +465,61 @@
     });
   }
 
+  /* ---------------------------------------------------------- home: the name docks into the header */
+  // Scrolling out of the hero, the big name glides up and shrinks while the nine MRUTHULAN tiles close
+  // ranks, until each letter sits on the same letter of the small logo, at its size; the tiles and
+  // SENTHIL NATHAN fade on the way and the logo takes over at the end. It follows the scroll position,
+  // so it runs backwards on the way up and never hides anything at rest. Everything is measured once
+  // (and on resize), so scrolling only writes transforms.
+  const logo = $('.logo', bar);
+  const logoText = logo && logo.firstChild;
+  const first = nameEl && $('.w', nameEl);
+  const row = first ? $$('.t', first) : [];
+  if (nameEl && logoText && logoText.nodeType === 3 && logoText.length === row.length && !still()) {
+    const intro = $('.hero-intro');
+    const range = document.createRange();
+    const charBox = (node, i) => { range.setStart(node, i); range.setEnd(node, i + 1); return range.getBoundingClientRect(); };
+    let m = null, raf = 0;
+    const measure = () => {
+      root.classList.add('docking');                     // the logo's resting place, without its fade-in offset
+      nameEl.style.transform = '';
+      row.forEach((t) => { t.style.translate = ''; });
+      const r = first.getBoundingClientRect(), n = nameEl.getBoundingClientRect();
+      // layout sizes, not on-screen boxes: the tiles may still be mid flip-in when this runs
+      const letters = row.map((t, i) => charBox(logoText, i));
+      const s = parseFloat(getComputedStyle(logo).fontSize) / parseFloat(getComputedStyle(row[0]).fontSize);
+      const centres = row.map((t) => t.offsetLeft - first.offsetLeft + t.offsetWidth / 2);
+      const cy = row[0].offsetTop - first.offsetTop + row[0].offsetHeight / 2;
+      const tx = letters[0].left + letters[0].width / 2 - s * centres[0];
+      const ty = letters[0].top + letters[0].height / 2 - s * cy;
+      const top = r.top + scrollY;                       // where MRUTHULAN sits in the page
+      m = {
+        x: r.left, top, s, tx, ty,
+        // how far each tile slides (before scaling) so its letter lands on the logo's letter
+        shift: letters.map((b, i) => (b.left + b.width / 2 - tx) / s - centres[i]),
+        end: Math.max(top - letters[0].top, innerHeight * 0.6),   // scroll distance over which it docks
+      };
+      nameEl.style.transformOrigin = `${r.left - n.left}px ${r.top - n.top}px`;
+      update();
+    };
+    const ease = (t) => t * t * (3 - 2 * t);
+    const update = () => {
+      raf = 0;
+      if (!m) return;
+      // the glide finishes at 85% of the distance and holds, so the logo takes over with every letter in place
+      const y = scrollY, t = Math.min(1, Math.max(0, y / m.end)), p = ease(Math.min(1, t / 0.85));
+      const dx = (m.tx - m.x) * p, dy = (m.ty - (m.top - y)) * p, sc = 1 + (m.s - 1) * p;
+      nameEl.style.transform = p ? `translate(${dx}px, ${dy}px) scale(${sc})` : '';
+      row.forEach((tile, i) => { tile.style.translate = p ? `${(m.shift[i] * p).toFixed(2)}px 0` : ''; });
+      root.style.setProperty('--dock', p.toFixed(4));
+      root.style.setProperty('--hand', Math.min(1, Math.max(0, (t - 0.88) / 0.12)).toFixed(3)); // tiles → logo
+      if (intro) intro.style.opacity = String(1 - Math.min(1, t * 1.4));
+    };
+    addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    addEventListener('resize', () => requestAnimationFrame(measure));
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(measure));
+  }
+
   /* ---------------------------------------------------------- home: header */
   const heroEnd = $('[data-hero-end]');
   new IntersectionObserver(([e]) => {

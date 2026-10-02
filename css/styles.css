@@ -533,18 +533,25 @@ p{margin:0}
     .progress{animation:read linear both;animation-timeline:scroll(root block)}
   }
   @supports (animation-timeline: view()){
-    .hero .tiles{animation:name-out linear both;animation-timeline:view();animation-range:exit 0% exit 100%;transform-origin:0 100%}
+    .work-top{animation:rise-in linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
     .par img{scale:1.14;animation:drift linear both;animation-timeline:view();animation-range:cover 0% cover 100%}
   }
 }
 @keyframes tile-in{from{transform:rotateX(-92deg);filter:brightness(1.7)}to{transform:none}}
-@keyframes name-out{to{transform:translateY(-10%) scale(.93);opacity:.12}}
+@keyframes rise-in{from{transform:translateY(56px)}to{transform:none}}
 @keyframes drift{from{transform:translateY(-6%)}to{transform:translateY(6%)}}
 @keyframes read{to{transform:scaleX(1)}}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 [data-page="home"] .logo:focus-visible{opacity:1;transform:none}
+/* the name docking into the header: --dock goes 0 → 1 over the hero, --hand hands over from the tiles to the logo at the very end */
+.docking .hero .tiles{position:relative;z-index:21;will-change:transform;opacity:calc(1 - var(--hand,0))}
+.docking .hero .tiles .t{background:color-mix(in srgb,var(--flap) calc(100% - var(--dock,0) * 100%),transparent);box-shadow:none;transition:none}
+.docking .hero .tiles .t::after{opacity:calc(1 - var(--dock,0))}
+.docking .hero .tiles .w + .w{opacity:calc(1 - var(--dock,0) * 2.2)}
+html.docking [data-page="home"] .top .logo{opacity:var(--hand,0);transform:none;transition:none}
+html.docking [data-page="home"] .top .logo:focus-visible{opacity:1}
 .no-js [data-copy]{display:none}
 
 /* ------------------------------------------------------------- laptops and up: a larger scale */
