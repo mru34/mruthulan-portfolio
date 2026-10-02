@@ -11,6 +11,11 @@
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
+  // In-page links scroll smoothly once the page has loaded. Not before: a page opened at /#about must
+  // jump straight there, so the browser can keep it in place while fonts and pictures settle above it.
+  const smooth = () => requestAnimationFrame(() => root.classList.add('loaded'));
+  if (document.readyState === 'complete') smooth(); else addEventListener('load', smooth, { once: true });
+
   /* ---------------------------------------------------------- smooth-motion helpers */
   // One flap turn, handed to the compositor (no class toggling, no forced layout).
   const FLIP = [{ transform: 'rotateX(75deg)', filter: 'brightness(1.8)' }, { transform: 'none', filter: 'none' }];
