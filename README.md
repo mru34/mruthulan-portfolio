@@ -65,6 +65,10 @@ GitHub Pages publishes the `main` branch from the repository root. The `CNAME` f
 
 The Google Analytics 4 measurement ID is configured in `js/analytics.js`. The question appears as a slim bar once a visitor scrolls into the page, and the tag loads only after they choose **Yes**; the choice is stored in that browser and can be changed on the privacy page. After consent the site sends `case_open`, `resume_click`, `proof_post_click` (with the project), `spin_result` (the project it landed on, when the visitor spins), `press_viewer_open`, `press_article_click`, `deck_open`, `contact_copy_email`, `contact_open_mail_app` and `contact_open_linkedin`. No names, email addresses or free text are sent.
 
+## Link previews
+
+Each case study shares with its own 1200×630 card (`assets/og/<page>.jpg`); the home page, Loomy, privacy and 404 use `assets/og/home.jpg`. The cards are drawn from the site's fonts and pictures by `portfolio-tools/card-shots/og.mjs` (outside the repo); re-run it after changing a project's picture, wording or result, then convert the PNGs to JPG and rebuild. Each `og:image` URL carries a hash of the file, so LinkedIn fetches a changed card again. `assets/og-card.jpg` is kept, with the home card's content, for links shared before.
+
 ## Fonts
 
 Archivo, Bricolage Grotesque, Geist and JetBrains Mono are served from `assets/fonts/` (latin subsets of the Google Fonts variable files, OFL; see `assets/fonts/LICENSES.txt`). `css/styles.css` declares them and every page preloads Archivo, the name and board font, so the first paint never waits on another domain.

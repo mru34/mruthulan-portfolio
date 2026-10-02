@@ -14,6 +14,9 @@
 @font-face{font-family:"Archivo";font-style:normal;font-weight:700 800;font-stretch:62% 75%;font-display:swap;src:url(../assets/fonts/archivo-latin.woff2) format("woff2")}
 @font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:500 700;font-display:swap;src:url(../assets/fonts/bricolage-grotesque-latin.woff2) format("woff2")}
 @font-face{font-family:"Geist";font-style:normal;font-weight:400 600;font-display:swap;src:url(../assets/fonts/geist-latin.woff2) format("woff2")}
+/* Stand-ins sized to the real fonts (measured widths), so text wraps the same before and after they load and nothing jumps */
+@font-face{font-family:"Bricolage Fallback";src:local("Arial");size-adjust:90.1%}
+@font-face{font-family:"Geist Fallback";src:local("Arial");size-adjust:103.8%}
 @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;src:url(../assets/fonts/jetbrains-mono-400-500-latin.woff2) format("woff2")}
 
 :root{
@@ -22,8 +25,8 @@
   --board:#101012; --board-line:#232327; --flap:#1D1D20; --flap-ink:#F4F4F4; --amber:#FFB000; --gold:#E8B64C; --focus:#6FA3FF;
   --gutter:clamp(16px,4.4vw,56px); --max:1440px; --bar:72px;
   --disp:"Archivo","Arial Narrow","Helvetica Neue",Arial,sans-serif;
-  --body:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --stmt:"Bricolage Grotesque","Geist",system-ui,sans-serif; /* big statements: the hero line, leads, award quotes */
+  --body:"Geist","Geist Fallback",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --stmt:"Bricolage Grotesque","Bricolage Fallback","Geist",system-ui,sans-serif; /* big statements: the hero line, leads, award quotes */
   --mono:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace; /* proof only: routes, files, stack, figures */
   --ease:cubic-bezier(.2,.7,.2,1);
 }
@@ -95,7 +98,7 @@ p{margin:0}
 .hero .tiles .sr-only + .w .t{color:var(--gold)} /* MRUTHULAN in gold; SENTHIL NATHAN stays white */
 .tiles .t{width:var(--tw);aspect-ratio:3/4.1;background:var(--flap);color:var(--flap-ink);border-radius:clamp(3px,.45vw,6px);display:grid;place-items:center;font:700 calc(var(--tw) * .8)/1 var(--disp);font-stretch:75%;position:relative;overflow:hidden;box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
 .tiles .t::after,.flaps span::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#050505}
-.hero-intro{margin-top:clamp(36px,6vh,64px);max-width:44rem}
+.hero-intro{margin-top:clamp(36px,6vh,64px);max-width:48rem}
 .hero-intro .acts{margin-top:clamp(28px,4vh,40px)}
 /* type roles: statements in Bricolage, reading text in Geist, proof in mono; emphasis is weight and gold, never italics */
 .lede,.about .lead,.case-hl,.text-page .lead{font-family:var(--stmt);font-weight:600;font-variation-settings:"opsz" 96;letter-spacing:-.025em;color:var(--ink)}
@@ -104,6 +107,7 @@ p{margin:0}
 .lede{font-size:clamp(26px,2.5vw,38px);line-height:1.1;max-width:24ch}
 .seeking{display:flex;gap:10px;align-items:center;margin-top:18px;font-size:16px}
 .seeking i{width:8px;height:8px;background:var(--amber);flex:none}
+.stack{margin-top:8px;padding-left:18px;font:400 16px/1.5 var(--mono);color:var(--grey)}
 .acts{display:flex;gap:10px;flex-wrap:wrap}
 
 /* organisers' logos, shown in white */
@@ -181,6 +185,7 @@ p{margin:0}
 .hs-hint .touch{display:none}
 @media (hover:none){.hs-hint .fine{display:none}.hs-hint .touch{display:inline}}
 .no-js .hs-hint{display:none}
+.hs-m{display:none}
 .gal-arrow{width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--hair);background:none;color:var(--ink);font:500 18px/1 var(--body);display:grid;place-items:center;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s,transform .15s var(--ease)}
 @media (hover:hover){.gal-arrow:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}}
 .gal-arrow:active{transform:scale(.92);background:var(--ink);color:var(--bg)}
@@ -479,6 +484,15 @@ p{margin:0}
   .hs-view.carded .hs-stage{filter:none;transform:none}
   .hs-tag{position:static;margin-top:10px;display:none;transform:none}
   .hs-tag[data-on]{display:block}
+  /* phones: no small zoomable picture; each line shows its own part of the product */
+  .feat-case .hs-wrap{display:none}
+  .feat-case .built{gap:28px}
+  .feat-case .hs-item{pointer-events:none;padding-left:0;margin-left:0;color:var(--ink);font-weight:500}
+  .hs-m{display:block;margin-top:10px}
+  .hs-crop{width:min(100%,calc(62vh * var(--ratio)));aspect-ratio:var(--ratio);border-radius:10px;background-repeat:no-repeat;background-color:#0E0E10;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+  .hs-m-tag{margin-top:10px;font-size:16px;color:var(--soft)}
+  .hs-m-card{display:grid;gap:4px;padding:14px 16px;border-radius:10px;background:#0E0E10;border:1px solid color-mix(in srgb,var(--c) 45%,#333)}
+  .hs-m-card code{font:400 15px/1.5 var(--mono);color:#E8E8EA;white-space:pre-wrap;overflow-wrap:anywhere}
   .work-top{grid-template-columns:1fr;align-items:start;gap:24px}
   .crumb-ev{display:none}
   .board-foot .result p{display:none}
