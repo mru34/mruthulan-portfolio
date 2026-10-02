@@ -245,6 +245,7 @@ PROJECTS = [
                ('Stack', 'Next.js · FastAPI · PostgreSQL'),
                ('Partner', 'Brief from Singapore Children’s Society')],
         lead=('signalbridge-shot-1', None),
+        scene='signalbridge-case',
         sections=lambda: [
             sec('The handoff', 'Five moments, and the judgement stays with the worker at every one.', steps([
                 ('Message', 'A young person writes to SafeNight after hours, on the web, Telegram or Discord.'),
@@ -293,7 +294,8 @@ PROJECTS = [
                ('Stack', 'On-device AI on a Dell GB10 · Singaporean TTS'),
                ('Partner', 'SPD Ltd, Singapore'),
                ('Status', 'Competition build · repository private')],
-        lead=('meant-shot-1', None),
+        lead=None,
+        scene='meant-case',
         sections=lambda: [
             sec('One turn', 'The whole product is three seconds of a conversation.', steps([
                 ('The room moves on', 'Turn Claim tells the other person an answer is coming, so the conversation holds instead of rolling past.'),
@@ -343,13 +345,14 @@ PROJECTS = [
                ('Stack', 'HTML · CSS · JavaScript · hosted on Render'),
                ('Client', 'A local barbershop in Singapore')],
         lead=('better-call-bhai-shot-1', 'The deployed site, on a laptop and a phone'),
+        scene='better-call-bhai-case',
         sections=lambda: [
             sec('Before and after', 'The whole job was removing a conversation.', compare(
                 ('Before: WhatsApp', ['Message the shop to ask what is free.', 'Wait for a reply.',
                                       'Agree a time.', 'Confirm again closer to the day.']),
                 ('After: the site', ['Open the site.', 'Pick an open slot.', 'Confirm.']))),
             sec('Evidence', 'The booking flow, end to end.',
-                shots(['better-call-bhai-shot-2', 'better-call-bhai-shot-3'])
+                shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'])
                 + note('Captured from the site’s own code running locally with an empty database, so no '
                        'customer appears. The struck-through times are test bookings.')
                 + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
@@ -394,7 +397,7 @@ PROJECTS = [
         result='Full-stack coursework build',
         event='BED CA2 coursework',
         proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
-        preview='boss-breaker-shot-2', cover=('browser', 'boss-breaker-shot-2'),
+        preview='boss-breaker-dashboard', cover=('browser', 'boss-breaker-dashboard'),
         desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
               'Built with JavaScript, Node.js and MySQL.'),
         og='A full-stack wellness game with challenges, points and boss raids.',
@@ -407,7 +410,8 @@ PROJECTS = [
                ('Result', 'Complete full-stack build for the BED CA2 brief'),
                ('Stack', 'JavaScript · Node.js · MySQL'),
                ('Status', 'Coursework · source on GitHub')],
-        lead=('boss-breaker-shot-2', None),
+        lead=('boss-breaker-dashboard', None),
+        scene='boss-breaker-case',
         sections=lambda: [
             sec('The loop', 'Four mechanics, one habit.', steps([
                 ('Challenges', 'A wellness action is the unit of play. Doing it is how you earn anything.'),
@@ -424,7 +428,7 @@ PROJECTS = [
                 ('Runs on an empty database', 'Its nine tables are created at start-up if they are missing, so '
                                               'the app runs against a fresh MySQL database.')],
                 'From the public repository, where every commit is mine.')
-                + shots(['boss-breaker-shot-1'])),
+                + shots(['boss-breaker-raid', 'boss-breaker-shot-1'])),
         ],
     ),
     dict(
@@ -604,10 +608,10 @@ FEATURED = [
     ),
     dict(pid='bb',
          frame='device',
-         layers={'flow': 'better-call-bhai-shot-2', 'live': 'better-call-bhai-shot-1'}, first='flow',
+         layers={'flow': 'better-call-bhai-flow', 'live': 'better-call-bhai-shot-1'}, first='flow',
          items=[
-             ('The booking site customers use', dict(t='img', l='flow', r=[0.17, 0.08, 0.31, 0.92])),
-             ('Server-side rules: no past dates, and each slot can only be booked once', dict(t='img', l='flow', r=[0.55, 0.36, 0.26, 0.5],
+             ('The booking site customers use', dict(t='img', l='flow', r=[0.206, 0.042, 0.263, 0.928])),
+             ('Server-side rules: no past dates, and each slot can only be booked once', dict(t='img', l='flow', r=[0.552, 0.33, 0.222, 0.41],
                  tag='Taken slots are struck through; a second booking gets “That time slot is already booked.”')),
              ('A Node/Express API on SQLite, with the shop’s admin page', dict(t='card', f='server.js',
                  lines=['GET/POST/PATCH/DELETE  /api/services', 'POST  /api/bookings        GET  /api/bookings', 'PATCH /api/bookings/:id/status', 'GET   /api/slots',
@@ -618,10 +622,10 @@ FEATURED = [
     ),
     dict(pid='bx',
          frame='browser',
-         layers={'dash': 'boss-breaker-shot-2'}, first='dash',
+         layers={'dash': 'boss-breaker-dashboard'}, first='dash',
          items=[
              ('A nine-page frontend: dashboard, challenges, boss raid, shop, inventory', dict(t='img', l='dash', r=[0.08, 0.0, 0.84, 0.07])),
-             ('Points and boss damage worked out on the server', dict(t='img', l='dash', r=[0.1, 0.12, 0.8, 0.24],
+             ('Points and boss damage worked out on the server', dict(t='img', l='dash', r=[0.06, 0.13, 0.89, 0.27],
                  tag='damage = challenge.points × item multiplier + bonus_damage')),
              ('An Express API and a nine-table MySQL schema created at start-up', dict(t='card', f='src/configure/initTables.js',
                  lines=['User · WellnessChallenge · UserCompletion', 'Item · Inventory · UserEffect', 'Boss · BossDamageLog · Review',
@@ -923,6 +927,10 @@ def build_case(p):
                 f'<figcaption class="cap">{e(cap or MEDIA[key].get("caption") or "")}</figcaption></figure>')
     else:
         lead = ''
+    if p.get('scene'):  # the whole product, framed in devices, opens the page (made by portfolio-tools/card-shots)
+        key = p['scene']
+        lead = (f'<figure class="lead-fig scene-fig">{zoom(key, "(max-width: 860px) 100vw, 1300px", MEDIA[key]["caption"], eager=True)}'
+                f'<figcaption class="cap">{e(MEDIA[key]["caption"])}</figcaption></figure>') + lead
     # back to the project's row in the list (Loomy is not on the homepage, so back to the list)
     back = f"index.html#work-{p['id']}" if p in HOME_PROJECTS else 'index.html#work'
     ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['name'],
