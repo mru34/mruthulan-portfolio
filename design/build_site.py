@@ -725,20 +725,20 @@ HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
 #   MEANT: the private repository's team table credits me with client and demo engineering (the PWA,
 #     accessibility, the booth); the audio and TTS are credited to a teammate, so they are not claimed here.
 #   KnowCad: the case study (the Autodesk engineers led the code; I built and delivered the presentation).
-# Pictures are never edited: a card shows the whole screenshot (z=1) or a crop of it (zoom z around the
-# point x, y), and the image it loads is large enough for that zoom, so the crop is never enlarged.
-# poster=True inlines a small copy of the screenshot behind it, so the frame is never empty while it loads.
+# A 'scene' card shows a whole picture of the product: real local captures, uncropped, framed in
+# devices on a backdrop in the project's colour (made by portfolio-tools/card-shots), with a small
+# inlined copy behind it so the card is never empty while it loads. The award card shows a photo.
 CARDS = {
-    'sb': dict(img='signalbridge-shot-3', frame='browser', z=1, x=50, y=50, poster=True,
+    'sb': dict(img='signalbridge-card', frame='scene', z=1, x=50, y=50,
                part='Youth chat and consent screens, their API routes, and the Discord intake with tests.',
                out=('Result', 'Champion, Dell InnovateDash 2026. Brief from Singapore Children’s Society.')),
-    'bx': dict(img='boss-breaker-shot-1', frame='browser', z=1, x=50, y=50,
+    'bx': dict(img='boss-breaker-card', frame='scene', z=1, x=50, y=50,
                part='Solo: frontend, Express API, MySQL database and game logic.',
                out=('Result', 'A complete full-stack app for the BED CA2 coursework brief. Source on GitHub.')),
-    'bb': dict(img='better-call-bhai-shot-2', frame='device', z=1.3, x=50, y=22,
+    'bb': dict(img='better-call-bhai-card', frame='scene', z=1, x=50, y=50,
                part='Solo: booking site, Node/Express API, SQLite database and Render deploy.',
                out=('Status', 'Live on Render, in a pilot with the shop.')),
-    'mt': dict(img='meant-shot-1', frame='device', z=1.25, x=10, y=40,
+    'mt': dict(img='meant-card', frame='scene', z=1, x=50, y=50,
                part='Tablet app interface, accessibility and the booth demo.',
                out=('Result', 'Second runner-up, Dell InnovateFest 2026, polytechnic category. S$3,000.')),
     'kc': dict(img='win-knowcad-champion', frame='award', z=1.0, x=50, y=35,
@@ -759,6 +759,8 @@ def project_card(pid, big):
     if d['frame'] == 'award':
         stage = (f'<div class="pc-stage is-award"><figure class="pc-photo" style="{crop}"><div class="pc-print">{shot}'
                  f'<span class="pc-chip">Award photo</span></div><figcaption>{e(m["caption"])}. The product is private.</figcaption></figure></div>')
+    elif d['frame'] == 'scene':
+        stage = f'<div class="pc-stage is-scene"><div class="pc-shot" style="background-image:url({poster(d["img"])})">{shot}</div></div>'
     else:
         bar = (f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
                if d['frame'] == 'browser' else '')
@@ -775,6 +777,14 @@ def project_card(pid, big):
             f'<span class="pc-k">{e(k)}</span><span class="pc-v">{e(v)}</span></span>'
             f'<span class="pc-go">Open the case study <span class="ar" aria-hidden="true">→</span></span></span>'
             f'<span class="pc-tag" aria-hidden="true">On the board</span></a></li>')
+
+
+# The board is drawn in the page already showing the first project, so it is never blank while the
+# script loads; the script then spins it to another one.
+def flaps(col, word, n=16):
+    w = word.upper().ljust(n)[:n]
+    return f'<div class="flaps{" status" if col == "status" else ""}" data-col="{col}" data-n="{n}">' + ''.join(
+        f'<span>{e(ch) if ch != " " else ""}</span>' for ch in w) + '</div>'
 
 
 def board_data():
@@ -809,12 +819,12 @@ def build_home():
             <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
             <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
           </div>
-          <section class="board" data-board aria-labelledby="board-title" hidden>
+          <section class="board" data-board data-first="{HOME_PROJECTS[0]['id']}" aria-labelledby="board-title">
             <div class="board-head"><h2 class="eyebrow" id="board-title">Now showing</h2><span class="eyebrow">{len(HOME_PROJECTS)} projects</span></div>
             <div class="fids" aria-hidden="true">
-              <div><span class="lab">Project</span><div class="flaps" data-col="name" data-n="16"></div></div>
-              <div><span class="lab">Type</span><div class="flaps" data-col="type" data-n="16"></div></div>
-              <div><span class="lab">Result</span><div class="flaps status" data-col="status" data-n="16"></div></div>
+              <div><span class="lab">Project</span>{flaps('name', HOME_PROJECTS[0]['name'])}</div>
+              <div><span class="lab">Type</span>{flaps('type', HOME_PROJECTS[0]['board'][0])}</div>
+              <div><span class="lab">Result</span>{flaps('status', HOME_PROJECTS[0]['board'][1])}</div>
             </div>
             <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result></div></div>
             <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>

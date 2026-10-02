@@ -506,9 +506,8 @@
   const board = $('[data-board]');
   const data = JSON.parse($('#projects-data').textContent);
   const ids = Object.keys(data);
-  board.hidden = false;
   const cols = {};
-  $$('[data-col]', board).forEach((f) => { f.innerHTML = '<span></span>'.repeat(+f.dataset.n); cols[f.dataset.col] = [...f.children]; });
+  $$('[data-col]', board).forEach((f) => { cols[f.dataset.col] = [...f.children]; });
   const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const put = (c, ch) => { c.textContent = ch === ' ' ? '' : ch; };
   let flipping = 0;
@@ -523,7 +522,7 @@
     let left = cells.length;
     flipping++;
     cells.forEach(([c, ch, idx]) => flicker(c, ch, {
-      dur: 260 + idx * 26, step: 60, flip: 110, each: true, chars: A,
+      dur: 220 + idx * 14, step: 60, flip: 110, each: true, chars: A,
       done: () => { if (--left === 0) { flipping--; if (done) done(); } },
     }));
   }
@@ -537,7 +536,8 @@
   const result = $('[data-result]', board);
   const live = $('[data-spin-live]', board);
   $('.fids', board).addEventListener('click', () => spin.click());
-  let last = null, busy = false;
+  // the page arrives showing the first project, so the opening spin lands somewhere else
+  let last = board.dataset.first || null, busy = false;
   // Picks never repeat the previous project; extra presses during a spin are ignored.
   function pick() {
     const pool = ids.filter((id) => id !== last);
@@ -584,6 +584,6 @@
     }
     renderResult(kept);
   } else {
-    setTimeout(() => go(false), still() ? 0 : 900);
+    setTimeout(() => go(false), still() ? 0 : 250);
   }
 })();
