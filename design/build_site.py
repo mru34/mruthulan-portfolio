@@ -259,7 +259,7 @@ PROJECTS = [
         id='mt', slug='meant', name='MEANT', type='Hackathon', c='#4DA3FF',
         board=('HACKATHON', '2ND RUNNER-UP'),
         line='Real-time reply suggestions for AAC users. The user picks every word.',
-        role='UI and UX, the Singaporean TTS voice, presenting the build',
+        role='UI and UX, the Singaporean TTS voice with a teammate, presenting the build',
         result='Dell InnovateFest 2026 — Second runner-up · S$3,000',
         event='Dell InnovateFest 2026 · Second runner-up',
         proof=('View my Dell InnovateFest post ↗', POST_DELL, 'proof_post_click'),
@@ -273,7 +273,7 @@ PROJECTS = [
         actions=[('My Dell InnovateFest post ↗', POST_DELL, 'proof_post_click'),
                  ('Featured in Tamil Murasu ↓', '#press', None)],
         more=[('SP School of Computing’s post ↗', POST_SPSOC_DELL, 'proof_post_click')],
-        facts=[('My role', 'UI and UX, the Singaporean TTS voice, and presenting the build'),
+        facts=[('My role', 'UI and UX, the Singaporean TTS voice with a teammate, and presenting the build'),
                ('Result', 'Second runner-up, polytechnic category · S$3,000'),
                ('Stack', 'On-device AI on a Dell GB10 · Singaporean TTS')],
         lead=None,
@@ -285,7 +285,7 @@ PROJECTS = [
                 ('The user authors it', 'They pick, type or use their board. Nothing is spoken without a tap.')])),
             sec('The voice', 'It had to sound like it came from here.',
                 para('A generic text-to-speech voice makes a Singaporean user sound like someone else. '
-                     'Building the Singaporean TTS voice was my part of the build.')
+                     'I worked on the Singaporean TTS voice with a teammate.')
                 + shots(['meant-shot-2', 'meant-shot-3'])
                 + note('The running tablet client with the hawker demo pack. The repository is private.')),
             sec('If the AI stops', 'It still works.',
@@ -425,8 +425,19 @@ BY_ID = {p['id']: p for p in PROJECTS}
 
 # ------------------------------------------------------------------ shared parts
 
+def og_image(path):
+    """The link-preview card for a page: its own card if it has one (made by portfolio-tools/card-shots/og.mjs),
+    else the home card. The query string changes with the picture, so LinkedIn and others fetch it again."""
+    import hashlib
+    card = ROOT / 'assets' / 'og' / f"{(path[:-5] if path.endswith('.html') else '') or 'home'}.jpg"
+    if not card.exists():
+        card = ROOT / 'assets' / 'og' / 'home.jpg'
+    return f"{SITE}/assets/og/{card.name}?v={hashlib.sha1(card.read_bytes()).hexdigest()[:8]}"
+
+
 def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False, prefix=''):
     canonical = f'{SITE}/{path}'
+    image = og_image(path)
     meta_robots = '\n  <meta name="robots" content="noindex">' if noindex else ''
     ld_html = (f'\n  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>'
                if ld else '')
@@ -442,14 +453,15 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <meta property="og:title" content="{e(og_title or title)}">
   <meta property="og:description" content="{e(og_desc or desc)}">
   <meta property="og:url" content="{canonical}">
-  <meta property="og:image" content="{SITE}/assets/og-card.jpg?v=night2">
+  <meta property="og:image" content="{image}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{SITE}/assets/og-card.jpg?v=night2">
+  <meta name="twitter:image" content="{image}">
   <title>{e(title)}</title>
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{prefix}css/styles.css">
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script src="{prefix}js/script.js" defer></script>
@@ -550,7 +562,8 @@ FEATURED = [
          frame='browser',
          layers={'chat': 'signalbridge-shot-1', 'consent': 'signalbridge-shot-3'}, first='chat',
          items=[
-             ('The youth-facing chat, sign-in and dashboard', dict(t='img', l='chat', r=[0.0, 0.08, 1.0, 0.32])),
+             ('The youth-facing chat, sign-in and dashboard', dict(t='img', l='chat', r=[0.0, 0.08, 1.0, 0.32],
+                 phone='signalbridge-phone-chat')),
              ('The consent step: the young person previews the note before it is shared', dict(t='img', l='consent', r=[0.24, 0.1, 0.52, 0.56])),
              ('FastAPI routes that connect the chat to the backend', dict(t='card', f='services/api/app/routes/conversations.py',
                  lines=['GET   /youth/conversation', 'POST  /conversations/{conversation_id}/messages', 'POST  /handoffs/consent'],
@@ -596,6 +609,28 @@ FEATURED = [
 FEAT_BY_ID = {f['pid']: f for f in FEATURED}
 
 
+def phone_view(f, d):
+    """On phones each "What I built" line shows its part of the product right under it: the zoomed-in
+    crop of the screenshot (r = x, y, w, h as fractions), or the code card. Hidden on larger screens,
+    where pointing at the line zooms the picture instead."""
+    if d['t'] == 'card':
+        lines = ''.join(f'<code>{e(x)}</code>' for x in d['lines'])
+        return f'<div class="hs-m hs-m-card"><p class="hs-file">{e(d["f"])}</p>{lines}<p class="hs-note">{e(d["note"])}</p></div>'
+    tag = f'<p class="hs-m-tag">{e(d["tag"])}</p>' if d.get('tag') else ''
+    if d.get('phone'):  # a phone screenshot of the same thing reads better than a crop of a laptop screen
+        m, (x, y, w, h) = MEDIA[d['phone']], (0, 0, 1, 1)
+    else:
+        m, (x, y, w, h) = MEDIA[f['layers'][d['l']]], d['r']
+    ratio = (w * m['width']) / (h * m['height'])
+    if ratio > 2.4 and not d.get('phone'):  # a thin strip of a laptop screen is unreadable on a phone
+        return f'<div class="hs-m">{tag}</div>' if tag else ''
+    px = 0 if w >= 1 else x / (1 - w) * 100
+    py = 0 if h >= 1 else y / (1 - h) * 100
+    crop = (f'<div class="hs-crop" style="--ratio:{ratio:.4f};background-image:url(assets/media/{m["src"]});'
+            f'background-size:{100 / w:.2f}% auto;background-position:{px:.2f}% {py:.2f}%"></div>')
+    return f'<div class="hs-m">{crop}{tag}</div>'
+
+
 def hotspots(f):
     """The case page's opening picture, with the "What I built" lines beside it."""
     p = BY_ID[f['pid']]
@@ -614,7 +649,7 @@ def hotspots(f):
         data = {k2: v for k2, v in d.items() if k2 in ('t', 'l', 'r', 'tag')}
         data['i'] = k
         items += (f'<li><button class="hs-item" type="button" aria-pressed="false" data-hs="{e(json.dumps(data, ensure_ascii=False))}">'
-                  f'<span class="hs-dot" aria-hidden="true"></span>{e(label)}</button></li>')
+                  f'<span class="hs-dot" aria-hidden="true"></span>{e(label)}</button>{phone_view(f, d)}</li>')
     bar = f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>' if f['frame'] == 'browser' else ''
     return f'''<section class="feat feat-case" id="built" data-feat aria-labelledby="built-title">
           <div class="hs-wrap">
@@ -732,6 +767,9 @@ def board_data():
     return json.dumps(d, ensure_ascii=False).replace('</', '<\\/')
 
 
+# The stack line under the intro lists only what the projects here use: TypeScript (SignalBridge's Next.js
+# screens, MEANT's tablet client), React/Next.js (SignalBridge), Node.js/Express (Boss Breaker, Better Call
+# Bhai), Python/FastAPI (SignalBridge routes and tests), SQL (PostgreSQL, MySQL, SQLite).
 def build_home():
     ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': 'Mruthulan Senthil Nathan',
           'alternateName': ['Mruthulan', 'Senthil Nathan Mruthulan'], 'url': f'{SITE}/',
@@ -754,7 +792,8 @@ def build_home():
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
         <div class="hero-intro">
           <p class="lede">I build full-stack products, from the interface people use <em>to the API and database behind it.</em></p>
-          <p class="seeking"><i aria-hidden="true"></i>Looking for a software engineering internship</p>
+          <p class="seeking"><i aria-hidden="true"></i>Looking for a year-long software engineering internship, 2027/2028</p>
+          <p class="stack" aria-label="Stack">TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL</p>
           <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
         </div>
         <div data-hero-end aria-hidden="true"></div>
