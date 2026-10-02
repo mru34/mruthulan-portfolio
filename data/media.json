@@ -139,5 +139,37 @@
     "caption": "The result on the big screen",
     "width": 1321,
     "height": 991
+  },
+  "signalbridge-card": {
+    "src": "signalbridge-card.webp",
+    "alt": "SignalBridge on a laptop and a phone. The laptop shows the worker cockpit: the queue opens on Mira Tan, a fictional youth, at high risk with consent on file. The phone shows SafeNight asking her: let your worker see a brief note from tonight? with Not now and Yes, share.",
+    "caption": "The worker’s cockpit and the youth’s phone, from the app’s fictional seed data",
+    "note": "Composed from real local captures (portfolio-tools/card-shots); demo/seed data only.",
+    "width": 1600,
+    "height": 1000
+  },
+  "boss-breaker-card": {
+    "src": "boss-breaker-card.webp",
+    "alt": "Boss Breaker's Boss Raid on a laptop and a phone: the Stress Dragon at 1,840 of 5,000 HP, an attack of 80 points typed in, and the damage leaderboard.",
+    "caption": "Boss Raid on a laptop and a phone, with demo data",
+    "note": "Composed from real local captures (portfolio-tools/card-shots); demo/seed data only.",
+    "width": 1600,
+    "height": 1000
+  },
+  "better-call-bhai-card": {
+    "src": "better-call-bhai-card.webp",
+    "alt": "Better Call Bhai on a laptop and a phone: the shop's home page with Book Your Chair, and a booking confirmed for a skin fade at 15:00 on Tuesday 6 October 2026.",
+    "caption": "The shop's site, and a booking confirmed on a phone",
+    "note": "Composed from real local captures (portfolio-tools/card-shots); demo/seed data only.",
+    "width": 1600,
+    "height": 1000
+  },
+  "meant-card": {
+    "src": "meant-card.webp",
+    "alt": "Two MEANT screens: the user's tablet offering four ranked replies to 'Hi what would you like to order', and the partner-facing display reading Give me a moment.",
+    "caption": "The user's tablet and the partner's display",
+    "note": "Composed from real local captures (portfolio-tools/card-shots); demo/seed data only.",
+    "width": 1600,
+    "height": 1000
   }
 }

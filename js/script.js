@@ -306,24 +306,6 @@
     }, 5200), gi * 1700);
   });
 
-  /* ---------------------------------------------------------- section titles flip in */
-  // Section titles spell themselves out like the board the first time they come into view.
-  $$('[data-scramble]').forEach((el) => {
-    if (still()) return;
-    const word = el.textContent, L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    new IntersectionObserver(([en], o) => {
-      if (!en.isIntersecting) return;
-      o.disconnect();
-      let f = 0;
-      const iv = setInterval(() => {
-        const done = Math.floor(f / 2);
-        el.textContent = [...word].map((ch, k) => (k < done || ch === ' ' || ch === '-' ? ch : L[Math.random() * 26 | 0])).join('');
-        if (done >= word.length) { clearInterval(iv); el.textContent = word; }
-        f++;
-      }, 32);
-    }, { threshold: 0.8 }).observe(el);
-  });
-
   /* ---------------------------------------------------------- tilt */
   // Pictures lean toward the mouse; on touch they tilt toward the finger while pressed.
   const tilt = (el, zone = el) => {
@@ -506,9 +488,8 @@
   const board = $('[data-board]');
   const data = JSON.parse($('#projects-data').textContent);
   const ids = Object.keys(data);
-  board.hidden = false;
   const cols = {};
-  $$('[data-col]', board).forEach((f) => { f.innerHTML = '<span></span>'.repeat(+f.dataset.n); cols[f.dataset.col] = [...f.children]; });
+  $$('[data-col]', board).forEach((f) => { cols[f.dataset.col] = [...f.children]; });
   const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   const put = (c, ch) => { c.textContent = ch === ' ' ? '' : ch; };
   let flipping = 0;
@@ -523,7 +504,7 @@
     let left = cells.length;
     flipping++;
     cells.forEach(([c, ch, idx]) => flicker(c, ch, {
-      dur: 260 + idx * 26, step: 60, flip: 110, each: true, chars: A,
+      dur: 220 + idx * 14, step: 60, flip: 110, each: true, chars: A,
       done: () => { if (--left === 0) { flipping--; if (done) done(); } },
     }));
   }
@@ -537,7 +518,8 @@
   const result = $('[data-result]', board);
   const live = $('[data-spin-live]', board);
   $('.fids', board).addEventListener('click', () => spin.click());
-  let last = null, busy = false;
+  // the page arrives showing the first project, so the first spin lands somewhere else
+  let last = board.dataset.first || null, busy = false;
   // Picks never repeat the previous project; extra presses during a spin are ignored.
   function pick() {
     const pool = ids.filter((id) => id !== last);
@@ -572,7 +554,7 @@
     });
   };
   spin.addEventListener('click', () => go(true));
-  // coming back from a case page keeps the last result on the board; otherwise it spins once by itself
+  // the page arrives showing the first project; coming back from a case page keeps the last result instead
   let kept = null;
   try { kept = sessionStorage.getItem('spin-last'); } catch { /* storage may be blocked */ }
   if (kept && data[kept]) {
@@ -583,7 +565,5 @@
       cols[col].forEach((c, i) => { c.textContent = w[i] === ' ' ? '' : w[i]; });
     }
     renderResult(kept);
-  } else {
-    setTimeout(() => go(false), still() ? 0 : 900);
   }
 })();
