@@ -9,6 +9,13 @@
    compositor draws those without redoing layout or paint). Shadows are drawn
    once and faded in; nothing blurs what is behind it live. */
 
+/* Fonts are served from this site (latin subsets of the Google Fonts variable files, OFL; see
+   assets/fonts/LICENSES.txt), so the first paint never waits on another domain. */
+@font-face{font-family:"Archivo";font-style:normal;font-weight:700 800;font-stretch:62% 75%;font-display:swap;src:url(../assets/fonts/archivo-latin.woff2) format("woff2")}
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:500 700;font-display:swap;src:url(../assets/fonts/bricolage-grotesque-latin.woff2) format("woff2")}
+@font-face{font-family:"Geist";font-style:normal;font-weight:400 600;font-display:swap;src:url(../assets/fonts/geist-latin.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;src:url(../assets/fonts/jetbrains-mono-400-500-latin.woff2) format("woff2")}
+
 :root{
   color-scheme:dark;
   --bg:#0C0C0D; --ink:#F2F2F2; --soft:#D4D4D7; --grey:#A0A0A7; --hair:#2A2A2E; --surf:#151517;
@@ -112,7 +119,7 @@ p{margin:0}
 .board{display:grid;gap:12px}
 .board-foot{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;min-height:48px}
 .board-foot .result{flex:1;min-width:0}
-.board[hidden]{display:none}
+.no-js .board{display:none} /* the spin needs the script */
 .board-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .board-head .eyebrow{color:var(--grey)}
 .board-head h2.eyebrow{color:var(--gold)}
@@ -224,6 +231,12 @@ p{margin:0}
 .pc-stage.is-whole{padding-bottom:clamp(18px,2.2vw,30px)}
 .pc-stage.is-whole .pc-frame{border-radius:10px;box-shadow:0 0 0 1px rgba(255,255,255,.2),0 18px 50px rgba(0,0,0,.5)}
 .pc-stage.is-award{padding-bottom:14px}
+/* Sections below the hero are laid out as they near the screen, so the first frame only lays out the hero.
+   The sizes are their measured heights, so the scrollbar barely moves when they render. */
+#work,#awards,#about,#contact{content-visibility:auto}
+#work{contain-intrinsic-size:auto 1650px}#awards{contain-intrinsic-size:auto 850px}#about{contain-intrinsic-size:auto 1150px}#contact{contain-intrinsic-size:auto 520px}
+@media (max-width:640px){#work{contain-intrinsic-size:auto 3300px}#about{contain-intrinsic-size:auto 1700px}}
+.pc-stage.is-scene{padding:0;background:#0D0D0F} /* the picture carries its own backdrop and devices */
 .pc-photo{margin:0;padding:0 6px}
 /* the award photo sits like a print, white-bordered, with its label and caption, so it never reads as a product screenshot */
 .pc-print{position:relative;aspect-ratio:2/1;border-radius:4px;overflow:hidden;box-shadow:0 0 0 6px #F2F2F2,0 18px 40px rgba(0,0,0,.5)}
@@ -506,21 +519,19 @@ p{margin:0}
   @view-transition{navigation:auto}
   ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}
-  .tiles .t{animation:tile-in .45s var(--ease) backwards;animation-delay:calc(var(--i) * 32ms + 120ms)}
+  .tiles .t{animation:tile-in .38s var(--ease) backwards;animation-delay:calc(var(--i) * 14ms)}
   @supports (animation-timeline: scroll()){
     .progress{animation:read linear both;animation-timeline:scroll(root block)}
   }
   @supports (animation-timeline: view()){
     .hero .tiles{animation:name-out linear both;animation-timeline:view();animation-range:exit 0% exit 100%;transform-origin:0 100%}
     .par img{scale:1.14;animation:drift linear both;animation-timeline:view();animation-range:cover 0% cover 100%}
-    .arrive{animation:arrive linear backwards;animation-timeline:view();animation-range:entry 0% entry 55%}
   }
 }
 @keyframes tile-in{from{transform:rotateX(-92deg);filter:brightness(1.7)}to{transform:none}}
 @keyframes name-out{to{transform:translateY(-10%) scale(.93);opacity:.12}}
 @keyframes drift{from{transform:translateY(-6%)}to{transform:translateY(6%)}}
 @keyframes read{to{transform:scaleX(1)}}
-@keyframes arrive{from{opacity:.35;transform:translateY(28px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
