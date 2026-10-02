@@ -546,6 +546,8 @@ p{margin:0}
 }
 [data-page="home"] .logo:focus-visible{opacity:1;transform:none}
 /* the name docking into the header: --dock goes 0 → 1 over the hero, --hand hands over from the tiles to the logo at the very end */
+@property --dock{syntax:'<number>';inherits:true;initial-value:0}
+@property --hand{syntax:'<number>';inherits:true;initial-value:0}
 .docking .hero .tiles{position:relative;z-index:21;will-change:transform;opacity:calc(1 - var(--hand,0))}
 .docking .hero .tiles .t{background:color-mix(in srgb,var(--flap) calc(100% - var(--dock,0) * 100%),transparent);box-shadow:none;transition:none}
 .docking .hero .tiles .t::after{opacity:calc(1 - var(--dock,0))}
