@@ -213,5 +213,13 @@
     "note": "Real local capture (portfolio-tools/card-shots); demo/seed data only.",
     "width": 2880,
     "height": 1800
+  },
+  "signalbridge-phone-chat": {
+    "src": "signalbridge-phone-chat.webp",
+    "alt": "SafeNight on a phone: Mira, a fictional youth, writes that classmates keep editing her photos and posted one on their story; SafeNight says she does not have to explain everything tonight and asks what she most wants it to understand.",
+    "caption": "SafeNight, the youth-facing chat, on a phone",
+    "note": "Real local capture (portfolio-tools/card-shots); fictional seed data.",
+    "width": 1170,
+    "height": 1823
   }
 }

@@ -271,15 +271,13 @@
   // themselves (not with reduced motion); touching a card's photos stops that card for good.
   $$('[data-gal]').forEach((gal, gi) => {
     const main = $('.gal-main', gal), shots = $$('.shot', gal);
-    const cap = $('[data-gal-cap]', gal), now = $('[data-gal-now]', gal), live = $('[data-gal-live]', gal);
+    const live = $('[data-gal-live]', gal);
     if (shots.length < 2) return;
     let i = 0, used = false, over = false, seen = false;
     const show = (n, quiet) => {
       const hadFocus = shots.includes(document.activeElement);
       i = (n + shots.length) % shots.length;
       shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
-      cap.textContent = shots[i].dataset.zoom;
-      now.textContent = i + 1;
       if (!quiet) live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
       if (hadFocus) shots[i].focus();
     };
@@ -467,6 +465,96 @@
     });
   }
 
+  /* ---------------------------------------------------------- home: the name docks into the header */
+  // Scrolling out of the hero, the big name glides up and shrinks while the nine MRUTHULAN tiles close
+  // ranks, until each letter sits on the same letter of the small logo, at its size; the tiles and
+  // SENTHIL NATHAN fade on the way and the logo takes over at the end. It follows the scroll position,
+  // so it runs backwards on the way up and never hides anything at rest.
+  // Where the browser supports scroll-driven animations, the motion is written once as keyframes on the
+  // page's scroll timeline, so the browser moves the name in the same frame as the scroll itself (smooth
+  // with a keyboard, a wheel or a trackpad). Elsewhere a script follows the scroll and writes transforms.
+  const logo = $('.logo', bar);
+  const logoText = logo && logo.firstChild;
+  const first = nameEl && $('.w', nameEl);
+  const row = first ? $$('.t', first) : [];
+  if (nameEl && logoText && logoText.nodeType === 3 && logoText.length === row.length && !still()) {
+    const intro = $('.hero-intro');
+    const range = document.createRange();
+    const charBox = (node, i) => { range.setStart(node, i); range.setEnd(node, i + 1); return range.getBoundingClientRect(); };
+    const onTimeline = window.CSS && CSS.supports('animation-timeline: scroll()');
+    const sheet = onTimeline ? document.head.appendChild(document.createElement('style')) : null;
+    row.forEach((t, i) => { t.dataset.dock = i; });
+    let m = null, raf = 0;
+    const measure = () => {
+      root.classList.add('docking');                     // the logo's resting place, without its fade-in offset
+      if (sheet) sheet.textContent = '';                 // measure the name at rest
+      nameEl.style.transform = '';
+      row.forEach((t) => { t.style.translate = ''; });
+      const r = first.getBoundingClientRect(), n = nameEl.getBoundingClientRect();
+      // layout sizes, not on-screen boxes: the tiles may still be mid flip-in when this runs
+      const letters = row.map((t, i) => charBox(logoText, i));
+      const s = parseFloat(getComputedStyle(logo).fontSize) / parseFloat(getComputedStyle(row[0]).fontSize);
+      const centres = row.map((t) => t.offsetLeft - first.offsetLeft + t.offsetWidth / 2);
+      const cy = row[0].offsetTop - first.offsetTop + row[0].offsetHeight / 2;
+      const tx = letters[0].left + letters[0].width / 2 - s * centres[0];
+      const ty = letters[0].top + letters[0].height / 2 - s * cy;
+      const top = r.top + scrollY;                       // where MRUTHULAN sits in the page
+      m = {
+        x: r.left, top, s, tx, ty,
+        // how far each tile slides (before scaling) so its letter lands on the logo's letter
+        shift: letters.map((b, i) => (b.left + b.width / 2 - tx) / s - centres[i]),
+        end: Math.max(top - letters[0].top, innerHeight * 0.6),   // scroll distance over which it docks
+      };
+      nameEl.style.transformOrigin = `${r.left - n.left}px ${r.top - n.top}px`;
+      if (sheet) writeTimeline(); else update();
+    };
+    const ease = (t) => t * t * (3 - 2 * t);
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    // Everything at one point of the dock, t = 0 (top of the page) … 1 (docked). The glide finishes at
+    // 85% of the distance and holds, so the logo takes over with every letter in place.
+    const at = (t) => {
+      const p = ease(clamp(t / 0.85)), y = t * m.end;
+      return {
+        p, hand: clamp((t - 0.88) / 0.12), intro: 1 - clamp(t * 1.4),
+        name: `translate(${((m.tx - m.x) * p).toFixed(2)}px, ${((m.ty - (m.top - y)) * p).toFixed(2)}px) scale(${(1 + (m.s - 1) * p).toFixed(5)})`,
+        tile: (i) => `${(m.shift[i] * p).toFixed(2)}px 0`,
+      };
+    };
+    // On a scroll timeline: sampled finely enough that the straight lines between samples are invisible.
+    const writeTimeline = () => {
+      const ts = [...new Set([...Array(49)].map((_, i) => i / 48).concat([0.85, 0.88]))].sort((a, b) => a - b);
+      const frames = (css) => ts.map((t) => `${(t * 100).toFixed(3)}%{${css(at(t))}}`).join('');
+      const on = `animation-timeline:scroll(root block);animation-range:0px ${Math.round(m.end)}px;animation-timing-function:linear`;
+      sheet.textContent =
+        `@keyframes dock-name{${frames((f) => `transform:${f.name}`)}}` +
+        `@keyframes dock-vars{${frames((f) => `--dock:${f.p.toFixed(4)};--hand:${f.hand.toFixed(3)}`)}}` +
+        `@keyframes dock-intro{${frames((f) => `opacity:${f.intro.toFixed(3)}`)}}` +
+        row.map((_, i) => `@keyframes dock-t${i}{${frames((f) => `translate:${f.tile(i)}`)}}`).join('') +
+        `html.docking{animation-name:dock-vars;animation-fill-mode:both;${on}}` +
+        `html.docking .hero .tiles{animation-name:dock-name;animation-fill-mode:both;${on}}` +
+        `html.docking .hero-intro{animation-name:dock-intro;animation-fill-mode:both;${on}}` +
+        // tiles keep their flip-in on arrival, and only pick up the slide once the page has moved
+        row.map((_, i) => `html.docking .hero .tiles .t[data-dock="${i}"]{animation-name:tile-in,dock-t${i};` +
+          `animation-duration:.38s,auto;animation-delay:calc(var(--i) * 14ms),0s;animation-fill-mode:backwards,forwards;` +
+          `animation-timing-function:var(--ease),linear;animation-timeline:auto,scroll(root block);` +
+          `animation-range:normal,1px ${Math.round(m.end)}px}`).join('');
+    };
+    // Elsewhere: follow the scroll and write the same values.
+    const update = () => {
+      raf = 0;
+      if (!m) return;
+      const f = at(clamp(scrollY / m.end));
+      nameEl.style.transform = f.p ? f.name : '';
+      row.forEach((tile, i) => { tile.style.translate = f.p ? f.tile(i) : ''; });
+      root.style.setProperty('--dock', f.p.toFixed(4));
+      root.style.setProperty('--hand', f.hand.toFixed(3));
+      if (intro) intro.style.opacity = String(f.intro);
+    };
+    if (!sheet) addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    addEventListener('resize', () => requestAnimationFrame(measure));
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(measure));
+  }
+
   /* ---------------------------------------------------------- home: header */
   const heroEnd = $('[data-hero-end]');
   new IntersectionObserver(([e]) => {
@@ -537,9 +625,8 @@
     const p = data[id];
     pickCard(id);
     spin.textContent = 'Spin again';
-    result.innerHTML = `<span class="sw" style="--c:${p.c}"></span><span class="nm cn">${esc(p.name)}</span>
-      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Open the case study <span class="ar">→</span></a>
-      <p>${esc(p.line)}</p>`;
+    result.innerHTML = `<span class="sw" style="--c:${p.c}"></span>
+      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Case study <span class="ar">→</span></a>`;
     if (!still()) { result.classList.remove('in'); void result.offsetWidth; result.classList.add('in'); }
   }
   const go = (byHand) => {
