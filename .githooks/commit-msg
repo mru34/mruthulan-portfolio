@@ -1,0 +1,20 @@
+#!/bin/sh
+# Commits here are credited to their author only. Refuse a commit authored
+# or committed as an AI tool, and drop AI credit lines from the message
+# (Co-Authored-By: Claude..., Claude-Session:, "Generated with Claude Code").
+# Enable once per clone: git config core.hooksPath .githooks
+
+for who in "$(git var GIT_AUTHOR_IDENT)" "$(git var GIT_COMMITTER_IDENT)"; do
+  case "$who" in
+    *@anthropic.com*|Claude\ *)
+      echo "commit-msg: refusing a commit as '${who% * *}'. Commit as yourself." >&2
+      exit 1 ;;
+  esac
+done
+
+perl -0pi -e '
+  s/^Co-Authored-By:.*(?:Claude|anthropic).*\n?//gmi;
+  s/^Claude-Session:.*\n?//gmi;
+  s/^.*Generated with \[?Claude Code.*\n?//gmi;
+  s/\s+\z/\n/;
+' "$1"

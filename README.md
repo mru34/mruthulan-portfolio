@@ -53,6 +53,10 @@ This writes `index.html`, the six case pages, `privacy.html` and `404.html`, mak
 
 After changing only `css/` or `js/`, run `python design/stamp_assets.py` so browsers fetch the new files instead of a cached copy.
 
+## Commits
+
+Commits are credited to me only. After cloning, run `git config core.hooksPath .githooks` once: the `commit-msg` hook refuses a commit authored as an AI tool and removes AI co-author lines from the message.
+
 ## Preview
 
 Run `python -m http.server 8000` in this folder and open `http://localhost:8000`.
