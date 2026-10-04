@@ -41,6 +41,8 @@
     // Two equal buttons: the choice is the visitor's, so neither is dressed up as the answer.
     banner.innerHTML = '<p>Allow Google Analytics? <a href="privacy.html">What it collects</a></p><div class="analytics-banner-actions"><button type="button" class="analytics-allow">Yes</button><button type="button" class="analytics-deny">No</button></div>';
     document.body.appendChild(banner);
+    // room under the footer so the bar never covers its links while it is up
+    document.documentElement.style.setProperty('--consent-h', `${banner.offsetHeight}px`);
     document.documentElement.classList.add('has-consent-prompt');
     const dismiss = () => {
       banner.remove();

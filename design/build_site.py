@@ -489,7 +489,7 @@ def header(home, current=None, prefix=''):
         <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
-    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a></nav>
+    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></nav>
   </header>"""
 
 
@@ -779,7 +779,7 @@ def build_home():
           'sameAs': [LINKEDIN, GITHUB]}
     about_personal = f'<p>{e(ABOUT_PERSONAL)}</p>' if ABOUT_PERSONAL else ''
     return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
-                 'Mruthulan Senthil Nathan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Five projects, what I built on each, and three hackathon results.',
+                 'Mruthulan Senthil Nathan, Year 2 IT at Singapore Polytechnic, builds full-stack products. Five projects, what I built on each, and three hackathon results.',
                  '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
                  og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld)}
 {body_open('home')}
@@ -854,6 +854,7 @@ def build_home():
         </div>
         <div class="acts">
           <a class="btn" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">Message me on LinkedIn ↗</a>
+          <a class="btn" href="{GITHUB}" target="_blank" rel="noopener noreferrer" data-event="contact_open_github">GitHub ↗</a>
           <a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
         </div>
         <p class="status" role="status" aria-live="polite" data-copy-status></p>
@@ -880,6 +881,11 @@ def build_case(p):
         evattr = f' data-event="{ev}" data-project="{p["id"]}"' if ev else ''
         return f'<a class="btn{" solid" if k == 0 else ""}" href="{e(href)}"{ext(href)}{evattr}>{e(label)}</a>'
     actions = ''.join(action(k, a) for k, a in enumerate(p['actions']))
+    # Render's free plan puts an app to sleep when nobody uses it, and the first visit wakes it slowly
+    live = next((a[0] for a in p['actions'] if 'onrender.com' in a[1]), None)
+    wake = (note(f"Free hosting: the {'site' if 'site' in live else 'app'} sleeps when nobody is using it, "
+                 'so the first visit can take up to a minute to load.').replace('class="note"', 'class="note wake"')
+            if live else '')
     # links beyond the two buttons sit quietly at the end of the page
     def more_link(label, href, ev):
         evattr = f' data-event="{ev}" data-project="{p["id"]}"' if ev else ''
@@ -912,7 +918,7 @@ def build_case(p):
         <h1 class="case-title cn" style="view-transition-name:t-{p['id']};--len:{max(len(w) for w in p['name'].split())}">{e(p['name'])}</h1>
         <p class="case-hl">{e(p['hl'])}</p>
         <p class="case-st">{e(p['st'])}</p>
-        <div class="acts">{actions}</div>
+        <div class="acts">{actions}</div>{wake}
         {picture}
         <dl class="facts">{facts}</dl>
         {built}

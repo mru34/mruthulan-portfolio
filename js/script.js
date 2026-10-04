@@ -551,6 +551,11 @@
       if (intro) intro.style.opacity = String(f.intro);
     };
     if (!sheet) addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    // Once the page moves the tiles fly over the header, so they stop taking the pointer there
+    // (the class only changes when the page leaves or returns to the very top).
+    const moved = () => root.classList.toggle('moved', scrollY > 0);
+    addEventListener('scroll', moved, { passive: true });
+    moved();
     addEventListener('resize', () => requestAnimationFrame(measure));
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(measure));
   }
