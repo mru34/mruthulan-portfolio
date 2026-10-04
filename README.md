@@ -82,7 +82,7 @@ Archivo, Bricolage Grotesque, Geist and JetBrains Mono are served from `assets/f
 
 ## Résumé
 
-The résumé is Mruthulan's own PDF with the phone number removed, at `assets/Mruthulan-Senthil-Nathan-Resume.pdf`. The same file also sits at the old address, `assets/Senthil-Nathan-Mruthulan-Resume.pdf`, so older links still work. Replace both together.
+The résumé is built from text by `python design/build_resume.py` (one A4 page; needs reportlab), which writes `assets/Mruthulan-Senthil-Nathan-Resume.pdf` and the same file at the old address, `assets/Senthil-Nathan-Mruthulan-Resume.pdf`, so older links still work. Every line matches what the site says, so change both together. The phone number is never published, so it is not in the script; add it to your own copy for applications.
 
 ## Loomy deck
 
