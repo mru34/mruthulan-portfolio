@@ -881,6 +881,11 @@ def build_case(p):
         evattr = f' data-event="{ev}" data-project="{p["id"]}"' if ev else ''
         return f'<a class="btn{" solid" if k == 0 else ""}" href="{e(href)}"{ext(href)}{evattr}>{e(label)}</a>'
     actions = ''.join(action(k, a) for k, a in enumerate(p['actions']))
+    # Render's free plan puts an app to sleep when nobody uses it, and the first visit wakes it slowly
+    live = next((a[0] for a in p['actions'] if 'onrender.com' in a[1]), None)
+    wake = (note(f"Free hosting: the {'site' if 'site' in live else 'app'} sleeps when nobody is using it, "
+                 'so the first visit can take up to a minute to load.').replace('class="note"', 'class="note wake"')
+            if live else '')
     # links beyond the two buttons sit quietly at the end of the page
     def more_link(label, href, ev):
         evattr = f' data-event="{ev}" data-project="{p["id"]}"' if ev else ''
@@ -913,7 +918,7 @@ def build_case(p):
         <h1 class="case-title cn" style="view-transition-name:t-{p['id']};--len:{max(len(w) for w in p['name'].split())}">{e(p['name'])}</h1>
         <p class="case-hl">{e(p['hl'])}</p>
         <p class="case-st">{e(p['st'])}</p>
-        <div class="acts">{actions}</div>
+        <div class="acts">{actions}</div>{wake}
         {picture}
         <dl class="facts">{facts}</dl>
         {built}
