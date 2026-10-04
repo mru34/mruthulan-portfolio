@@ -113,6 +113,29 @@ def pic(key, sizes, eager=False, alt=None, cls='ph', fit_style=''):
             f'alt="{a}" decoding="async"{load}{style}></div>')
 
 
+# On phones a laptop-and-phone scene shrinks until neither screen can be read, so the case pages show
+# just the phone there: the same region of each scene (the phone sits in the same place in all three).
+PHONE_SCENES = {'signalbridge-case': 'The youth’s side: SafeNight asks before anything is shared',
+                'better-call-bhai-case': 'A booking confirmed on a phone',
+                'boss-breaker-case': 'Boss Raid on a phone'}   # with the caption for the phone alone
+PHONE_CROP = (0.685, 0.10, 0.985, 0.90)   # left, top, right, bottom, as fractions of the scene
+
+
+def phone_crop(key, width=640):
+    """The phone from a scene, as its own file (made once, like the 800px copies)."""
+    from PIL import Image
+    m = MEDIA[key]
+    out = ROOT / 'assets' / 'media' / (Path(m['src']).stem + '-phone.webp')
+    l, t, r, b = PHONE_CROP
+    w, h = m['width'] * (r - l), m['height'] * (b - t)
+    size = (width, round(width * h / w))
+    if not out.exists():
+        with Image.open(ROOT / 'assets' / 'media' / m['src']) as im:
+            box = tuple(round(v) for v in (l * im.width, t * im.height, r * im.width, b * im.height))
+            im.convert('RGB').crop(box).resize(size, Image.LANCZOS).save(out, 'WEBP', quality=82, method=6)
+    return f'assets/media/{out.name}', size
+
+
 def zoom(key, sizes, caption=None, eager=False, cls='ph', project=None):
     """A picture that opens full size in the viewer (or as the file, without script)."""
     m = MEDIA[key]
@@ -121,6 +144,13 @@ def zoom(key, sizes, caption=None, eager=False, cls='ph', project=None):
     return (f'<a class="zoom" href="assets/media/{m["src"]}" data-zoom="{e(cap or "Full size")}" '
             f'data-alt="{e(m["alt"])}"{proj} aria-label="View full size: {e(cap or m["alt"])}">'
             f'{pic(key, sizes, eager, cls=cls)}</a>')
+
+
+def phone_first(html, key):
+    """Wrap a scene's <img> in a <picture> whose phone source is the cropped phone."""
+    src, (w, h) = phone_crop(key)
+    return html.replace('<img ', f'<picture><source media="(max-width: 860px)" srcset="{src}" width="{w}" height="{h}"><img ', 1
+                        ).replace('decoding="async" fetchpriority="high">', 'decoding="async" fetchpriority="high"></picture>', 1)
 
 
 def figure(key, sizes, caption=None, eager=False):
@@ -176,8 +206,11 @@ def built(items, source):
     return f'<div class="duo">{cards}</div><p class="note">{e(source)}</p>'
 
 
-def shots(keys, sizes='(max-width: 860px) 100vw, 44vw'):
-    return '<div class="shots">' + ''.join(figure(k, sizes) for k in keys) + '</div>'
+def shots(keys, sizes='(max-width: 860px) 100vw, 44vw', one=False):
+    """Pictures side by side, or one to a row (one=True) where each is a screen worth reading."""
+    if one:
+        sizes = '(max-width: 860px) 100vw, 900px'
+    return f'<div class="shots{" one" if one else ""}">' + ''.join(figure(k, sizes) for k in keys) + '</div>'
 
 
 def para(t):
@@ -251,7 +284,7 @@ PROJECTS = [
                 ('Brief', 'A handoff brief: context, risk, a key quote, a first response.'),
                 ('Worker', 'The worker opens the brief instead of a cold thread.')])),
             sec('Evidence', 'What it actually looks like.',
-                shots(['signalbridge-shot-2', 'signalbridge-shot-3'])
+                shots(['signalbridge-shot-2', 'signalbridge-shot-3'], one=True)
                 + note('Fictional demo data from the running app. The backend, AI and deployment were teammates’ work.')),
         ],
     ),
@@ -325,7 +358,7 @@ PROJECTS = [
                                       'Agree a time.', 'Confirm again closer to the day.']),
                 ('After: the site', ['Open the site.', 'Pick an open slot.', 'Confirm.']))),
             sec('Evidence', 'The booking flow, end to end.',
-                shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'])
+                shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'], one=True)
                 + note('Run locally with test bookings, so no customer appears.')
                 + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
         ],
@@ -355,7 +388,7 @@ PROJECTS = [
                 ('Everything', 'Knowledge spread across long documents, none of it indexed.'),
                 ('What is relevant', 'Retrieval narrows it to the passages that matter.'),
                 ('The answer', 'One answer with its source, and a human still reviewing.')])),
-            sec('Proof', 'The result, and the team behind it.', shots(['win-knowcad-team'])
+            sec('Proof', 'The result, and the team behind it.', shots(['win-knowcad-team'], one=True)
                 + note('The product is private, so the proof is the award and my post.')),
         ],
     ),
@@ -365,14 +398,14 @@ PROJECTS = [
         line='Wellness challenges, played as a boss fight.',
         role='Solo build: frontend, API, database and game logic',
         result='Full-stack coursework build',
-        event='BED CA2 coursework',
+        event='Back-end development module · coursework',
         proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
         preview='boss-breaker-dashboard', cover=('browser', 'boss-breaker-dashboard'),
         desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
               'Built with JavaScript, Node.js and MySQL.'),
         og='A full-stack wellness game with challenges, points and boss raids.',
         hl='Wellness challenges, played as a boss fight.',
-        st=('A full-stack build for the BED CA2 brief: complete wellness challenges to earn points, then '
+        st=('A full-stack build for a back-end development module assignment: complete wellness challenges to earn points, then '
             'spend them against a shared boss.'),
         actions=[('View the code ↗', 'https://github.com/mru34/bedca2', None)],
         facts=[('My role', 'Built it alone: frontend, API, database and game logic'),
@@ -386,7 +419,7 @@ PROJECTS = [
                 ('Points', 'Added on the server, so the browser cannot cheat.'),
                 ('Boss raids', 'Spend points against a shared boss, with a damage leaderboard.'),
                 ('Progression', 'Everything lives in MySQL, so it survives a refresh.')])),
-            sec('In play', 'What a session looks like.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'])
+            sec('In play', 'What a session looks like.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
                 + note('Run locally on a fresh database with demo data. Every commit in the public repository is mine.')),
         ],
     ),
@@ -713,7 +746,8 @@ CARDS = {
     'bx': dict(img='boss-breaker-card', frame='scene', z=1, x=50, y=50, tag='Coursework · code on GitHub'),
     'bb': dict(img='better-call-bhai-card', frame='scene', z=1, x=50, y=50, tag='Live pilot with the shop'),
     'mt': dict(img='meant-card', frame='scene', z=1, x=50, y=50, tag='2nd runner-up · Dell InnovateFest 2026'),
-    'kc': dict(img='win-knowcad-champion', frame='award', z=1.0, x=50, y=35, tag='Champion · Autodesk Hackathon 2026'),
+    'kc': dict(img='win-knowcad-champion', frame='award', z=1.0, x=50, y=35, tag='Champion · Autodesk Hackathon 2026',
+               part='My part: the presentation. Autodesk engineers led the code.'),
 }
 FEATURED_CARDS = ['sb', 'bx']
 MORE_CARDS = ['bb', 'mt', 'kc']
@@ -742,7 +776,9 @@ def project_card(pid, big):
     return (f'<li><a class="pcard{" is-big" if big else ""}" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}"{picked} '
             f'data-project="{pid}" data-event="case_open">{stage}'
             f'<span class="pc-body"><span class="pc-type">{e(p["type"])}</span><span class="nm cn">{e(p["name"])}</span>'
-            f'<span class="pc-line">{e(p["line"])}</span><span class="pc-res">{e(d["tag"])}</span>'
+            f'<span class="pc-line">{e(p["line"])}</span>'
+            + (f'<span class="pc-part">{e(d["part"])}</span>' if d.get('part') else '')
+            + f'<span class="pc-res">{e(d["tag"])}</span>'
             f'<span class="pc-go">Case study <span class="ar" aria-hidden="true">→</span></span></span>'
             f'<span class="pc-tag" aria-hidden="true">On the board</span></a></li>')
 
@@ -765,6 +801,20 @@ def board_data():
     d = {p['id']: dict(name=p['name'], type=p['type'], line=p['line'], c=p['c'], board=list(p['board']),
                        href=f"{p['slug']}.html") for p in HOME_PROJECTS}
     return json.dumps(d, ensure_ascii=False).replace('</', '<\\/')
+
+
+# The results, briefly, on the first screen: each links to its case page; Awards below has the photos.
+HERO_RESULTS = [('Champion', 'Dell InnovateDash 2026', 'sb', ''),
+                ('Champion', 'Autodesk Singapore Hackathon 2026', 'kc', ''),
+                ('2nd runner-up', 'Dell InnovateFest 2026', 'mt', ''),
+                ('Featured', 'Tamil Murasu, 28 September 2026', 'mt', '#press')]
+
+
+def hero_results():
+    rows = ''.join(f'<li><a href="{BY_ID[pid]["slug"]}.html{frag}" style="--c:{BY_ID[pid]["c"]}" data-event="case_open" '
+                   f'data-project="{pid}"><b class="cn">{e(place)}</b><span>{e(what)}<span class="sr-only">, </span><i>{e(BY_ID[pid]["name"])}</i></span></a></li>'
+                   for place, what, pid, frag in HERO_RESULTS)
+    return f'<ul class="results-list" aria-label="Results">{rows}</ul>'
 
 
 # The stack line under the intro lists only what the projects here use: TypeScript (SignalBridge's Next.js
@@ -791,10 +841,13 @@ def build_home():
         <p class="eyebrow">Year 2 IT · Singapore Polytechnic</p>
         <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
         <div class="hero-intro">
+          <div class="hero-text">
           <p class="lede">I build full-stack products, from the interface people use <em>to the API and database behind it.</em></p>
           <p class="seeking"><i aria-hidden="true"></i>Looking for a year-long software engineering internship, 2027/2028</p>
           <p class="stack" aria-label="Stack">TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL</p>
           <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
+          </div>
+          {hero_results()}
         </div>
         <div data-hero-end aria-hidden="true"></div>
       </section>
@@ -898,8 +951,14 @@ def build_case(p):
     built = hotspots(FEAT_BY_ID[p['id']]) if p['id'] in FEAT_BY_ID else ''
     key, cap = (p['scene'], None) if p.get('scene') else (p['lead'] or (None, None))
     cap = cap or (MEDIA[key].get('caption') or '' if key else '')
-    picture =(f'<figure class="lead-fig{" scene-fig" if p.get("scene") else ""}">{zoom(key, "(max-width: 860px) 100vw, 1300px", cap, eager=True)}'
-               f'<figcaption class="cap">{e(cap)}</figcaption></figure>') if key else ''
+    lead = zoom(key, "(max-width: 860px) 100vw, 1300px", cap, eager=True) if key else ''
+    kind = ' scene-fig' if p.get('scene') else ' is-photo' if p['cover'][0] == 'photo' else ''
+    capt = e(cap)
+    if key in PHONE_SCENES:
+        lead, kind = phone_first(lead, key), kind + ' has-phone'
+        capt = f'<span class="cap-wide">{capt}</span><span class="cap-phone">{e(PHONE_SCENES[key])}</span>'
+    picture =(f'<figure class="lead-fig{kind}">{lead}'
+               f'<figcaption class="cap">{capt}</figcaption></figure>') if key else ''
     # back to the project's row in the list (Loomy is not on the homepage, so back to the list)
     back = f"index.html#work-{p['id']}" if p in HOME_PROJECTS else 'index.html#work'
     ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['name'],

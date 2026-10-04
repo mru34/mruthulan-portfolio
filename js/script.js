@@ -478,7 +478,7 @@
   const first = nameEl && $('.w', nameEl);
   const row = first ? $$('.t', first) : [];
   if (nameEl && logoText && logoText.nodeType === 3 && logoText.length === row.length && !still()) {
-    const intro = $('.hero-intro');
+    const intro = $('.hero-text');
     const range = document.createRange();
     const charBox = (node, i) => { range.setStart(node, i); range.setEnd(node, i + 1); return range.getBoundingClientRect(); };
     const onTimeline = window.CSS && CSS.supports('animation-timeline: scroll()');
@@ -532,7 +532,7 @@
         row.map((_, i) => `@keyframes dock-t${i}{${frames((f) => `translate:${f.tile(i)}`)}}`).join('') +
         `html.docking{animation-name:dock-vars;animation-fill-mode:both;${on}}` +
         `html.docking .hero .tiles{animation-name:dock-name;animation-fill-mode:both;${on}}` +
-        `html.docking .hero-intro{animation-name:dock-intro;animation-fill-mode:both;${on}}` +
+        `html.docking .hero-text{animation-name:dock-intro;animation-fill-mode:both;${on}}` +
         // tiles keep their flip-in on arrival, and only pick up the slide once the page has moved
         row.map((_, i) => `html.docking .hero .tiles .t[data-dock="${i}"]{animation-name:tile-in,dock-t${i};` +
           `animation-duration:.38s,auto;animation-delay:calc(var(--i) * 14ms),0s;animation-fill-mode:backwards,forwards;` +
