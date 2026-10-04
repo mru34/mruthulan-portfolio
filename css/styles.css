@@ -255,7 +255,7 @@ p{margin:0}
 .pc-photo{margin:0;padding:0 6px}
 /* the award photo sits like a print, white-bordered, with its label and caption, so it never reads as a product screenshot */
 .pc-print{position:relative;aspect-ratio:2/1;border-radius:4px;overflow:hidden;box-shadow:0 0 0 6px #F2F2F2,0 18px 40px rgba(0,0,0,.5)}
-.pc-chip{position:absolute;z-index:2;top:10px;left:10px;padding:5px 9px;border-radius:4px;background:#0C0C0D;color:var(--gold);font:600 16px/1 var(--body);letter-spacing:.02em}
+.pc-chip{position:absolute;z-index:2;bottom:10px;left:10px;padding:5px 9px;border-radius:4px;background:#0C0C0D;color:var(--gold);font:600 16px/1 var(--body);letter-spacing:.02em}
 .pc-photo figcaption{margin-top:14px;font-size:16px;line-height:1.35;color:var(--soft)}
 .pc-body{display:flex;flex-direction:column;gap:10px;padding:26px 28px 26px;flex:1}
 .pc-res{font-size:16px;font-weight:500;color:var(--c)}
@@ -558,7 +558,7 @@ p{margin:0}
 
 /* ------------------------------------------------------------- touch: every standalone link is at least 44px tall */
 @media (max-width:860px), (pointer:coarse){
-  .links a,.win .pr a,.result a,.crumb a,.foot nav a,.case-nav .all,.deck-bar .link,.text-page .acts a,.logo,.mail-big{display:inline-flex;align-items:center;min-height:44px}
+  .links a,.win .pr a,.result a,.crumb a,.foot nav a,.case-nav .all,.deck-bar .link,.text-page .acts a,.logo,.mail-big{display:inline-flex;align-items:center;min-height:44px;gap:.3em}
   .link{background-position:0 calc(100% - 9px)}
 }
 

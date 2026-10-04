@@ -57,6 +57,11 @@ def e(s):
     return html.escape(str(s), quote=True)
 
 
+def code_line(x):
+    """Code in a card: long paths and names may break after / and _, not mid-word."""
+    return e(x).replace('/', '/<wbr>').replace('_', '_<wbr>')
+
+
 def ext(href):
     return ' target="_blank" rel="noopener noreferrer"' if href.startswith('http') else ''
 
@@ -647,8 +652,8 @@ def phone_view(f, d):
     crop of the screenshot (r = x, y, w, h as fractions), or the code card. Hidden on larger screens,
     where pointing at the line zooms the picture instead."""
     if d['t'] == 'card':
-        lines = ''.join(f'<code>{e(x)}</code>' for x in d['lines'])
-        return f'<div class="hs-m hs-m-card"><p class="hs-file">{e(d["f"])}</p>{lines}<p class="hs-note">{e(d["note"])}</p></div>'
+        lines = ''.join(f'<code>{code_line(x)}</code>' for x in d['lines'])
+        return f'<div class="hs-m hs-m-card"><p class="hs-file">{code_line(d["f"])}</p>{lines}<p class="hs-note">{e(d["note"])}</p></div>'
     tag = f'<p class="hs-m-tag">{e(d["tag"])}</p>' if d.get('tag') else ''
     if d.get('phone'):  # a phone screenshot of the same thing reads better than a crop of a laptop screen
         m, (x, y, w, h) = MEDIA[d['phone']], (0, 0, 1, 1)
@@ -676,8 +681,8 @@ def hotspots(f):
     cards = items = ''
     for k, (label, d) in enumerate(f['items']):
         if d['t'] == 'card':
-            lines = ''.join(f'<code>{e(x)}</code>' for x in d['lines'])
-            cards += (f'<div class="hs-card" data-card="{k}"><p class="hs-file">{e(d["f"])}</p>{lines}'
+            lines = ''.join(f'<code>{code_line(x)}</code>' for x in d['lines'])
+            cards += (f'<div class="hs-card" data-card="{k}"><p class="hs-file">{code_line(d["f"])}</p>{lines}'
                       f'<p class="hs-note">{e(d["note"])}</p></div>')
         data = {k2: v for k2, v in d.items() if k2 in ('t', 'l', 'r', 'tag')}
         data['i'] = k
