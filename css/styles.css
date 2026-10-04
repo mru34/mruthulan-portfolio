@@ -105,8 +105,8 @@ p{margin:0}
 .lede em,.about .lead em{font-style:normal;color:var(--gold)}
 .does strong{font-weight:600;color:var(--gold)}
 .lede{font-size:clamp(26px,2.5vw,38px);line-height:1.1;max-width:24ch}
-.seeking{display:flex;gap:10px;align-items:center;margin-top:18px;font-size:16px}
-.seeking i{width:8px;height:8px;background:var(--amber);flex:none}
+.seeking{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:16px}
+.seeking i{width:8px;height:8px;background:var(--amber);flex:none;margin-top:calc(.81em - 4px)}
 .stack{margin-top:8px;padding-left:18px;font:400 16px/1.5 var(--mono);color:var(--grey)}
 .acts{display:flex;gap:10px;flex-wrap:wrap}
 
@@ -449,6 +449,7 @@ p{margin:0}
 
 /* ------------------------------------------------------------- analytics prompt */
 .analytics-banner{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;max-width:620px;margin-inline:auto;background:#18181B;color:#F2F2F2;border:1px solid #3A3A3F;border-radius:12px;padding:8px 8px 8px 18px;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;box-shadow:0 12px 36px rgba(0,0,0,.4);font-size:16px}
+.has-consent-prompt body{padding-bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))}
 .analytics-banner p{color:#C9C9CE;flex:1;min-width:10em}
 .analytics-banner a{margin-left:6px}
 .analytics-banner a{text-decoration:underline;text-underline-offset:3px}
@@ -563,6 +564,8 @@ p{margin:0}
 @property --dock{syntax:'<number>';inherits:true;initial-value:0}
 @property --hand{syntax:'<number>';inherits:true;initial-value:0}
 .docking .hero .tiles{position:relative;z-index:21;will-change:transform;opacity:calc(1 - var(--hand,0))}
+.docking.moved .hero .tiles{pointer-events:none}
+.top:has(.menu:not([hidden])){z-index:22}
 .docking .hero .tiles .t{background:color-mix(in srgb,var(--flap) calc(100% - var(--dock,0) * 100%),transparent);box-shadow:none;transition:none}
 .docking .hero .tiles .t::after{opacity:calc(1 - var(--dock,0))}
 .docking .hero .tiles .w + .w{opacity:calc(1 - var(--dock,0) * 2.2)}

@@ -489,7 +489,7 @@ def header(home, current=None, prefix=''):
         <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
-    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↗</a></nav>
+    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></nav>
   </header>"""
 
 
@@ -779,7 +779,7 @@ def build_home():
           'sameAs': [LINKEDIN, GITHUB]}
     about_personal = f'<p>{e(ABOUT_PERSONAL)}</p>' if ABOUT_PERSONAL else ''
     return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
-                 'Mruthulan Senthil Nathan, a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Five projects, what I built on each, and three hackathon results.',
+                 'Mruthulan Senthil Nathan, Year 2 IT at Singapore Polytechnic, builds full-stack products. Five projects, what I built on each, and three hackathon results.',
                  '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
                  og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld)}
 {body_open('home')}
@@ -854,6 +854,7 @@ def build_home():
         </div>
         <div class="acts">
           <a class="btn" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">Message me on LinkedIn ↗</a>
+          <a class="btn" href="{GITHUB}" target="_blank" rel="noopener noreferrer" data-event="contact_open_github">GitHub ↗</a>
           <a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
         </div>
         <p class="status" role="status" aria-live="polite" data-copy-status></p>
