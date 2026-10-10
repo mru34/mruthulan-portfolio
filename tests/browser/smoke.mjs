@@ -138,6 +138,46 @@ scenario('the board survives the breakpoint', async () => {
   await page.close();
 });
 
+// mean difference per channel (0-255) between two PNG screenshots, measured in the page
+async function meanDiff(page, a, b) {
+  return page.evaluate(async (a, b) => {
+    const load = (src) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.src = `data:image/png;base64,${src}`; });
+    const [ia, ib] = await Promise.all([load(a), load(b)]);
+    const c = new OffscreenCanvas(ia.width, ia.height);
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.drawImage(ia, 0, 0);
+    const da = g.getImageData(0, 0, ia.width, ia.height).data;
+    g.clearRect(0, 0, ia.width, ia.height);
+    g.drawImage(ib, 0, 0, ia.width, ia.height);
+    const db = g.getImageData(0, 0, ia.width, ia.height).data;
+    let s = 0;
+    for (let i = 0; i < da.length; i += 4) s += Math.abs(da[i] - db[i]) + Math.abs(da[i + 1] - db[i + 1]) + Math.abs(da[i + 2] - db[i + 2]);
+    return s / ((da.length / 4) * 3);
+  }, a, b);
+}
+
+scenario('the live board takes over from its still without a visible change', async () => {
+  const clipOf = (page) => page.$eval('.hero-board', (el) => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; });
+  const stills = await open({ path: '?mode=stills' });
+  const a = await stills.page.screenshot({ encoding: 'base64', clip: await clipOf(stills.page) });
+  const live = await open();
+  await live.page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await sleep(300);
+  const b = await live.page.screenshot({ encoding: 'base64', clip: await clipOf(live.page) });
+  const d = await meanDiff(live.page, a, b);
+  check(d < 8, `still and first live frame differ by ${d.toFixed(2)} (under 8)`);
+  await stills.page.close();
+  await live.page.close();
+});
+
+scenario('a scene that fails to load leaves its still', async () => {
+  const { page } = await open({ block: '/js/3d/hero.js' });
+  await sleep(2500);
+  check(!(await page.$eval('.hero-board', (b) => b.hasAttribute('data-live'))), 'hero not marked live');
+  check(await page.$eval('.hero-board .still img', (i) => i.complete && i.naturalWidth > 0 && getComputedStyle(i).visibility !== 'hidden'), 'hero still showing');
+  await page.close();
+});
+
 /* ------------------------------------------------------------------ run */
 for (const [name, fn] of SCENARIOS) {
   console.log(name);
