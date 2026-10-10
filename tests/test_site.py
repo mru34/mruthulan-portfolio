@@ -187,3 +187,10 @@ def test_every_module_import_resolves():
                 assert (f.parent / spec).resolve().exists(), (f.name, spec)
             else:
                 assert spec in imports, (f.name, spec)
+
+
+def test_3d_code_fits_the_budget():
+    import gzip
+    files = [f for f in (ROOT / 'js').rglob('*.js') if f.name not in ('script.js', 'analytics.js')]
+    total = sum(len(gzip.compress(f.read_bytes(), 9)) for f in files)
+    assert total <= 260_000, total
