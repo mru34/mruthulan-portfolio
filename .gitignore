@@ -3,6 +3,9 @@ AGENTS.md
 sources/
 tmp/
 
+# Résumé copy with the phone number (python design/build_resume.py --private)
+private/
+
 # Operating-system files
 .DS_Store
 Thumbs.db

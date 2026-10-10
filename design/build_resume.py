@@ -4,11 +4,19 @@
 
 Writes assets/Mruthulan-Senthil-Nathan-Resume.pdf and the same file at the old address,
 assets/Senthil-Nathan-Mruthulan-Resume.pdf, so links shared before still open it. The phone
-number is never published, so it is not in here; add it to your own copy for applications.
+number is never published, so it is not in here.
+
+    python design/build_resume.py --private
+
+writes the copy for applications instead: private/Mruthulan-Senthil-Nathan-Resume.pdf, with
+the phone number read from private/phone.txt (one line, e.g. +65 9123 4567). private/ is
+ignored by Git, so neither file is committed or deployed.
+
 Every line matches what the site says; change both together. Needs reportlab.
 """
 from pathlib import Path
 import shutil
+import sys
 
 from reportlab.lib.colors import Color
 from reportlab.lib.enums import TA_CENTER
@@ -19,6 +27,7 @@ from reportlab.platypus import HRFlowable, KeepTogether, Paragraph, SimpleDocTem
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'assets' / 'Mruthulan-Senthil-Nathan-Resume.pdf'
 OLD = ROOT / 'assets' / 'Senthil-Nathan-Mruthulan-Resume.pdf'
+PRIVATE = ROOT / 'private'
 
 NAVY, SLATE, TEAL, RULE = (Color(.082, .133, .208), Color(.282, .345, .420),
                            Color(0, .486, .475), Color(.847, .878, .906))
@@ -43,12 +52,10 @@ def link(url, text):
 
 
 SKILLS = [
-    ('Languages', 'TypeScript, JavaScript, Python, SQL, HTML/CSS'),
+    ('Languages', 'TypeScript, JavaScript, Python, Java, SQL, HTML/CSS'),
     ('Frameworks', 'React, Next.js, Node.js / Express, FastAPI'),
     ('Data and Engineering', 'PostgreSQL, MySQL, SQLite, REST APIs, JWT and bcrypt authentication, Git/GitHub, '
-                             'automated testing, Render'),
-    ('AI Products', 'interfaces and consent flows for AI-assisted products; a Singaporean text-to-speech voice '
-                    '(with a teammate)'),
+                             'pytest, Render'),
 ]
 
 # name, what it is, result, bullets
@@ -83,11 +90,11 @@ PROJECTS = [
 ]
 
 EXPERIENCE = [
-    ('Retail Associate, Watsons Singapore', ' | Mar - Apr 2025 - Served customers, processed payments, supported '
-     'self-checkout and replenished stock in a fast-paced retail environment.'),
-    ('Secretary, Subcommittee, Youth Harmony Chapter', ' - Coordinated communication and follow-through for student '
+    ('Retail Associate, Watsons Singapore', ' | Mar – Apr 2025 – Served customers, processed payments, supported '
+     'self-checkout and replenished stock.'),
+    ('Secretary, Subcommittee, Youth Harmony Chapter', ' | Jun 2026 – Present – Coordinated communication and follow-through for student '
      'activities and community engagement.'),
-    ('Class Chairman and SP ACER, Singapore Polytechnic', ' - Led class communication and supported outreach, '
+    ('Class Chairman and SP ACER, Singapore Polytechnic', ' | May 2025 – Present – Led class communication and supported outreach, '
      'including Open House 2026 and First Steps with SP.'),
 ]
 
@@ -97,13 +104,14 @@ def section(title):
             HRFlowable(width='100%', thickness=0.6, color=RULE, spaceBefore=2, spaceAfter=5)]
 
 
-def build():
+def build(phone=None, out=OUT):
     sep = '&nbsp;&nbsp;|&nbsp;&nbsp;'
+    contact = ['Singapore'] + ([phone] if phone else []) + [
+        '<a href="mailto:mruthulansenthilnathan@gmail.com">mruthulansenthilnathan@gmail.com</a>']
     story = [
         Paragraph('Mruthulan Senthil Nathan', S['name']), Spacer(1, 2),
-        Paragraph('SOFTWARE ENGINEERING | FULL-STACK | AI ENGINEERING INTERN', S['title']), Spacer(1, 3),
-        Paragraph(f'Singapore{sep}<a href="mailto:mruthulansenthilnathan@gmail.com">mruthulansenthilnathan@gmail.com</a>',
-                  S['contact']),
+        Paragraph('SOFTWARE ENGINEERING | FULL-STACK INTERN', S['title']), Spacer(1, 3),
+        Paragraph(sep.join(contact), S['contact']),
         Paragraph(sep.join([link('https://mruthulan.com', 'mruthulan.com'),
                             link('https://linkedin.com/in/mruthulan', 'linkedin.com/in/mruthulan'),
                             link('https://github.com/mru34', 'github.com/mru34')]), S['contact']),
@@ -111,27 +119,35 @@ def build():
     ]
     story += section('Education')
     story.append(Paragraph('<b>Diploma in Information Technology</b>, Singapore Polytechnic | '
-                           'Apr 2025 - May 2028 (Expected)', S['body']))
+                           'Apr 2025 – May 2028 (Expected)', S['body']))
     story += section('Technical Skills')
     story += [Paragraph(f'<b>{k}:</b> {v}', S['body']) for k, v in SKILLS]
     story += section('Selected Projects')
     for k, (name, what, result, bullets) in enumerate(PROJECTS):
         block = [Paragraph(name, S['project']), Paragraph(what, S['what']), Paragraph(result, S['result'])]
-        block += [Paragraph(f'- {b}', S['bullet']) for b in bullets]
+        block += [Paragraph(f'• {b}', S['bullet']) for b in bullets]
         story += ([Spacer(1, 4)] if k else []) + [KeepTogether(block)]
     story += section('Experience and Leadership')
-    story += [Paragraph(f'- <b>{t}</b>{d}', S['bullet']) for t, d in EXPERIENCE]
+    story += [Paragraph(f'• <b>{t}</b>{d}', S['bullet']) for t, d in EXPERIENCE]
 
     doc = SimpleDocTemplate(
-        str(OUT), pagesize=A4, leftMargin=57, rightMargin=57, topMargin=30, bottomMargin=30,
+        str(out), pagesize=A4, leftMargin=57, rightMargin=57, topMargin=30, bottomMargin=30,
         title='Mruthulan Senthil Nathan - Internship Resume 2027 2028', author='Mruthulan Senthil Nathan',
-        subject='One-page resume for software engineering, full-stack, and AI engineering internships',
-        keywords='software engineering, full-stack, AI engineering, internship, Singapore Polytechnic',
+        subject='One-page resume for software engineering and full-stack internships',
+        keywords='software engineering, full-stack, internship, Singapore Polytechnic',
         creator='design/build_resume.py')
     doc.build(story)
-    shutil.copyfile(OUT, OLD)
-    print(f'wrote {OUT.relative_to(ROOT)} and {OLD.relative_to(ROOT)}')
 
 
 if __name__ == '__main__':
-    build()
+    if '--private' in sys.argv:
+        phone_file = PRIVATE / 'phone.txt'
+        if not phone_file.exists():
+            sys.exit(f'put your phone number in {phone_file.relative_to(ROOT)} first')
+        out = PRIVATE / OUT.name
+        build(phone_file.read_text(encoding='utf-8').strip(), out)
+        print(f'wrote {out.relative_to(ROOT)} (with your phone number; not committed)')
+    else:
+        build()
+        shutil.copyfile(OUT, OLD)
+        print(f'wrote {OUT.relative_to(ROOT)} and {OLD.relative_to(ROOT)}')
