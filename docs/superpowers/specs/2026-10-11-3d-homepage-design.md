@@ -290,7 +290,7 @@ Only the five project names use their own faces, like product logos; everything 
 
 **Libraries,** saved into the repo at pinned versions (no CDN, no build step), loaded with an import map:
 - three.js (ES module build, plus `RoundedBoxGeometry` and `RoomEnvironment` from its addons)
-- GSAP with ScrollTrigger (free for commercial use since 2025) for pinning, scrubbing and the snap
+- No GSAP (changed while planning): pinning is CSS `position: sticky`, and the scrubbing, the snap and the springs are small tested functions in `js/lib/`. Same behaviour, one library fewer, native scrolling untouched.
 
 **One stage.** `js/3d/stage.js` owns the renderer, one fixed full-screen canvas behind the page, the camera and the studio lighting. It renders only when something changes (scroll, pointer, a spring still settling) and sleeps otherwise, so nothing moves by itself and phones don't burn battery.
 
@@ -303,7 +303,7 @@ Only the five project names use their own faces, like product logos; everything 
 | `js/3d/devices.js` | Laptop, phone, tablet and partner display, built in code |
 | `js/3d/flythrough.js` | The camera move and the dust |
 | `js/3d/chapters/signalbridge.js` and four more | One file per chapter |
-| `js/scroll.js` | ScrollTrigger pins, scrubbing, the snap and the rail |
+| `js/home.js` and `js/lib/` | Pins (CSS sticky), scrubbing, the snap and the rail |
 | `js/fallback.js` | Decides 3D or stills; the frame-time watchdog |
 
 `js/script.js` keeps the viewer, analytics hooks, copy button, menu and button effects; the spin board and name-docking code are removed.
@@ -316,10 +316,10 @@ Only the five project names use their own faces, like product logos; everything 
 
 ## Loading and speed
 
-- First paint: the HTML, the CSS, the Archivo font and the hero still. three.js, GSAP and the hero board load right after, as modules, without blocking.
+- First paint: the HTML, the CSS, the Archivo font and the hero still. three.js and the hero board load right after, as modules, without blocking.
 - Each chapter's textures and font load when the visitor is within about 1.5 screens of it.
 - Pixel ratio capped at 2 on desktops and 1.5 on phones.
-- Budgets: the 3D libraries plus the site's own 3D code at most about 260 KB compressed; each chapter's textures at most about 400 KB.
+- Budgets: three.js plus the site's own 3D code at most about 260 KB compressed; each chapter's textures at most about 400 KB.
 
 ## Fallbacks
 
