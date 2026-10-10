@@ -340,7 +340,7 @@ PROJECTS = [
         id='bb', slug='better-call-bhai', name='Better Call Bhai', type='Client build', c='#E3B53A',
         board=('CLIENT', 'PILOT'),
         line='Appointment booking for a local barbershop.',
-        role='Web design, frontend build and deployment',
+        role='Solo build: design, frontend, API, database and deployment',
         result='Deployed pilot',
         event='Client build · Deployed pilot',
         proof=('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None),
@@ -353,9 +353,9 @@ PROJECTS = [
             'details one tap away on WhatsApp. The shop is piloting it; most bookings still come in through '
             'WhatsApp for now.'),
         actions=[('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None)],
-        facts=[('My role', 'Web design, frontend build and deployment'),
+        facts=[('My role', 'Built it alone: design, frontend, Express API, SQLite database, admin page and deployment'),
                ('Status', 'Deployed pilot, for a barbershop in Singapore'),
-               ('Stack', 'HTML · CSS · JavaScript · hosted on Render')],
+               ('Stack', 'JavaScript · Node.js / Express · SQLite · hosted on Render')],
         lead=('better-call-bhai-shot-1', 'The deployed site, on a laptop and a phone'),
         scene='better-call-bhai-case',
         sections=lambda: [
