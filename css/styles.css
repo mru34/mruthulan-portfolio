@@ -18,6 +18,12 @@
 @font-face{font-family:"Bricolage Fallback";src:local("Arial");size-adjust:90.1%}
 @font-face{font-family:"Geist Fallback";src:local("Arial");size-adjust:103.8%}
 @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;src:url(../assets/fonts/jetbrains-mono-400-500-latin.woff2) format("woff2")}
+/* each project's name in its own typeface, cut down to the letters of the name (design/build_name_fonts.py) */
+@font-face{font-family:"Name SignalBridge";src:url(../assets/fonts/name-signalbridge.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Name Boss Breaker";src:url(../assets/fonts/name-boss-breaker.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Name Better Call Bhai";src:url(../assets/fonts/name-better-call-bhai.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Name MEANT";src:url(../assets/fonts/name-meant.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Name KnowCad";src:url(../assets/fonts/name-knowcad.woff2) format("woff2");font-display:swap}
 
 :root{
   color-scheme:dark;
