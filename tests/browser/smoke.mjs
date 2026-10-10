@@ -118,6 +118,26 @@ scenario('the snap never pulls back', async () => {
   await page.close();
 });
 
+scenario('the board comes alive in its box', async () => {
+  const { page, errors } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  check(true, 'hero board live');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('the board survives the breakpoint', async () => {
+  const { page, errors } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await page.setViewport({ width: 700, height: 900 });
+  await sleep(1500);
+  await page.setViewport({ width: 1200, height: 800 });
+  await sleep(1500);
+  check(await page.$eval('.hero-board', (b) => b.hasAttribute('data-live')), 'still live after crossing 860px twice');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
 /* ------------------------------------------------------------------ run */
 for (const [name, fn] of SCENARIOS) {
   console.log(name);

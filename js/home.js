@@ -9,7 +9,9 @@ import { FrameWatch } from './lib/watchdog.js';
 export const KEY = 0.8;                                    // the payoff pose every chapter settles on
 const BEATS = { line: [0.25, 0.35], pay: [0.6, 0.7] };     // the one line, then the result and the link
 // data-scene → its module, loaded only when its section comes near
-const SCENES = {};
+const SCENES = {
+  hero: () => import('./3d/hero.js'),
+};
 
 const root = document.documentElement;
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];

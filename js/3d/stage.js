@@ -16,7 +16,7 @@ export function createStage(canvas, { maxDpr = 2 } = {}) {
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.6;
+  scene.environmentIntensity = 0.45;
   pmrem.dispose();
   // the studio: a soft key from the top left and a dim cool fill; project colour only ever comes in as rim light
   const key = new THREE.DirectionalLight(0xffffff, 1.4);
