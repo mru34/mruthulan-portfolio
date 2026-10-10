@@ -124,3 +124,39 @@ def test_hero_and_ending_carry_the_links_with_their_events():
         assert f'href="{bs.e(href)}"' in end and f'data-event="{event}"' in end
     assert f'data-copy="{bs.EMAIL}"' in end
     assert '<h1 class="sr-only" id="name">Mruthulan Senthil Nathan</h1>' in hero
+
+
+def _used_class_tokens():
+    tokens = set()
+    for f in ROOT.glob('*.html'):
+        for cls in re.findall(r'class="([^"]+)"', f.read_text(encoding='utf-8')):
+            tokens.update(cls.split())
+    for f in (ROOT / 'js').rglob('*.js'):
+        if 'vendor' in f.parts:
+            continue
+        # only words inside the scripts' strings (class names they add or query), not their comments
+        strings = re.findall(r"'([^'\n]*)'|\"([^\"\n]*)\"|`([^`]*)`", f.read_text(encoding='utf-8'))
+        for parts in strings:
+            tokens.update(re.findall(r'[A-Za-z][\w-]*', ' '.join(parts)))
+    return tokens
+
+
+def _css_classes(css):
+    css = re.sub(r'/\*.*?\*/', '', css, flags=re.S)
+    css = re.sub(r'url\([^)]*\)', '', css)
+    css = re.sub(r'"[^"]*"|\'[^\']*\'', '', css)
+    return set(re.findall(r'\.([A-Za-z][\w-]*)', css))
+
+
+def test_every_css_class_is_used_somewhere():
+    """Needs a fresh build. A class only some script adds counts as used if it appears in a string in js/."""
+    css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
+    assert sorted(_css_classes(css) - _used_class_tokens()) == []
+
+
+def test_hero_board_box_matches_the_board_layout():
+    """The 3D board is fitted into this box, and its still is drawn in it: the shapes must agree
+    (js/3d/flap.js layoutRows gives 14.94 x 3.42 for two rows and 10.12 x 5.07 for three)."""
+    css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
+    assert 'aspect-ratio:14.94/3.42' in css
+    assert 'aspect-ratio:10.12/5.07' in css
