@@ -11,8 +11,9 @@ const failures = [];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function check(ok, label) { console.log(`  ${ok ? '✓' : '✗'} ${label}`); if (!ok) failures.push(label); }
 
-async function open({ w = 1440, h = 900, js = true, reduced = false, path = '', block = null } = {}) {
+async function open({ w = 1440, h = 900, js = true, reduced = false, path = '', block = null, init = null } = {}) {
   const page = await browser.newPage();
+  if (init) await page.evaluateOnNewDocument(init);
   const errors = [];
   page.on('pageerror', (err) => errors.push(String(err)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
@@ -191,8 +192,134 @@ scenario('SignalBridge comes alive, and its payoff shows everything', async () =
   await page.close();
 });
 
+scenario('a page opened at #contact has nothing animating by itself', async () => {
+  for (const path of ['', '#contact']) {
+    const page = await browser.newPage();
+    await page.evaluateOnNewDocument(() => {
+      window.__anims = [];
+      document.addEventListener('animationstart', (e) => window.__anims.push(e.animationName), true);
+      try { localStorage.setItem('mruthulan-analytics-choice', 'deny'); } catch {}
+    });
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto(BASE + path, { waitUntil: 'networkidle0' });
+    const anims = await page.evaluate(() => window.__anims);
+    check(anims.length === 0, `${path || 'top'}: no CSS animation started on arrival (${anims.slice(0, 3).join(', ')})`);
+    await page.close();
+  }
+});
+
+scenario('the header logo shows when it has keyboard focus, and without JavaScript once scrolled', async () => {
+  const { page } = await open();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await sleep(400);
+  const focused = await page.evaluate(() => { const a = document.activeElement; return a.classList.contains('logo') ? parseFloat(getComputedStyle(a).opacity) : -1; });
+  check(focused > 0.99, `focused logo is visible (opacity ${focused})`);
+  await page.close();
+  const nojs = await open({ js: false });
+  await nojs.page.evaluate(() => scrollTo(0, 1500));
+  await sleep(400);
+  const op = await nojs.page.$eval('.top .logo', (l) => parseFloat(getComputedStyle(l).opacity));
+  check(op > 0.99, `without JavaScript the scrolled logo is visible (opacity ${op})`);
+  await nojs.page.close();
+});
+
+scenario('a link lands exactly on the payoff pose and stays there', async () => {
+  for (const [w, h] of [[1440, 900], [844, 390]]) {
+    // count the page's own glides (the snap scrolls smoothly); landing by link must need none
+    const init = () => {
+      window.__glides = 0;
+      const to = window.scrollTo;
+      window.scrollTo = function (o, ...rest) { if (o && o.behavior === 'smooth') window.__glides += 1; return to.call(this, o, ...rest); };
+    };
+    const { page } = await open({ w, h, path: '#work-bx', init });
+    const at = () => page.evaluate(() => {
+      const c = document.querySelectorAll('.chapter')[1];
+      const key = c.getBoundingClientRect().top + scrollY + 0.8 * (c.offsetHeight - innerHeight);
+      return Math.round(scrollY - key);
+    });
+    const off1 = await at();
+    check(Math.abs(off1) <= 2 && (await infoVisible(page, 'bx')), `${w}x${h}: on arrival ${off1}px from the pose, everything visible`);
+    await sleep(2500);
+    const off2 = await at();
+    check(Math.abs(off2) <= 2, `${w}x${h}: still on the pose 2.5 s later (${off2}px)`);
+    const glides = await page.evaluate(() => window.__glides);
+    check(glides === 0, `${w}x${h}: the page did not glide by itself (${glides} glides)`);
+    await page.close();
+  }
+});
+
+scenario('slow frames while scrolling switch to the stills', async () => {
+  const { page } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  const cdp = await page.createCDPSession();
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 20 });
+  await page.evaluate(() => dispatchEvent(new PointerEvent('pointerdown')));   // hold off the snap
+  const end = Date.now() + 9000;
+  while (Date.now() < end && !(await page.evaluate(() => document.documentElement.classList.contains('frozen')))) {
+    await page.evaluate(() => scrollBy(0, 40));
+    await sleep(50);
+  }
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+  check(await page.evaluate(() => document.documentElement.classList.contains('frozen')), 'html.frozen after slow scrolling');
+  await page.close();
+});
+
+scenario('crossing the breakpoint does not leak GPU memory', async () => {
+  const page = await browser.newPage();
+  await page.evaluateOnNewDocument(() => {
+    const n = (window.__gl = { tex: 0, buf: 0 });
+    const P = WebGL2RenderingContext.prototype;
+    for (const [make, drop, k] of [['createTexture', 'deleteTexture', 'tex'], ['createBuffer', 'deleteBuffer', 'buf']]) {
+      const mk = P[make], dr = P[drop];
+      P[make] = function (...a) { n[k] += 1; return mk.apply(this, a); };
+      P[drop] = function (...a) { if (a[0]) n[k] -= 1; return dr.apply(this, a); };
+    }
+    try { localStorage.setItem('mruthulan-analytics-choice', 'deny'); } catch {}
+  });
+  await page.setViewport({ width: 1200, height: 800 });
+  await page.goto(BASE, { waitUntil: 'networkidle0' });
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await page.setViewport({ width: 700, height: 900 });
+  await sleep(1500);
+  await page.setViewport({ width: 1200, height: 800 });
+  await sleep(1500);
+  const before = await page.evaluate(() => ({ ...window.__gl }));
+  for (let i = 0; i < 3; i++) {
+    await page.setViewport({ width: 700, height: 900 });
+    await sleep(1500);
+    await page.setViewport({ width: 1200, height: 800 });
+    await sleep(1500);
+  }
+  const after = await page.evaluate(() => ({ ...window.__gl }));
+  check(after.tex - before.tex <= 1 && after.buf - before.buf <= 10,
+    `six more crossings: +${after.tex - before.tex} textures, +${after.buf - before.buf} buffers alive`);
+  await page.close();
+});
+
+scenario('a finger resting on the screen is never moved by the snap', async () => {
+  const { page } = await open({ w: 390, h: 844 });
+  const y0 = await page.evaluate(() => {
+    const c = document.querySelectorAll('.chapter')[1];
+    const key = c.getBoundingClientRect().top + scrollY + 0.8 * (c.offsetHeight - innerHeight);
+    scrollTo({ top: key - 200, behavior: 'instant' });
+    return key - 200;
+  });
+  await page.touchscreen.touchStart(200, 400);
+  // a browser cancels the pointer as soon as a touch starts to pan; the finger is still down
+  await page.evaluate(() => dispatchEvent(new PointerEvent('pointercancel', { pointerType: 'touch' })));
+  await page.evaluate(() => scrollBy(0, 10));
+  await sleep(600);
+  const y1 = await page.evaluate(() => scrollY);
+  check(Math.abs(y1 - (y0 + 10)) <= 2, `page stayed under the finger (${y0 + 10} → ${y1})`);
+  await page.touchscreen.touchEnd();
+  await page.close();
+});
+
 /* ------------------------------------------------------------------ run */
+const ONLY = process.env.ONLY;   // run just the scenarios whose name contains this text
 for (const [name, fn] of SCENARIOS) {
+  if (ONLY && !name.includes(ONLY)) continue;
   console.log(name);
   try { await fn(); } catch (err) { check(false, `${name}: ${err.message}`); }
 }

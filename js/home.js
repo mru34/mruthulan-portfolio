@@ -59,9 +59,13 @@ function snap() {
   let held = false;
   let gliding = false;
   const poses = () => chapters.map((c) => c.getBoundingClientRect().top + scrollY + KEY * (c.offsetHeight - innerHeight));
-  addEventListener('pointerdown', () => { held = true; }, { passive: true });
-  addEventListener('pointerup', () => { held = false; }, { passive: true });
-  addEventListener('pointercancel', () => { held = false; }, { passive: true });
+  // a mouse button or a finger on the screen holds the page still; a browser cancels a touch's pointer as soon
+  // as it pans, so fingers are tracked by touch events instead
+  addEventListener('pointerdown', (e) => { if (e.pointerType !== 'touch') held = true; }, { passive: true });
+  addEventListener('pointerup', (e) => { if (e.pointerType !== 'touch') held = false; }, { passive: true });
+  addEventListener('touchstart', () => { held = true; }, { passive: true });
+  addEventListener('touchend', (e) => { if (!e.touches.length) held = false; }, { passive: true });
+  addEventListener('touchcancel', (e) => { if (!e.touches.length) held = false; }, { passive: true });
   addEventListener('scroll', () => {
     const y = scrollY;
     if (y !== lastY) dir = y > lastY ? 1 : -1;

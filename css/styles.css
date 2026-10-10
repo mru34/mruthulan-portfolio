@@ -393,13 +393,11 @@ p{margin:0}
   @view-transition{navigation:auto}
   ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}
-  .tiles .t{animation:tile-in .38s var(--ease) backwards;animation-delay:calc(var(--i) * 14ms)}
   @supports (animation-timeline: scroll()){
     .progress{animation:read linear both;animation-timeline:scroll(root block)}
   }
 
 }
-@keyframes tile-in{from{transform:rotateX(-92deg);filter:brightness(1.7)}to{transform:none}}
 @keyframes drift{from{transform:translateY(-6%)}to{transform:translateY(6%)}}
 @keyframes read{to{transform:scaleX(1)}}
 @media (prefers-reduced-motion: reduce){
@@ -442,7 +440,7 @@ p{margin:0}
 .icon-btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px 0 16px;border:1px solid var(--hair);border-radius:999px;font:500 16px/1 var(--body);color:var(--ink);transition:background-color .25s,color .25s,border-color .25s}
 .icon-btn svg{width:20px;height:20px;flex:none;fill:currentColor}
 @media (hover:hover){.icon-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}}
-[data-page="home"] .top:not(.scrolled) .logo{opacity:0;pointer-events:none}
+html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible){opacity:0;pointer-events:none}
 .logo{transition:color .2s,opacity .3s var(--ease)}
 
 /* flap tiles in rows (the hero until its still exists; the ending board) */
@@ -506,7 +504,7 @@ html[data-pose] body > :not(.stage){visibility:hidden}
 .has-3d .chapter .pin{position:sticky;top:0;height:100vh}
 .has-3d .ch-stage{aspect-ratio:auto;height:100%}
 .has-3d .ch-stage .still{border-radius:0}
-.has-3d .ch-key{top:120vh} /* the payoff pose: 0.8 of the 150vh each chapter stays pinned */
+.has-3d .ch-key{top:120vh;scroll-margin-top:calc(-1 * (var(--bar) + 16px))} /* the payoff pose: 0.8 of the 150vh each chapter stays pinned; lands exactly there despite the scroll padding */
 .has-3d .beat-line{opacity:var(--b1,1);translate:0 calc((1 - var(--b1,1)) * 14px)}
 .has-3d .beat-pay{opacity:var(--b2,1);translate:0 calc((1 - var(--b2,1)) * 14px)}
 .has-3d .info:focus-within :is(.beat-line,.beat-pay){opacity:1;translate:none}
