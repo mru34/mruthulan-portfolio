@@ -56,3 +56,71 @@ def test_case_pages_cycle_through_five_in_homepage_order():
     kc = bs.build_case(bs.BY_ID['kc'])
     assert 'href="meant.html" rel="prev"' in kc
     assert 'href="signalbridge.html" rel="next"' in kc
+
+
+COPY = [
+    'Five projects.',
+    'SignalBridge', 'After-hours chat for young people. Nothing reaches a youth worker until they say yes.',
+    'Champion · Dell InnovateDash 2026',
+    'Boss Breaker', 'Wellness challenges, played as a boss fight.', 'Solo build · code on GitHub',
+    'Better Call Bhai', 'Online booking for a barbershop in Singapore.', 'Solo build · in a pilot with the shop',
+    'MEANT', 'Helps people who can’t rely on their speech reply in time. They choose every word.',
+    '2nd runner-up · Dell InnovateFest 2026',
+    'KnowCad', 'An AI assistant for customer service that finds answers in long documents.',
+    'Champion · Autodesk Singapore Hackathon 2026',
+    'Case study',
+    'Study', 'Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)',
+    'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER',
+    'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
+    'Reach out', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
+]
+GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
+        'Year 2 IT', 'See all projects', 'last mile', 'Now showing']
+BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',
+          'crafted', 'unlock', 'robust', 'delve']
+
+
+def test_home_says_every_word_in_the_copy_deck():
+    t = text_of(bs.build_home())
+    assert [s for s in COPY if s not in t] == []
+
+
+def test_home_drops_what_the_redesign_removed():
+    markup = bs.build_home()
+    t = text_of(markup)
+    assert [s for s in GONE if s in t] == []
+    assert [w for w in BANNED if w in t.lower()] == []
+    for marker in ('data-board', 'results-list', 'pcard', 'data-spin', 'projects-data', 'data-name'):
+        assert marker not in markup, marker
+
+
+def test_chapters_in_order_each_with_its_four_pieces_and_anchors():
+    markup = bs.build_home()
+    sections = re.findall(r'<section class="chapter".*?</section>', markup, re.S)
+    assert [c['pid'] for c in bs.CHAPTERS] == ['sb', 'bx', 'bb', 'mt', 'kc']
+    assert len(sections) == 5
+    for c, sec in zip(bs.CHAPTERS, sections):
+        p = bs.BY_ID[c['pid']]
+        t = text_of(sec)
+        for piece in (c['num'], p['name'], p['line'], c['result'], 'Case study'):
+            assert piece in t, (p['id'], piece)
+        assert f'href="{p["slug"]}.html"' in sec
+        assert f'data-event="case_open" data-project="{p["id"]}"' in sec
+        assert f'id="work-{p["id"]}"' in sec
+        assert f'data-scene="{p["slug"]}"' in sec
+        assert 'data-anchor' in sec
+    assert 'id="work"' in sections[0]
+
+
+def test_hero_and_ending_carry_the_links_with_their_events():
+    markup = bs.build_home()
+    hero = markup[markup.index('<section class="hero'):markup.index('<section class="fly')]
+    end = markup[markup.index('id="contact"'):markup.index('</main>')]
+    for href, event in ((bs.LINKEDIN, 'contact_open_linkedin'), (bs.GITHUB, 'contact_open_github'),
+                        (bs.RESUME, 'resume_click')):
+        assert f'href="{href}"' in hero and f'data-event="{event}"' in hero
+    for href, event in ((bs.MAILTO, 'contact_open_mail_app'), (bs.LINKEDIN, 'contact_open_linkedin'),
+                        (bs.GITHUB, 'contact_open_github')):
+        assert f'href="{bs.e(href)}"' in end and f'data-event="{event}"' in end
+    assert f'data-copy="{bs.EMAIL}"' in end
+    assert '<h1 class="sr-only" id="name">Mruthulan Senthil Nathan</h1>' in hero

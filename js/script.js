@@ -9,7 +9,6 @@
   const still = () => reduced.matches;
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
   // In-page links scroll smoothly once the page has loaded. Not before: a page opened at /#about must
   // jump straight there, so the browser can keep it in place while fonts and pictures settle above it.
@@ -17,35 +16,6 @@
   if (document.readyState === 'complete') smooth(); else addEventListener('load', smooth, { once: true });
 
   /* ---------------------------------------------------------- smooth-motion helpers */
-  // One flap turn, handed to the compositor (no class toggling, no forced layout).
-  const FLIP = [{ transform: 'rotateX(75deg)', filter: 'brightness(1.8)' }, { transform: 'none', filter: 'none' }];
-  const flap = (el, ms) => { if (!still() && el.animate) el.animate(FLIP, { duration: ms, easing: 'ease-out' }); };
-  // Every flickering letter (the name, the board, a hovered flap) is advanced by one
-  // loop tied to the screen's refresh, so a whole board costs one update per frame.
-  const jobs = new Set();
-  let loop = 0;
-  const pump = () => {
-    const now = performance.now();
-    for (const j of jobs) {
-      if (now < j.start) continue;
-      if (now >= j.stop) {
-        j.el.textContent = j.final === ' ' ? '' : j.final;
-        if (j.flip) flap(j.el, j.flip);
-        jobs.delete(j);
-        if (j.done) j.done();
-      } else if (now >= j.next) {
-        j.el.textContent = j.chars[Math.random() * j.chars.length | 0];
-        if (j.flip && (j.each || j.next === j.start)) flap(j.el, j.flip);
-        j.next = now + j.step;
-      }
-    }
-    loop = jobs.size ? requestAnimationFrame(pump) : 0;
-  };
-  const flicker = (el, final, o) => {
-    const start = performance.now() + (o.delay || 0);
-    jobs.add({ el, final, start, next: start, stop: start + o.dur, step: o.step, flip: o.flip, each: o.each, chars: o.chars, done: o.done });
-    if (!loop) loop = requestAnimationFrame(pump);
-  };
   // Decode a picture before it is shown, so a crossfade never waits on a large image.
   const warm = (img) => {
     if (!img || !img.decode) return;
@@ -344,7 +314,7 @@
     });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => zone.addEventListener(t, (e) => { if (e.pointerType !== 'mouse') clear(); }));
   };
-  $$('a.zoom, .pcard, .gal-main, .about > .ph').forEach((el) => tilt(el));
+  $$('a.zoom, .gal-main, .me > .ph').forEach((el) => tilt(el));
 
   /* ---------------------------------------------------------- buttons */
   // The fill grows from where the pointer came in and leaves toward where it went;
@@ -374,8 +344,8 @@
     btn.addEventListener('click', () => {
       const addr = btn.dataset.copy;
       const ok = () => {
-        btn.textContent = 'Copied ✓';
-        if (status) status.textContent = 'Copied. Paste it into any email app.';
+        btn.textContent = 'Copied';
+        if (status) status.textContent = 'Email address copied';
         setTimeout(() => { btn.textContent = label; }, 2200);
         track('contact_copy_email');
       };
@@ -414,122 +384,9 @@
 
   if (page !== 'home') return;
 
-  /* ---------------------------------------------------------- home: the name board */
-  // The name never changes. A tile flickers under the mouse and lands back on its
-  // letter; a tap or click ripples the whole name out from that tile.
-  const nameEl = $('[data-name]');
-  if (nameEl) {
-    const L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const cells = $$('.t', nameEl);
-    const flick = (t, delay = 0) => {
-      if (still() || t.dataset.busy) return;
-      t.dataset.busy = '1';
-      flicker(t, t.dataset.ch, { delay, dur: 200, step: 45, flip: 220, chars: L, done: () => { delete t.dataset.busy; } });
-    };
-    cells.forEach((t) => t.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') flick(t); }));
-    nameEl.addEventListener('pointerdown', (e) => {
-      const hit = e.target.closest('.t');
-      const i0 = hit ? cells.indexOf(hit) : 0;
-      cells.forEach((t, i) => { if (t !== hit || e.pointerType !== 'mouse') flick(t, Math.abs(i - i0) * 28); });
-    });
-  }
-
-  /* ---------------------------------------------------------- home: the name docks into the header */
-  // Scrolling out of the hero, the big name glides up and shrinks while the nine MRUTHULAN tiles close
-  // ranks, until each letter sits on the same letter of the small logo, at its size; the tiles and
-  // SENTHIL NATHAN fade on the way and the logo takes over at the end. It follows the scroll position,
-  // so it runs backwards on the way up and never hides anything at rest.
-  // Where the browser supports scroll-driven animations, the motion is written once as keyframes on the
-  // page's scroll timeline, so the browser moves the name in the same frame as the scroll itself (smooth
-  // with a keyboard, a wheel or a trackpad). Elsewhere a script follows the scroll and writes transforms.
-  const logo = $('.logo', bar);
-  const logoText = logo && logo.firstChild;
-  const first = nameEl && $('.w', nameEl);
-  const row = first ? $$('.t', first) : [];
-  if (nameEl && logoText && logoText.nodeType === 3 && logoText.length === row.length && !still()) {
-    const intro = $('.hero-text');
-    const range = document.createRange();
-    const charBox = (node, i) => { range.setStart(node, i); range.setEnd(node, i + 1); return range.getBoundingClientRect(); };
-    const onTimeline = window.CSS && CSS.supports('animation-timeline: scroll()');
-    const sheet = onTimeline ? document.head.appendChild(document.createElement('style')) : null;
-    row.forEach((t, i) => { t.dataset.dock = i; });
-    let m = null, raf = 0;
-    const measure = () => {
-      root.classList.add('docking');                     // the logo's resting place, without its fade-in offset
-      if (sheet) sheet.textContent = '';                 // measure the name at rest
-      nameEl.style.transform = '';
-      row.forEach((t) => { t.style.translate = ''; });
-      const r = first.getBoundingClientRect(), n = nameEl.getBoundingClientRect();
-      // layout sizes, not on-screen boxes: the tiles may still be mid flip-in when this runs
-      const letters = row.map((t, i) => charBox(logoText, i));
-      const s = parseFloat(getComputedStyle(logo).fontSize) / parseFloat(getComputedStyle(row[0]).fontSize);
-      const centres = row.map((t) => t.offsetLeft - first.offsetLeft + t.offsetWidth / 2);
-      const cy = row[0].offsetTop - first.offsetTop + row[0].offsetHeight / 2;
-      const tx = letters[0].left + letters[0].width / 2 - s * centres[0];
-      const ty = letters[0].top + letters[0].height / 2 - s * cy;
-      const top = r.top + scrollY;                       // where MRUTHULAN sits in the page
-      m = {
-        x: r.left, top, s, tx, ty,
-        // how far each tile slides (before scaling) so its letter lands on the logo's letter
-        shift: letters.map((b, i) => (b.left + b.width / 2 - tx) / s - centres[i]),
-        end: Math.max(top - letters[0].top, innerHeight * 0.6),   // scroll distance over which it docks
-      };
-      nameEl.style.transformOrigin = `${r.left - n.left}px ${r.top - n.top}px`;
-      if (sheet) writeTimeline(); else update();
-    };
-    const ease = (t) => t * t * (3 - 2 * t);
-    const clamp = (v) => Math.min(1, Math.max(0, v));
-    // Everything at one point of the dock, t = 0 (top of the page) … 1 (docked). The glide finishes at
-    // 85% of the distance and holds, so the logo takes over with every letter in place.
-    const at = (t) => {
-      const p = ease(clamp(t / 0.85)), y = t * m.end;
-      return {
-        p, hand: clamp((t - 0.88) / 0.12), intro: 1 - clamp(t * 1.4),
-        name: `translate(${((m.tx - m.x) * p).toFixed(2)}px, ${((m.ty - (m.top - y)) * p).toFixed(2)}px) scale(${(1 + (m.s - 1) * p).toFixed(5)})`,
-        tile: (i) => `${(m.shift[i] * p).toFixed(2)}px 0`,
-      };
-    };
-    // On a scroll timeline: sampled finely enough that the straight lines between samples are invisible.
-    const writeTimeline = () => {
-      const ts = [...new Set([...Array(49)].map((_, i) => i / 48).concat([0.85, 0.88]))].sort((a, b) => a - b);
-      const frames = (css) => ts.map((t) => `${(t * 100).toFixed(3)}%{${css(at(t))}}`).join('');
-      const on = `animation-timeline:scroll(root block);animation-range:0px ${Math.round(m.end)}px;animation-timing-function:linear`;
-      sheet.textContent =
-        `@keyframes dock-name{${frames((f) => `transform:${f.name}`)}}` +
-        `@keyframes dock-vars{${frames((f) => `--dock:${f.p.toFixed(4)};--hand:${f.hand.toFixed(3)}`)}}` +
-        `@keyframes dock-intro{${frames((f) => `opacity:${f.intro.toFixed(3)}`)}}` +
-        row.map((_, i) => `@keyframes dock-t${i}{${frames((f) => `translate:${f.tile(i)}`)}}`).join('') +
-        `html.docking{animation-name:dock-vars;animation-fill-mode:both;${on}}` +
-        `html.docking .hero .tiles{animation-name:dock-name;animation-fill-mode:both;${on}}` +
-        `html.docking .hero-text{animation-name:dock-intro;animation-fill-mode:both;${on}}` +
-        // tiles keep their flip-in on arrival, and only pick up the slide once the page has moved
-        row.map((_, i) => `html.docking .hero .tiles .t[data-dock="${i}"]{animation-name:tile-in,dock-t${i};` +
-          `animation-duration:.38s,auto;animation-delay:calc(var(--i) * 14ms),0s;animation-fill-mode:backwards,forwards;` +
-          `animation-timing-function:var(--ease),linear;animation-timeline:auto,scroll(root block);` +
-          `animation-range:normal,1px ${Math.round(m.end)}px}`).join('');
-    };
-    // Elsewhere: follow the scroll and write the same values.
-    const update = () => {
-      raf = 0;
-      if (!m) return;
-      const f = at(clamp(scrollY / m.end));
-      nameEl.style.transform = f.p ? f.name : '';
-      row.forEach((tile, i) => { tile.style.translate = f.p ? f.tile(i) : ''; });
-      root.style.setProperty('--dock', f.p.toFixed(4));
-      root.style.setProperty('--hand', f.hand.toFixed(3));
-      if (intro) intro.style.opacity = String(f.intro);
-    };
-    if (!sheet) addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
-    // Once the page moves the tiles fly over the header, so they stop taking the pointer there
-    // (the class only changes when the page leaves or returns to the very top).
-    const moved = () => root.classList.toggle('moved', scrollY > 0);
-    addEventListener('scroll', moved, { passive: true });
-    moved();
-    addEventListener('resize', () => requestAnimationFrame(measure));
-    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(measure));
-  }
-
   /* ---------------------------------------------------------- home: header */
+  // The gold logo stays hidden while the name board fills the screen (CSS), and the header gets its
+  // line once the page has moved past the hero.
   const heroEnd = $('[data-hero-end]');
   new IntersectionObserver(([e]) => {
     bar.classList.toggle('scrolled', !e.isIntersecting && e.boundingClientRect.top < 200);
@@ -550,86 +407,4 @@
   }), { rootMargin: '-45% 0px -50% 0px' });
   $$('[data-sec]').forEach((s) => secObs.observe(s));
   addEventListener('scroll', () => { if (scrollY < 200) mark(null); }, { passive: true });
-
-  /* ---------------------------------------------------------- home: departures board */
-  const board = $('[data-board]');
-  const data = JSON.parse($('#projects-data').textContent);
-  const ids = Object.keys(data);
-  const cols = {};
-  $$('[data-col]', board).forEach((f) => { cols[f.dataset.col] = [...f.children]; });
-  const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  const put = (c, ch) => { c.textContent = ch === ' ' ? '' : ch; };
-  let flipping = 0;
-  function flipAll(words, done) {
-    const cells = []; let k = 0;
-    for (const [col, word] of Object.entries(words)) {
-      const row = cols[col];
-      const w = word.toUpperCase().padEnd(row.length, ' ').slice(0, row.length);
-      row.forEach((c, i) => cells.push([c, w[i], k++]));
-    }
-    if (still() || document.hidden) { cells.forEach(([c, ch]) => put(c, ch)); if (done) done(); return; }
-    let left = cells.length;
-    flipping++;
-    cells.forEach(([c, ch, idx]) => flicker(c, ch, {
-      dur: 220 + idx * 14, step: 60, flip: 110, each: true, chars: A,
-      done: () => { if (--left === 0) { flipping--; if (done) done(); } },
-    }));
-  }
-  // a flap flickers under the mouse and lands back on what it showed
-  Object.values(cols).flat().forEach((c) => c.addEventListener('pointerenter', (e) => {
-    if (e.pointerType !== 'mouse' || flipping || still() || c.dataset.busy) return;
-    c.dataset.busy = '1';
-    flicker(c, c.textContent || ' ', { dur: 170, step: 55, flip: 110, each: true, chars: A, done: () => { delete c.dataset.busy; } });
-  }));
-  const spin = $('[data-spin]', board);
-  const result = $('[data-result]', board);
-  const live = $('[data-spin-live]', board);
-  $('.fids', board).addEventListener('click', () => spin.click());
-  // the page arrives showing the first project, so the first spin lands somewhere else
-  let last = board.dataset.first || null, busy = false;
-  // Picks never repeat the previous project; extra presses during a spin are ignored.
-  function pick() {
-    const pool = ids.filter((id) => id !== last);
-    const r = new Uint32Array(1);
-    (window.crypto || window.msCrypto).getRandomValues(r);
-    return pool[r[0] % pool.length];
-  }
-  const pickCard = (id) => $$('.pcard').forEach((c) => c.toggleAttribute('data-picked', c.dataset.project === id));
-  function renderResult(id) {
-    const p = data[id];
-    pickCard(id);
-    spin.textContent = 'Spin again';
-    result.innerHTML = `<span class="sw" style="--c:${p.c}"></span>
-      <a class="link" href="${esc(p.href)}" data-event="case_open" data-project="${id}">Case study <span class="ar">→</span></a>`;
-    if (!still()) { result.classList.remove('in'); void result.offsetWidth; result.classList.add('in'); }
-  }
-  const go = (byHand) => {
-    if (busy) return;
-    busy = true;
-    spin.setAttribute('aria-disabled', 'true');
-    const id = pick(); last = id;
-    const p = data[id];
-    live.textContent = 'Spinning…';
-    flipAll({ name: p.name, type: p.board[0], status: p.board[1] }, () => {
-      renderResult(id);
-      live.textContent = `Landed on ${p.name}. ${p.line}`;
-      busy = false;
-      spin.removeAttribute('aria-disabled');
-      if (byHand) track('spin_result', { project: id });
-      try { sessionStorage.setItem('spin-last', id); } catch { /* storage may be blocked */ }
-    });
-  };
-  spin.addEventListener('click', () => go(true));
-  // the page arrives showing the first project; coming back from a case page keeps the last result instead
-  let kept = null;
-  try { kept = sessionStorage.getItem('spin-last'); } catch { /* storage may be blocked */ }
-  if (kept && data[kept]) {
-    last = kept;
-    const p = data[kept];
-    for (const [col, word] of Object.entries({ name: p.name, type: p.board[0], status: p.board[1] })) {
-      const w = word.toUpperCase().padEnd(cols[col].length, ' ');
-      cols[col].forEach((c, i) => { c.textContent = w[i] === ' ' ? '' : w[i]; });
-    }
-    renderResult(kept);
-  }
 })();
