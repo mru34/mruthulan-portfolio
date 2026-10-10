@@ -160,3 +160,30 @@ def test_hero_board_box_matches_the_board_layout():
     css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
     assert 'aspect-ratio:14.94/3.42' in css
     assert 'aspect-ratio:10.12/5.07' in css
+
+
+import json  # noqa: E402
+
+
+def test_import_map_points_every_module_at_a_stamped_file_that_exists():
+    markup = bs.build_home()
+    m = re.search(r'<script type="importmap">(.*?)</script>', markup, re.S)
+    assert m, 'no import map'
+    imports = json.loads(m.group(1))['imports']
+    for spec, url in imports.items():
+        path, _, stamp = url.partition('?v=')
+        assert (ROOT / path.removeprefix('./')).exists(), (spec, url)
+        assert re.fullmatch(r'[0-9a-f]{8}', stamp), (spec, url)
+    assert imports['three'].startswith('./js/vendor/three/three.module.min.js?v=')
+    assert re.search(r'<script type="module" src="\./js/home\.js\?v=[0-9a-f]{8}"></script>', markup)
+
+
+def test_every_module_import_resolves():
+    imports = json.loads(re.search(r'<script type="importmap">(.*?)</script>', bs.build_home(), re.S).group(1))['imports']
+    own = [f for f in (ROOT / 'js').rglob('*.js') if 'vendor' not in f.parts and f.name not in ('script.js', 'analytics.js')]
+    for f in own:
+        for spec in re.findall(r'(?:\bfrom|\bimport)\s*\(?\s*[\'"]([^\'"]+)[\'"]', f.read_text(encoding='utf-8')):
+            if spec.startswith('.'):
+                assert (f.parent / spec).resolve().exists(), (f.name, spec)
+            else:
+                assert spec in imports, (f.name, spec)

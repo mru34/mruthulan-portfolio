@@ -60,6 +60,64 @@ for (const [w, h] of [[1440, 900], [390, 844]]) {
   });
 }
 
+scenario('?mode=stills and reduced motion both get the stills', async () => {
+  for (const opts of [{ path: '?mode=stills' }, { reduced: true }]) {
+    const { page, errors } = await open(opts);
+    check(await page.evaluate(() => document.documentElement.classList.contains('stills')), `${JSON.stringify(opts)}: html.stills`);
+    for (const pid of PIDS) check(await infoVisible(page, pid), `${JSON.stringify(opts)}: ${pid} visible`);
+    check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+    await page.close();
+  }
+});
+
+scenario('live: tall pinned chapters and a stage', async () => {
+  const { page, errors } = await open();
+  check(await page.evaluate(() => document.documentElement.classList.contains('has-3d')), 'html.has-3d');
+  check(await page.$eval('.chapter', (c) => Math.abs(c.offsetHeight - 2.5 * innerHeight) < 2), 'a chapter is 250vh');
+  check(await page.$eval('canvas.stage', (c) => getComputedStyle(c).display === 'block'), 'canvas showing');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('a link lands on the payoff pose', async () => {
+  for (const hash of ['#work-bx', '#work']) {
+    const { page } = await open({ path: hash });
+    await sleep(600);
+    const pid = hash === '#work' ? 'sb' : 'bx';
+    check(await infoVisible(page, pid), `${hash}: ${pid} fully visible on arrival`);
+    await page.close();
+  }
+});
+
+scenario('focus shows the whole information block', async () => {
+  const { page } = await open();
+  await page.evaluate(() => {
+    const c = document.querySelectorAll('.chapter')[2];
+    scrollTo({ top: c.getBoundingClientRect().top + scrollY + 5, behavior: 'instant' });
+  });
+  await sleep(300);
+  await page.focus('.chapter:nth-of-type(3) .info a.btn');
+  await sleep(100);
+  const op = await page.$eval('.chapter:nth-of-type(3) .info a.btn', (a) => parseFloat(getComputedStyle(a).opacity));
+  check(op > 0.99, `focused Case study link is visible (opacity ${op})`);
+  await page.close();
+});
+
+scenario('the snap never pulls back', async () => {
+  const { page } = await open();
+  const y0 = await page.evaluate(() => {
+    const c = document.querySelectorAll('.chapter')[1];
+    const key = c.getBoundingClientRect().top + scrollY + 0.8 * (c.offsetHeight - innerHeight);
+    scrollTo({ top: key + 120, behavior: 'instant' });
+    return key + 120;
+  });
+  await page.mouse.wheel({ deltaY: 100 });
+  await sleep(700);
+  const y1 = await page.evaluate(() => scrollY);
+  check(y1 >= y0, `stayed at or past where the visitor scrolled (${y0} → ${y1})`);
+  await page.close();
+});
+
 /* ------------------------------------------------------------------ run */
 for (const [name, fn] of SCENARIOS) {
   console.log(name);

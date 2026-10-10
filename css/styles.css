@@ -494,3 +494,23 @@ p{margin:0}
 /* stills of the 3D (design/stills.mjs): only the canvas shows, on a transparent page */
 html[data-pose],html[data-pose] body{background:transparent!important}
 html[data-pose] body > :not(.stage){visibility:hidden}
+
+/* with the live 3D (.has-3d, set by js/home.js): the canvas shows; "Five projects." and every chapter are tall
+   sections whose content stays pinned while the scroll drives it; a chapter's words arrive in beats */
+.has-3d .stage{display:block}
+.has-3d.frozen .stage{display:none}
+.has-3d .fly{height:200vh}
+.has-3d .fly .pin{position:sticky;top:0;height:100vh;min-height:0}
+.has-3d .fly .big{transform:translateY(calc((.5 - var(--p,.5)) * 24vh)) scale(calc(.94 + var(--p,.5) * .12))}
+.has-3d .chapter{height:250vh}
+.has-3d .chapter .pin{position:sticky;top:0;height:100vh}
+.has-3d .ch-stage{aspect-ratio:auto;height:100%}
+.has-3d .ch-stage .still{border-radius:0}
+.has-3d .ch-key{top:120vh} /* the payoff pose: 0.8 of the 150vh each chapter stays pinned */
+.has-3d .beat-line{opacity:var(--b1,1);translate:0 calc((1 - var(--b1,1)) * 14px)}
+.has-3d .beat-pay{opacity:var(--b2,1);translate:0 calc((1 - var(--b2,1)) * 14px)}
+.has-3d .info:focus-within :is(.beat-line,.beat-pay){opacity:1;translate:none}
+.has-3d .rail{position:fixed;right:clamp(10px,1.6vw,24px);top:50%;z-index:5;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;translate:0 -50%;opacity:0;transition:opacity .3s var(--ease)}
+.rail.on{opacity:1}
+.rail li{width:22px;height:2px;border-radius:2px;background:var(--hair);transition:width .3s var(--ease),background-color .3s}
+.rail li[data-on]{width:36px;background:var(--c)}

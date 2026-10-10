@@ -5,9 +5,11 @@
     "test": "node --test \"tests/js/*.test.js\"",
     "smoke": "node tests/browser/smoke.mjs",
     "stills": "node design/stills.mjs",
-    "perf": "node tests/browser/perf.mjs"
+    "perf": "node tests/browser/perf.mjs",
+    "vendor:three": "esbuild node_modules/three/build/three.module.js --bundle --format=esm --minify --legal-comments=eof --outfile=js/vendor/three/three.module.min.js"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "puppeteer-core": "23.11.1",
     "three": "0.186.1"
   }

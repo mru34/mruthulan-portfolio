@@ -407,12 +407,34 @@ def og_image(path):
     return f"{SITE}/assets/og/{card.name}?v={hashlib.sha1(card.read_bytes()).hexdigest()[:8]}"
 
 
-def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False, prefix=''):
+def module_map():
+    """The homepage's ES modules. Every module URL points at a copy stamped with a hash of its contents, so
+    a browser never mixes modules from two releases (GitHub Pages lets them be cached for ten minutes)."""
+    import hashlib
+    imports = {}
+    for f in sorted((ROOT / 'js').rglob('*.js')):
+        rel = f.relative_to(ROOT).as_posix()
+        if rel in ('js/script.js', 'js/analytics.js'):
+            continue
+        h = hashlib.sha1(f.read_bytes().replace(b'\r\n', b'\n')).hexdigest()[:8]
+        imports[f'./{rel}'] = f'./{rel}?v={h}'
+        if rel.startswith('js/vendor/three/addons/'):
+            imports['three/addons/' + rel.removeprefix('js/vendor/three/addons/')] = f'./{rel}?v={h}'
+    imports['three'] = imports['./js/vendor/three/three.module.min.js']
+    return imports
+
+
+def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False, prefix='', modules=False):
     canonical = f'{SITE}/{path}'
     image = og_image(path)
     meta_robots = '\n  <meta name="robots" content="noindex">' if noindex else ''
     ld_html = (f'\n  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>'
                if ld else '')
+    mods = ''
+    if modules:
+        imap = module_map()
+        mods = (f'\n  <script type="importmap">{json.dumps({"imports": imap}, separators=(",", ":"))}</script>'
+                f'\n  <script type="module" src="{imap["./js/home.js"]}"></script>')
     return f"""<!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -437,7 +459,7 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <link rel="stylesheet" href="{prefix}css/styles.css">
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script src="{prefix}js/script.js" defer></script>
-  <script src="{prefix}js/analytics.js" defer></script>{ld_html}
+  <script src="{prefix}js/analytics.js" defer></script>{mods}{ld_html}
 </head>"""
 
 
@@ -786,7 +808,7 @@ def build_home():
     return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
                  'Mruthulan Senthil Nathan, Year 2 IT at Singapore Polytechnic, builds full-stack products. Five projects, what I built on each, and three hackathon results.',
                  '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
-                 og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld)}
+                 og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld, modules=True)}
 {body_open('home')}
   <canvas class="stage" aria-hidden="true"></canvas>
   {header('')}
