@@ -11,6 +11,7 @@ const BEATS = { line: [0.25, 0.35], pay: [0.6, 0.7] };     // the one line, then
 // data-scene → its module, loaded only when its section comes near
 const SCENES = {
   hero: () => import('./3d/hero.js'),
+  fly: () => import('./3d/flythrough.js'),
 };
 
 const root = document.documentElement;
