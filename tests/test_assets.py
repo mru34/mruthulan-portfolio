@@ -21,3 +21,37 @@ def test_each_name_font_is_small_and_has_every_letter_of_the_name(slug, name):
     assert all(ord(ch) in cmap for ch in set(name)), name
     css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
     assert f'font-family:"Name {name}";src:url(../assets/fonts/name-{slug}.woff2)' in css
+
+
+import re  # noqa: E402
+
+RAW = ROOT.parent / 'portfolio-tools' / 'card-shots' / 'raw'
+SB = {'sb-phone-consent': (768, 1662), 'sb-phone-notified': (768, 1662), 'sb-laptop-handoffs': (1600, 1000),
+      'sb-laptop-brief': (1600, 1000), 'sb-message': (837, 270), 'sb-consent-ask': (1074, 213),
+      'sb-consent-given': (1074, 213)}
+
+
+@pytest.mark.parametrize('name,limit', SB.items())
+def test_signalbridge_textures_exist_within_their_sizes(name, limit):
+    from PIL import Image
+    path = ROOT / 'assets' / '3d' / f'{name}.webp'
+    assert path.exists(), path
+    with Image.open(path) as im:
+        assert im.width <= limit[0] and im.height <= limit[1], im.size
+        if name in ('sb-message', 'sb-consent-ask', 'sb-consent-given'):
+            assert im.mode == 'RGBA'
+            assert im.getpixel((0, 0))[3] == 0, 'rounded corner is transparent'
+            assert im.getpixel((im.width // 2, im.height // 2))[3] == 255
+
+
+def test_signalbridge_textures_fit_the_chapter_budget():
+    total = sum((ROOT / 'assets' / '3d' / f'{n}.webp').stat().st_size for n in SB)
+    assert total <= 400_000, total
+
+
+@pytest.mark.skipif(not (ROOT / 'js' / '3d' / 'chapters' / 'signalbridge.js').exists(), reason='the scene comes in Task 11')
+def test_the_scene_and_the_builder_agree_on_the_message_crop():
+    import build_3d_assets as b
+    js = (ROOT / 'js' / '3d' / 'chapters' / 'signalbridge.js').read_text(encoding='utf-8')
+    m = re.search(r'MESSAGE_BOX = \[(\d+), (\d+), (\d+), (\d+)\]', js)
+    assert m and tuple(map(int, m.groups())) == b.MESSAGE_BOX
