@@ -1,6 +1,6 @@
 # 3D homepage redesign: design spec
 
-Date: 11 October 2026 · Branch: `redesign-3d` · Status: waiting for Mruthulan's review
+Date: 11 October 2026 · Branch: `redesign-3d` · Status: approved by Mruthulan
 
 ## Goal
 
@@ -175,7 +175,7 @@ The *Spin a project* board and its `spin_result` analytics event, the hero resul
 
 ## Every word on the homepage
 
-This is the complete text. Nothing else appears. Lines marked *new* replace today's wording, which is shown after them for comparison.
+This is the complete text. Nothing else appears. Lines marked *new* replace today's wording (shown after them for comparison); Mruthulan approved them.
 
 **Header:** MRUTHULAN · Work · Awards · About · Résumé ↓ · Contact
 
@@ -378,4 +378,4 @@ Removed: `spin_result`. Unchanged: `case_open`, `resume_click`, `proof_post_clic
 - The page follows Apple's flow: loud and quiet moments in turn, one idea per screen, three beats per chapter.
 - Each project name in its own typeface.
 - Visitors see the projects one by one: pinned chapters and a snap, but the scroll is never locked.
-- **Assumption to confirm:** "keep the spinny" means the ending flap board, and the old *Spin a project* button is removed.
+- The page ends on the flap board ("keep the spinny"); the old *Spin a project* button is removed, because the five chapters already show every project and the board bookends the hero.
