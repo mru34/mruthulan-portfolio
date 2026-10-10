@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/js/*.test.js\"",
+    "smoke": "node tests/browser/smoke.mjs",
+    "stills": "node design/stills.mjs",
+    "perf": "node tests/browser/perf.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "23.11.1",
+    "three": "0.186.1"
+  }
+}

@@ -344,7 +344,7 @@
     });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => zone.addEventListener(t, (e) => { if (e.pointerType !== 'mouse') clear(); }));
   };
-  $$('a.zoom, .pcard, .gal-main, .about > .ph, .deck-stage').forEach((el) => tilt(el));
+  $$('a.zoom, .pcard, .gal-main, .about > .ph').forEach((el) => tilt(el));
 
   /* ---------------------------------------------------------- buttons */
   // The fill grows from where the pointer came in and leaves toward where it went;
@@ -386,37 +386,6 @@
       };
       try { navigator.clipboard.writeText(addr).then(ok, fallback); } catch { fallback(); }
     });
-  });
-
-  /* ---------------------------------------------------------- Loomy deck */
-  $$('[data-deck]').forEach((deck) => {
-    const slides = $$('.deck-slide', deck);
-    const now = $('[data-deck-now]', deck);
-    const live = $('[data-deck-live]', deck);
-    let i = 0;
-    const show = (n, announce) => {
-      i = (n + slides.length) % slides.length;
-      slides.forEach((s, k) => { s.toggleAttribute('data-on', k === i); s.setAttribute('aria-hidden', String(k !== i)); s.tabIndex = k === i ? 0 : -1; });
-      now.textContent = i + 1;
-      if (announce) live.textContent = `Slide ${i + 1} of ${slides.length}`;
-    };
-    $('[data-deck-prev]', deck).addEventListener('click', () => show(i - 1, true));
-    $('[data-deck-next]', deck).addEventListener('click', () => show(i + 1, true));
-    deck.addEventListener('keydown', (e) => {
-      if (e.target.closest('button,a:not(.deck-slide)')) return;
-      if (e.key === 'ArrowRight') { show(i + 1, true); e.preventDefault(); }
-      if (e.key === 'ArrowLeft') { show(i - 1, true); e.preventDefault(); }
-    });
-    let x0 = null;
-    const stage = $('.deck-stage', deck);
-    stage.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-    stage.addEventListener('pointerup', (e) => {
-      if (x0 === null) return;
-      const dx = e.clientX - x0; x0 = null;
-      if (Math.abs(dx) > 40) { show(dx < 0 ? i + 1 : i - 1, true); stage.dataset.swiped = '1'; setTimeout(() => delete stage.dataset.swiped, 50); }
-    });
-    stage.addEventListener('click', (e) => { if (stage.dataset.swiped) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
-    show(0, false);
   });
 
   /* ---------------------------------------------------------- case pages */

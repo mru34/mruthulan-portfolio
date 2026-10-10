@@ -3,7 +3,7 @@
 
     python design/build_site.py
 
-Writes index.html, the six case pages, privacy.html and 404.html, makes
+Writes index.html, the five case pages, privacy.html and 404.html, makes
 800px-wide copies of large images for phones (originals are never touched),
 then stamps the CSS and JS links (stamp_assets.py).
 
@@ -172,19 +172,6 @@ TESTIMONIAL = ((_T['quote'], f"{_T['attribution']}, {_T.get('role', '')}".strip(
 ABOUT_PERSONAL = (CONTENT.get('aboutPersonal', {}).get('text')
                   if CONTENT.get('aboutPersonal', {}).get('status') == 'ready' else None)
 
-LOOMY_SLIDES = [
-    ('loomy-01.jpg', 'Title slide: Loomy, a social thrifting app that helps reduce waste and make fashion more sustainable.'),
-    ('loomy-02.jpg', 'Problem: unwearable clothes sitting in closets, rising clothing prices, and accessibility and sizing problems when thrifting.'),
-    ('loomy-03.jpg', 'Market validation, after interviewing 30+ people aged 15 to 25: what potential users said about convenience, incentives and slow platforms.'),
-    ('loomy-04.jpg', 'Solution: a trading platform built around an AI-powered online closet for finding your style and trading unworn clothes.'),
-    ('loomy-05.jpg', 'The product, in three parts: a community aspect, profiling, and a smart digital wardrobe.'),
-    ('loomy-06.jpg', 'Revenue model: a freemium tier, paid convenience services, and commissions on in-app purchases.'),
-    ('loomy-07.jpg', 'Competition: where Loomy sits against existing resale platforms on price.'),
-    ('loomy-08.jpg', 'Timeline: four quarters of planned milestones, with target user numbers and a projected first-year revenue figure.'),
-    ('loomy-09.jpg', 'Team slide: six members with their roles, listing Mru as prototype designer.'),
-    ('loomy-10.jpg', 'Closing slide: thank you, with the Loomy contact details.'),
-]
-
 
 def sec(eyebrow, heading, body, sid=None):
     i = f' id="{sid}"' if sid else ''
@@ -231,31 +218,6 @@ def quote(q, who):
             'emoji removed and one sentence left out, marked with an ellipsis</footer></blockquote>')
 
 
-def tally(count, label):
-    marks = '<i></i>' * count
-    return (f'<div class="tally"><span class="num" aria-hidden="true">{count}+</span>'
-            f'<div><p>{e(label)}</p><div class="marks" aria-hidden="true">{marks}</div></div></div>')
-
-
-def deck():
-    slides = ''.join(
-        f'<a class="deck-slide" href="assets/deck/{src}" data-zoom="Loomy pitch deck · slide {i + 1} of {len(LOOMY_SLIDES)}" '
-        f'data-alt="{e(alt)}"{" data-on" if i == 0 else ""}>'
-        f'<img src="assets/deck/{src}" width="1655" height="931" alt="{e(alt)}" decoding="async"'
-        f'{"" if i == 0 else " loading=" + chr(34) + "lazy" + chr(34)}></a>'
-        for i, (src, alt) in enumerate(LOOMY_SLIDES))
-    return ('<div class="deck" id="deck" data-deck tabindex="0" role="group" aria-roledescription="carousel" '
-            'aria-label="Loomy pitch deck, use the arrow keys to move between slides">'
-            f'<div class="deck-stage">{slides}</div>'
-            '<div class="deck-bar">'
-            '<button class="btn" type="button" data-deck-prev aria-label="Previous slide">←</button>'
-            '<button class="btn" type="button" data-deck-next aria-label="Next slide">→</button>'
-            f'<span class="count">Slide <b data-deck-now>1</b> of {len(LOOMY_SLIDES)}</span>'
-            '<a class="link" href="assets/Loomy-Pitch-Deck.pdf" target="_blank" rel="noopener" '
-            'data-event="deck_open" data-project="lm">Open the full deck (PDF) ↗</a>'
-            '</div><p class="sr-only" data-deck-live aria-live="polite"></p></div>')
-
-
 PROJECTS = [
     dict(
         id='sb', slug='signalbridge', name='SignalBridge', type='Hackathon', c='#2BC4BC',
@@ -291,6 +253,70 @@ PROJECTS = [
             sec('Evidence', 'What it actually looks like.',
                 shots(['signalbridge-shot-2', 'signalbridge-shot-3'], one=True)
                 + note('Fictional demo data from the running app. The backend, AI and deployment were teammates’ work.')),
+        ],
+    ),
+    dict(
+        id='bx', slug='boss-breaker', name='Boss Breaker', type='Solo build', c='#F06A43',
+        board=('SOLO BUILD', 'COMPLETED'),
+        line='Wellness challenges, played as a boss fight.',
+        role='Solo build: frontend, API, database and game logic',
+        result='Full-stack coursework build',
+        event='Back-end development module · coursework',
+        proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
+        preview='boss-breaker-dashboard', cover=('browser', 'boss-breaker-dashboard'),
+        desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
+              'Built with JavaScript, Node.js and MySQL.'),
+        og='A full-stack wellness game with challenges, points and boss raids.',
+        hl='Wellness challenges, played as a boss fight.',
+        st=('A full-stack build for a back-end development module assignment: complete wellness challenges to earn points, then '
+            'spend them against a shared boss.'),
+        actions=[('View the code ↗', 'https://github.com/mru34/bedca2', None)],
+        facts=[('My role', 'Built it alone: frontend, API, database and game logic'),
+               ('Stack', 'JavaScript · Node.js · MySQL'),
+               ('Status', 'Coursework · source on GitHub')],
+        lead=('boss-breaker-dashboard', None),
+        scene='boss-breaker-case',
+        sections=lambda: [
+            sec('The loop', 'Four mechanics, one habit.', steps([
+                ('Challenges', 'A wellness action is how you earn anything.'),
+                ('Points', 'Added on the server, so the browser cannot cheat.'),
+                ('Boss raids', 'Spend points against a shared boss, with a damage leaderboard.'),
+                ('Progression', 'Everything lives in MySQL, so it survives a refresh.')])),
+            sec('In play', 'What a session looks like.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
+                + note('Run locally on a fresh database with demo data. Every commit in the public repository is mine.')),
+        ],
+    ),
+    dict(
+        id='bb', slug='better-call-bhai', name='Better Call Bhai', type='Client build', c='#E3B53A',
+        board=('CLIENT', 'PILOT'),
+        line='Appointment booking for a local barbershop.',
+        role='Solo build: design, frontend, API, database and deployment',
+        result='Deployed pilot',
+        event='Client build · Deployed pilot',
+        proof=('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None),
+        preview='better-call-bhai-shot-1', cover=('device', 'better-call-bhai-shot-1'),
+        desc=('Better Call Bhai case study: an appointment booking site for a local barbershop, deployed '
+              'on Render and in a pilot with the shop.'),
+        og='An appointment booking site for a local barbershop, in a pilot with the shop.',
+        hl='Barber bookings, minus the back-and-forth.',
+        st=('Customers pick a service, a day and an open slot and confirm on the site, with their booking '
+            'details one tap away on WhatsApp. The shop is piloting it; most bookings still come in through '
+            'WhatsApp for now.'),
+        actions=[('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None)],
+        facts=[('My role', 'Built it alone: design, frontend, Express API, SQLite database, admin page and deployment'),
+               ('Status', 'Deployed pilot, for a barbershop in Singapore'),
+               ('Stack', 'JavaScript · Node.js / Express · SQLite · hosted on Render')],
+        lead=('better-call-bhai-shot-1', 'The deployed site, on a laptop and a phone'),
+        scene='better-call-bhai-case',
+        sections=lambda: [
+            sec('Before and after', 'The whole job was removing a conversation.', compare(
+                ('Before: WhatsApp', ['Message the shop to ask what is free.', 'Wait for a reply.',
+                                      'Agree a time.', 'Confirm again closer to the day.']),
+                ('After: the site', ['Open the site.', 'Pick an open slot.', 'Confirm.']))),
+            sec('Evidence', 'The booking flow, end to end.',
+                shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'], one=True)
+                + note('Run locally with test bookings, so no customer appears.')
+                + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
         ],
     ),
     dict(
@@ -337,39 +363,6 @@ PROJECTS = [
         ],
     ),
     dict(
-        id='bb', slug='better-call-bhai', name='Better Call Bhai', type='Client build', c='#E3B53A',
-        board=('CLIENT', 'PILOT'),
-        line='Appointment booking for a local barbershop.',
-        role='Solo build: design, frontend, API, database and deployment',
-        result='Deployed pilot',
-        event='Client build · Deployed pilot',
-        proof=('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None),
-        preview='better-call-bhai-shot-1', cover=('device', 'better-call-bhai-shot-1'),
-        desc=('Better Call Bhai case study: an appointment booking site for a local barbershop, deployed '
-              'on Render and in a pilot with the shop.'),
-        og='An appointment booking site for a local barbershop, in a pilot with the shop.',
-        hl='Barber bookings, minus the back-and-forth.',
-        st=('Customers pick a service, a day and an open slot and confirm on the site, with their booking '
-            'details one tap away on WhatsApp. The shop is piloting it; most bookings still come in through '
-            'WhatsApp for now.'),
-        actions=[('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None)],
-        facts=[('My role', 'Built it alone: design, frontend, Express API, SQLite database, admin page and deployment'),
-               ('Status', 'Deployed pilot, for a barbershop in Singapore'),
-               ('Stack', 'JavaScript · Node.js / Express · SQLite · hosted on Render')],
-        lead=('better-call-bhai-shot-1', 'The deployed site, on a laptop and a phone'),
-        scene='better-call-bhai-case',
-        sections=lambda: [
-            sec('Before and after', 'The whole job was removing a conversation.', compare(
-                ('Before: WhatsApp', ['Message the shop to ask what is free.', 'Wait for a reply.',
-                                      'Agree a time.', 'Confirm again closer to the day.']),
-                ('After: the site', ['Open the site.', 'Pick an open slot.', 'Confirm.']))),
-            sec('Evidence', 'The booking flow, end to end.',
-                shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'], one=True)
-                + note('Run locally with test bookings, so no customer appears.')
-                + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
-        ],
-    ),
-    dict(
         id='kc', slug='knowcad', name='KnowCad', type='Hackathon', c='#9B87FF',
         board=('HACKATHON', 'CHAMPION'),
         line='A retrieval-based AI assistant for customer service.',
@@ -396,66 +389,6 @@ PROJECTS = [
                 ('The answer', 'One answer with its source, and a human still reviewing.')])),
             sec('Proof', 'The result, and the team behind it.', shots(['win-knowcad-team'], one=True)
                 + note('The product is private, so the proof is the award and my post.')),
-        ],
-    ),
-    dict(
-        id='bx', slug='boss-breaker', name='Boss Breaker', type='Solo build', c='#F06A43',
-        board=('SOLO BUILD', 'COMPLETED'),
-        line='Wellness challenges, played as a boss fight.',
-        role='Solo build: frontend, API, database and game logic',
-        result='Full-stack coursework build',
-        event='Back-end development module · coursework',
-        proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
-        preview='boss-breaker-dashboard', cover=('browser', 'boss-breaker-dashboard'),
-        desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
-              'Built with JavaScript, Node.js and MySQL.'),
-        og='A full-stack wellness game with challenges, points and boss raids.',
-        hl='Wellness challenges, played as a boss fight.',
-        st=('A full-stack build for a back-end development module assignment: complete wellness challenges to earn points, then '
-            'spend them against a shared boss.'),
-        actions=[('View the code ↗', 'https://github.com/mru34/bedca2', None)],
-        facts=[('My role', 'Built it alone: frontend, API, database and game logic'),
-               ('Stack', 'JavaScript · Node.js · MySQL'),
-               ('Status', 'Coursework · source on GitHub')],
-        lead=('boss-breaker-dashboard', None),
-        scene='boss-breaker-case',
-        sections=lambda: [
-            sec('The loop', 'Four mechanics, one habit.', steps([
-                ('Challenges', 'A wellness action is how you earn anything.'),
-                ('Points', 'Added on the server, so the browser cannot cheat.'),
-                ('Boss raids', 'Spend points against a shared boss, with a damage leaderboard.'),
-                ('Progression', 'Everything lives in MySQL, so it survives a refresh.')])),
-            sec('In play', 'What a session looks like.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
-                + note('Run locally on a fresh database with demo data. Every commit in the public repository is mine.')),
-        ],
-    ),
-    dict(
-        id='lm', slug='loomy', name='Loomy', type='Concept', c='#3DBB7A',
-        board=('CONCEPT', 'PITCH DECK'),
-        line='A social thrifting app concept to cut clothing waste.',
-        role='Prototype designer',
-        result='Research and a pitch deck',
-        event='Product concept',
-        proof=('Read the pitch deck →', 'loomy.html#deck', None),
-        preview=None, cover=('slide', 'loomy-01.jpg'),
-        desc='Loomy case study: a social thrifting product concept, researched by a team of six and pitched with a deck.',
-        og='A social thrifting concept, researched by a team of six and pitched with a deck.',
-        hl='Thrifting, with a community attached.',
-        st='A social thrifting app concept to cut clothing waste, researched by our team of six and pitched with a deck.',
-        actions=[('Read the pitch deck ↓', '#deck', None)],
-        facts=[('My role', 'Prototype designer'),
-               ('Team', 'Six members'),
-               ('Status', 'Product concept, not shipped')],
-        lead=None,
-        sections=lambda: [
-            sec('Research first', 'Thirty conversations before a single screen.',
-                tally(30, 'people aged 15 to 25 interviewed by the team before any product was designed.')
-                + para('The research decided what the product should be. The interviews were the team’s work.')),
-            sec('The pitch', 'Ten slides, as we pitched them.',
-                deck()
-                + '<p class="projection">The timeline slide’s <strong>targets and first-year revenue are '
-                  'projections we pitched</strong>, not results. None of those numbers have happened.</p>',
-                sid=None),
         ],
     ),
 ]
@@ -737,8 +670,6 @@ def award(pid, anchor, place, event, facts, logos, photos, post):
 
 
 # ------------------------------------------------------------------ the project list and the board
-# Loomy is a concept with a pitch deck and no build, so it stays off the homepage; its case
-# page is still reachable from the other case pages.
 HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
 
 
@@ -965,7 +896,7 @@ def build_case(p):
         capt = f'<span class="cap-wide">{capt}</span><span class="cap-phone">{e(PHONE_SCENES[key])}</span>'
     picture =(f'<figure class="lead-fig{kind}">{lead}'
                f'<figcaption class="cap">{capt}</figcaption></figure>') if key else ''
-    # back to the project's row in the list (Loomy is not on the homepage, so back to the list)
+    # back to the project's place on the homepage
     back = f"index.html#work-{p['id']}" if p in HOME_PROJECTS else 'index.html#work'
     ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['name'],
           'description': p['og'], 'url': f"{SITE}/{p['slug']}.html",

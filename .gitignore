@@ -10,3 +10,6 @@ private/
 .DS_Store
 Thumbs.db
 __pycache__/
+
+# Node dev tools (npm install)
+node_modules/

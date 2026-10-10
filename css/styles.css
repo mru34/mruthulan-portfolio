@@ -416,19 +416,6 @@ p{margin:0}
 .case-nav .next{text-align:right;justify-items:end}
 .case-nav .all{align-self:center;font-weight:500}
 
-/* deck viewer */
-.deck{display:grid;gap:12px}
-.deck:focus-visible{outline-offset:6px}
-.deck-stage{position:relative;aspect-ratio:1655/931;border-radius:8px;overflow:hidden;background:#fff;border:1px solid var(--hair)}
-.deck-slide{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .35s var(--ease);cursor:zoom-in}
-.deck-slide[data-on]{opacity:1}
-.deck-slide img{width:100%;height:100%;object-fit:contain}
-.deck-bar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
-.deck-bar .count{font-variant-numeric:tabular-nums;color:var(--grey);min-width:88px}
-.deck-bar .btn{min-width:48px;padding:0 14px}
-.no-js .deck-stage{aspect-ratio:auto;border:0;background:none;display:grid;gap:16px}
-.no-js .deck-slide{position:static;opacity:1}
-.no-js .deck-bar .btn{display:none}
 
 /* ------------------------------------------------------------- tilt */
 [data-tilt]{transform:perspective(1000px);transition:transform .6s var(--ease),scale .2s var(--ease)}
@@ -558,7 +545,7 @@ p{margin:0}
 
 /* ------------------------------------------------------------- touch: every standalone link is at least 44px tall */
 @media (max-width:860px), (pointer:coarse){
-  .links a,.win .pr a,.result a,.crumb a,.foot nav a,.case-nav .all,.deck-bar .link,.text-page .acts a,.logo,.mail-big{display:inline-flex;align-items:center;min-height:44px;gap:.3em}
+  .links a,.win .pr a,.result a,.crumb a,.foot nav a,.case-nav .all,.text-page .acts a,.logo,.mail-big{display:inline-flex;align-items:center;min-height:44px;gap:.3em}
   .link{background-position:0 calc(100% - 9px)}
 }
 
