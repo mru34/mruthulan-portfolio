@@ -22,12 +22,13 @@ for (const scene of scenes) {
     await page.setViewport({ width: w, height: h, deviceScaleFactor: 2, isMobile: w < 768, hasTouch: w < 768 });
     await page.goto(`${BASE}?pose=${scene}&mode=3d`, { waitUntil: 'networkidle0' });
     await page.waitForSelector(`html[data-posed="${scene}"]`, { timeout: 30000 });
+    // clip is in page coordinates; capturing only the viewport keeps the 100vh layout as posed
     const clip = await page.$eval(`[data-scene="${scene}"] [data-anchor]`, (el) => {
       const r = el.getBoundingClientRect();
-      return { x: r.left, y: r.top, width: r.width, height: r.height };
+      return { x: r.left + scrollX, y: r.top + scrollY, width: r.width, height: r.height };
     });
     const file = `${OUT}${scene}-${form}.webp`;
-    await page.screenshot({ path: file, type: 'webp', quality: 82, omitBackground: true, clip });
+    await page.screenshot({ path: file, type: 'webp', quality: 82, omitBackground: true, clip, captureBeyondViewport: false });
     console.log(`wrote ${scene}-${form}.webp  ${fs.statSync(file).size} bytes  ${errors.join(' | ')}`);
     if (errors.length) failed = true;
     await page.close();

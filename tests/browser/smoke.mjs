@@ -178,6 +178,19 @@ scenario('a scene that fails to load leaves its still', async () => {
   await page.close();
 });
 
+scenario('SignalBridge comes alive, and its payoff shows everything', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => {
+    const s = document.querySelector('[data-scene="signalbridge"]');
+    scrollTo({ top: s.getBoundingClientRect().top + scrollY + 0.8 * (s.offsetHeight - innerHeight), behavior: 'instant' });
+  });
+  await page.waitForSelector('[data-scene="signalbridge"] [data-anchor][data-live]', { timeout: 30000 });
+  await sleep(500);
+  check(await infoVisible(page, 'sb'), 'SignalBridge information fully visible at the payoff');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
 /* ------------------------------------------------------------------ run */
 for (const [name, fn] of SCENARIOS) {
   console.log(name);

@@ -12,6 +12,7 @@ const BEATS = { line: [0.25, 0.35], pay: [0.6, 0.7] };     // the one line, then
 const SCENES = {
   hero: () => import('./3d/hero.js'),
   fly: () => import('./3d/flythrough.js'),
+  signalbridge: () => import('./3d/chapters/signalbridge.js'),
 };
 
 const root = document.documentElement;

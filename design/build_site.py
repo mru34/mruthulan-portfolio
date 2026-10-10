@@ -726,7 +726,9 @@ END_LINKS = [('gmail', 'Gmail', MAILTO, 'contact_open_mail_app'),
 # typeface (assets/fonts/name-*.woff2). still: the picture shown until a chapter has its own rendered still.
 CHAPTERS = [
     dict(pid='sb', num='01', side='left', result='Champion · Dell InnovateDash 2026',
-         font='Name SignalBridge', still='signalbridge-card'),
+         font='Name SignalBridge', still='signalbridge-card',
+         alt='SignalBridge on a phone and a laptop: the youth’s SafeNight chat showing Worker notified, '
+             'and the worker’s handoff brief for Mira Tan, a fictional youth.'),
     dict(pid='bx', num='02', side='right', result='Solo build · code on GitHub',
          font='Name Boss Breaker', still='boss-breaker-card'),
     dict(pid='bb', num='03', side='bottom-left', result='Solo build · in a pilot with the shop',
@@ -770,7 +772,7 @@ def chapter(c, first=False):
     p = BY_ID[c['pid']]
     href = f"{p['slug']}.html"
     ev = f'data-event="case_open" data-project="{p["id"]}"'
-    still = still_picture(p['slug'], MEDIA[c['still']]['alt']) or pic(
+    still = still_picture(p['slug'], c.get('alt') or MEDIA[c['still']]['alt']) or pic(
         c['still'], '(max-width: 860px) 100vw, 58vw', cls='still')
     work = '<span class="ch-key" id="work"></span>' if first else ''
     return f'''<section class="chapter" data-scene="{p['slug']}" data-side="{c['side']}" style="--c:{p['c']};--name-font:'{c['font']}'" aria-labelledby="ch-{p['id']}">

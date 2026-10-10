@@ -49,9 +49,18 @@ def test_signalbridge_textures_fit_the_chapter_budget():
     assert total <= 400_000, total
 
 
-@pytest.mark.skipif(not (ROOT / 'js' / '3d' / 'chapters' / 'signalbridge.js').exists(), reason='the scene comes in Task 11')
 def test_the_scene_and_the_builder_agree_on_the_message_crop():
     import build_3d_assets as b
     js = (ROOT / 'js' / '3d' / 'chapters' / 'signalbridge.js').read_text(encoding='utf-8')
     m = re.search(r'MESSAGE_BOX = \[(\d+), (\d+), (\d+), (\d+)\]', js)
     assert m and tuple(map(int, m.groups())) == b.MESSAGE_BOX
+
+
+@pytest.mark.parametrize('name', ['hero-desk', 'hero-phone', 'signalbridge-desk', 'signalbridge-phone'])
+def test_each_rendered_still_shows_its_scene(name):
+    """A still taken from the wrong place is a transparent (or empty) image: at least a tenth must be drawn."""
+    from PIL import Image
+    with Image.open(ROOT / 'assets' / '3d' / 'stills' / f'{name}.webp') as im:
+        alpha = im.convert('RGBA').getchannel('A')
+        drawn = sum(1 for a in alpha.get_flattened_data() if a > 200)
+        assert drawn / (im.width * im.height) > 0.1, drawn
