@@ -89,8 +89,8 @@ PROJECTS = [
       'bcrypt password hashing and JWT-protected routes.']),
     ('Better Call Bhai', 'Booking site for a Singapore barbershop',
      'Deployed pilot with the shop',
-     ['Built the booking flow: customers pick a service, a day and an open slot and confirm on the site, then '
-      'get a WhatsApp message with their booking time.',
+     ['Built the booking flow: customers pick a service, a day and an open slot and confirm on the site, with '
+      'their booking details one tap away on WhatsApp.',
       'Built a Node.js/Express API on SQLite with server-side rules (no past dates; each slot booked once) and an '
       'admin page for the shop; deployed on Render.']),
     ('MEANT', 'Assistive communication (AAC) app that suggests replies on-device; the user picks every word',
