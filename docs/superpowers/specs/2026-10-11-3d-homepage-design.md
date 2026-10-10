@@ -33,21 +33,42 @@ It works if:
 
 ## Scope
 
-**In this round:** the homepage, plus the new header and icon links on every page.
+**In this round:**
+- the homepage
+- the new header and icon links on every page
+- **Loomy removed from the site entirely:**
+  - `loomy.html`, the deck images (`assets/deck/`), `assets/Loomy-Pitch-Deck.pdf`, its link-preview card, `LOOMY_SLIDES` and the deck viewer code
+  - its `sitemap.xml` entry and its place in the case pages' Previous · Next (which now cycle through five)
+  - its lines in the README
+
+  Git history keeps the files.
 
 **Next round (not this spec):** restyling the case pages to match, and KnowCad's wording on its own case page.
 
-**Untouched:** Loomy, the résumé, link-preview cards, the press viewer on MEANT's page, the privacy and 404 pages (apart from the header).
+**Untouched:** the résumé, the other link-preview cards, the press viewer on MEANT's page, the privacy and 404 pages (apart from the header).
+
+## The flow (how it should feel, like Apple and the reference sites)
+
+Apple's product pages, landonorris.com and lusion.co share a rhythm, and the page follows it:
+
+- **Big moments, then calm.** A loud moment (a 3D object doing something) is followed by a quiet one (big type on dark, or photos), so neither gets tiring. Here: Hero (loud) → "Five projects" (quiet) → five chapters (loud) → Awards (quiet, real photos) → About (quiet) → Reach out (loud again: the board).
+- **One idea per screen.** Each screen has one thing to look at and at most one sentence.
+- **Every chapter has three beats, tied to the scroll** (Apple's reveal, show, payoff):
+  1. **Reveal:** the project name arrives alone, huge, in its own typeface, while the 3D element comes in.
+  2. **Show:** the element does its thing, and the one line appears under the name.
+  3. **Payoff:** the result and *Case study →* appear. This is the key pose the snap settles on, and everything is visible in it.
+- **Type does the work.** Headings are very large and very short, with lots of empty dark space around them. Small text is rare.
+- **Motion has weight and follows the visitor.** Nothing plays by itself.
 
 ## The page, top to bottom
 
 1. Header
 2. Hero: the 3D name board
-3. Fly-through: "Selected work"
+3. Fly-through: "Five projects"
 4. Five project chapters, one by one
 5. Awards: photo-print stacks
 6. About: portrait and three facts
-7. Ending: the internship board and the contact icons
+7. Ending: the internship board, "Reach out" and the contact icons
 8. Footer
 
 ### 1. Header
@@ -65,17 +86,17 @@ Sticky on every page, as today: the gold MRUTHULAN logo, Work · Awards · About
 - **Scroll:** the board tilts back and rises away as the camera moves forward, handing over to the fly-through.
 - The `<h1>` stays real text for screen readers and search ("Mruthulan Senthil Nathan").
 
-### 3. Fly-through: "Selected work"
+### 3. Fly-through: "Five projects"
 
 About one screen of scrolling, all tied to the scroll position, so scrolling up plays it backwards.
 
 - The camera moves forward through the dark. A sparse field of fine gold dust (a few hundred points) streams past to give a sense of speed. If the dust reads as filler at the review gate, it is removed.
-- "Selected work" sits large in the middle (HTML text, Bricolage) and moves only with the scroll. It is readable at every point.
+- "Five projects." sits large in the middle (HTML text, Bricolage) and moves only with the scroll. It is readable at every point.
 - The flight ends on the opening pose of chapter 01, SignalBridge.
 
 ### 4. The project chapters
 
-Order: 01 SignalBridge, 02 Boss Breaker, 03 Better Call Bhai, 04 MEANT, 05 KnowCad. Loomy stays off the homepage.
+Order: 01 SignalBridge, 02 Boss Breaker, 03 Better Call Bhai, 04 MEANT, 05 KnowCad. The exact words for each chapter are in "Every word on the homepage" below.
 
 **What every chapter shares: the information block.** The number (01–05), the project name (in its own typeface and colour), the one-line pitch, the result, and *Case study →*. Nothing else in words. The block's position changes from chapter to chapter (left, right, bottom-left and so on) so the page never repeats itself, but it always holds the same four things in the same order, so a recruiter knows where to look. Clicking the name or the 3D element also opens the case study; the name keeps its view transition into the case page title.
 
@@ -96,7 +117,7 @@ Order: 01 SignalBridge, 02 Boss Breaker, 03 Better Call Bhai, 04 MEANT, 05 KnowC
 - **Attack:** clicking the phone or the bar (or the visible *Attack* button, which also works from the keyboard) hits the boss for 350: a damage number appears above the bar, the bar shakes once and drops. It stops at 0 with "Stress Dragon defeated", and resets when the visitor scrolls back above the chapter.
 - Damage numbers and HP are HTML positioned over the 3D, so they stay sharp. The HP is announced politely to screen readers.
 - Captures: `bx/m-boss.png`, `bx/d-boss.png`.
-- Result: Coursework · code on GitHub (today's card tag).
+- Result: Solo build · code on GitHub (every commit in the repository is Mruthulan's).
 
 **03 · Better Call Bhai (yellow): the booking.**
 - A 3D barber pole: a glass tube with yellow, black and white stripes inside and chrome end caps. It turns with the scroll.
@@ -138,11 +159,11 @@ Order: 01 SignalBridge, 02 Boss Breaker, 03 Better Call Bhai, 04 MEANT, 05 KnowC
   - **Stack:** TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL
 - "I build full-stack products…", the about paragraph and the "last mile" statement are removed from the homepage.
 
-### 7. Ending: the internship board and the contact icons
+### 7. Ending: the internship board, "Reach out" and the contact icons
 
 - A smaller 3D split-flap board, built from the same parts as the hero: **OPEN TO A SWE INTERNSHIP** / **2027/28** (four rows on phones). It flickers under the mouse and ripples on a tap, like the hero.
-- Under it, one row of icon buttons: **Gmail** (opens a new email to `mruthulansenthilnathan@gmail.com`), **LinkedIn**, **GitHub**. The address is shown as text beside a *Copy* button.
-- No "Let's talk." heading. The section keeps `id="contact"`.
+- Under it, the heading **Reach out**, then one row of icon buttons: **Gmail** (opens a new email to `mruthulansenthilnathan@gmail.com`), **LinkedIn**, **GitHub**. The address is shown as text beside a *Copy* button.
+- The section keeps `id="contact"`.
 
 ### 8. Footer
 
@@ -152,12 +173,96 @@ One slim line, as today.
 
 The *Spin a project* board and its `spin_result` analytics event, the hero results list, the project card grid, the name-docking animation, the awards carousels and the "Let's talk" band.
 
+## Every word on the homepage
+
+This is the complete text. Nothing else appears. Lines marked *new* replace today's wording, which is shown after them for comparison.
+
+**Header:** MRUTHULAN · Work · Awards · About · Résumé ↓ · Contact
+
+**Hero:** MRUTHULAN / SENTHIL NATHAN · LinkedIn · GitHub · Résumé
+
+**Fly-through:** Five projects.
+
+| # | Name | One line | Result |
+|---|---|---|---|
+| 01 | SignalBridge | *New:* After-hours chat for young people. Nothing reaches a youth worker until they say yes. *(Today: "Youth support that keeps the context and asks before anything is shared.")* | Champion · Dell InnovateDash 2026 |
+| 02 | Boss Breaker | Wellness challenges, played as a boss fight. *(unchanged)* | Solo build · code on GitHub |
+| 03 | Better Call Bhai | *New:* Online booking for a barbershop in Singapore. *(Today: "Appointment booking for a local barbershop.")* | Solo build · in a pilot with the shop |
+| 04 | MEANT | *New:* Helps people who can't rely on their speech reply in time. They choose every word. *(Today: "Real-time reply suggestions for AAC users. The user picks every word.")* | 2nd runner-up · Dell InnovateFest 2026 |
+| 05 | KnowCad | *New:* An AI assistant for customer service that finds answers in long documents. *(Today: "A retrieval-based AI assistant for customer service.")* | Champion · Autodesk Singapore Hackathon 2026 |
+
+Every chapter ends with *Case study →*.
+
+**Inside the chapters:**
+- Boss Breaker: *Attack*, the damage number (−350), *Stress Dragon defeated*.
+- MEANT: *Featured in Tamil Murasu*. The tablet, the tiles and the partner display show only what the real app shows.
+- KnowCad: the question *Who won the Autodesk Singapore Hackathon 2026?*
+- SignalBridge: the phone and laptop show only what the real app shows.
+
+**Awards:**
+- Champion · Dell InnovateDash 2026 · SignalBridge · LinkedIn post ↗
+- 2nd runner-up · Dell InnovateFest 2026, polytechnic category · S$3,000 · MEANT · LinkedIn post ↗
+- Champion · Autodesk Singapore Hackathon 2026 · KnowCad · LinkedIn post ↗
+
+Photo captions (shown in the viewer) stay as they are; they are already plain: "The finals, at Singapore Polytechnic", "Collecting the prize", "Taking the plaque at Dell InnovateFest", "The result on the big screen", "With the MEANT poster, after the result", "Champion, announced on the night", "The team, with the trophies".
+
+**About:**
+- Study: Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)
+- Leadership: Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER
+- Stack: TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL
+
+**Ending:** OPEN TO A SWE INTERNSHIP / 2027/28 · Reach out · Gmail · LinkedIn · GitHub · mruthulansenthilnathan@gmail.com · Copy (then "Copied")
+
+**Footer:** Mruthulan Senthil Nathan · Singapore · GitHub ↗ · LinkedIn ↗ · Privacy · Back to top ↑
+
+### Writing rules (so nothing sounds AI-written)
+
+- Say it the way you'd say it out loud to a friend: plain words, short sentences.
+- Facts instead of adjectives: names, places, numbers, results.
+- Banned words: innovative, seamless, cutting-edge, passionate, empower, leverage, elevate, journey, crafted, unlock, robust, delve.
+- No slogan tricks: no "not X, but Y", no three-item lists for rhythm, no rhetorical questions, no "Imagine…", no "The result: …" reveals, no dashes used for drama, no exclamation marks.
+- Jargon only where a recruiter expects it (SWE, the stack). Otherwise spell it out ("AAC users" becomes "people who can't rely on their speech").
+- Every claim is already true on the case page or in the repository.
+
+## Project facts, checked
+
+Checked on 11 October 2026 against GitHub and the project folders on this machine. The homepage claims nothing beyond these.
+
+- **SignalBridge:**
+  - built for Singapore Children's Society by a team of four (King-Shelton, mru34, Mike-Franco and DY32Yeo on GitHub)
+  - Mruthulan's 18 commits: the youth chat frontend, the youth dashboard, connecting the chat to the backend, the handoff preview and consent flow, the Discord SafeNight integration and Discord thread intake
+  - Champion, Dell InnovateDash 2026
+
+  Source: `King-Shelton/signalbridge` (fork: `mru34/signalbridge`).
+- **Boss Breaker:**
+  - a solo build: all 17 commits are Mruthulan's, besides GitHub Classroom's starter commit
+  - nine pages, an Express API, a nine-table MySQL schema, JWT and bcrypt, points and damage worked out on the server
+  - Singapore Polytechnic's back-end development module
+
+  Source: `mru34/bedca2`.
+- **Better Call Bhai:**
+  - a solo build (private repository `mru34/bettercalbhai`)
+  - Express, SQLite, hosted on Render
+  - in a pilot with the shop; the owner's testimonial is in `data/content.json`
+- **MEANT:**
+  - a team of five (King-Shelton, JanstonTay, DY32Yeo, mru34 and Mike-Franco)
+  - Mruthulan's 70 commits: the user tablet's UI and its accessibility pass; the AAC boards coloured and iconed by word type; vocabulary search; the setup flow (screen ruler, mic permission); switch access; the stage script and the demo fixes
+  - 2nd runner-up, polytechnic category, S$3,000, Dell InnovateFest 2026; featured in Tamil Murasu on 28 September 2026
+
+  Source: `King-Shelton/meant-DellInnovateFest`, private and never linked.
+- **KnowCad:**
+  - Champion, Autodesk Singapore Hackathon 2026 (the event screen reads "KnowCAD Intellicase")
+  - a retrieval-based AI assistant for customer service
+  - The case page says Autodesk engineers led the code and Mruthulan built and delivered the presentation. The homepage makes no claim either way about who built what.
+
+  Source: the case page and the LinkedIn post.
+
 ## Typography
 
 | Use | Face | Notes |
 |---|---|---|
 | Name boards (hero, ending) | Archivo, condensed, 800 | Already in the repo |
-| Big headings ("Selected work", "Awards", "About") | Bricolage Grotesque, 700 | Already in the repo |
+| Big headings ("Five projects.", "Awards", "About", "Reach out") | Bricolage Grotesque, 700 | Already in the repo |
 | Results, numbers, labels | JetBrains Mono, 500 | Already in the repo |
 | One-liners, facts, small text | Geist | Already in the repo |
 | SignalBridge name | Fraunces, 600 | Warm, human |
@@ -267,7 +372,10 @@ Removed: `spin_result`. Unchanged: `case_open`, `resume_click`, `proof_post_clic
 - Nothing game-like for navigation (no driving around); Boss Breaker's attack is the one playful touch, because it is a game.
 - Hero: name and three icon links only.
 - KnowCad: the product and the win, no disclaimers.
-- About: no paragraphs. No "Let's talk"; end on the flap board and Gmail, LinkedIn and GitHub icons.
+- About: no paragraphs. No "Let's talk"; end on the flap board, "Reach out" and Gmail, LinkedIn and GitHub icons.
+- Loomy is removed from the whole site.
+- Every word on the homepage is listed in this spec and follows the writing rules; project facts were checked against GitHub.
+- The page follows Apple's flow: loud and quiet moments in turn, one idea per screen, three beats per chapter.
 - Each project name in its own typeface.
 - Visitors see the projects one by one: pinned chapters and a snap, but the scroll is never locked.
 - **Assumption to confirm:** "keep the spinny" means the ending flap board, and the old *Spin a project* button is removed.
