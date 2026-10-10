@@ -97,7 +97,7 @@ PROJECTS = [
      '2nd Runner-Up, polytechnic category (S$3,000), Dell InnovateFest 2026 | Featured in Tamil Murasu',
      ['Designed the UI and interaction flows: colour-coded symbol boards, search across the whole vocabulary '
       'when a prediction is wrong, and setup that stays out of the conversation.',
-      'Fixed a stuck mic, a silent send and a black camera so the live demo could not stall; worked on the '
+      'Fixed a stuck mic, a silent send and a black camera before the live demo; worked on the '
       'Singaporean text-to-speech voice with a teammate and presented the build.']),
 ]
 
