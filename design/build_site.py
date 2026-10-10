@@ -349,8 +349,9 @@ PROJECTS = [
               'on Render and in a pilot with the shop.'),
         og='An appointment booking site for a local barbershop, in a pilot with the shop.',
         hl='Barber bookings, minus the back-and-forth.',
-        st=('Customers pick a service, a day and an open slot, then confirm on WhatsApp. The shop is '
-            'piloting it; most bookings still come in through WhatsApp for now.'),
+        st=('Customers pick a service, a day and an open slot and confirm on the site, with their booking '
+            'details one tap away on WhatsApp. The shop is piloting it; most bookings still come in through '
+            'WhatsApp for now.'),
         actions=[('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None)],
         facts=[('My role', 'Web design, frontend build and deployment'),
                ('Status', 'Deployed pilot, for a barbershop in Singapore'),
