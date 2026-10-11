@@ -18,8 +18,8 @@ from pathlib import Path
 import shutil
 import sys
 
-from reportlab.lib.colors import Color
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.colors import HexColor
+from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
@@ -32,36 +32,39 @@ OUT = ROOT / 'assets' / 'Mruthulan-Senthil-Nathan-Resume.pdf'
 OLD = ROOT / 'assets' / 'Senthil-Nathan-Mruthulan-Resume.pdf'
 PRIVATE = ROOT / 'private'
 
-# An embedded TrueType font, not the built-in Helvetica: with Helvetica, PDF readers and
-# application portals extract the bullets, dashes and curly apostrophes as junk characters.
-# Arial on Windows (Helvetica's metrics, so the page still fits); reportlab's own Vera elsewhere.
+# Embedded TrueType fonts keep bullets and punctuation extractable by application portals.
+# Use Segoe UI on this Windows machine; Vera remains a portable fallback for rebuilding.
 WIN_FONTS, RL_FONTS = Path('C:/Windows/Fonts'), Path(reportlab.__file__).parent / 'fonts'
-REGULAR, BOLD = ((WIN_FONTS / 'arial.ttf', WIN_FONTS / 'arialbd.ttf') if (WIN_FONTS / 'arialbd.ttf').exists()
-                 else (RL_FONTS / 'Vera.ttf', RL_FONTS / 'VeraBd.ttf'))
+if (WIN_FONTS / 'seguisb.ttf').exists():
+    REGULAR, SEMIBOLD, BOLD = (WIN_FONTS / name for name in
+                               ('segoeui.ttf', 'seguisb.ttf', 'segoeuib.ttf'))
+else:
+    REGULAR, SEMIBOLD, BOLD = (RL_FONTS / 'Vera.ttf', RL_FONTS / 'VeraBd.ttf', RL_FONTS / 'VeraBd.ttf')
 pdfmetrics.registerFont(TTFont('Sans', str(REGULAR)))
+pdfmetrics.registerFont(TTFont('Sans-Semibold', str(SEMIBOLD)))
 pdfmetrics.registerFont(TTFont('Sans-Bold', str(BOLD)))
 pdfmetrics.registerFontFamily('Sans', normal='Sans', bold='Sans-Bold', italic='Sans', boldItalic='Sans-Bold')
 
-NAVY, SLATE, TEAL, RULE = (Color(.082, .133, .208), Color(.282, .345, .420),
-                           Color(0, .486, .475), Color(.847, .878, .906))
+NAVY, SLATE, TEAL, RULE = (HexColor('#14243C'), HexColor('#45566D'),
+                           HexColor('#006F6B'), HexColor('#D9E2E8'))
 
 S = dict(
-    name=ParagraphStyle('name', fontName='Sans-Bold', fontSize=26, leading=30, textColor=NAVY, alignment=TA_CENTER),
-    title=ParagraphStyle('title', fontName='Sans-Bold', fontSize=10, leading=14, textColor=SLATE, alignment=TA_CENTER),
-    contact=ParagraphStyle('contact', fontName='Sans', fontSize=9, leading=12, textColor=SLATE, alignment=TA_CENTER),
-    avail=ParagraphStyle('avail', fontName='Sans-Bold', fontSize=9.2, leading=13, textColor=SLATE, alignment=TA_CENTER),
-    head=ParagraphStyle('head', fontName='Sans-Bold', fontSize=9.4, leading=12, textColor=TEAL),
-    body=ParagraphStyle('body', fontName='Sans', fontSize=9.3, leading=12.7, textColor=NAVY),
-    project=ParagraphStyle('project', fontName='Sans-Bold', fontSize=10.6, leading=13, textColor=NAVY),
-    what=ParagraphStyle('what', fontName='Sans-Bold', fontSize=9.2, leading=11.8, textColor=SLATE),
-    result=ParagraphStyle('result', fontName='Sans-Bold', fontSize=9.1, leading=12, textColor=TEAL),
-    bullet=ParagraphStyle('bullet', fontName='Sans', fontSize=9.3, leading=11.9, textColor=NAVY,
-                          leftIndent=9, firstLineIndent=-7, spaceBefore=0.5),
+    name=ParagraphStyle('name', fontName='Sans-Bold', fontSize=25.5, leading=29.5, textColor=NAVY, alignment=TA_LEFT),
+    title=ParagraphStyle('title', fontName='Sans-Semibold', fontSize=9.8, leading=12.8, textColor=TEAL, alignment=TA_LEFT),
+    contact=ParagraphStyle('contact', fontName='Sans', fontSize=9.15, leading=12.2, textColor=SLATE, alignment=TA_LEFT),
+    avail=ParagraphStyle('avail', fontName='Sans-Semibold', fontSize=9.1, leading=12.2, textColor=NAVY, alignment=TA_LEFT),
+    head=ParagraphStyle('head', fontName='Sans-Bold', fontSize=9.3, leading=12, textColor=TEAL, alignment=TA_LEFT),
+    body=ParagraphStyle('body', fontName='Sans', fontSize=9.45, leading=12.6, textColor=NAVY, alignment=TA_LEFT),
+    project=ParagraphStyle('project', fontName='Sans-Bold', fontSize=10.9, leading=13.4, textColor=NAVY, alignment=TA_LEFT),
+    what=ParagraphStyle('what', fontName='Sans-Semibold', fontSize=9.15, leading=12, textColor=SLATE, alignment=TA_LEFT),
+    result=ParagraphStyle('result', fontName='Sans-Semibold', fontSize=9.0, leading=11.9, textColor=TEAL, alignment=TA_LEFT),
+    bullet=ParagraphStyle('bullet', fontName='Sans', fontSize=9.4, leading=12.25, textColor=NAVY,
+                          leftIndent=10, firstLineIndent=-8, spaceBefore=0.8),
 )
 
 
 def link(url, text):
-    return f'<a href="{url}" color="#007C79">{text}</a>'
+    return f'<a href="{url}" color="#006F6B">{text}</a>'
 
 
 SKILLS = [
@@ -116,10 +119,25 @@ EXPERIENCE = [
      'and First Steps with SP.'),
 ]
 
+HIGHLIGHTS = [
+    [('consent screen',), ('FastAPI chat routes', 'pytest tests')],
+    [('nine-page frontend', 'nine-table MySQL schema'), ('server', 'bcrypt password hashing', 'JWT-protected routes')],
+    [('booking flow',), ('Node.js/Express API', 'server-side rules')],
+    [('colour-coded symbol boards',), ('Fixed a stuck mic, a silent send and a black camera',)],
+]
 
-def section(title):
-    return [Spacer(1, 5), Paragraph(title.upper(), S['head']),
-            HRFlowable(width='100%', thickness=0.6, color=RULE, spaceBefore=2, spaceAfter=5)]
+
+def highlight(text, terms):
+    for term in terms:
+        if term not in text:
+            raise ValueError(f'Highlight is missing from source text: {term}')
+        text = text.replace(term, f'<b>{term}</b>', 1)
+    return text
+
+
+def section(title, first=False):
+    return [Spacer(1, 8 if first else 9), Paragraph(title.upper(), S['head']),
+            HRFlowable(width='100%', thickness=0.55, color=RULE, spaceBefore=2, spaceAfter=5)]
 
 
 def build(phone=None, out=OUT):
@@ -127,15 +145,16 @@ def build(phone=None, out=OUT):
     contact = ['Singapore'] + ([phone] if phone else []) + [
         '<a href="mailto:mruthulansenthilnathan@gmail.com">mruthulansenthilnathan@gmail.com</a>']
     story = [
-        Paragraph('Mruthulan Senthil Nathan', S['name']), Spacer(1, 2),
-        Paragraph('SOFTWARE ENGINEERING INTERN | FULL-STACK DEVELOPMENT', S['title']), Spacer(1, 3),
+        Paragraph('Mruthulan Senthil Nathan', S['name']), Spacer(1, 1),
+        Paragraph('SOFTWARE ENGINEERING INTERN | FULL-STACK DEVELOPMENT', S['title']), Spacer(1, 7),
         Paragraph(sep.join(contact), S['contact']),
         Paragraph(sep.join([link('https://mruthulan.com', 'mruthulan.com'),
                             link('https://linkedin.com/in/mruthulan', 'linkedin.com/in/mruthulan'),
                             link('https://github.com/mru34', 'github.com/mru34')]), S['contact']),
-        Spacer(1, 5), Paragraph('Available for a year-long internship in 2027/2028', S['avail']),
+        Spacer(1, 3), Paragraph('Available for a year-long internship in 2027/2028', S['avail']),
+        Spacer(1, 6), HRFlowable(width='100%', thickness=1.15, color=TEAL),
     ]
-    story += section('Education')
+    story += section('Education', first=True)
     story.append(Paragraph('<b>Diploma in Information Technology</b>, Singapore Polytechnic | '
                            'Apr 2025 – May 2028 (Expected)', S['body']))
     story += section('Technical Skills')
@@ -144,15 +163,16 @@ def build(phone=None, out=OUT):
     for k, (name, what, result, bullets) in enumerate(PROJECTS):
         block = [Paragraph(name, S['project']), Paragraph(what, S['what'])]
         block += [Paragraph(result, S['result'])] if result else []
-        block += [Paragraph(f'• {b}', S['bullet']) for b in bullets]
-        story += ([Spacer(1, 4)] if k else []) + [KeepTogether(block)]
-    story += section('Awards')
+        block += [Paragraph(f'• {highlight(b, HIGHLIGHTS[k][j])}', S['bullet'])
+                  for j, b in enumerate(bullets)]
+        story += ([Spacer(1, 7)] if k else []) + [KeepTogether(block)]
+    story += section('Awards, Experience and Leadership')
     story += [Paragraph(f'• <b>{t}</b>{d}', S['bullet']) for t, d in AWARDS]
-    story += section('Experience and Leadership')
+    story.append(Spacer(1, 5))
     story += [Paragraph(f'• <b>{t}</b>{d}', S['bullet']) for t, d in EXPERIENCE]
 
     doc = SimpleDocTemplate(
-        str(out), pagesize=A4, leftMargin=57, rightMargin=57, topMargin=30, bottomMargin=30,
+        str(out), pagesize=A4, leftMargin=49, rightMargin=49, topMargin=35, bottomMargin=30,
         title='Mruthulan Senthil Nathan - Internship Resume 2027 2028', author='Mruthulan Senthil Nathan',
         subject='One-page resume for software engineering and full-stack internships',
         keywords='software engineering, full-stack, internship, Singapore Polytechnic',
