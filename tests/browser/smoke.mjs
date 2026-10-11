@@ -295,7 +295,7 @@ scenario('SignalBridge comes alive, and its payoff shows everything', async () =
 });
 
 // a chapter's still (design/stills.mjs) is the live scene at its payoff: the visitor without the 3D sees the same
-for (const scene of ['signalbridge', 'boss-breaker', 'better-call-bhai']) {
+for (const scene of ['signalbridge', 'boss-breaker', 'better-call-bhai', 'meant']) {
   scenario(`${scene}: the still matches the live payoff`, async () => {
     const at = (page) => page.evaluate((scene) => {
       const s = document.querySelector(`[data-scene="${scene}"]`);
@@ -364,6 +364,21 @@ scenario('Better Call Bhai: a spun pole keeps turning, then settles', async () =
   // it slows down on its own (software rendering steps the physics slower than real time, so allow a while)
   await page.waitForFunction(() => window.__world.mounted.get('better-call-bhai').debug.spin.resting, { timeout: 15000 }).catch(() => {});
   check((await spin()).resting, 'and then it settles');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('MEANT: a reply picked from the keyboard reaches the partner display', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(400);
+  await page.focus('[data-reply="2"]');
+  check(await page.evaluate(() => window.__world.mounted.get('meant').debug.focused) === 2, 'focusing a reply lifts its tile');
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => window.__world.mounted.get('meant').debug.shown === 2, { timeout: 8000 }).catch(() => {});
+  check(await page.$eval('[data-partner-live]', (e) => e.textContent) === 'Partner display: Char siew rice', 'announced');
+  check(await page.evaluate(() => window.__world.mounted.get('meant').debug.shown) === 2, 'the partner display shows it');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });

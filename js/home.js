@@ -17,6 +17,7 @@ const SECTIONS = [
   ['signalbridge', '[data-scene="signalbridge"]', 'flight', () => import('./3d/chapters/signalbridge.js')],
   ['boss-breaker', '[data-scene="boss-breaker"]', 'flight', () => import('./3d/chapters/boss-breaker.js')],
   ['better-call-bhai', '[data-scene="better-call-bhai"]', 'flight', () => import('./3d/chapters/better-call-bhai.js')],
+  ['meant', '[data-scene="meant"]', 'flight', () => import('./3d/chapters/meant.js')],
 ];
 
 const root = document.documentElement;

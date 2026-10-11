@@ -741,7 +741,12 @@ CHAPTERS = [
     dict(pid='bb', num='03', side='bottom-left', result='Solo build · in a pilot with the shop',
          font='Name Better Call Bhai', still='better-call-bhai-card'),
     dict(pid='mt', num='04', side='right', result='2nd runner-up · Dell InnovateFest 2026',
-         font='Name MEANT', still='meant-card'),
+         font='Name MEANT', still='meant-card',
+         extra='<a class="link mt-press" href="meant.html#press">Featured in Tamil Murasu</a>'
+               '<div class="mt-picks" role="group" aria-label="Pick a reply">'
+               + ''.join(f'<button class="mt-pick" type="button" data-reply="{i}">{r}</button>'
+                         for i, r in enumerate(['Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice']))
+               + '</div><p class="sr-only" aria-live="polite" data-partner-live></p>'),
     dict(pid='kc', num='05', side='left', result='Champion · Autodesk Singapore Hackathon 2026',
          font='Name KnowCad', still='win-knowcad-champion'),
 ]

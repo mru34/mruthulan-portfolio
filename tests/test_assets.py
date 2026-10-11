@@ -110,3 +110,19 @@ def test_better_call_bhai_textures_exist_and_the_scene_agrees_on_the_slot_grid()
     js = (ROOT / 'js' / '3d' / 'chapters' / 'better-call-bhai.js').read_text(encoding='utf-8')
     m = re.search(r'SLOT_GRID = \[(\d+), (\d+), (\d+), (\d+)\]', js)
     assert m and tuple(map(int, m.groups())) == b.SLOT_GRID
+
+
+def test_meant_textures_exist_and_their_boxes_sit_inside_the_captures():
+    import build_3d_assets as b
+    names = ['mt-tablet', 'mt-partner-wait', 'mt-words', 'mt-paper'] + [f'mt-partner-{i}' for i in range(1, 5)] + [f'mt-reply-{i}' for i in range(1, 5)]
+    assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []
+    for box in [*b.REPLY_BOXES, b.WORD_GRID]:
+        left, top, right, bottom = box
+        assert 0 <= left < right <= 1600 and 0 <= top < bottom <= 1000, box
+
+
+def test_the_meant_scene_and_the_builder_agree_on_the_reply_tiles():
+    import build_3d_assets as b
+    js = (ROOT / 'js' / '3d' / 'chapters' / 'meant.js').read_text(encoding='utf-8')
+    found = [tuple(map(int, m)) for m in re.findall(r'\[(\d+), (\d+), (\d+), (\d+)\]', js.split('REPLY_BOXES = ')[1].split(';')[0])]
+    assert found == b.REPLY_BOXES

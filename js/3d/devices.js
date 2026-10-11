@@ -1,4 +1,4 @@
-// A phone, a laptop, a monitor on its post and a phone stand, built in code at real-world proportions (units:
+// A phone, a laptop, an 11-inch tablet, a monitor on its post and a phone stand, built in code at real-world proportions (units:
 // decimetres), generic rather than any brand's product. Screens show real captures; mix(t) crossfades to a
 // second capture.
 import * as THREE from 'three';
@@ -7,6 +7,7 @@ import { roundedRect, screenGeometry, contactShadow, keyboardTexture, panel } fr
 
 export const PHONE = { w: 0.715, h: 1.47, d: 0.078, r: 0.11 };
 export const LAPTOP = { w: 3.12, depth: 2.21, base: 0.155, lidH: 2.06, lid: 0.06 };
+export const TABLET = { w: 2.47, h: 1.78, d: 0.06, r: 0.12 };   // an 11-inch tablet, in landscape
 
 function screens(w, h, r, a, b) {
   const geo = screenGeometry(w, h, r);
@@ -37,6 +38,27 @@ export function makePhone({ screen, after, shadow = true } = {}) {
   group.add(body, s.group);
   if (shadow) {
     const sh = contactShadow(w * 1.6, d * 6);
+    sh.position.y = -h / 2 - 0.004;
+    group.add(sh);
+  }
+  return { group, screen: s.group, screenSize, mix: s.mix, size: { w, h } };
+}
+
+export function makeTablet({ screen, after, shadow = true } = {}) {
+  const { w, h, d, r } = TABLET;
+  const bevel = 0.01;
+  const bodyGeo = new THREE.ExtrudeGeometry(roundedRect(w - 2 * bevel, h - 2 * bevel, r - bevel), {
+    depth: d - 2 * bevel, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 3, curveSegments: 14,
+  });
+  bodyGeo.center();
+  const body = new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ color: 0x3a3c41, metalness: 0.9, roughness: 0.34 }));
+  const screenSize = { w: w - 0.16, h: h - 0.16 };
+  const s = screens(screenSize.w, screenSize.h, r - 0.06, screen, after);
+  s.group.position.z = d / 2 + 0.001;
+  const group = new THREE.Group();
+  group.add(body, s.group);
+  if (shadow) {
+    const sh = contactShadow(w * 1.2, d * 14);
     sh.position.y = -h / 2 - 0.004;
     group.add(sh);
   }

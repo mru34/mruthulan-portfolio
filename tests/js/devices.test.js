@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import { makePhone, makeLaptop, PHONE, LAPTOP } from '../../js/3d/devices.js';
+import { makePhone, makeLaptop, PHONE, LAPTOP, TABLET } from '../../js/3d/devices.js';
 
 const sizeOf = (obj) => { obj.updateMatrixWorld(true); return new THREE.Box3().setFromObject(obj).getSize(new THREE.Vector3()); };
 const near = (a, b, tol) => Math.abs(a - b) <= tol;
@@ -30,4 +30,11 @@ test('the laptop screen is 16:10, like the captures', () => {
   geo.computeBoundingBox();
   const s = geo.boundingBox.getSize(new THREE.Vector3());
   assert.ok(near(s.x / s.y, 1.6, 0.01), `${s.x / s.y}`);
+});
+
+test('the tablet is an 11-inch tablet in landscape', () => {
+  assert.ok(Math.abs(TABLET.w - 2.47) < 1e-9 && Math.abs(TABLET.h - 1.78) < 1e-9);
+  assert.ok(TABLET.w / TABLET.h > 1.35 && TABLET.w / TABLET.h < 1.42);
+  const diagonalInches = (Math.hypot(TABLET.w - 0.16, TABLET.h - 0.16) * 10) / 2.54;
+  assert.ok(diagonalInches > 10.5 && diagonalInches < 11.5, diagonalInches);
 });

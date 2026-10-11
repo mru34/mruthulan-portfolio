@@ -39,6 +39,16 @@ LEADER_BOX = (1460, 350, 2731, 868)   # the leaderboard: mruthulan 1,240 · priy
 # 7 down (20 in all, 10:30 12:00 12:30 14:30 17:00 taken, 15:00 chosen). The phone field in these captures is
 # the "+65 XXXX XXXX" placeholder; no number is published.
 SLOT_GRID = (116, 784, 1054, 1850)
+# MEANT, in pixels of the 1600 x 1000 captures assets/media/meant-shot-1 (the tablet with the four replies) and
+# meant-shot-3 (the word board, coloured by word type): the four reply tiles, and the board's top three rows
+REPLY_BOXES = [(56, 332, 522, 548), (534, 332, 1000, 548), (56, 558, 522, 774), (534, 558, 1000, 774)]
+REPLIES = ['Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice']
+WORD_GRID = (76, 230, 1524, 676)      # 8 x 3 tiles: each 172 x 144, 182.1 x 150.5 apart, starting 2 px in
+# The partner display could not be captured showing each reply: the receiver needs the whole MEANT core
+# running. So each reply is written onto the real "Give me a moment" capture (meant-shot-2), in the display's
+# own typeface (Inter 800, from the MEANT repository), colour and size, centred where that sentence is.
+MEANT_FONT = ROOT.parent / 'meant-DellInnovateFest' / 'meant' / 'web' / 'src' / 'assets' / 'fonts' / 'inter-latin-800-normal.woff2'
+FONT_CACHE = ROOT.parent / 'portfolio-tools' / 'fonts-src' / 'inter-800.ttf'
 CARD_BOXES = [(145, 549, 1423, 936), (1457, 549, 2735, 936), (145, 971, 1423, 1358),
               (1457, 971, 2735, 1358), (145, 1392, 1423, 1780), (1457, 1392, 2735, 1780)]   # challenges #6 to #1
 
@@ -82,6 +92,48 @@ def plate(piece, like, scale=1.6):
     return out
 
 
+def inter():
+    """Inter 800 as a TrueType file Pillow can draw with (converted once from MEANT's own woff2)."""
+    if not FONT_CACHE.exists():
+        from fontTools.ttLib import TTFont
+        FONT_CACHE.parent.mkdir(parents=True, exist_ok=True)
+        f = TTFont(MEANT_FONT)
+        f.flavor = None
+        f.save(FONT_CACHE)
+    return FONT_CACHE
+
+
+def partner_reply(text):
+    """The "Give me a moment" capture with its sentence replaced by `text`, in the same font, colour and size."""
+    from PIL import ImageFont
+    im = Image.open(ROOT / 'assets' / 'media' / 'meant-shot-2.webp').convert('RGB')
+    W, H = im.size
+    px = im.load()
+    bright = [(x, y) for y in range(int(H * 0.15), int(H * 0.85)) for x in range(0, W, 2)
+              if px[x, y][1] > 170 and px[x, y][0] < 160]
+    xs, ys = [p[0] for p in bright], [p[1] for p in bright]
+    box = (min(xs), min(ys), max(xs), max(ys))          # the sentence as drawn
+    bg = px[box[0] - 30, (box[1] + box[3]) // 2]
+    ink = max((px[x, y] for x, y in bright), key=lambda c: c[1])
+    draw = ImageDraw.Draw(im)
+    draw.rectangle((box[0] - 12, box[1] - 12, box[2] + 12, box[3] + 12), fill=bg)
+    def size_for(sample, height):
+        lo, hi = 10, 400
+        while lo < hi:
+            mid = (lo + hi + 1) // 2
+            b = ImageFont.truetype(str(inter()), mid).getbbox(sample)
+            lo, hi = (mid, hi) if b[3] - b[1] <= height else (lo, mid - 1)
+        return lo
+    size = size_for('Give me a moment', box[3] - box[1])
+    font = ImageFont.truetype(str(inter()), size)
+    while font.getlength(text) > W * 0.86:                 # the display fits a long sentence to its width
+        size -= 2
+        font = ImageFont.truetype(str(inter()), size)
+    cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+    draw.text((cx, cy), text, font=font, fill=ink, anchor='mm')
+    return im
+
+
 def save(im, name):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f'{name}.webp'
@@ -112,6 +164,16 @@ def main():
     save(sized(crop(bx / 'd-boss.png', LEADER_BOX, 26), 960), 'bx-leaderboard')
     for i, box in enumerate(CARD_BOXES, 1):
         save(sized(crop(bx / 'd-challenges.png', box, 26), 640), f'bx-card-{i}')
+
+    media = ROOT / 'assets' / 'media'
+    save(fit(media / 'meant-shot-1.webp', (1600, 1000)), 'mt-tablet')
+    save(fit(media / 'meant-shot-2.webp', (1600, 1000)), 'mt-partner-wait')
+    for i, text in enumerate(REPLIES, 1):
+        save(partner_reply(text), f'mt-partner-{i}')
+    for i, box in enumerate(REPLY_BOXES, 1):
+        save(crop(media / 'meant-shot-1.webp', box, 26), f'mt-reply-{i}')
+    save(fit_crop(media / 'meant-shot-3.webp', WORD_GRID, (1448, 446)), 'mt-words')
+    save(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8-1200.webp', (1200, 960)), 'mt-paper')
 
     bb = RAW / 'bcb'
     for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):
