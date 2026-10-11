@@ -45,7 +45,7 @@ def test_signalbridge_textures_exist_within_their_sizes(name, limit):
 
 
 SB_WALL = {'sb-wall-radar': (1280, 800), 'sb-wall-cases': (1280, 800), 'sb-wall-chat': (1280, 800),
-           'sb-wall-supervisor': (1280, 800), 'sb-wall-handoffs': (1280, 800), 'sb-phone-preview': (768, 1662)}
+           'sb-wall-supervisor': (1280, 800), 'sb-wall-handoffs': (1280, 800)}
 
 
 @pytest.mark.parametrize('name,limit', SB_WALL.items())
@@ -72,6 +72,18 @@ def test_no_signalbridge_wall_screen_is_light():
     for p in walls:
         with Image.open(p) as im:
             assert ImageStat.Stat(im.convert('L')).mean[0] < 70, p.name
+
+
+def test_every_screen_in_the_signalbridge_room_is_dark():
+    """Read the room's screens from the scene itself, so a light one hung there under any name is caught."""
+    from PIL import Image, ImageStat
+    js = (ROOT / 'js' / '3d' / 'chapters' / 'signalbridge.js').read_text(encoding='utf-8')
+    block = js.split('const WALL = [')[1].split('];')[0]
+    names = re.findall(r"\['([a-z0-9-]+)',", block)
+    assert len(names) >= 5, names
+    for n in names:
+        with Image.open(ROOT / 'assets' / '3d' / f'{n}.webp') as im:
+            assert ImageStat.Stat(im.convert('L')).mean[0] < 70, n
 
 
 MIN_WIDTH = {'bx-display': 1600, 'bx-leaderboard': 1271, 'bx-phone': 768}

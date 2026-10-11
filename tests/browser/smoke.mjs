@@ -669,6 +669,9 @@ for (const where of ['top', 'contact']) scenario(`crossing the breakpoint does n
   await sleep(1500);
   await page.setViewport({ width: 1200, height: 800 });
   await sleep(1500);
+  // a scene still being built has some of its textures on the GPU already; count only once nothing is building
+  const settled = () => page.waitForFunction(() => window.__world.debugBuilding() === 0, { timeout: 30000 }).catch(() => {});
+  await settled();
   const before = await page.evaluate(() => ({ ...window.__gl }));
   for (let i = 0; i < 3; i++) {
     await page.setViewport({ width: 700, height: 900 });
@@ -676,6 +679,7 @@ for (const where of ['top', 'contact']) scenario(`crossing the breakpoint does n
     await page.setViewport({ width: 1200, height: 800 });
     await sleep(1500);
   }
+  await settled();
   const after = await page.evaluate(() => ({ ...window.__gl }));
   check(after.tex - before.tex <= 1 && after.buf - before.buf <= 10,
     `six more crossings: +${after.tex - before.tex} textures, +${after.buf - before.buf} buffers alive`);
@@ -757,6 +761,7 @@ scenario('fix: arriving at Boss Breaker by link, the health bar holds still', as
   const { page } = await open({ path: '#work-bx' });
   await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
   const fill = () => page.evaluate(() => window.__world.mounted.get('boss-breaker').debug.fill());
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));   // its first frames ran
   const a = await fill();
   await sleep(700);
   const b = await fill();
@@ -850,7 +855,7 @@ scenario('fix: after a header link glides, focus moves to where it landed', asyn
   const { page } = await open();
   await page.focus('.nav a[href$="#awards"]');
   await page.keyboard.press('Enter');
-  await sleep(2200);
+  await page.waitForFunction(() => Boolean(document.activeElement.closest('#awards')), { timeout: 8000 }).catch(() => {});   // after the glide lands
   check(await page.evaluate(() => Boolean(document.activeElement.closest('#awards'))), `focus is in Awards (${await page.evaluate(() => document.activeElement.id || document.activeElement.className)})`);
   await page.close();
 });
@@ -1018,6 +1023,87 @@ scenario('at 390px every changed chapter goes live without errors', async () => 
   await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop, behavior: 'instant' }); });
   await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 }).catch(() => {});
   check(await page.$('#awards .aw-stack[data-live]') !== null, 'Awards is live at 390px');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+/* ------------------------------------------------------------------ v3 final-review fixes (each failed first) */
+
+scenario('fix: KnowCad’s source page on the desk lies on it, not through it', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="knowcad"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const r = await page.evaluate(() => window.__world.mounted.get('knowcad').debug.deskPage());
+  check(r.bottom >= r.desk - 0.001, `its lowest corner is on the desk (${r.bottom.toFixed(3)} vs desk ${r.desk.toFixed(3)})`);
+  check(r.front <= r.edge, `and does not hang over the desk's front edge (${r.front.toFixed(3)} vs edge ${r.edge.toFixed(3)})`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('fix: at 390px KnowCad’s three source pages are on screen at the payoff', async () => {
+  const { page, errors } = await open({ w: 390, h: 844 });
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="knowcad"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const r = await page.evaluate(() => window.__world.mounted.get('knowcad').debug.pageBoxes());
+  r.forEach((b, i) => check(b.l >= 0 && b.r <= 390 && b.t >= 0 && b.b <= 844, `source page ${i + 1} is wholly on screen (${JSON.stringify(b)})`));
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('fix: the newspaper’s glide reaches the paper before the article opens', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  await page.evaluate(() => addEventListener('pagehide', () => sessionStorage.setItem('glideAtLeave', String(window.__world.debugGlide()))));
+  const p = await page.evaluate(() => window.__world.debugProject('meant', 'paper'));
+  await Promise.all([page.waitForNavigation({ timeout: 15000 }).catch(() => {}), page.mouse.click(p.x, p.y)]);
+  check(page.url().endsWith('meant.html#press'), `it opened the article (${page.url()})`);
+  check(await page.evaluate(() => sessionStorage.getItem('glideAtLeave')) === '1', `the glide had finished when the page left (${await page.evaluate(() => sessionStorage.getItem('glideAtLeave'))})`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('fix: coming back while the newspaper glide was under way stays on the homepage', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const p = await page.evaluate(() => window.__world.debugProject('meant', 'paper'));
+  await page.mouse.click(p.x, p.y);
+  await page.evaluate(() => dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));   // the page came back from the cache mid-glide
+  await sleep(2500);
+  check(!page.url().includes('meant.html'), `it stayed on the homepage (${page.url()})`);
+  await page.close();
+});
+
+scenario('fix: if the 3D stops during the newspaper glide, the article still opens', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const p = await page.evaluate(() => window.__world.debugProject('meant', 'paper'));
+  await page.evaluate(() => { window.__world.update = () => false; });   // the world never steps again
+  await Promise.all([page.waitForNavigation({ timeout: 6000 }).catch(() => {}), page.mouse.click(p.x, p.y)]);
+  check(page.url().endsWith('meant.html#press'), `the article opened anyway (${page.url()})`);
+  await page.close();
+});
+
+scenario('fix: Awards — the previous photo (ArrowLeft) is the one revealed, not the next', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop - 0.1 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 });
+  await sleep(800);
+  await page.focus('#win-dell [data-gal-step]');
+  await page.keyboard.press('ArrowLeft');
+  const want = await page.$eval('#win-dell .shot[data-on]', (a) => a.dataset.photo);
+  await page.waitForFunction(() => (window.__world.mounted.get('awards').debug.slideT(1) ?? 0) > 0.55, { timeout: 8000 }).catch(() => {});
+  const seen = await page.evaluate(() => window.__world.mounted.get('awards').debug.revealed(1));
+  check(seen === want, `mid-slide the frame reveals the gallery’s photo (${seen} vs ${want})`);
+  await page.waitForFunction(() => window.__world.mounted.get('awards').debug.resting(1), { timeout: 10000 }).catch(() => {});
+  check(await page.evaluate(() => window.__world.mounted.get('awards').debug.topPhoto(1)) === want, 'and ends on it');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });

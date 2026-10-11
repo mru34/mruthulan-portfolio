@@ -230,7 +230,7 @@ def test_knowcad_asks_its_question_in_full_without_the_3d():
     q = 'Licence “in use on another device” after moving to new laptops'
     assert f'<span data-typed>{q}</span>' in sec
     assert f'<p class="sr-only">{q}</p>' in sec
-    assert 'An example question' in sec and 'private' not in sec.lower()
+    assert 'The question, manuals and answer are an example.' in sec and 'private' not in sec.lower()
 
 
 def test_awards_are_three_stacks_with_their_placing_boxes_and_no_carousel():

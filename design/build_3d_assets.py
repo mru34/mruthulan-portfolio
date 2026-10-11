@@ -438,7 +438,6 @@ def main():
                            ('d-youth-chat', 'sb-wall-chat', CHAT_CROP), ('d-worker-handoffs', 'sb-wall-handoffs', DESK_CROP),
                            ('d-supervisor', 'sb-wall-supervisor', SUPERVISOR_CROP)):
         save(fit_crop(sb / f'{raw}.png', box, (1280, 800)), name)
-    save(fit_crop(sb / 'm-youth-preview.png', PHONE_CROP, (768, 1662)), 'sb-phone-preview')
 
     bx = RAW / 'bx'
     # sized to 1.5x their largest size on screen, so each goes to the GPU without stalling a frame

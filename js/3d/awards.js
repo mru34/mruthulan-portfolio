@@ -108,14 +108,21 @@ export async function mount({ world, stage, section }) {
   let k = stage.view.k;
   const reorder = (s, top) => { s.order = s.prints.map((_, j) => (j + top) % s.prints.length); };
   // the gallery script (js/script.js) is the one source of truth: it moves data-on and tells us
+  // a slide out of the front photo; the photo to show next is put straight behind it first (out of sight), so the
+  // slide reveals that one, whichever way the gallery moved
+  function startSlide(s, dir, fromX, fromZ) {
+    const target = s.pending;
+    if (target !== undefined && s.order[0] !== target) s.order = [s.order[0], target, ...s.order.slice(1).filter((k) => k !== target)];
+    s.slide = { t: 0, dir, fromX, fromZ, pi: s.order[0] };
+    stage.invalidate();
+  }
   function onGal(s, e) {
     if (s.fromDrag) { s.fromDrag = false; reorder(s, e.detail.index); return; }
     s.pending = e.detail.index;
-    if (s.slide) return;   // the latest press wins when this slide lands
+    if (s.slide) return;   // this slide lands first, then the next one runs on to the latest press
     s.drag = null;
     s.back = null;
-    s.slide = { t: 0, dir: 1, fromX: 0, fromZ: REST_Z, pi: s.order[0] };
-    stage.invalidate();
+    startSlide(s, 1, 0, REST_Z);
   }
   const listeners = [];
   const on = (el, type, fn, opts) => { el.addEventListener(type, fn, opts); listeners.push([el, type, fn, opts]); };
@@ -162,6 +169,9 @@ export async function mount({ world, stage, section }) {
     boardText: (i) => frames[i].board.text(),
     resting: (i) => !frames[i].slide && !frames[i].drag && !frames[i].back,
     topPhoto: (i) => frames[i].shots[frames[i].order[0]].dataset.photo,
+    slideT: (i) => (frames[i].slide ? frames[i].slide.t : null),
+    // the photo showing in the window: mid-slide, the one being revealed behind the front
+    revealed: (i) => frames[i].shots[frames[i].order[frames[i].slide ? 1 : 0]].dataset.photo,
   };
   return {
     group,
@@ -216,7 +226,11 @@ export async function mount({ world, stage, section }) {
           if (s.slide.t >= 1) {
             s.slide = null;
             if (s.byHand) { s.byHand = false; s.fromDrag = true; s.pending = undefined; s.next.click(); }   // the gallery moves on (and tells us)
-            else if (s.pending !== undefined) { reorder(s, s.pending); s.pending = undefined; }
+            else {
+              s.order = [...s.order.slice(1), s.order[0]];   // the front goes to the back; the revealed photo is in front
+              if (s.pending !== undefined && s.pending !== s.order[0]) startSlide(s, 1, 0, REST_Z);   // on to a later press
+              else s.pending = undefined;
+            }
           }
         }
         if (s.back && s.back.t >= 1) s.back = null;

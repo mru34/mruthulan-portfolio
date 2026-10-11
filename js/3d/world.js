@@ -174,11 +174,14 @@ export function createWorld(stage, { sections, form }) {
     top(name) { const i = sections.findIndex((x) => x.name === name); return i < 0 ? 0 : spans[i][0] - scrollY; },
     shake(a) { shakeS.velocity += a; stage.invalidate(); },
     // the camera glides toward `point` over `ms` and holds there; the scroll (or coming back to the page) takes it back
+    // it resolves with how it ended: 'done', 'scrolled' (the visitor scrolled away), 'restored' (the page came back
+    // from the browser's cache) or 'replaced' (another glide started)
     glideTo(point, ms = 600) {
-      if (glide) glide.resolve(false);
+      if (glide) glide.resolve('replaced');
       return new Promise((resolve) => { glide = { to: point.toArray(), t: 0, ms, y: scrollY, resolve, done: false }; stage.invalidate(); });
     },
-    endGlide() { if (glide) { glide.resolve(false); glide = null; stage.invalidate(); } },
+    endGlide(why = 'ended') { if (glide) { glide.resolve(why); glide = null; stage.invalidate(); } },
+    glideT: () => (glide ? glide.t : null),   // how far the glide is (0..1), or null when there is none
     debugGlide: () => (glide ? glide.t : null),
     ray(clientX, clientY) {
       const r = new THREE.Raycaster();
@@ -216,6 +219,7 @@ export function createWorld(stage, { sections, form }) {
       return { ok: off < 1e-3, off };
     },
     get form() { return form0; },
+    debugBuilding: () => pending.size,   // scenes still being built
     onRestore: null,
     // where the page is: the section across the middle of the screen and the time into it, in screens
     debugPlace() {
@@ -250,14 +254,14 @@ export function createWorld(stage, { sections, form }) {
       busy = lookY.step(dt) || busy;
       busy = shakeS.step(dt) || busy;
       if (glide) {
-        if (Math.abs(y - glide.y) > 2) api.endGlide();
+        if (Math.abs(y - glide.y) > vh * 0.25) api.endGlide('scrolled');   // a smooth scroll's last few pixels do not count
         else {
           glide.t = Math.min(1, glide.t + (dt || 16) / glide.ms);
           const g = glidePose(camPos.toArray(), camAt.toArray(), glide.to, glide.t, GLIDE_NEAR);
           camPos.fromArray(g.pos);
           camAt.fromArray(g.at);
           if (glide.t < 1) busy = true;
-          else if (!glide.done) { glide.done = true; glide.resolve(true); }
+          else if (!glide.done) { glide.done = true; glide.resolve('done'); }
         }
       }
       camera.position.copy(camPos);
@@ -302,7 +306,7 @@ export function createWorld(stage, { sections, form }) {
     stage.invalidate();
   });
   // back to the page from the browser's cache (after the newspaper's glide opened the article): the scroll's pose
-  addEventListener('pageshow', (e) => { if (e.persisted) api.endGlide(); });
+  addEventListener('pageshow', (e) => { if (e.persisted) api.endGlide('restored'); });
   // crossing the phone breakpoint rebuilds the scenes for that form (phone camera keys, fewer objects)
   const narrow = matchMedia('(max-width: 860px)');
   narrow.addEventListener('change', () => {

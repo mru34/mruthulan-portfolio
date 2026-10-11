@@ -167,17 +167,32 @@ export async function mount({ world, stage, section, origin, form }) {
   // pressing the paper (or its link) glides the camera into it, then opens the article; a new-tab click, or
   // reduced motion, is left to the browser
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let leaving = false;
+  let leaving = false, pressId = 0;
   const onPress = async (e) => {
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || reduced.matches) return;
     e.preventDefault();
     if (leaving) return;
     leaving = true;
-    await world.glideTo(news.top.getWorldPosition(new THREE.Vector3()), 600);
-    leaving = false;
+    const id = ++pressId;
+    // if the 3D stops mid-glide (it falls back to the stills, say), the glide stops moving: go anyway
+    let watch = 0;
+    const stalled = new Promise((r) => {
+      let last = -1, still = 0;
+      watch = setInterval(() => {
+        const t = world.glideT();
+        if (t === null || t >= 1) { clearInterval(watch); return; }
+        if (t !== last) { last = t; still = 0; } else if (++still >= 3) { clearInterval(watch); r('stalled'); }
+      }, 250);
+    });
+    const why = await Promise.race([world.glideTo(news.top.getWorldPosition(new THREE.Vector3()), 600), stalled]);
+    clearInterval(watch);
+    if (id !== pressId || why === 'restored') return;   // the visitor came back to this page meanwhile
     location.href = pressLink.href;
   };
+  // back from the article (the browser's cache): this page stays, and a press can glide again
+  const onShow = (e) => { if (e.persisted) { pressId += 1; leaving = false; } };
   pressLink.addEventListener('click', onPress);
+  addEventListener('pageshow', onShow);
   const offTap = onTap(pin, (e) => {
     if (e.target.closest('a, button')) return;
     const hit = ndcHit(e, [...tileMeshes, news.group]);
@@ -250,6 +265,7 @@ export async function mount({ world, stage, section, origin, form }) {
     dispose() {
       offTap();
       pressLink.removeEventListener('click', onPress);
+      removeEventListener('pageshow', onShow);
       pin.removeEventListener('pointermove', onMove);
       pin.style.cursor = '';
       buttons.forEach((b) => { b.removeEventListener('click', onClick); b.removeEventListener('focus', onFocus); b.removeEventListener('blur', onBlur); });

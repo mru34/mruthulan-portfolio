@@ -27,7 +27,7 @@ const PART_R = 2.0;
 const REST = [
   { p: [4.0, 0.95, -32.9], r: [0, -0.35, 0.05] },
   { p: [4.35, -0.2, -32.6], r: [0, -0.3, -0.04] },
-  { p: [3.2, DESK.y + 0.02, -31.8], r: [-Math.PI / 2 + 0.25, 0, 0.3] },
+  { p: [3.5, DESK.y + 0.005, -32.3], r: [-Math.PI / 2, 0, 0.3] },   // flat on the desk, clear of the keyboard
 ];
 
 // four loose pages of generic text (bars, no words) in one atlas
@@ -268,6 +268,23 @@ export async function mount({ world, stage, section, origin, form }) {
     forward: (i) => pages[i].fwd.value,
     pulled: () => Math.max(0, ...[...pulls.values()].map((s) => s.value)),
     anchors: { manual: matched[2].pos.clone().add(origin) },
+    // the page that lands on the desk: its lowest point and front edge against the desk's top and front edge
+    deskPage() {
+      const b = new THREE.Box3().setFromObject(pages[2].m);
+      return { bottom: b.min.y - origin.y, desk: DESK.y, front: b.max.z - origin.z, edge: DESK.z + 0.3 + 1.5 };
+    },
+    // each source page's box on screen, in CSS pixels
+    pageBoxes() {
+      return pages.map((p) => {
+        const b = new THREE.Box3().setFromObject(p.m);
+        const xs = [], ys = [];
+        for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) {
+          const v = new THREE.Vector3(x, y, z).project(stage.camera);
+          xs.push(((v.x + 1) / 2) * stage.view.w); ys.push(((1 - v.y) / 2) * stage.view.h);
+        }
+        return { l: Math.round(Math.min(...xs)), r: Math.round(Math.max(...xs)), t: Math.round(Math.min(...ys)), b: Math.round(Math.max(...ys)) };
+      });
+    },
   };
   pages.forEach((p, i) => Object.defineProperty(debug.anchors, `source${i}`, { get: () => p.m.getWorldPosition(new THREE.Vector3()) }));
 

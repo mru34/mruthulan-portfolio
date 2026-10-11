@@ -750,7 +750,7 @@ CHAPTERS = [
          font='Name KnowCad', still='win-knowcad-champion',
          alt='KnowCad at a support rep’s desk: a customer asks why their licence shows as in use on another '
              'device, and KnowCad’s suggested answer cites three manuals pulled from the shelves around the desk, '
-             'Licensing p. 42, Admin Handbook p. 118 and Troubleshooting p. 7. An example question.',
+             'Licensing p. 42, Admin Handbook p. 118 and Troubleshooting p. 7. The question, manuals and answer are an example.',
          extra=f'<p class="kc-q" aria-hidden="true"><span data-typed>{e(KC_QUERY)}</span>'
                f'<i class="kc-caret"></i></p><p class="sr-only">{e(KC_QUERY)}</p>'),
 ]
