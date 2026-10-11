@@ -17,6 +17,7 @@ instead).
 The supervisor view is cropped above its "Signed in as" corner, which names a teammate; every screen is cropped
 above the Next.js dev badge in its bottom-left corner.
 """
+import random
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
@@ -80,6 +81,20 @@ CHALLENGES = [
     ('Cook one meal instead of ordering in', 30, 'priya.r', 'pan', (234, 179, 8)),
     ('Eight hours of sleep, two nights running', 35, 'mruthulan', 'bed', (226, 93, 78)),
 ]
+# KnowCad, drawn (the product is private): a support rep's console and three manual pages, an example in KnowCad's
+# colours. No product is named and no real manual is quoted.
+KC_TICKET = 'We moved to new laptops and the app says our licence is in use on another device. How do we fix it?'
+KC_QUERY = 'Licence “in use on another device” after moving to new laptops'
+KC_ANSWER = ('Sign out on the old laptop to free the licence. If that laptop is gone, an admin can release it '
+             'from the account portal. Then sign in on the new one.')
+KC_SOURCES = ['Licensing · p. 42', 'Admin Handbook · p. 118', 'Troubleshooting · p. 7']
+KC_PASSAGES = ['Signing out of the app on a device frees its licence for use on another device.',
+               'An admin can release a licence from a device in the account portal when that device is no longer available.',
+               '“In use on another device”: sign out on the old device, then sign in on the new one.']
+KC_TITLES = ['Installation Guide', 'Licensing', 'Admin Handbook', 'Release Notes', 'Troubleshooting']
+KC_COVERS = [(42, 35, 70), (51, 42, 87), (61, 50, 102), (40, 32, 64), (70, 58, 117)]
+KC_INK = {'bg': (18, 17, 26), 'side': (23, 21, 33), 'panel': (28, 26, 40), 'line': (52, 48, 72),
+          'ink': (236, 233, 248), 'soft': (154, 148, 180), 'violet': (155, 135, 255), 'deep': (61, 50, 102)}
 
 
 def fit(src, size):
@@ -287,6 +302,107 @@ def challenge_card(n, text, pts, by, kind, accent):
     return im
 
 
+def kc_console(state):
+    """The rep's console: 0 no ticket, 1 the customer's ticket, 2 the rep's question and the search, 3 KnowCad's
+    suggested answer with its three sources."""
+    C = KC_INK
+    W, H = 1600, 1000
+    im = Image.new('RGB', (W, H), C['bg'])
+    d = ImageDraw.Draw(im)
+    d.rectangle((0, 0, 300, H), fill=C['side'])
+    d.text((40, 52), 'KnowCad', font=font('knowcad', 34), fill=C['violet'])
+    for k, item in enumerate(['Tickets', 'Knowledge', 'Settings']):
+        y = 150 + k * 64
+        if k == 0:
+            d.rounded_rectangle((24, y - 10, 276, y + 42), radius=12, fill=C['deep'])
+        d.text((48, y), item, font=font('geist', 26, 500), fill=C['ink'] if k == 0 else C['soft'])
+    d.text((340, 52), 'Ticket #4821 · Licence', font=font('geist', 30, 600), fill=C['ink'])
+    d.rounded_rectangle((340, 120, 900, 940), radius=22, fill=C['panel'])
+    if state >= 1:
+        d.text((372, 150), 'Customer', font=font('geist', 22, 600), fill=C['soft'])
+        ft = font('geist', 30, 500)
+        for k, line in enumerate(wrap(KC_TICKET, ft, 490)):
+            d.text((372, 192 + k * 42), line, font=ft, fill=C['ink'])
+    else:
+        d.text((620, 520), 'No new tickets', font=font('geist', 26, 500), fill=C['soft'], anchor='mm')
+    d.rounded_rectangle((930, 120, 1560, 940), radius=22, fill=C['panel'])
+    d.text((962, 150), 'Ask KnowCad', font=font('geist', 22, 600), fill=C['violet'])
+    if state >= 2:
+        ft = font('geist', 26, 500)
+        lines = wrap(KC_QUERY, ft, 500)
+        h = 28 + 36 * len(lines)
+        d.rounded_rectangle((990, 196, 1528, 196 + h), radius=18, fill=C['deep'])
+        for k, line in enumerate(lines):
+            d.text((1010, 210 + k * 36), line, font=ft, fill=C['ink'])
+        top = 196 + h + 30
+        if state == 2:
+            d.text((962, top), 'Searching 5 manuals…', font=font('geist', 24, 500), fill=C['soft'])
+            for k in range(3):
+                d.rounded_rectangle((962, top + 50 + k * 40, 1400 - k * 90, top + 70 + k * 40), radius=10, fill=C['line'])
+        else:
+            d.text((962, top), 'Suggested answer', font=font('geist', 22, 600), fill=C['violet'])
+            ft = font('geist', 27, 500)
+            y = top + 40
+            for line in wrap(KC_ANSWER, ft, 560):
+                d.text((962, y), line, font=ft, fill=C['ink'])
+                y += 38
+            y += 18
+            x, mono = 962, font('mono', 19, 500)
+            for s in KC_SOURCES:
+                w = mono.getlength(s) + 28
+                if x + w > 1530:
+                    x, y = 962, y + 48
+                d.rounded_rectangle((x, y, x + w, y + 38), radius=19, outline=C['violet'], width=2)
+                d.text((x + 14, y + 19), s, font=mono, fill=C['violet'], anchor='lm')
+                x += w + 12
+            d.rounded_rectangle((962, 860, 1200, 912), radius=14, fill=C['violet'])
+            d.text((1081, 886), 'Send to customer', font=font('geist', 22, 600), fill=(20, 16, 34), anchor='mm')
+    return im
+
+
+def kc_spines():
+    """The five manuals' spines, side by side (160 x 800 each), titled top to bottom."""
+    W, H = 160, 800
+    im = Image.new('RGB', (W * 5, H), (0, 0, 0))
+    for i, (title, cover) in enumerate(zip(KC_TITLES, KC_COVERS)):
+        sp = Image.new('RGB', (H, W), cover)
+        d = ImageDraw.Draw(sp)
+        light = tuple(min(255, c + 30) for c in cover)
+        d.rectangle((0, 0, 44, W), fill=light)
+        d.rectangle((H - 60, 0, H, W), fill=light)
+        d.text((H / 2 - 8, W / 2), title, font=font('geist', 46, 700), fill=(217, 210, 255), anchor='mm')
+        im.paste(sp.rotate(-90, expand=True), (i * W, 0))
+    return im
+
+
+def kc_source(i):
+    """Source page i: the manual's name and page, lines of text as grey bars, and the passage that answers the
+    ticket, highlighted in violet."""
+    W, H = 600, 780
+    im = Image.new('RGB', (W, H), (238, 236, 244))
+    d = ImageDraw.Draw(im)
+    title, page = KC_SOURCES[i].split(' · ')
+    d.text((44, 40), title.upper(), font=font('geist', 22, 700), fill=(98, 84, 170))
+    d.text((W - 44, 40), page, font=font('mono', 20, 500), fill=(120, 114, 140), anchor='ra')
+    d.line((44, 84, W - 44, 84), fill=(200, 196, 214), width=2)
+    rng = random.Random(i + 7)
+    ft = font('geist', 26, 500)
+    lines = wrap(KC_PASSAGES[i], ft, W - 110)
+    y = 116
+    for k in range(16):
+        if k == 3 + i:
+            h = 18 + 36 * len(lines)
+            d.rounded_rectangle((34, y - 10, W - 34, y - 10 + h), radius=10, fill=(214, 205, 255))
+            for line in lines:
+                d.text((50, y), line, font=ft, fill=(30, 24, 52))
+                y += 36
+            y += 24
+        else:
+            d.rounded_rectangle((44, y + 6, 44 + rng.randint(300, W - 100), y + 18), radius=6, fill=(205, 202, 216))
+            y += 34
+    return im
+
+
 def save(im, name, quality=84):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f'{name}.webp'
@@ -330,7 +446,11 @@ def main():
     save(fit_crop(media / 'meant-shot-3.webp', WORD_GRID, (1448, 446)), 'mt-words')
     save(sharpen(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8.webp', (1400, 1117))), 'mt-paper', quality=80)
 
-    save(fit(media / 'win-knowcad-champion.webp', (1179, 705)), 'kc-champion')
+    for state in range(4):
+        save(kc_console(state), f'kc-console-{state}')
+    save(kc_spines(), 'kc-spines')
+    for i in range(3):
+        save(kc_source(i), f'kc-source-{i + 1}')
     for key in AWARD_PHOTOS:
         with Image.open(media / f'{key}.webp') as src:
             width = min(src.width, AWARD_WIDTH)

@@ -218,12 +218,28 @@ def test_the_meant_scene_and_the_builder_agree_on_the_reply_tiles():
     assert found == b.REPLY_BOXES
 
 
-def test_the_knowcad_champion_photo_is_ready():
-    from PIL import Image
-    path = ROOT / 'assets' / '3d' / 'kc-champion.webp'
-    assert path.exists()
-    with Image.open(path) as im:
-        assert im.width <= 1179 and im.height <= 705
+KC = ['kc-console-0', 'kc-console-1', 'kc-console-2', 'kc-console-3', 'kc-spines', 'kc-source-1', 'kc-source-2', 'kc-source-3']
+
+
+def test_knowcad_textures_are_drawn_and_the_champion_photo_is_gone():
+    from PIL import Image, ImageChops, ImageStat
+    sizes = {n: Image.open(ROOT / 'assets' / '3d' / f'{n}.webp').size for n in KC}
+    assert all(sizes[f'kc-console-{i}'] == (1600, 1000) for i in range(4))
+    assert sizes['kc-spines'] == (800, 800)
+    assert all(sizes[f'kc-source-{i}'] == (600, 780) for i in range(1, 4))
+    assert not (ROOT / 'assets' / '3d' / 'kc-champion.webp').exists()
+    states = [Image.open(ROOT / 'assets' / '3d' / f'kc-console-{i}.webp').convert('RGB') for i in range(4)]
+    for a, b in zip(states, states[1:]):
+        assert sum(ImageStat.Stat(ImageChops.difference(a, b)).mean) / 3 > 1, 'each state adds something'
+
+
+def test_the_knowcad_example_agrees_everywhere():
+    import build_3d_assets as b
+    import build_site as bs
+    js = (ROOT / 'js' / '3d' / 'chapters' / 'knowcad-timeline.js').read_text(encoding='utf-8')
+    q = re.search(r"QUESTION = '([^']+)'", js).group(1)
+    assert q == b.KC_QUERY == bs.KC_QUERY
+    assert re.search(r'SOURCES = \[([^\]]+)\]', js).group(1) == ', '.join(f"'{s}'" for s in b.KC_SOURCES)
 
 
 def test_every_award_photo_has_its_print_and_the_awards_list_agrees():

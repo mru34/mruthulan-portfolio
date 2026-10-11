@@ -392,20 +392,75 @@ scenario('MEANT: a reply picked from the keyboard reaches the partner display', 
   await page.close();
 });
 
-scenario('KnowCad: the sheets part for the cursor and come back when it leaves', async () => {
+scenario('KnowCad: the loose pages part for the cursor and come back when it leaves', async () => {
   const { page, errors } = await open();
-  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop - 0.2 * innerHeight, behavior: 'instant' }); });
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop + 0.16 * innerHeight, behavior: 'instant' }); });   // offsetTop is from <main>, below the header
   await page.waitForSelector('[data-scene="knowcad"][data-live]', { timeout: 30000 });
   await sleep(500);
   const typed = await page.$eval('[data-typed]', (e) => e.textContent);
-  check(typed.length > 0 && typed.length < 46, `the question is part-typed at this point (${JSON.stringify(typed)})`);
+  check(typed.length > 0 && typed.length < 63, `the rep’s question is part-typed at this point (${JSON.stringify(typed)})`);
   for (const [x, y] of [[620, 420], [700, 450], [780, 480], [860, 500]]) { await page.mouse.move(x, y); await sleep(60); }
   await sleep(300);
-  check(await page.evaluate(() => window.__world.mounted.get('knowcad').debug.parted() > 0.05), 'some sheets moved aside');
+  check(await page.evaluate(() => window.__world.mounted.get('knowcad').debug.parted() > 0.05), 'some pages moved aside');
   await page.evaluate(() => document.documentElement.dispatchEvent(new PointerEvent('pointerleave')));
   await page.waitForFunction(() => window.__world.mounted.get('knowcad').debug.parted() < 0.001, { timeout: 8000 }).catch(() => {});
   check(await page.evaluate(() => window.__world.mounted.get('knowcad').debug.parted() < 0.001), 'all back in place');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('KnowCad: at the payoff the answer and the three source pages are shown', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="knowcad"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const st = await page.evaluate(() => window.__world.mounted.get('knowcad').debug.state());
+  check(st.answer > 0.99 && st.pull > 0.99 && st.ticket > 0.99, `the answer is up and the pages have landed (${JSON.stringify(st)})`);
+  check(await page.$eval('[data-typed]', (e) => e.textContent) === 'Licence “in use on another device” after moving to new laptops', 'the question is typed in full');
+  for (let i = 0; i < 3; i++) {
+    const p = await page.evaluate((i) => window.__world.debugProject('knowcad', `source${i}`), i);
+    check(p && p.x > 0 && p.x < 1440 && p.y > 0 && p.y < 900, `source page ${i + 1} is on screen (${JSON.stringify(p)})`);
+  }
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('KnowCad: a tap brings a source page forward and another puts it back; a tap pulls a manual out', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="knowcad"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const fwd = () => page.evaluate(() => window.__world.mounted.get('knowcad').debug.forward(0));
+  let p = await page.evaluate(() => window.__world.debugProject('knowcad', 'source0'));
+  await page.mouse.click(p.x, p.y);
+  await page.waitForFunction(() => window.__world.mounted.get('knowcad').debug.forward(0) > 0.9, { timeout: 6000 }).catch(() => {});
+  check(await fwd() > 0.9, `the page came forward (${(await fwd()).toFixed(2)})`);
+  p = await page.evaluate(() => window.__world.debugProject('knowcad', 'source0'));
+  await page.mouse.click(p.x, p.y);
+  await page.waitForFunction(() => window.__world.mounted.get('knowcad').debug.forward(0) < 0.02, { timeout: 6000 }).catch(() => {});
+  check(await fwd() < 0.02, 'and went back');
+  const m = await page.evaluate(() => window.__world.debugProject('knowcad', 'manual'));
+  await page.mouse.click(m.x, m.y);
+  await page.waitForFunction(() => window.__world.mounted.get('knowcad').debug.pulled() > 0.5, { timeout: 6000 }).catch(() => {});
+  check(await page.evaluate(() => window.__world.mounted.get('knowcad').debug.pulled()) > 0.5, 'the manual slid out');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('KnowCad: a swipe that starts on a source page does not bring it forward', async () => {
+  const { page } = await open({ w: 390, h: 844 });
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="knowcad"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const p = await page.evaluate(() => window.__world.debugProject('knowcad', 'source0'));
+  check(p !== null, 'the source page has an anchor');
+  if (p) {
+    await page.touchscreen.touchStart(p.x, p.y);
+    for (let k = 1; k <= 6; k++) { await page.touchscreen.touchMove(p.x, p.y - k * 30); await sleep(16); }
+    await page.touchscreen.touchEnd();
+    await sleep(600);
+    check(await page.evaluate(() => window.__world.mounted.get('knowcad').debug.forward(0)) < 0.02, 'a swipe is not a tap');
+  }
   await page.close();
 });
 

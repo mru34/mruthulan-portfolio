@@ -69,14 +69,15 @@ COPY = [
     'Champion · Autodesk Singapore Hackathon 2026',
     'Case study',
     'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
-    'Next photo', 'Who won the Autodesk Singapore Hackathon 2026?', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
+    'Next photo', 'Licence “in use on another device” after moving to new laptops', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
     'Study', 'Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)',
     'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER',
     'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
     'Reach out', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
-        'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo']
+        'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo',
+        'Who won the Autodesk Singapore Hackathon 2026?']
 BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',
           'crafted', 'unlock', 'robust', 'delve']
 
@@ -224,8 +225,10 @@ def test_meant_has_its_four_replies_as_buttons_and_the_press_link():
 def test_knowcad_asks_its_question_in_full_without_the_3d():
     markup = bs.build_home()
     sec = re.search(r'<section class="chapter" data-scene="knowcad".*?</section>', markup, re.S).group(0)
-    assert '<span data-typed>Who won the Autodesk Singapore Hackathon 2026?</span>' in sec
-    assert '<p class="sr-only">Who won the Autodesk Singapore Hackathon 2026?</p>' in sec
+    q = 'Licence “in use on another device” after moving to new laptops'
+    assert f'<span data-typed>{q}</span>' in sec
+    assert f'<p class="sr-only">{q}</p>' in sec
+    assert 'An example question' in sec and 'private' not in sec.lower()
 
 
 def test_awards_are_three_stacks_with_their_placing_boxes_and_no_carousel():

@@ -716,6 +716,9 @@ END_LINKS = [('gmail', 'Gmail', MAILTO, 'contact_open_mail_app'),
 # side: which corner of the full-screen scene the information sits in (left, right, bottom-left).
 # extra: markup after Case study (a chapter's own button or line); hud: markup over the scene. font: the project name's own
 # typeface (assets/fonts/name-*.woff2). still: the picture shown until a chapter has its own rendered still.
+# KnowCad's example (the chapter's 3D draws the same words; tests/test_assets.py checks they agree)
+KC_QUERY = 'Licence “in use on another device” after moving to new laptops'
+
 CHAPTERS = [
     dict(pid='sb', num='01', side='left', result='Champion · Dell InnovateDash 2026',
          font='Name SignalBridge', still='signalbridge-card',
@@ -745,10 +748,11 @@ CHAPTERS = [
                + '</div><p class="sr-only" aria-live="polite" data-partner-live></p>'),
     dict(pid='kc', num='05', side='left', result='Champion · Autodesk Singapore Hackathon 2026',
          font='Name KnowCad', still='win-knowcad-champion',
-         alt='The champion photo from the Autodesk Singapore Hackathon 2026, KnowCAD Intellicase on the screen '
-             'behind the team, among drawing sheets.',
-         extra='<p class="kc-q" aria-hidden="true"><span data-typed>Who won the Autodesk Singapore Hackathon 2026?</span>'
-               '<i class="kc-caret"></i></p><p class="sr-only">Who won the Autodesk Singapore Hackathon 2026?</p>'),
+         alt='KnowCad at a support rep’s desk: a customer asks why their licence shows as in use on another '
+             'device, and KnowCad’s suggested answer cites three manuals pulled from the shelves around the desk, '
+             'Licensing p. 42, Admin Handbook p. 118 and Troubleshooting p. 7. An example question.',
+         extra=f'<p class="kc-q" aria-hidden="true"><span data-typed>{e(KC_QUERY)}</span>'
+               f'<i class="kc-caret"></i></p><p class="sr-only">{e(KC_QUERY)}</p>'),
 ]
 
 ABOUT_FACTS = [
