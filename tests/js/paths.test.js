@@ -9,6 +9,11 @@ test('every chapter has an origin, a colour, and keys in time order with the pay
     const pay = keys.find((k) => k.t === 0.42), hold = keys.find((k) => k.t === 0.6);
     assert.ok(pay && pay.stop && hold && hold.stop, `${name}: stops at 0.42 and 0.6`);
     assert.deepEqual({ ...pay, t: 0 }, { ...hold, t: 0 }, `${name}: the payoff holds still`);
-    assert.ok(keys[0].t <= -0.3 && keys.at(-1).t >= 0.9, `${name}: arrives and leaves`);
+    assert.ok(keys[0].t <= -0.3 && keys.at(-1).t > 0.6, `${name}: arrives and leaves`);
   }
+});
+
+test('the flight from KnowCad onto the Awards table takes at least 0.3 of a screen', () => {
+  // the camera reaches the page pose when Awards' top is 0.6 screens down: KnowCad's local time 1.0
+  assert.ok(1.0 - KEYS.knowcad.at(-1).t >= 0.3, `${KEYS.knowcad.at(-1).t}`);
 });

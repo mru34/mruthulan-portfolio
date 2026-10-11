@@ -71,6 +71,9 @@ async function start3D(ticker) {
   const world = createWorld(stage, { sections, form: matchMedia('(max-width: 860px)').matches ? 'phone' : 'desk' });
   window.__world = world;   // the smoke tests read it
   const stopAll = () => { stage.stop(); world.freeAll(); };
+  stage.onError = (err) => { console.warn('A 3D scene failed; showing the stills.', err); stopAll(); freeze(); };
+  // after a resize the world puts the page back at the same place in the story (Lenis must not undo it)
+  world.onRestore = (y) => { if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true, force: true }); else scrollTo({ top: y, behavior: 'instant' }); };
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stopAll(); freeze(); });
   // ?debug=frames: after the 3D has drawn each frame, the scroll the page shows and the one the 3D used
   if (debug) {
@@ -118,11 +121,17 @@ if (live) {
       prevent: (node) => Boolean(node.closest('dialog[open], [data-lenis-prevent]')),
     });
     root.classList.add('smooth');
-    ticker.add((now) => { lenis?.raf(now); return lenis?.isScrolling === 'smooth'; });
+    // Lenis runs on the loop's own clock: after the loop has slept, its first step is one frame long, not the
+    // whole pause (which made the first wheel notch of a gesture land in one frame)
+    let clock = 0;
+    ticker.add((now, dt) => { clock += dt; lenis?.raf(clock); return lenis?.isScrolling === 'smooth'; });
     addEventListener('wheel', ticker.invalidate, { passive: true });
     window.__lenis = lenis;   // the smoke tests read isScrolling
     // a stopped 3D must never leave the wheel smoothed by nothing: back to the browser's own scrolling
     onFreeze = () => { lenis?.destroy(); lenis = null; window.__lenis = null; root.classList.remove('smooth'); };
+    // the page holds still behind the photo viewer
+    const viewer = document.querySelector('dialog[data-viewer]');
+    if (viewer) new MutationObserver(() => { if (viewer.open) lenis?.stop(); else lenis?.start(); }).observe(viewer, { attributes: true, attributeFilter: ['open'] });
     // in-page links glide with Lenis and land exactly where the browser would have put them
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a[href^="#"], a[href^="index.html#"]');
@@ -134,7 +143,12 @@ if (live) {
         - (parseFloat(getComputedStyle(target).scrollMarginTop) || 0)
         - (parseFloat(getComputedStyle(root).scrollPaddingTop) || 0);
       history.pushState(null, '', a.hash);
-      lenis.scrollTo(Math.round(y), { duration: 1.1, easing: (t) => 1 - (1 - t) ** 4 });
+      // and, as a native in-page link does, the next Tab starts from where it landed
+      const land = target.classList.contains('ch-key') ? target.closest('section') : target;
+      lenis.scrollTo(Math.round(y), {
+        duration: 1.1, easing: (t) => 1 - (1 - t) ** 4,
+        onComplete: () => { if (!land.hasAttribute('tabindex')) land.setAttribute('tabindex', '-1'); land.focus({ preventScroll: true }); },
+      });
     });
   }
   // any scroll keeps the loop running for three more frames, so frames come back to back while the page moves

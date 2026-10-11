@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { createBoard } from './board.js';
 import { fitScale } from '../lib/fit.js';
+import { onTap } from './tap.js';
 import { clamp, easeInOut } from '../lib/motion.js';
 
 const DESK = [{ text: 'MRUTHULAN', color: 'gold' }, { text: 'SENTHIL NATHAN', color: 'white' }];
@@ -36,24 +37,10 @@ export async function mount({ world, stage, section }) {
   const onMove = (e) => { if (e.pointerType === 'mouse') { board.hover(board.pick(stage.camera, ndc(e))); stage.invalidate(); } };
   const onLeave = () => board.hover(-1);
   // a tap ripples the name; a drag or a swipe that starts on it does not
-  let press = null;
   const debug = { fit: null, rippled: false };
-  const onDown = (e) => { press = { x: e.clientX, y: e.clientY }; };
-  const onUp = (e) => {
-    if (!press) return;
-    const moved = Math.hypot(e.clientX - press.x, e.clientY - press.y);
-    press = null;
-    if (moved >= 8) return;
-    board.ripple(board.pick(stage.camera, ndc(e)));
-    debug.rippled = true;
-    stage.invalidate();
-  };
-  const onCancel = () => { press = null; };
+  const offTap = onTap(box, (e) => { board.ripple(board.pick(stage.camera, ndc(e))); debug.rippled = true; stage.invalidate(); });
   box.addEventListener('pointermove', onMove);
   box.addEventListener('pointerleave', onLeave);
-  box.addEventListener('pointerdown', onDown);
-  box.addEventListener('pointerup', onUp);
-  box.addEventListener('pointercancel', onCancel);
   const glint = world.glint;
 
   return {
@@ -84,10 +71,8 @@ export async function mount({ world, stage, section }) {
       narrow.removeEventListener('change', onBreak);
       box.removeEventListener('pointermove', onMove);
       box.removeEventListener('pointerleave', onLeave);
-      box.removeEventListener('pointerdown', onDown);
-      box.removeEventListener('pointerup', onUp);
-      box.removeEventListener('pointercancel', onCancel);
       glint.intensity = 0;
+      offTap();
       board.dispose();
     },
   };

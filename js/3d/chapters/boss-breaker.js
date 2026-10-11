@@ -8,6 +8,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { makePhone, makeMonitor, makeStand } from '../devices.js';
 import { loadTexture, card, bez, glow, panel, contactShadow, disposeTree, nextFrame } from '../textures.js';
 import { lerp, Spring, easeInOut } from '../../lib/motion.js';
+import { onTap } from '../tap.js';
 import { bossHp, hpText, bxState, START_HP } from './boss-timeline.js';
 
 const ORANGE = 0xf06a43;
@@ -107,7 +108,7 @@ export async function mount({ world, stage, section, origin, form }) {
     live: section.querySelector('[data-hp-live]'), down: section.querySelector('[data-defeated]'),
   };
   const hpSpring = new Spring(START_HP, { stiffness: 140, damping: 20 });
-  let hits = 0, local = -1, shownHp = -1, throwN = 0, throwT = 1, hitTimer = 0;
+  let hits = 0, local = -1, shownHp = -1, throwN = 0, throwT = 1, hitTimer = 0, wasVisible = false;
   const fillEnd = () => new THREE.Vector3(fill.position.x + (BAR.len * hpSpring.value) / START_HP, BAR.at[1], BAR.at[2] + 0.3);
   function hit() {
     if (bossHp(local, hits) <= 0) return;
@@ -122,13 +123,13 @@ export async function mount({ world, stage, section, origin, form }) {
     stage.invalidate();
   }
   const pin = section.querySelector('.pin');
-  const onDown = (e) => { if (!e.target.closest('a, button')) hit(); };
+  const offTap = onTap(pin, (e) => { if (!e.target.closest('a, button')) hit(); });   // a tap, never a swipe
   const button = section.querySelector('[data-attack]');
-  pin.addEventListener('pointerdown', onDown);
   button.addEventListener('click', hit);
 
   return {
     group,
+    debug: { fill: () => fill.scale.x },
     update(t, f) {
       local = t;
       if (t < -0.6 && hits) { hits = 0; hud.live.textContent = ''; }
@@ -140,16 +141,18 @@ export async function mount({ world, stage, section, origin, form }) {
         hud.hp.textContent = hpText(hp);
         hud.down.hidden = hp > 0;
       }
-      if (!visible) return false;
+      if (!visible) { wasVisible = false; return false; }
       const st = bxState(t);
       hpSpring.target = hp;
+      // arriving (by scroll, link or reload), the bar is where the HP is; it only moves with hits and the scroll
+      if (!wasVisible) { hpSpring.value = hp; hpSpring.velocity = 0; wasVisible = true; }
       let busy = hpSpring.step(f.dt);
       fill.scale.x = Math.max(0.0001, hpSpring.value / START_HP);
       // the HP readout sits just above the middle of the bar, wherever the camera has it on screen; the pin it
       // lives in is stuck to the top of the screen while the chapter is pinned, and scrolls in and out with it
       const p = new THREE.Vector3(BAR.at[0], BAR.at[1] + 0.3, BAR.at[2]).add(origin).project(f.camera);
-      const secTop = -t * f.vh;
-      const pinTop = secTop > 0 ? secTop : Math.min(0, secTop + 0.6 * f.vh);
+      const secTop = -t * f.unit;
+      const pinTop = secTop > 0 ? secTop : Math.min(0, secTop + 0.6 * f.unit);
       hud.box.style.transform = `translate(${((p.x + 1) / 2) * innerWidth}px, ${((1 - p.y) / 2) * f.vh - pinTop}px) translate(-50%, -100%)`;
       fill.visible = hpSpring.value > 1;
       bars.forEach((b) => { b.scale.y = Math.max(0.001, st.bars); });
@@ -171,7 +174,7 @@ export async function mount({ world, stage, section, origin, form }) {
     },
     dispose() {
       clearTimeout(hitTimer);
-      pin.removeEventListener('pointerdown', onDown);
+      offTap();
       button.removeEventListener('click', hit);
       world.root.remove(group);
       disposeTree(group);

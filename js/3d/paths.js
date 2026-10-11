@@ -52,6 +52,6 @@ export const KEYS = {
     { t: 0.15, at: [-0.6, 0, -28], from: [0, 0.02, 1], d: 9 },
     { t: 0.42, at: [-1.2, 0.05, -31], from: [0, 0, 1], w: 8, h: 5, stop: true, phone: { at: [0, -1.0, -31], w: 4.5, h: 7.5 } },
     { t: 0.6, at: [-1.2, 0.05, -31], from: [0, 0, 1], w: 8, h: 5, stop: true, phone: { at: [0, -1.0, -31], w: 4.5, h: 7.5 } },
-    { t: 0.9, at: [0, -2, -34], from: [0, 0.6, 1], d: 12 },
+    { t: 0.65, at: [0, -2, -34], from: [0, 0.6, 1], d: 12 },   // leaves early: the flight onto the Awards table runs to 1.0
   ],
 };

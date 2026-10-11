@@ -31,11 +31,18 @@ export function createStage(canvas, { maxDpr = 2, ticker } = {}) {
   let stopped = false;
 
   // frame hooks get the real time since the previous frame, or null after an idle pause (not a slow frame)
+  let onError = (err) => { throw err; };
   ticker.add((now, dt, gap) => {
     if (stopped) return false;
     let busy = false;
-    for (const p of parts) busy = p.update(now, dt) || busy;
-    renderer.render(scene, camera);
+    try {
+      for (const p of parts) busy = p.update(now, dt) || busy;
+      renderer.render(scene, camera);
+    } catch (err) {
+      stopped = true;   // a scene that throws stops the 3D; the page goes on (home.js shows the stills)
+      onError(err);
+      return false;
+    }
     for (const h of hooks) h(now, gap);
     return busy;
   });
@@ -79,5 +86,6 @@ export function createStage(canvas, { maxDpr = 2, ticker } = {}) {
       renderer.render(scene, camera);
     },
     stop() { stopped = true; },
+    set onError(fn) { onError = fn; },
   };
 }

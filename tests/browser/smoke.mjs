@@ -470,8 +470,8 @@ scenario('a live chapter still describes its picture to screen readers', async (
   const { page } = await open();
   await page.evaluate(() => { const c = document.querySelector('[data-scene="signalbridge"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
   await page.waitForSelector('[data-scene="signalbridge"][data-live]', { timeout: 30000 });
-  const r = await page.$eval('[data-scene="signalbridge"] .pin', (p) => ({ role: p.getAttribute('role'), label: p.getAttribute('aria-label') }));
-  check(r.role === 'img' && /SignalBridge/.test(r.label || ''), `the pin carries the still's description (${JSON.stringify(r)})`);
+  const r = await page.$eval('[data-scene="signalbridge"] .pin', (p) => { const d = p.querySelector(':scope > [role="img"]'); return { role: d?.getAttribute('role'), label: d?.getAttribute('aria-label') }; });
+  check(r.role === 'img' && /SignalBridge/.test(r.label || ''), `the pin holds the still's description (${JSON.stringify(r)})`);
   await page.close();
 });
 
@@ -624,6 +624,188 @@ for (const where of ['top', 'contact']) scenario(`crossing the breakpoint does n
   const after = await page.evaluate(() => ({ ...window.__gl }));
   check(after.tex - before.tex <= 1 && after.buf - before.buf <= 10,
     `six more crossings: +${after.tex - before.tex} textures, +${after.buf - before.buf} buffers alive`);
+  await page.close();
+});
+
+/* ------------------------------------------------------------------ final-review fixes (each failed first) */
+
+scenario('fix: the first wheel notch after the page sat still glides instead of jumping', async () => {
+  const { page } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await page.mouse.move(720, 450);
+  await sleep(1500);
+  await page.evaluate(() => { window.__d = []; let last = scrollY; const tick = () => { window.__d.push(scrollY - last); last = scrollY; if (window.__d.length < 90) requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
+  await page.mouse.wheel({ deltaY: 100 });
+  await sleep(1600);
+  const d = await page.evaluate(() => window.__d);
+  const max = Math.max(...d.map(Math.abs));
+  const total = d.reduce((a, b) => a + b, 0);
+  check(total > 80 && max <= 35, `the notch glides (largest step ${max} px of ${total})`);
+  await page.close();
+});
+
+scenario('fix: a swipe is not a tap (the boss, the newspaper)', async () => {
+  const { page } = await open({ w: 390, h: 844 });
+  const go = (scene, t) => page.evaluate((scene, t) => { const c = document.querySelector(`[data-scene="${scene}"]`); scrollTo({ top: c.offsetTop + t * innerHeight, behavior: 'instant' }); }, scene, t);
+  const swipe = async (x, y) => {
+    await page.touchscreen.touchStart(x, y);
+    for (let k = 1; k <= 6; k++) { await page.touchscreen.touchMove(x, y - k * 30); await sleep(16); }
+    await page.touchscreen.touchEnd();
+    await sleep(500);
+  };
+  await go('boss-breaker', 0.5);
+  await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
+  await sleep(400);
+  await go('boss-breaker', 0.5);
+  await sleep(300);
+  await swipe(195, 330);   // on the arena, above the words
+  check(await page.$eval('[data-hp-live]', (e) => e.textContent) === '', 'a swipe through Boss Breaker did not hit the boss');
+  await go('meant', 0.5);
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(400);
+  await go('meant', 0.5);
+  await sleep(300);
+  const p = await page.evaluate(() => window.__world.debugProject('meant', 'paper'));
+  check(p !== null, 'the newspaper is on screen');
+  if (p) await swipe(p.x, p.y);
+  check(!page.url().includes('meant.html'), `a swipe that starts on the newspaper did not open it (${page.url()})`);
+  await page.close();
+});
+
+scenario('fix: Awards keeps its words, photos and announcements for screen readers while the 3D is live', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop, behavior: 'instant' }); });
+  await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 });
+  await sleep(600);
+  // the whole page's tree (a snapshot rooted at a section comes back empty), from the Awards heading on
+  const flat = [];
+  const walk = (n) => { if (!n) return; flat.push(`${n.role}: ${n.name || ''}`); (n.children || []).forEach(walk); };
+  walk(await page.accessibility.snapshot({ interestingOnly: true }));
+  const awards = flat.slice(flat.findIndex((l) => /heading: Awards/i.test(l)));
+  check(awards.some((l) => /^heading: 2nd runner-up$/i.test(l)), `the placing is still a heading (${awards.slice(0, 5).join(' | ')})`);
+  check(awards.some((l) => /^link: View full size/.test(l)), 'the top photo still opens the viewer from the keyboard');
+  const live = await page.$eval('#win-dell [data-gal-live]', (e) => getComputedStyle(e).visibility);
+  check(live !== 'hidden', `the photo announcements are not hidden (${live})`);
+  await page.close();
+});
+
+scenario('fix: a chapter is described without hiding its heading and buttons', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="boss-breaker"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
+  const r = await page.$eval('[data-scene="boss-breaker"] .pin', (p) => ({ pinRole: p.getAttribute('role'), img: p.querySelector(':scope > [role="img"]')?.getAttribute('aria-label') || '' }));
+  check(r.pinRole === null && /Boss Raid/.test(r.img), `the description is its own element (${JSON.stringify(r)})`);
+  await page.close();
+});
+
+scenario('fix: arriving at Boss Breaker by link, the health bar holds still', async () => {
+  const { page } = await open({ path: '#work-bx' });
+  await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
+  const fill = () => page.evaluate(() => window.__world.mounted.get('boss-breaker').debug.fill());
+  const a = await fill();
+  await sleep(700);
+  const b = await fill();
+  check(Math.abs(a - b) < 0.002 && Math.abs(b - 0.368) < 0.01, `the bar stays at the capture's 1,840 (${a.toFixed(3)} → ${b.toFixed(3)})`);
+  await page.close();
+});
+
+scenario('fix: the wheel over the viewer toolbar never scrolls the page', async () => {
+  const { page } = await open();
+  await page.evaluate(() => document.getElementById('awards').scrollIntoView({ behavior: 'instant' }));
+  await sleep(300);
+  await page.evaluate(() => document.querySelector('#awards a[data-zoom]').click());
+  await sleep(400);
+  const y0 = await page.evaluate(() => scrollY);
+  await page.mouse.move(720, 30);
+  await page.mouse.wheel({ deltaY: 400 });
+  await sleep(800);
+  check(await page.evaluate(() => scrollY) === y0, 'page stayed put under the toolbar too');
+  await page.close();
+});
+
+scenario('fix: Attack and the reply buttons only show while their scene is live', async () => {
+  const { page } = await open({ block: '/js/3d/chapters/boss-breaker.js' });
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="boss-breaker"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await sleep(3000);
+  check(await page.$eval('[data-attack]', (b) => getComputedStyle(b).display === 'none'), 'no Attack without the scene');
+  check(await page.$eval('.bx-hud', (b) => getComputedStyle(b).display === 'none'), 'no HP readout without the scene');
+  await page.close();
+});
+
+for (const [from, to] of [[[1440, 900], [900, 1000]], [[1024, 768], [768, 1024]]]) {
+  scenario(`fix: resizing ${from.join('x')} to ${to.join('x')} keeps the place in the story`, async () => {
+    const { page, errors } = await open({ w: from[0], h: from[1] });
+    await page.evaluate(() => { const c = document.querySelector('[data-scene="boss-breaker"]'); const pin = c.querySelector('.pin'); scrollTo({ top: c.offsetTop + 0.3 * pin.offsetHeight, behavior: 'instant' }); });
+    await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
+    await sleep(500);
+    const before = await page.evaluate(() => window.__world.debugPlace());
+    await page.setViewport({ width: to[0], height: to[1] });
+    await sleep(1500);
+    const after = await page.evaluate(() => window.__world.debugPlace());
+    check(after.name === before.name && Math.abs(after.t - before.t) < 0.03, `still in ${before.name} at ${before.t.toFixed(2)} (now ${after.name} at ${after.t.toFixed(2)})`);
+    check(errors.filter((e) => !e.includes('did not load')).length === 0, `no errors ${errors.join(' | ')}`);
+    await page.close();
+  });
+}
+
+scenario('fix: crossing to a phone width rebuilds the scenes for a phone', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="signalbridge"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="signalbridge"][data-live]', { timeout: 30000 });
+  check(await page.evaluate(() => window.__world.form) === 'desk', 'desk at 1440');
+  await page.setViewport({ width: 600, height: 900 });
+  await sleep(2500);
+  check(await page.evaluate(() => window.__world.form) === 'phone', 'phone at 600');
+  await page.close();
+});
+
+scenario('fix: chapter time is counted in pin heights (100svh), which a phone toolbar does not change', async () => {
+  // a phone's toolbar changes innerHeight but not 100svh; emulation cannot move one without the other, so the pin
+  // is made shorter than the window here and the world must count in pins
+  const { page } = await open();
+  await page.addStyleTag({ content: '.has-3d .chapter .pin{height:80vh!important}' });
+  await page.evaluate(() => { dispatchEvent(new Event('resize')); const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 200, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(300);
+  const r = await page.evaluate(() => {
+    const c = document.querySelector('[data-scene="meant"]');
+    return { got: window.__world.debugPlace().t, want: (scrollY - (c.getBoundingClientRect().top + scrollY)) / c.querySelector('.pin').offsetHeight };
+  });
+  check(Math.abs(r.got - r.want) < 0.005, `the world counts in pins (${r.got.toFixed(3)}, a pin gives ${r.want.toFixed(3)})`);
+  await page.close();
+});
+
+scenario('fix: pinch-zoom still works over the barber poles and the award prints', async () => {
+  const { page } = await open({ w: 390, h: 844 });
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="better-call-bhai"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="better-call-bhai"][data-live]', { timeout: 30000 });
+  const pin = await page.$eval('[data-scene="better-call-bhai"] .pin', (p) => getComputedStyle(p).touchAction);
+  const stack = await page.$eval('.aw-stack', (p) => getComputedStyle(p).touchAction);
+  check(pin.includes('pinch-zoom') && stack.includes('pinch-zoom'), `pan-y pinch-zoom (${pin}; ${stack})`);
+  await page.close();
+});
+
+scenario('fix: Featured in Tamil Murasu is a 44px touch target', async () => {
+  const { page } = await open({ w: 390, h: 844 });
+  check(await page.$eval('.mt-press', (a) => a.getBoundingClientRect().height >= 44), 'at least 44px tall');
+  await page.close();
+});
+
+scenario('fix: after a header link glides, focus moves to where it landed', async () => {
+  const { page } = await open();
+  await page.focus('.nav a[href$="#awards"]');
+  await page.keyboard.press('Enter');
+  await sleep(2200);
+  check(await page.evaluate(() => Boolean(document.activeElement.closest('#awards'))), `focus is in Awards (${await page.evaluate(() => document.activeElement.id || document.activeElement.className)})`);
+  await page.close();
+});
+
+scenario('fix: an error in a scene sends the page to the stills instead of breaking it', async () => {
+  const { page } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await page.evaluate(() => { window.__world.mounted.get('hero').update = () => { throw new Error('test: a broken scene'); }; scrollBy(0, 10); });
+  await sleep(800);
+  check(await page.evaluate(() => document.documentElement.classList.contains('frozen')), 'html.frozen');
   await page.close();
 });
 

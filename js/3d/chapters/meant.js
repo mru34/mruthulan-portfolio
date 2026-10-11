@@ -11,6 +11,7 @@ import { loadTexture, card, bez, glow, screenGeometry, cropUV, disposeTree, next
 import { lerp, Spring } from '../../lib/motion.js';
 import { mulberry32 } from '../../lib/scatter.js';
 import { mtState, REPLIES } from './meant-timeline.js';
+import { onTap } from '../tap.js';
 
 // the reply tiles in the 1600 x 1000 tablet capture: must match design/build_3d_assets.py (tested)
 export const REPLY_BOXES = [[56, 332, 522, 548], [534, 332, 1000, 548], [56, 558, 522, 774], [534, 558, 1000, 774]];
@@ -138,13 +139,14 @@ export async function mount({ world, stage, section, origin, form }) {
   const pin = section.querySelector('.pin');
   const ndcHit = (e, objs) => world.ray(e.clientX, e.clientY).intersectObjects(objs, true)[0];
   const tileMeshes = tiles.map((t) => t.c);
-  const onDown = (e) => {
+  const pressLink = section.querySelector('a.mt-press');
+  const offTap = onTap(pin, (e) => {
     if (e.target.closest('a, button')) return;
     const hit = ndcHit(e, [...tileMeshes, paper]);
     if (!hit) return;
-    if (hit.object === paper) location.href = 'meant.html#press';
+    if (hit.object === paper) pressLink.click();   // through the real link, so it behaves like one
     else pick(hit.object.userData.reply);
-  };
+  });
   const onMove = (e) => {
     if (e.pointerType !== 'mouse') return;
     const hit = ndcHit(e, tileMeshes);
@@ -154,11 +156,10 @@ export async function mount({ world, stage, section, origin, form }) {
   const onClick = (e) => pick(Number(e.currentTarget.dataset.reply));
   const onFocus = (e) => { focused = Number(e.target.dataset.reply); stage.invalidate(); };
   const onBlur = () => { focused = -1; stage.invalidate(); };
-  pin.addEventListener('pointerdown', onDown);
   pin.addEventListener('pointermove', onMove);
   buttons.forEach((b) => { b.addEventListener('click', onClick); b.addEventListener('focus', onFocus); b.addEventListener('blur', onBlur); });
 
-  const debug = {};
+  const debug = { anchors: { paper: paper.position.clone().add(origin) } };
   Object.defineProperties(debug, { shown: { get: () => shown }, focused: { get: () => focused } });
   return {
     group,
@@ -209,7 +210,7 @@ export async function mount({ world, stage, section, origin, form }) {
       return busy;
     },
     dispose() {
-      pin.removeEventListener('pointerdown', onDown);
+      offTap();
       pin.removeEventListener('pointermove', onMove);
       pin.style.cursor = '';
       buttons.forEach((b) => { b.removeEventListener('click', onClick); b.removeEventListener('focus', onFocus); b.removeEventListener('blur', onBlur); });

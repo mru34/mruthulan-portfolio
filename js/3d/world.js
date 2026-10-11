@@ -51,7 +51,9 @@ export function createWorld(stage, { sections, form }) {
   const pending = new Map();     // name -> promise
   const docRects = new Map();    // fitted element -> its box in document coordinates
   let spans = [];                // each section's top and bottom in document coordinates
-  let keys = [], bases = {}, pageStart = 99, vh = 1, aspect = 1;
+  let keys = [], bases = {}, pageStart = 99, vh = 1, unit = 1, aspect = 1, form0 = form;
+  let place = null;      // where the page is in the story (section and fraction), kept for a resize
+  let laidOut = { w: 0, h: 0 };
   const heroEnd = 0.4;
   let lastScroll = 0;
   const lookX = new Spring(0, { stiffness: 60, damping: 16 });
@@ -62,20 +64,23 @@ export function createWorld(stage, { sections, form }) {
   const docBox = (el) => { const r = el.getBoundingClientRect(); return { left: r.left + scrollX, top: r.top + scrollY, width: r.width, height: r.height }; };
   function layout() {
     vh = innerHeight;
+    // one screen of chapter time is one pin: 100svh, which a phone's toolbar does not change (innerHeight does)
+    unit = document.querySelector('.chapter .pin')?.offsetHeight || innerHeight;
     aspect = innerWidth / innerHeight;
+    laidOut = { w: innerWidth, h: innerHeight };
     docRects.clear();
     for (const s of sections) if (s.kind === 'page') for (const el of s.el.querySelectorAll('[data-anchor]')) docRects.set(el, docBox(el));
     spans = sections.map((s) => { const b = docBox(s.el); return [b.top, b.top + b.height]; });
-    bases = Object.fromEntries(sections.map((s, i) => [s.name, spans[i][0] / vh]));
+    bases = Object.fromEntries(sections.map((s, i) => [s.name, spans[i][0] / unit]));
     const awards = sections.findIndex((s) => s.name === 'awards');
-    pageStart = awards >= 0 ? spans[awards][0] / vh - 0.6 : 99;
+    pageStart = awards >= 0 ? spans[awards][0] / unit - 0.6 : 99;
     const pagePose = (t) => ({ t, at: [...ORIGINS.page], from: [0, 0, 1], d: CAM_Z, stop: true, color: COLORS.page });
     keys = [{ t: 0, at: [...ORIGINS.hero], from: [0, 0, 1], d: CAM_Z, stop: true, color: COLORS.hero }];
     for (const s of sections) {
       if (s.kind !== 'flight' || !KEYS[s.name]) continue;
       const o = ORIGINS[s.name];
       for (const key of KEYS[s.name]) {
-        const k = form === 'phone' && key.phone ? { ...key, ...key.phone } : key;
+        const k = form0 === 'phone' && key.phone ? { ...key, ...key.phone } : key;
         keys.push({ ...k, t: bases[s.name] + k.t, at: [k.at[0] + o[0], k.at[1] + o[1], k.at[2] + o[2]], color: COLORS[s.name] });
       }
     }
@@ -99,12 +104,19 @@ export function createWorld(stage, { sections, form }) {
 
   const anchorsOf = (s) => [s.el, ...s.el.querySelectorAll('[data-anchor]')];
   // while a chapter's 3D stands in for its still, the chapter carries the still's description for screen readers
+  // (its own element: a role on the whole pin would hide the heading and buttons inside it)
   function describe(s, live) {
     const pin = s.kind === 'flight' && s.el.querySelector('.pin');
     const alt = pin && s.el.querySelector('.ch-stage img')?.alt;
     if (!alt) return;
-    if (live) { pin.setAttribute('role', 'img'); pin.setAttribute('aria-label', alt); }
-    else { pin.removeAttribute('role'); pin.removeAttribute('aria-label'); }
+    pin.querySelector(':scope > [data-described]')?.remove();
+    if (!live) return;
+    const d = document.createElement('span');
+    d.className = 'sr-only';
+    d.setAttribute('role', 'img');
+    d.setAttribute('aria-label', alt);
+    d.setAttribute('data-described', '');
+    pin.prepend(d);
   }
   function mountScene(s) {
     if (mounted.has(s.name)) return Promise.resolve();
@@ -113,7 +125,7 @@ export function createWorld(stage, { sections, form }) {
     if (s.kind === 'flight') s.el.classList.add('near');   // its name's own typeface may load now
     const job = (async () => {
       const mod = await s.load();
-      const part = await mod.mount({ THREE, world: api, stage, section: s.el, form, origin: origins[s.name] ?? origins.page, invalidate: stage.invalidate });
+      const part = await mod.mount({ THREE, world: api, stage, section: s.el, form: form0, origin: origins[s.name] ?? origins.page, invalidate: stage.invalidate });
       // shaders compile and textures go to the GPU before the scene shows, a frame at a time
       if (part.group.parent) part.group.parent.remove(part.group);
       // one piece at a time, a frame apart, so compiling never stalls the scroll
@@ -193,6 +205,13 @@ export function createWorld(stage, { sections, form }) {
       const off = want.distanceTo(camPos);
       return { ok: off < 1e-3, off };
     },
+    get form() { return form0; },
+    onRestore: null,
+    // where the page is: the section across the middle of the screen and the time into it, in screens
+    debugPlace() {
+      const i = current(scrollY);
+      return { name: sections[i].name, t: (scrollY - spans[i][0]) / unit };
+    },
     debugTrim() {
       const cur = current(scrollY);
       sections.forEach((s, i) => { if (Math.abs(i - cur) > 1) free(s); });
@@ -200,7 +219,8 @@ export function createWorld(stage, { sections, form }) {
     update(now, dt) {
       const y = scrollY;
       lastScroll = y;
-      const s = y / vh;
+      const s = y / unit;
+      { const i = current(y); place = { i, frac: (y - spans[i][0]) / Math.max(1, spans[i][1] - spans[i][0]) }; }
       // the scenes near the visitor exist; far ones are freed
       const cur = current(y);
       sections.forEach((sec, i) => {
@@ -234,7 +254,7 @@ export function createWorld(stage, { sections, form }) {
       rim.color.setRGB(...k.color);
       bounce.color.setRGB(...k.color);
       // each mounted scene poses itself; flight scenes get their chapter-local time
-      const f = { now, dt, s, vh, pointer: P, camera, form, pageWeight: pw };
+      const f = { now, dt, s, vh, unit, pointer: P, camera, form: form0, pageWeight: pw };
       sections.forEach((sec) => {
         const part = mounted.get(sec.name);
         if (!part) return;
@@ -248,7 +268,27 @@ export function createWorld(stage, { sections, form }) {
     },
   };
   layout();
-  addEventListener('resize', () => { layout(); stage.invalidate(); });
-  new ResizeObserver(() => { layout(); stage.invalidate(); }).observe(document.querySelector('main'));
+  // a resize lays the world out again; when the width changes (a rotation, a resized window) the page goes back to
+  // the same place in the story, since every section's height is in screens while the scroll is in pixels
+  addEventListener('resize', () => {
+    const keep = innerWidth !== laidOut.w ? place : null;
+    layout();
+    if (keep && spans[keep.i]) {
+      const [a, b] = spans[keep.i];
+      const y = Math.round(a + keep.frac * (b - a));
+      if (Math.abs(y - scrollY) > 1 && api.onRestore) api.onRestore(y);
+    }
+    stage.invalidate();
+  });
+  // crossing the phone breakpoint rebuilds the scenes for that form (phone camera keys, fewer objects)
+  const narrow = matchMedia('(max-width: 860px)');
+  narrow.addEventListener('change', () => {
+    form0 = narrow.matches ? 'phone' : 'desk';
+    sections.forEach(free);
+    layout();
+    stage.invalidate();
+  });
+  // content that changes size (an image arriving) lays the world out again; a window resize is handled above
+  new ResizeObserver(() => { if (innerWidth === laidOut.w && innerHeight === laidOut.h) { layout(); stage.invalidate(); } }).observe(document.querySelector('main'));
   return api;
 }

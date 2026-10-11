@@ -136,10 +136,10 @@ export async function mount({ world, stage, section, origin, form }) {
   // grab a pole and spin it: it keeps turning after the release and slows down on its own
   const spins = poles.map(() => ({ angle: 0, vel: 0, resting: true }));
   const pin = section.querySelector('.pin');
-  pin.style.touchAction = 'pan-y';   // a vertical swipe still scrolls the page
+  pin.style.touchAction = 'pan-y pinch-zoom';   // a vertical swipe still scrolls the page, a pinch still zooms
   let drag = null;
   const onDown = (e) => {
-    if (e.target.closest('a, button')) return;
+    if (e.button !== 0 || e.target.closest('a, button')) return;
     const hit = world.ray(e.clientX, e.clientY).intersectObjects(poles.map((p) => p.glass), false)[0];
     if (!hit) return;
     drag = { k: poles.findIndex((p) => p.glass === hit.object), x: e.clientX, t: e.timeStamp, vel: 0, id: e.pointerId };
@@ -160,7 +160,8 @@ export async function mount({ world, stage, section, origin, form }) {
   const onUp = (e) => {
     if (!drag || e.pointerId !== drag.id) return;
     const s = spins[drag.k];
-    s.vel = Math.max(-25, Math.min(25, drag.vel));   // at most about four turns a second
+    // it keeps the hand's speed (at most about four turns a second); a touch that became a scroll does not
+    s.vel = e.type === 'pointercancel' ? 0 : Math.max(-25, Math.min(25, drag.vel));
     s.resting = Math.abs(s.vel) < 0.02;
     drag = null;
     stage.invalidate();

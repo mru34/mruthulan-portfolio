@@ -13,6 +13,7 @@ import { Spring, lerp } from '../lib/motion.js';
 import { flickStep } from '../lib/physics.js';
 import { mulberry32 } from '../lib/scatter.js';
 import { awState, awProgress } from './awards-timeline.js';
+import { onTap } from './tap.js';
 
 const GOLD = 0xe8b64c;
 const UNIT = 1;   // prints are built one unit wide and scaled to their box each frame
@@ -99,7 +100,7 @@ export async function mount({ world, stage, section }) {
     });
     on(s.stackEl, 'pointerleave', () => { s.hover = null; stage.invalidate(); });
     on(s.stackEl, 'pointerdown', (e) => {
-      if (e.target.closest('button') || s.fly || s.tuck) return;
+      if (e.button !== 0 || e.target.closest('button') || s.fly || s.tuck) return;
       s.drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now(), vx: 0, vy: 0, dx: 0, dy: 0 };
       s.stackEl.setPointerCapture(e.pointerId);
       e.preventDefault();   // a press here is a drag of the print, not a text selection or a link follow
@@ -126,7 +127,7 @@ export async function mount({ world, stage, section }) {
     const ndc = (e) => new THREE.Vector2((e.clientX / stage.view.w) * 2 - 1, -(e.clientY / stage.view.h) * 2 + 1);
     on(s.placeEl, 'pointermove', (e) => { if (e.pointerType === 'mouse') { s.board.hover(s.board.pick(stage.camera, ndc(e))); stage.invalidate(); } });
     on(s.placeEl, 'pointerleave', () => s.board.hover(-1));
-    on(s.placeEl, 'pointerdown', (e) => { s.board.ripple(s.board.pick(stage.camera, ndc(e))); stage.invalidate(); });
+    s.offTap = onTap(s.placeEl, (e) => { s.board.ripple(s.board.pick(stage.camera, ndc(e))); stage.invalidate(); });
     s.next = s.stackEl.querySelector('[data-gal-step]');
     s.i = i;
   });
@@ -246,7 +247,7 @@ export async function mount({ world, stage, section }) {
     },
     dispose() {
       listeners.forEach(([el, type, fn, opts]) => el.removeEventListener(type, fn, opts));
-      stacks.forEach((s) => s.board.dispose());
+      stacks.forEach((s) => { s.offTap(); s.board.dispose(); });
       world.root.remove(group);
       disposeTree(group);
     },

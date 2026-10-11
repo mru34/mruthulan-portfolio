@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { createBoard } from './board.js';
 import { fitScale } from '../lib/fit.js';
+import { onTap } from './tap.js';
 
 const DESK = [{ text: 'OPEN TO A SWE INTERNSHIP', color: 'gold' }, { text: '2027/28', color: 'white' }];
 const PHONE = [{ text: 'OPEN TO A', color: 'gold' }, { text: 'SWE', color: 'gold' }, { text: 'INTERNSHIP', color: 'gold' }, { text: '2027/28', color: 'white' }];
@@ -29,26 +30,13 @@ export async function mount({ world, stage, section }) {
   narrow.addEventListener('change', onBreak);
 
   const ndc = (e) => new THREE.Vector2((e.clientX / stage.view.w) * 2 - 1, -(e.clientY / stage.view.h) * 2 + 1);
-  let press = null;
   const debug = { fit: null, rippled: false, text: () => board.text() };
   const onMove = (e) => { if (e.pointerType === 'mouse') { board.hover(board.pick(stage.camera, ndc(e))); stage.invalidate(); } };
   const onLeave = () => board.hover(-1);
-  const onDown = (e) => { press = { x: e.clientX, y: e.clientY }; };
-  const onUp = (e) => {
-    if (!press) return;
-    const moved = Math.hypot(e.clientX - press.x, e.clientY - press.y);
-    press = null;
-    if (moved >= 8) return;   // a drag or a swipe, not a tap
-    board.ripple(board.pick(stage.camera, ndc(e)));
-    debug.rippled = true;
-    stage.invalidate();
-  };
-  const onCancel = () => { press = null; };
+  // a tap ripples the board; a drag or a swipe that starts on it does not
+  const offTap = onTap(box, (e) => { board.ripple(board.pick(stage.camera, ndc(e))); debug.rippled = true; stage.invalidate(); });
   box.addEventListener('pointermove', onMove);
   box.addEventListener('pointerleave', onLeave);
-  box.addEventListener('pointerdown', onDown);
-  box.addEventListener('pointerup', onUp);
-  box.addEventListener('pointercancel', onCancel);
 
   return {
     group,
@@ -69,9 +57,7 @@ export async function mount({ world, stage, section }) {
       narrow.removeEventListener('change', onBreak);
       box.removeEventListener('pointermove', onMove);
       box.removeEventListener('pointerleave', onLeave);
-      box.removeEventListener('pointerdown', onDown);
-      box.removeEventListener('pointerup', onUp);
-      box.removeEventListener('pointercancel', onCancel);
+      offTap();
       board.dispose();
     },
   };

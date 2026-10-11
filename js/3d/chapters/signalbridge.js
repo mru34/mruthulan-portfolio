@@ -8,6 +8,7 @@ import { makePhone, makeLaptop, makeMonitor, makeStand } from '../devices.js';
 import { loadTexture, card, bez, glow, disposeTree, nextFrame } from '../textures.js';
 import { lerp, Spring } from '../../lib/motion.js';
 import { sbLocal } from './signalbridge-timeline.js';
+import { onTap } from '../tap.js';
 
 export const MESSAGE_BOX = [285, 240, 1122, 510];   // must match design/build_3d_assets.py (tested)
 const CAPTURE = { w: 1170, h: 2532 };
@@ -93,14 +94,13 @@ export async function mount({ world, stage, section, origin, form }) {
   // tapping the consent card turns it over (decorative: the words carry the meaning)
   const flip = new Spring(0, { stiffness: 120, damping: 18 });
   const pin = section.querySelector('.pin');
-  const onDown = (e) => {
+  const offTap = onTap(pin, (e) => {
     if (e.target.closest('a, button')) return;
     if (world.ray(e.clientX, e.clientY).intersectObject(consent, true).length) {
       flip.target = flip.target ? 0 : 1;
       stage.invalidate();
     }
-  };
-  pin.addEventListener('pointerdown', onDown);
+  });
 
   return {
     group,
@@ -137,7 +137,7 @@ export async function mount({ world, stage, section, origin, form }) {
       return busy;
     },
     dispose() {
-      pin.removeEventListener('pointerdown', onDown);
+      offTap();
       world.root.remove(group);
       disposeTree(group);
     },
