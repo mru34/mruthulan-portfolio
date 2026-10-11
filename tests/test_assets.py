@@ -185,6 +185,17 @@ def test_meant_textures_exist_and_their_boxes_sit_inside_the_captures():
         assert 0 <= left < right <= 1600 and 0 <= top < bottom <= 1000, box
 
 
+def test_meant_reply_cards_are_drawn_white_cards_and_the_paper_is_sharper():
+    from PIL import Image, ImageStat
+    for i in range(1, 5):
+        with Image.open(ROOT / 'assets' / '3d' / f'mt-reply-{i}.webp') as im:
+            assert im.size == (640, 296), im.size
+            assert min(im.getpixel((8, 8))[:3]) >= 250, 'the card is white to its edge (the 3D card rounds it)'
+            assert ImageStat.Stat(im.convert('L')).mean[0] > 200
+    with Image.open(ROOT / 'assets' / '3d' / 'mt-paper.webp') as im:
+        assert im.width >= 1400, im.size
+
+
 def test_the_meant_scene_and_the_builder_agree_on_the_reply_tiles():
     import build_3d_assets as b
     js = (ROOT / 'js' / '3d' / 'chapters' / 'meant.js').read_text(encoding='utf-8')

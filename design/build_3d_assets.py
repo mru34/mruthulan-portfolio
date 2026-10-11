@@ -4,7 +4,8 @@
 
 Reads the raw captures in ../portfolio-tools/card-shots/raw (outside this repository; raw files are never
 published) and the site's own media, and writes WebP files to assets/3d/. Crops are cut from the real screens
-with rounded corners, so each piece is exactly what the app showed. Nothing is drawn or invented here: the
+with rounded corners, so each piece is exactly what the app showed. Nothing is drawn or invented here (except the crisp parts drawn from the apps' real words: Better Call
+Bhai's times, MEANT's reply cards, Boss Breaker's challenge cards, and KnowCad's example console and pages): the
 one composite (sb-consent-given) is the app's own "Worker notified" pill, centred on a plate of the consent
 card's own background colour, the same size as the card.
 
@@ -207,6 +208,24 @@ def sharpen(im):
     return im.filter(ImageFilter.UnsharpMask(radius=1.2, percent=60, threshold=2))
 
 
+def reply_card(text):
+    """One of the tablet's four replies as a clean card: white (the 3D card rounds its corners), a small dish icon,
+    the reply in MEANT's own Inter 600."""
+    W, H = 640, 296
+    im = Image.new('RGB', (W, H), (255, 255, 255))
+    d = ImageDraw.Draw(im)
+    ink = (74, 79, 87)
+    d.chord((284, 52, 356, 108), 0, 180, outline=ink, width=6)          # the bowl
+    d.line((276, 80, 364, 80), fill=ink, width=6)                        # its rim
+    for x in (306, 320, 334):                                            # steam
+        d.line((x, 68, x - 5, 58, x, 48, x - 5, 38), fill=ink, width=4, joint='curve')
+    size = 72                                                            # one size for all four: the longest fits
+    while font('inter-600', size).getlength(max(REPLIES, key=len)) > W - 56:
+        size -= 2
+    d.text((W / 2, 190), text, font=font('inter-600', size), fill=(31, 35, 40), anchor='mm')
+    return im
+
+
 def save(im, name, quality=84):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f'{name}.webp'
@@ -245,10 +264,10 @@ def main():
     save(fit(media / 'meant-shot-2.webp', (1024, 640)), 'mt-partner-wait')
     for i, text in enumerate(REPLIES, 1):
         save(sized(partner_reply(text), 1024), f'mt-partner-{i}')
-    for i, box in enumerate(REPLY_BOXES, 1):
-        save(crop(media / 'meant-shot-1.webp', box, 26), f'mt-reply-{i}')
+    for i, text in enumerate(REPLIES, 1):
+        save(reply_card(text), f'mt-reply-{i}')
     save(fit_crop(media / 'meant-shot-3.webp', WORD_GRID, (1448, 446)), 'mt-words')
-    save(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8-1200.webp', (1024, 820)), 'mt-paper')
+    save(sharpen(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8.webp', (1400, 1117))), 'mt-paper', quality=80)
 
     save(fit(media / 'win-knowcad-champion.webp', (1179, 705)), 'kc-champion')
     for key in AWARD_PHOTOS:

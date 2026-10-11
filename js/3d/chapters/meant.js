@@ -3,7 +3,7 @@
 // reply tiles rise off the tablet as the visitor scrolls; picking one (click, tap, or the keyboard: each tile
 // is a real button) sends it across the table, and the partner's display shows that reply. Around the table
 // hang tiles from the word board, coloured by word type; the Tamil Murasu page that featured MEANT lies on the
-// table and opens the article.
+// table as a folded newspaper; press it and the camera glides into it before the article opens.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { makeTablet } from '../devices.js';
@@ -35,6 +35,34 @@ function standFor(device, tilt) {
   device.rotation.x = -tilt;
   g.add(foot, arm, device);
   return g;
+}
+
+// the Tamil Murasu page as a folded broadsheet lying open: the top sheet bends a little along its centre fold and
+// curls up at one corner, and three sheets under it show their edges
+function newspaper(tex) {
+  const W = 2.2, H = 2.2 * (1416 / 1776);
+  const shape = (curlBy) => {
+    const geo = new THREE.PlaneGeometry(W, H, 32, 24);
+    const p = geo.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), y = p.getY(i);
+      const curl = Math.max(0, x / W + 0.5 + y / H + 0.5 - 1.55) / 0.45;
+      p.setZ(i, Math.abs(x) * 0.05 + curlBy * curl * curl * 0.28);
+    }
+    geo.computeVertexNormals();
+    return geo;
+  };
+  const group = new THREE.Group();
+  const under = new THREE.MeshStandardMaterial({ color: 0xe6e1d4, roughness: 0.95, side: THREE.DoubleSide });
+  for (let k = 1; k <= 3; k++) {
+    const s = new THREE.Mesh(shape(0.3), under);
+    s.position.set(k * 0.012, -k * 0.008, -k * 0.006);
+    group.add(s);
+  }
+  const top = new THREE.Mesh(shape(1), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.92, side: THREE.DoubleSide }));
+  group.add(top);
+  group.traverse((o) => { o.userData.paper = true; });
+  return { group, top };
 }
 
 export async function mount({ world, stage, section, origin, form }) {
@@ -114,15 +142,11 @@ export async function mount({ world, stage, section, origin, form }) {
     return { m, y: m.position.y, depth };
   });
 
-  // the newspaper page, lying on the table with a slight curl
-  const paperGeo = new THREE.PlaneGeometry(2.2, 2.2 * (957 / 1200), 24, 1);
-  const pos = paperGeo.attributes.position;
-  for (let i = 0; i < pos.count; i++) pos.setZ(i, 0.12 * (pos.getX(i) / 1.1) ** 2);
-  paperGeo.computeVertexNormals();
-  const paper = new THREE.Mesh(paperGeo, new THREE.MeshStandardMaterial({ map: tex['mt-paper'], roughness: 0.92, side: THREE.DoubleSide }));
-  paper.position.set(0.55, 0.068, 1.7);
-  paper.rotation.set(-Math.PI / 2, 0, 0.32);
-  group.add(paper);
+  // the newspaper, folded open on the table
+  const news = newspaper(tex['mt-paper']);
+  news.group.position.set(0.55, 0.068, 1.7);
+  news.group.rotation.set(-Math.PI / 2, 0, 0.32);
+  group.add(news.group);
   world.root.add(group);
 
   // picking: a tile flies across the table into the partner's display, which then shows that reply
@@ -140,11 +164,25 @@ export async function mount({ world, stage, section, origin, form }) {
   const ndcHit = (e, objs) => world.ray(e.clientX, e.clientY).intersectObjects(objs, true)[0];
   const tileMeshes = tiles.map((t) => t.c);
   const pressLink = section.querySelector('a.mt-press');
+  // pressing the paper (or its link) glides the camera into it, then opens the article; a new-tab click, or
+  // reduced motion, is left to the browser
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let leaving = false;
+  const onPress = async (e) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || reduced.matches) return;
+    e.preventDefault();
+    if (leaving) return;
+    leaving = true;
+    await world.glideTo(news.top.getWorldPosition(new THREE.Vector3()), 600);
+    leaving = false;
+    location.href = pressLink.href;
+  };
+  pressLink.addEventListener('click', onPress);
   const offTap = onTap(pin, (e) => {
     if (e.target.closest('a, button')) return;
-    const hit = ndcHit(e, [...tileMeshes, paper]);
+    const hit = ndcHit(e, [...tileMeshes, news.group]);
     if (!hit) return;
-    if (hit.object === paper) pressLink.click();   // through the real link, so it behaves like one
+    if (hit.object.userData.paper) pressLink.click();   // through the real link, so it behaves like one
     else pick(hit.object.userData.reply);
   });
   const onMove = (e) => {
@@ -159,7 +197,7 @@ export async function mount({ world, stage, section, origin, form }) {
   pin.addEventListener('pointermove', onMove);
   buttons.forEach((b) => { b.addEventListener('click', onClick); b.addEventListener('focus', onFocus); b.addEventListener('blur', onBlur); });
 
-  const debug = { anchors: { paper: paper.position.clone().add(origin) } };
+  const debug = { anchors: { paper: news.group.position.clone().add(origin) } };
   Object.defineProperties(debug, { shown: { get: () => shown }, focused: { get: () => focused } });
   return {
     group,
@@ -211,6 +249,7 @@ export async function mount({ world, stage, section, origin, form }) {
     },
     dispose() {
       offTap();
+      pressLink.removeEventListener('click', onPress);
       pin.removeEventListener('pointermove', onMove);
       pin.style.cursor = '';
       buttons.forEach((b) => { b.removeEventListener('click', onClick); b.removeEventListener('focus', onFocus); b.removeEventListener('blur', onBlur); });

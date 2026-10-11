@@ -9,12 +9,14 @@
 import * as THREE from 'three';
 import { sampleKeys, pageWeight } from '../lib/path.js';
 import { Spring } from '../lib/motion.js';
+import { glidePose } from '../lib/glide.js';
 import { rectToWorld } from '../lib/fit.js';
 import { CAM_Z } from './stage.js';
 import { KEYS, ORIGINS, COLORS } from './paths.js';
 import { glow, texturesOf } from './textures.js';
 
 const BG = 0x0c0c0d;
+const GLIDE_NEAR = 2.2;   // how close the press glide stops to the paper (decimetres)
 const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
 
 export function createWorld(stage, { sections, form }) {
@@ -60,6 +62,7 @@ export function createWorld(stage, { sections, form }) {
   const lookY = new Spring(0, { stiffness: 60, damping: 16 });
   const shakeS = new Spring(0, { stiffness: 900, damping: 18 });
   const camPos = new THREE.Vector3(), camAt = new THREE.Vector3();
+  let glide = null;   // a short camera move toward a point (MEANT's newspaper), held until the page leaves or scrolls
 
   const docBox = (el) => { const r = el.getBoundingClientRect(); return { left: r.left + scrollX, top: r.top + scrollY, width: r.width, height: r.height }; };
   function layout() {
@@ -170,6 +173,13 @@ export function createWorld(stage, { sections, form }) {
     // a section's top, in CSS pixels from the top of the screen, from the cached layout (no layout read)
     top(name) { const i = sections.findIndex((x) => x.name === name); return i < 0 ? 0 : spans[i][0] - scrollY; },
     shake(a) { shakeS.velocity += a; stage.invalidate(); },
+    // the camera glides toward `point` over `ms` and holds there; the scroll (or coming back to the page) takes it back
+    glideTo(point, ms = 600) {
+      if (glide) glide.resolve(false);
+      return new Promise((resolve) => { glide = { to: point.toArray(), t: 0, ms, y: scrollY, resolve, done: false }; stage.invalidate(); });
+    },
+    endGlide() { if (glide) { glide.resolve(false); glide = null; stage.invalidate(); } },
+    debugGlide: () => (glide ? glide.t : null),
     ray(clientX, clientY) {
       const r = new THREE.Raycaster();
       r.setFromCamera(new THREE.Vector2((clientX / view.w) * 2 - 1, -(clientY / view.h) * 2 + 1), camera);
@@ -239,6 +249,17 @@ export function createWorld(stage, { sections, form }) {
       let busy = lookX.step(dt);
       busy = lookY.step(dt) || busy;
       busy = shakeS.step(dt) || busy;
+      if (glide) {
+        if (Math.abs(y - glide.y) > 2) api.endGlide();
+        else {
+          glide.t = Math.min(1, glide.t + (dt || 16) / glide.ms);
+          const g = glidePose(camPos.toArray(), camAt.toArray(), glide.to, glide.t, GLIDE_NEAR);
+          camPos.fromArray(g.pos);
+          camAt.fromArray(g.at);
+          if (glide.t < 1) busy = true;
+          else if (!glide.done) { glide.done = true; glide.resolve(true); }
+        }
+      }
       camera.position.copy(camPos);
       camera.position.x += shakeS.value * 0.04;
       camera.position.y += shakeS.value * 0.025;
@@ -280,6 +301,8 @@ export function createWorld(stage, { sections, form }) {
     }
     stage.invalidate();
   });
+  // back to the page from the browser's cache (after the newspaper's glide opened the article): the scroll's pose
+  addEventListener('pageshow', (e) => { if (e.persisted) api.endGlide(); });
   // crossing the phone breakpoint rebuilds the scenes for that form (phone camera keys, fewer objects)
   const narrow = matchMedia('(max-width: 860px)');
   narrow.addEventListener('change', () => {

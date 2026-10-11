@@ -850,6 +850,54 @@ scenario('Better Call Bhai: a time slot lifts under the mouse and settles when i
   await page.close();
 });
 
+scenario('MEANT: pressing the newspaper glides into it, then opens the article', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const p = await page.evaluate(() => window.__world.debugProject('meant', 'paper'));
+  check(p !== null, 'the newspaper is on screen');
+  const t0 = Date.now();
+  await Promise.all([page.waitForNavigation({ timeout: 15000 }).catch(() => {}), page.mouse.click(p.x, p.y)]);
+  const ms = Date.now() - t0;
+  check(page.url().endsWith('meant.html#press'), `it opened the article (${page.url()})`);
+  check(ms >= 500, `after the camera glided in (${ms} ms)`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('MEANT: after coming back from the article, the camera is on the scroll again', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(400);
+  await page.evaluate(() => { window.__world.glideTo(window.__world.mounted.get('meant').debug.anchors.paper.clone()); });
+  await page.waitForFunction(() => window.__world.debugGlide() === 1, { timeout: 8000 }).catch(() => {});
+  check(await page.evaluate(() => window.__world.debugGlide()) === 1, 'the camera glided to the paper');
+  await page.evaluate(() => dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+  await page.waitForFunction(() => window.__world.debugCamera().ok, { timeout: 5000 }).catch(() => {});   // the next frame
+  check(await page.evaluate(() => window.__world.debugGlide()) === null, 'coming back ends the glide');
+  check(await page.evaluate(() => window.__world.debugCamera().ok), 'the camera is on the scroll’s pose');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('MEANT: a ctrl-click on Featured in Tamil Murasu is left to the browser', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="meant"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="meant"][data-live]', { timeout: 30000 });
+  await sleep(400);
+  const prevented = await page.$eval('a.mt-press', (a) => {
+    let seen = null;
+    addEventListener('click', (e) => { seen = e.defaultPrevented; e.preventDefault(); }, { once: true });   // stay on the page
+    a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true, button: 0 }));
+    return seen;
+  });
+  check(prevented === false, 'the page did not take over the click');
+  check(await page.evaluate(() => window.__world.debugGlide && window.__world.debugGlide()) === null, 'no glide started');
+  await page.close();
+});
+
 /* ------------------------------------------------------------------ run */
 const ONLY = process.env.ONLY;   // run just the scenarios whose name contains this text
 for (const [name, fn] of SCENARIOS) {
