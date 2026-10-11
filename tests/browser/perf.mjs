@@ -49,6 +49,7 @@ const { log, frames, frozen } = await page.evaluate(() => ({
 }));
 const slow = log.filter(([dt]) => dt > 33).length;
 const longest = Math.max(...log.map(([dt]) => dt));
+const slowAt = log.filter(([dt]) => dt > 33).map(([dt, y]) => `${Math.round(dt)}@${Math.round(y / (form === 'phone' ? 844 : 900) * 10) / 10}`).join(' ');
 const v = log.map(([, y], i) => (i ? y - log[i - 1][1] : 0));
 const raw = v.map((d, i) => (i > 1 ? Math.abs(d - v[i - 1]) : 0));
 const worst = raw.indexOf(Math.max(...raw));
@@ -58,7 +59,9 @@ const p99 = jerk[Math.floor(jerk.length * 0.99)] || 0;
 const mismatched = frames.filter(([, y, used]) => y !== used).length;
 const pct = (100 * slow) / log.length;
 console.log(`${form}${native ? ' (native)' : ''}: ${log.length} frames, ${pct.toFixed(1)}% slow, longest ${longest.toFixed(0)} ms, jerk p99 ${p99.toFixed(1)} px, `
-  + `max ${(jerk.at(-1) || 0).toFixed(1)} px (around: ${around}), ${mismatched} out-of-sync frames of ${frames.length}${frozen ? ', ended on stills' : ''}`);
+  + `max ${(jerk.at(-1) || 0).toFixed(1)} px (around: ${around}), ${mismatched} out-of-sync frames of ${frames.length}${frozen ? ', ended on stills' : ''}`
+  + `
+  slow frames (ms@screens): ${slowAt}`);
 await browser.close();
 const ok = (pct < 5 || frozen) && mismatched === 0 && (native || frozen || longest <= LONGEST_MAX)
   && (native || mobile || !JERK_MAX || p99 <= JERK_MAX);

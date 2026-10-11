@@ -408,8 +408,8 @@ def og_image(path):
 
 
 def module_map():
-    """The homepage's ES modules. Every module URL points at a copy stamped with a hash of its contents, so
-    a browser never mixes modules from two releases (GitHub Pages lets them be cached for ten minutes)."""
+    """The homepage's ES modules. Every module URL carries a hash of the file's contents (?v=…), so a browser
+    never mixes modules from two releases (GitHub Pages lets them be cached for ten minutes)."""
     import hashlib
     imports = {}
     for f in sorted((ROOT / 'js').rglob('*.js')):
@@ -723,15 +723,21 @@ CHAPTERS = [
              'and the worker’s handoff brief for Mira Tan, a fictional youth.'),
     dict(pid='bx', num='02', side='right', result='Solo build · code on GitHub',
          font='Name Boss Breaker', still='boss-breaker-card',
+         alt='Boss Breaker’s Boss Raid screen on a large display and on a phone, the Stress Dragon’s health bar '
+             'at 1,840 of 5,000 HP, a hand of challenge cards and the leaderboard.',
          extra='<button class="btn bx-attack" type="button" data-attack>Attack</button>',
          hud='<div class="bx-hud" aria-hidden="true"><p class="bx-hit" data-hit></p><p class="bx-boss">Stress Dragon</p>'
              '<p class="bx-hp"><span data-hp>1,840</span> / 5,000 HP</p>'
              '<p class="bx-down" data-defeated hidden>Stress Dragon defeated</p></div>'
              '<p class="sr-only" aria-live="polite" data-hp-live></p>'),
     dict(pid='bb', num='03', side='bottom-left', result='Solo build · in a pilot with the shop',
-         font='Name Better Call Bhai', still='better-call-bhai-card'),
+         font='Name Better Call Bhai', still='better-call-bhai-card',
+         alt='Better Call Bhai on a phone showing Booking Confirmed, between two yellow, black and white barber poles, '
+             'with the day’s time slots behind it and 15:00 chosen.'),
     dict(pid='mt', num='04', side='right', result='2nd runner-up · Dell InnovateFest 2026',
          font='Name MEANT', still='meant-card',
+         alt='MEANT on a café table: the tablet showing four suggested replies, the partner’s display showing '
+             'Give me a moment, and the Tamil Murasu page, with word tiles from the board around them.',
          extra='<a class="link mt-press" href="meant.html#press">Featured in Tamil Murasu</a>'
                '<div class="mt-picks" role="group" aria-label="Pick a reply">'
                + ''.join(f'<button class="mt-pick" type="button" data-reply="{i}">{r}</button>'
@@ -739,6 +745,8 @@ CHAPTERS = [
                + '</div><p class="sr-only" aria-live="polite" data-partner-live></p>'),
     dict(pid='kc', num='05', side='left', result='Champion · Autodesk Singapore Hackathon 2026',
          font='Name KnowCad', still='win-knowcad-champion',
+         alt='The champion photo from the Autodesk Singapore Hackathon 2026, KnowCAD Intellicase on the screen '
+             'behind the team, among drawing sheets.',
          extra='<p class="kc-q" aria-hidden="true"><span data-typed>Who won the Autodesk Singapore Hackathon 2026?</span>'
                '<i class="kc-caret"></i></p><p class="sr-only">Who won the Autodesk Singapore Hackathon 2026?</p>'),
 ]

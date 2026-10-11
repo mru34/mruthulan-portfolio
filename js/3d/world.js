@@ -98,10 +98,19 @@ export function createWorld(stage, { sections, form }) {
   }
 
   const anchorsOf = (s) => [s.el, ...s.el.querySelectorAll('[data-anchor]')];
+  // while a chapter's 3D stands in for its still, the chapter carries the still's description for screen readers
+  function describe(s, live) {
+    const pin = s.kind === 'flight' && s.el.querySelector('.pin');
+    const alt = pin && s.el.querySelector('.ch-stage img')?.alt;
+    if (!alt) return;
+    if (live) { pin.setAttribute('role', 'img'); pin.setAttribute('aria-label', alt); }
+    else { pin.removeAttribute('role'); pin.removeAttribute('aria-label'); }
+  }
   function mountScene(s) {
     if (mounted.has(s.name)) return Promise.resolve();
     if (pending.has(s.name)) return pending.get(s.name);
     const stillWanted = () => pending.get(s.name) === job;
+    if (s.kind === 'flight') s.el.classList.add('near');   // its name's own typeface may load now
     const job = (async () => {
       const mod = await s.load();
       const part = await mod.mount({ THREE, world: api, stage, section: s.el, form, origin: origins[s.name] ?? origins.page, invalidate: stage.invalidate });
@@ -122,6 +131,7 @@ export function createWorld(stage, { sections, form }) {
       root.add(part.group);
       mounted.set(s.name, part);
       if (!document.documentElement.classList.contains('frozen')) anchorsOf(s).forEach((a) => a.setAttribute('data-live', ''));
+      describe(s, true);
       stage.invalidate();
     })().catch((err) => {
       console.warn(`3D scene "${s.name}" did not load; its still stays.`, err);
@@ -138,6 +148,7 @@ export function createWorld(stage, { sections, form }) {
     root.remove(part.group);
     part.dispose();
     anchorsOf(s).forEach((a) => a.removeAttribute('data-live'));
+    describe(s, false);
   }
 
   const api = {
@@ -226,7 +237,12 @@ export function createWorld(stage, { sections, form }) {
       const f = { now, dt, s, vh, pointer: P, camera, form, pageWeight: pw };
       sections.forEach((sec) => {
         const part = mounted.get(sec.name);
-        if (part) busy = part.update(sec.kind === 'flight' ? s - bases[sec.name] : null, f) || busy;
+        if (!part) return;
+        busy = part.update(sec.kind === 'flight' ? s - bases[sec.name] : null, f) || busy;
+        // a scene out of range leaves the scene graph, so three.js does not walk its objects every frame
+        const inGraph = part.group.parent === root;
+        if (part.group.visible && !inGraph) root.add(part.group);
+        else if (!part.group.visible && inGraph) root.remove(part.group);
       });
       return busy;
     },

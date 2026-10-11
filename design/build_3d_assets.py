@@ -169,14 +169,16 @@ def main():
         save(sized(crop(bx / 'd-challenges.png', box, 26), 640), f'bx-card-{i}')
 
     media = ROOT / 'assets' / 'media'
-    save(fit(media / 'meant-shot-1.webp', (1600, 1000)), 'mt-tablet')
-    save(fit(media / 'meant-shot-2.webp', (1600, 1000)), 'mt-partner-wait')
+    # the tablet and the partner's display are about 400 px wide on screen at most: 1024 px is plenty, and
+    # smaller textures go to the GPU without stalling a frame
+    save(fit(media / 'meant-shot-1.webp', (1280, 800)), 'mt-tablet')
+    save(fit(media / 'meant-shot-2.webp', (1024, 640)), 'mt-partner-wait')
     for i, text in enumerate(REPLIES, 1):
-        save(partner_reply(text), f'mt-partner-{i}')
+        save(sized(partner_reply(text), 1024), f'mt-partner-{i}')
     for i, box in enumerate(REPLY_BOXES, 1):
         save(crop(media / 'meant-shot-1.webp', box, 26), f'mt-reply-{i}')
     save(fit_crop(media / 'meant-shot-3.webp', WORD_GRID, (1448, 446)), 'mt-words')
-    save(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8-1200.webp', (1200, 960)), 'mt-paper')
+    save(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8-1200.webp', (1024, 820)), 'mt-paper')
 
     save(fit(media / 'win-knowcad-champion.webp', (1179, 705)), 'kc-champion')
     for key in AWARD_PHOTOS:

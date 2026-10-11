@@ -440,6 +440,9 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .ch-num{font:500 16px/1 var(--mono);letter-spacing:.1em;color:var(--c)}
 .ch-name{font-family:var(--name-font),var(--stmt);font-weight:400;font-size:clamp(48px,18cqi,120px);line-height:1;letter-spacing:-.01em;color:var(--c);text-wrap:balance}
 .ch-name a{color:inherit}
+/* with script on, a project's own typeface is only asked for once its chapter is near (the world adds .near); the
+   stills, a frozen page and a page without script use it straight away */
+.js-on:not(.stills):not(.frozen) .chapter:not(.near) .ch-name{font-family:var(--stmt)}
 .chapter[data-scene="knowcad"] .ch-name{font-size:clamp(40px,14cqi,96px)} /* Michroma is very wide */
 .ch-line{font-size:clamp(18px,1.5vw,22px);line-height:1.45;color:var(--soft);max-width:32ch}
 .ch-res{font:500 16px/1.4 var(--mono);letter-spacing:.02em;color:var(--c)}
@@ -481,6 +484,7 @@ html:not(.has-3d) .mt-picks,.frozen .mt-picks{display:none}
 @media (max-width:860px){
   .hero-board{aspect-ratio:10.12/5.07}
   .end-board{aspect-ratio:11.21/6.72}
+  html.has-3d .rail{display:none} /* on a phone the rail would sit over the scene */
   .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
   .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
   .me{grid-template-columns:1fr}

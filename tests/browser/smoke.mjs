@@ -466,6 +466,46 @@ scenario('the internship board comes alive in its box at the end, and a swipe ac
   await page.close();
 });
 
+scenario('a live chapter still describes its picture to screen readers', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="signalbridge"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="signalbridge"][data-live]', { timeout: 30000 });
+  const r = await page.$eval('[data-scene="signalbridge"] .pin', (p) => ({ role: p.getAttribute('role'), label: p.getAttribute('aria-label') }));
+  check(r.role === 'img' && /SignalBridge/.test(r.label || ''), `the pin carries the still's description (${JSON.stringify(r)})`);
+  await page.close();
+});
+
+scenario('a swipe that starts on the name board does not ripple it; a tap does', async () => {
+  const { page } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await sleep(300);
+  const box = await page.$eval('.hero-board', (e) => { const r = e.getBoundingClientRect(); return { x: r.x + r.width * 0.3, y: r.y + r.height * 0.4 }; });
+  await page.mouse.move(box.x, box.y); await page.mouse.down();
+  await page.mouse.move(box.x + 150, box.y + 10, { steps: 5 }); await page.mouse.up();
+  check(!(await page.evaluate(() => window.__world.mounted.get('hero').debug.rippled)), 'a drag across the name did not ripple it');
+  await page.mouse.click(box.x, box.y);
+  check(await page.evaluate(() => window.__world.mounted.get('hero').debug.rippled), 'a tap ripples it');
+  await page.close();
+});
+
+scenario('on a phone the chapter rail stays out of the way', async () => {
+  const { page } = await open({ w: 390, h: 844 });
+  check(await page.$eval('.rail', (r) => getComputedStyle(r).display === 'none'), 'no rail on a phone');
+  await page.close();
+});
+
+scenario('the name font of a project loads only as its chapter comes near', async () => {
+  const { page } = await open();
+  await sleep(800);
+  const fetched = () => page.evaluate(() => performance.getEntriesByType('resource').some((e) => e.name.includes('name-knowcad')));
+  check(!(await fetched()), 'KnowCad’s font is not fetched at the top of the page');
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop - innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="knowcad"].near', { timeout: 30000 }).catch(() => {});
+  await sleep(800);
+  check(await fetched(), 'it is fetched once the chapter is near');
+  await page.close();
+});
+
 scenario('a page opened at #contact has nothing animating by itself', async () => {
   for (const path of ['', '#contact']) {
     const page = await browser.newPage();

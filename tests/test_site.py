@@ -131,8 +131,13 @@ def test_hero_and_ending_carry_the_links_with_their_events():
 def _used_class_tokens():
     tokens = set()
     for f in ROOT.glob('*.html'):
-        for cls in re.findall(r'class="([^"]+)"', f.read_text(encoding='utf-8')):
+        html = f.read_text(encoding='utf-8')
+        for cls in re.findall(r'class="([^"]+)"', html):
             tokens.update(cls.split())
+        # class names an inline script adds (the page's first line of script swaps no-js for js-on)
+        for script in re.findall(r'<script>(.*?)</script>', html, re.S):
+            for parts in re.findall(r"'([^'\n]*)'|\"([^\"\n]*)\"", script):
+                tokens.update(re.findall(r'[A-Za-z][\w-]*', ' '.join(parts)))
     for f in (ROOT / 'js').rglob('*.js'):
         if 'vendor' in f.parts:
             continue
@@ -255,3 +260,9 @@ def test_every_page_header_links_to_linkedin_and_github():
         head = markup[markup.index('<header'):markup.index('</header>')]
         assert f'href="{bs.LINKEDIN}"' in head and 'aria-label="LinkedIn"' in head, name
         assert f'href="{bs.GITHUB}"' in head and 'aria-label="GitHub"' in head, name
+
+
+def test_every_chapter_still_has_its_own_description():
+    for c in bs.CHAPTERS:
+        assert c.get('alt'), c['pid']
+        assert bs.BY_ID[c['pid']]['name'].split()[0] in c['alt'] or c['pid'] == 'kc', c['pid']

@@ -79,14 +79,21 @@ def test_the_scene_and_the_builder_agree_on_the_message_crop():
     assert m and tuple(map(int, m.groups())) == b.MESSAGE_BOX
 
 
-@pytest.mark.parametrize('name', ['hero-desk', 'hero-phone', 'signalbridge-desk', 'signalbridge-phone'])
+STILL_SCENES = ['hero', 'ending', 'signalbridge', 'boss-breaker', 'better-call-bhai', 'meant', 'knowcad']
+
+
+@pytest.mark.parametrize('name', [f'{s}-{f}' for s in STILL_SCENES for f in ('desk', 'phone')])
 def test_each_rendered_still_shows_its_scene(name):
-    """A still taken from the wrong place is a transparent (or empty) image: at least a tenth must be drawn."""
-    from PIL import Image
+    """A still taken from the wrong place is empty: a board's still (transparent around the board) must be at
+    least a tenth drawn, and a chapter's (the whole screen) must not be one flat colour."""
+    from PIL import Image, ImageStat
     with Image.open(ROOT / 'assets' / '3d' / 'stills' / f'{name}.webp') as im:
-        alpha = im.convert('RGBA').getchannel('A')
-        drawn = sum(1 for a in alpha.get_flattened_data() if a > 200)
-        assert drawn / (im.width * im.height) > 0.1, drawn
+        if name.startswith(('hero', 'ending')):
+            alpha = im.convert('RGBA').getchannel('A')
+            drawn = sum(1 for a in alpha.get_flattened_data() if a > 200)
+            assert drawn / (im.width * im.height) > 0.1, drawn
+        else:
+            assert ImageStat.Stat(im.convert('L')).stddev[0] > 12, ImageStat.Stat(im.convert('L')).stddev
 
 
 def test_boss_breaker_crop_boxes_sit_inside_their_captures():

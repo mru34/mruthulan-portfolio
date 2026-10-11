@@ -1,6 +1,6 @@
 // The hero: the name as a 3D split-flap board, fitted into .hero-board (a page scene: the camera holds the page
 // pose here). It leans toward the mouse with a warm glint following the pointer, flickers a flap under the
-// mouse, ripples on a press, and as the visitor scrolls on it tilts back and rises out of the camera's way
+// mouse, ripples on a tap, and as the visitor scrolls on it tilts back and rises out of the camera's way
 // while the camera flies on into SignalBridge. The first frame matches the still exactly (no pointer, no lean).
 import * as THREE from 'three';
 import { createBoard } from './board.js';
@@ -35,12 +35,26 @@ export async function mount({ world, stage, section }) {
   const ndc = (e) => new THREE.Vector2((e.clientX / stage.view.w) * 2 - 1, -(e.clientY / stage.view.h) * 2 + 1);
   const onMove = (e) => { if (e.pointerType === 'mouse') { board.hover(board.pick(stage.camera, ndc(e))); stage.invalidate(); } };
   const onLeave = () => board.hover(-1);
-  const onDown = (e) => { board.ripple(board.pick(stage.camera, ndc(e))); stage.invalidate(); };
+  // a tap ripples the name; a drag or a swipe that starts on it does not
+  let press = null;
+  const debug = { fit: null, rippled: false };
+  const onDown = (e) => { press = { x: e.clientX, y: e.clientY }; };
+  const onUp = (e) => {
+    if (!press) return;
+    const moved = Math.hypot(e.clientX - press.x, e.clientY - press.y);
+    press = null;
+    if (moved >= 8) return;
+    board.ripple(board.pick(stage.camera, ndc(e)));
+    debug.rippled = true;
+    stage.invalidate();
+  };
+  const onCancel = () => { press = null; };
   box.addEventListener('pointermove', onMove);
   box.addEventListener('pointerleave', onLeave);
   box.addEventListener('pointerdown', onDown);
+  box.addEventListener('pointerup', onUp);
+  box.addEventListener('pointercancel', onCancel);
   const glint = world.glint;
-  const debug = { fit: null };
 
   return {
     group,
@@ -71,6 +85,8 @@ export async function mount({ world, stage, section }) {
       box.removeEventListener('pointermove', onMove);
       box.removeEventListener('pointerleave', onLeave);
       box.removeEventListener('pointerdown', onDown);
+      box.removeEventListener('pointerup', onUp);
+      box.removeEventListener('pointercancel', onCancel);
       glint.intensity = 0;
       board.dispose();
     },
