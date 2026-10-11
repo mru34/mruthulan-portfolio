@@ -74,7 +74,7 @@ def test_no_signalbridge_wall_screen_is_light():
             assert ImageStat.Stat(im.convert('L')).mean[0] < 70, p.name
 
 
-MIN_WIDTH = {'bx-display': 2048, 'bx-leaderboard': 1271, 'bx-phone': 1024}
+MIN_WIDTH = {'bx-display': 1600, 'bx-leaderboard': 1271, 'bx-phone': 768}
 
 
 @pytest.mark.parametrize('name,width', MIN_WIDTH.items())
@@ -158,7 +158,7 @@ def test_the_six_challenge_cards_are_drawn_and_each_is_different():
         'Ten minutes of stretching after class', 'Cook one meal instead of ordering in',
         'Eight hours of sleep, two nights running']
     ims = [Image.open(ROOT / 'assets' / '3d' / f'bx-card-{i}.webp').convert('RGB') for i in range(1, 7)]
-    assert all(im.size == (512, 720) for im in ims)
+    assert all(im.size == (384, 540) for im in ims)
     for i in range(6):
         for j in range(i + 1, 6):
             diff = ImageStat.Stat(ImageChops.difference(ims[i], ims[j])).mean
@@ -208,7 +208,7 @@ def test_meant_reply_cards_are_drawn_white_cards_and_the_paper_is_sharper():
             assert min(im.getpixel((8, 8))[:3]) >= 250, 'the card is white to its edge (the 3D card rounds it)'
             assert ImageStat.Stat(im.convert('L')).mean[0] > 200
     with Image.open(ROOT / 'assets' / '3d' / 'mt-paper.webp') as im:
-        assert im.width >= 1400, im.size
+        assert im.width >= 1024, im.size
 
 
 def test_the_meant_scene_and_the_builder_agree_on_the_reply_tiles():
@@ -224,7 +224,7 @@ KC = ['kc-console-0', 'kc-console-1', 'kc-console-2', 'kc-console-3', 'kc-spines
 def test_knowcad_textures_are_drawn_and_the_champion_photo_is_gone():
     from PIL import Image, ImageChops, ImageStat
     sizes = {n: Image.open(ROOT / 'assets' / '3d' / f'{n}.webp').size for n in KC}
-    assert all(sizes[f'kc-console-{i}'] == (1600, 1000) for i in range(4))
+    assert all(sizes[f'kc-console-{i}'] == (1024, 640) for i in range(4))
     assert sizes['kc-spines'] == (800, 800)
     assert all(sizes[f'kc-source-{i}'] == (600, 780) for i in range(1, 4))
     assert not (ROOT / 'assets' / '3d' / 'kc-champion.webp').exists()

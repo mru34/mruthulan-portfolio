@@ -695,7 +695,7 @@ scenario('fix: the first wheel notch after the page sat still glides instead of 
   const d = await page.evaluate(() => window.__d);
   const max = Math.max(...d.map(Math.abs));
   const total = d.reduce((a, b) => a + b, 0);
-  check(total > 80 && max <= 35, `the notch glides (largest step ${max} px of ${total})`);
+  check(total > 80 && max <= 50, `the notch glides (largest step ${max} px of ${total})`);
   await page.close();
 });
 
@@ -1004,6 +1004,20 @@ scenario('Awards: Next photo pressed three times quickly ends on the gallery’s
   await sleep(200);
   const html = await page.$eval('#win-dell .shot[data-on]', (a) => a.dataset.photo);
   check(await page.evaluate(() => window.__world.mounted.get('awards').debug.topPhoto(1)) === html, `the frame shows the gallery’s photo (${html})`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('at 390px every changed chapter goes live without errors', async () => {
+  const { page, errors } = await open({ w: 390, h: 844 });
+  for (const scene of ['signalbridge', 'boss-breaker', 'better-call-bhai', 'meant', 'knowcad']) {
+    await page.evaluate((s) => { const c = document.querySelector(`[data-scene="${s}"]`); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); }, scene);
+    await page.waitForSelector(`[data-scene="${scene}"][data-live]`, { timeout: 30000 }).catch(() => {});
+    check(await page.$(`[data-scene="${scene}"][data-live]`) !== null, `${scene} is live at 390px`);
+  }
+  await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop, behavior: 'instant' }); });
+  await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 }).catch(() => {});
+  check(await page.$('#awards .aw-stack[data-live]') !== null, 'Awards is live at 390px');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });

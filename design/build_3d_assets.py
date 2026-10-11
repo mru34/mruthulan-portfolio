@@ -70,7 +70,8 @@ FONT_FILES = {
 # Awards: each event's real photos, printed on the table (the keys of data/media.json)
 AWARD_PHOTOS = ['win-signalbridge-team', 'win-signalbridge-award', 'win-meant-handover', 'win-meant-stage',
                 'win-meant-team', 'win-knowcad-champion', 'win-knowcad-team']
-AWARD_WIDTH = 1400                    # the photos at their source's full width (at most this), lightly sharpened
+AWARD_WIDTH = 900                     # the photos at most this wide (1.5x their largest size on screen at 1920 px,
+                                      # and a GPU upload short enough not to stall a frame), lightly sharpened
 # Boss Breaker's six challenges, #1 to #6, as d-challenges.png shows them: the words, points, creator; each card
 # gets its own icon and an accent from the game's orange family
 CHALLENGES = [
@@ -440,12 +441,13 @@ def main():
     save(fit_crop(sb / 'm-youth-preview.png', PHONE_CROP, (768, 1662)), 'sb-phone-preview')
 
     bx = RAW / 'bx'
-    save(sharpen(fit_crop(bx / 'd-boss.png', DISPLAY_CROP, (2048, 2048))), 'bx-display')
-    save(fit(bx / 'm-boss.png', (1024, 2216)), 'bx-phone')
+    # sized to 1.5x their largest size on screen, so each goes to the GPU without stalling a frame
+    save(sharpen(fit_crop(bx / 'd-boss.png', DISPLAY_CROP, (1600, 1600))), 'bx-display')
+    save(fit(bx / 'm-boss.png', (768, 1662)), 'bx-phone')
     save(sized(crop(bx / 'd-boss.png', DRAGON_BOX, 22), 320), 'bx-dragon')   # already its source size (184 x 244)
     save(crop(bx / 'd-boss.png', LEADER_BOX, 26), 'bx-leaderboard')          # its source size, 1271 x 518
     for i, (text, pts, by, kind, accent) in enumerate(CHALLENGES, 1):
-        save(challenge_card(i, text, pts, by, kind, accent), f'bx-card-{i}')
+        save(challenge_card(i, text, pts, by, kind, accent).resize((384, 540), Image.LANCZOS), f'bx-card-{i}')   # drawn at 512
 
     media = ROOT / 'assets' / 'media'
     # the tablet and the partner's display are about 400 px wide on screen at most: 1024 px is plenty, and
@@ -457,10 +459,10 @@ def main():
     for i, text in enumerate(REPLIES, 1):
         save(reply_card(text), f'mt-reply-{i}')
     save(fit_crop(media / 'meant-shot-3.webp', WORD_GRID, (1448, 446)), 'mt-words')
-    save(sharpen(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8.webp', (1400, 1117))), 'mt-paper', quality=80)
+    save(sharpen(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8.webp', (1024, 817))), 'mt-paper', quality=82)   # from the full scan
 
     for state in range(4):
-        save(kc_console(state), f'kc-console-{state}')
+        save(kc_console(state).resize((1024, 640), Image.LANCZOS), f'kc-console-{state}')   # drawn at 1600, kept at 1024
     save(kc_spines(), 'kc-spines')
     for i in range(3):
         save(kc_source(i), f'kc-source-{i + 1}')
