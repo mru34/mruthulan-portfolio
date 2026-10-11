@@ -479,6 +479,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .facts3 dt{font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
 .facts3 dd{margin:8px 0 0;font-size:clamp(19px,1.6vw,24px);line-height:1.35}
 .facts3 .mono{font:500 17px/1.5 var(--mono);color:var(--soft)}
+.me-intro{margin:0 0 clamp(28px,4vh,40px);font-size:clamp(22px,2vw,30px);line-height:1.35;max-width:34ch;color:var(--ink)}
 
 /* the ending: the internship board, Reach out, the links */
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}

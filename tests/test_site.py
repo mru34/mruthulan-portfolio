@@ -70,14 +70,16 @@ COPY = [
     'Case study',
     'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
     'Next photo', 'Licence “in use on another device” after moving to new laptops', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
-    'Study', 'Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)',
-    'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER',
+    'Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028',
+    'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER',
+    'I study IT at Singapore Polytechnic. I build for one real person first: a youth worker at midnight, '
+    'someone who can’t rely on their speech, a barber with a full day of bookings.',
     'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
     'Reach out', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
         'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo',
-        'Who won the Autodesk Singapore Hackathon 2026?']
+        'Who won the Autodesk Singapore Hackathon 2026?', '(expected)']
 BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',
           'crafted', 'unlock', 'robust', 'delve']
 

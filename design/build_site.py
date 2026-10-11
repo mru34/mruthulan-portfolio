@@ -755,9 +755,11 @@ CHAPTERS = [
                f'<i class="kc-caret"></i></p><p class="sr-only">{e(KC_QUERY)}</p>'),
 ]
 
+ABOUT_INTRO = ('I study IT at Singapore Polytechnic. I build for one real person first: a youth worker at midnight, '
+               'someone who can’t rely on their speech, a barber with a full day of bookings.')
 ABOUT_FACTS = [
-    ('Study', 'Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)', ''),
-    ('Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER', ''),
+    ('Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028', ''),
+    ('Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER', ''),
     ('Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL', 'mono'),
 ]
 
@@ -859,7 +861,7 @@ def build_home():
       <h2 class="big" id="about-title">About</h2>
       <div class="me">
         {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait')}
-        <dl class="facts3" id="credentials">{facts}</dl>
+        <div class="me-text"><p class="me-intro">{e(ABOUT_INTRO)}</p><dl class="facts3" id="credentials">{facts}</dl></div>
       </div>
     </section>
 
