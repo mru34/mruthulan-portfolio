@@ -732,7 +732,12 @@ CHAPTERS = [
          alt='SignalBridge on a phone and a laptop: the youth’s SafeNight chat showing Worker notified, '
              'and the worker’s handoff brief for Mira Tan, a fictional youth.'),
     dict(pid='bx', num='02', side='right', result='Solo build · code on GitHub',
-         font='Name Boss Breaker', still='boss-breaker-card'),
+         font='Name Boss Breaker', still='boss-breaker-card',
+         extra='<button class="btn bx-attack" type="button" data-attack>Attack</button>',
+         hud='<div class="bx-hud" aria-hidden="true"><p class="bx-hit" data-hit></p><p class="bx-boss">Stress Dragon</p>'
+             '<p class="bx-hp"><span data-hp>1,840</span> / 5,000 HP</p>'
+             '<p class="bx-down" data-defeated hidden>Stress Dragon defeated</p></div>'
+             '<p class="sr-only" aria-live="polite" data-hp-live></p>'),
     dict(pid='bb', num='03', side='bottom-left', result='Solo build · in a pilot with the shop',
          font='Name Better Call Bhai', still='better-call-bhai-card'),
     dict(pid='mt', num='04', side='right', result='2nd runner-up · Dell InnovateFest 2026',

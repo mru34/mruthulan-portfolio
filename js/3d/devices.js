@@ -1,8 +1,9 @@
-// A phone and a laptop, built in code at real-world proportions (units: decimetres), generic rather than any
-// brand's product. Screens show real captures; mix(t) crossfades to a second capture.
+// A phone, a laptop, a monitor on its post and a phone stand, built in code at real-world proportions (units:
+// decimetres), generic rather than any brand's product. Screens show real captures; mix(t) crossfades to a
+// second capture.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { roundedRect, screenGeometry, contactShadow, keyboardTexture } from './textures.js';
+import { roundedRect, screenGeometry, contactShadow, keyboardTexture, panel } from './textures.js';
 
 export const PHONE = { w: 0.715, h: 1.47, d: 0.078, r: 0.11 };
 export const LAPTOP = { w: 3.12, depth: 2.21, base: 0.155, lidH: 2.06, lid: 0.06 };
@@ -80,4 +81,38 @@ export function makeLaptop({ screen, after, shadow = true, detail = true } = {})
   const setOpen = (t) => { hinge.rotation.x = Math.PI / 2 + (-0.28 - Math.PI / 2) * t; };
   setOpen(1);
   return { group, screen: s.group, mix: s.mix, setOpen, size: { w: L.w, h: 2.2 } };
+}
+
+const dark = () => new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.7 });
+
+// a monitor standing on its post: the panel w wide, centred at (x, y, z), a post down to the floor at `floor`
+// and a foot, turned a little toward the middle of the room
+export function makeMonitor(tex, w, aspect, x, y, z, floor) {
+  const h = w / aspect;
+  const g = new THREE.Group();
+  const { group } = panel(tex, w, h);
+  g.add(group);
+  const postH = y - h / 2 - floor;
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.07, postH, 0.07), dark());
+  post.position.set(0, -h / 2 - postH / 2, -0.08);
+  const foot = new THREE.Mesh(new RoundedBoxGeometry(Math.min(0.9, w * 0.3), 0.04, 0.5, 2, 0.015), dark());
+  foot.position.set(0, floor - y + 0.02, -0.08);
+  const shadow = contactShadow(w * 0.6, 0.9, 0.55);
+  shadow.position.set(0, floor - y + 0.002, -0.08);
+  g.add(post, foot, shadow);
+  g.position.set(x, y, z);
+  g.rotation.y = -x * 0.05;
+  return g;
+}
+
+// a small dark stand a phone leans back on, standing on the floor at `floor`
+export function makeStand(floor) {
+  const g = new THREE.Group();
+  const base = new THREE.Mesh(new RoundedBoxGeometry(0.55, 0.04, 0.42, 2, 0.015), dark());
+  base.position.set(0, floor + 0.02, 0);
+  const back = new THREE.Mesh(new RoundedBoxGeometry(0.42, 0.9, 0.035, 2, 0.012), dark());
+  back.position.set(0, floor + 0.45, -0.1);
+  back.rotation.x = -0.2;
+  g.add(base, back);
+  return g;
 }

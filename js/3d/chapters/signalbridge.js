@@ -4,9 +4,8 @@
 // to "Worker notified"), onto the worker's laptop, whose screen becomes the handoff brief. Every picture is a
 // capture or a crop of the running app (design/build_3d_assets.py); every object is built at real size.
 import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { makePhone, makeLaptop } from '../devices.js';
-import { loadTexture, card, bez, glow, panel, contactShadow, disposeTree } from '../textures.js';
+import { makePhone, makeLaptop, makeMonitor, makeStand } from '../devices.js';
+import { loadTexture, card, bez, glow, disposeTree } from '../textures.js';
 import { lerp, Spring } from '../../lib/motion.js';
 import { sbLocal } from './signalbridge-timeline.js';
 
@@ -28,39 +27,6 @@ const WALL = [
   ['sb-phone-preview', 1.3, 5.6, 1.7, -6.6, true],
 ];
 
-const dark = () => new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.7 });
-
-// a monitor on its post: the panel, a post down to the floor and a foot, turned a little toward the middle
-function monitor(tex, w, aspect, x, y, z) {
-  const h = w / aspect;
-  const g = new THREE.Group();
-  const { group } = panel(tex, w, h);
-  g.add(group);
-  const postH = y - h / 2 - FLOOR;
-  const post = new THREE.Mesh(new THREE.BoxGeometry(0.07, postH, 0.07), dark());
-  post.position.set(0, -h / 2 - postH / 2, -0.08);
-  const foot = new THREE.Mesh(new RoundedBoxGeometry(Math.min(0.9, w * 0.3), 0.04, 0.5, 2, 0.015), dark());
-  foot.position.set(0, FLOOR - y + 0.02, -0.08);
-  const shadow = contactShadow(w * 0.6, 0.9, 0.55);
-  shadow.position.set(0, FLOOR - y + 0.002, -0.08);
-  g.add(post, foot, shadow);
-  g.position.set(x, y, z);
-  g.rotation.y = -x * 0.05;
-  return g;
-}
-
-// a small dark stand the phone leans back on
-function stand() {
-  const g = new THREE.Group();
-  const base = new THREE.Mesh(new RoundedBoxGeometry(0.55, 0.04, 0.42, 2, 0.015), dark());
-  base.position.set(0, FLOOR + 0.02, 0);
-  const back = new THREE.Mesh(new RoundedBoxGeometry(0.42, 0.9, 0.035, 2, 0.012), dark());
-  back.position.set(0, FLOOR + 0.45, -0.1);
-  back.rotation.x = -0.2;
-  g.add(base, back);
-  return g;
-}
-
 export async function mount({ world, stage, section, origin, form }) {
   const desk = form === 'desk';
   const wall = WALL.filter((p) => desk || !p[5]);
@@ -69,7 +35,7 @@ export async function mount({ world, stage, section, origin, form }) {
 
   const group = new THREE.Group();
   group.position.copy(origin);
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x0d1313, roughness: 0.4, metalness: 0.55 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({ color: 0x0d1313, roughness: 0.85, metalness: 0.2 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = FLOOR;
   const pool = glow(TEAL, 16, 11, 0.2);
@@ -80,7 +46,7 @@ export async function mount({ world, stage, section, origin, form }) {
   group.add(floor, pool, behind);
   for (const [n, w, x, y, z] of wall) {
     const img = tex[n].image;
-    group.add(monitor(tex[n], w, img.width / img.height, x, y, z));
+    group.add(makeMonitor(tex[n], w, img.width / img.height, x, y, z, FLOOR));
     const under = glow(TEAL, w * 1.1, 1.2, 0.16);
     under.rotation.x = -Math.PI / 2;
     under.position.set(x, FLOOR + 0.008, z + 0.5);
@@ -90,7 +56,7 @@ export async function mount({ world, stage, section, origin, form }) {
   const phone = makePhone({ screen: tex['sb-phone-consent'], after: tex['sb-phone-notified'] });
   phone.group.position.set(...PHONE_AT);
   phone.group.rotation.set(-0.2, 0.25, 0);
-  const phoneStand = stand();
+  const phoneStand = makeStand(FLOOR);
   phoneStand.position.set(PHONE_AT[0], 0, PHONE_AT[2] - 0.02);
   phoneStand.rotation.y = 0.25;
   const laptop = makeLaptop({ screen: tex['sb-laptop-handoffs'], after: tex['sb-laptop-brief'] });

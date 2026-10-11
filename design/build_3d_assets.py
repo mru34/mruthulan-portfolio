@@ -31,6 +31,12 @@ DESK_CROP = (0, 0, 2880, 1650)        # above the dev badge
 CHAT_CROP = (0, 0, 2880, 1600)        # d-youth-chat: above the message box, which the badge overlaps
 SUPERVISOR_CROP = (0, 0, 2880, 1500)  # d-supervisor: above "Signed in as", which names a teammate
 PHONE_CROP = (0, 0, 1170, 2380)       # m-youth-preview: above the dev badge
+# Boss Breaker, in pixels of the 2880 x 1800 captures d-boss.png and d-challenges.png (HP 1,840 / 5,000, the
+# same as the phone captures). The leaderboard names and the challenges' creators are the app's seeded players.
+DRAGON_BOX = (176, 406, 360, 650)     # the Stress Dragon's portrait card
+LEADER_BOX = (1460, 350, 2731, 868)   # the leaderboard: mruthulan 1,240 · priya.r 760 · aisha.k 560 · jun_wei 360 · ethan.t 240
+CARD_BOXES = [(145, 549, 1423, 936), (1457, 549, 2735, 936), (145, 971, 1423, 1358),
+              (1457, 971, 2735, 1358), (145, 1392, 1423, 1780), (1457, 1392, 2735, 1780)]   # challenges #6 to #1
 
 
 def fit(src, size):
@@ -45,6 +51,12 @@ def fit_crop(src, box, size):
         im = im.convert('RGB').crop(box)
         im.thumbnail(size, Image.LANCZOS)
         return im.copy()
+
+
+def sized(im, width):
+    if im.width <= width:
+        return im
+    return im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
 
 
 def crop(src, box, radius):
@@ -88,6 +100,14 @@ def main():
                            ('d-supervisor', 'sb-wall-supervisor', SUPERVISOR_CROP)):
         save(fit_crop(sb / f'{raw}.png', box, (1280, 800)), name)
     save(fit_crop(sb / 'm-youth-preview.png', PHONE_CROP, (768, 1662)), 'sb-phone-preview')
+
+    bx = RAW / 'bx'
+    save(fit(bx / 'd-boss.png', (1600, 1000)), 'bx-display')
+    save(fit(bx / 'm-boss.png', (768, 1662)), 'bx-phone')
+    save(sized(crop(bx / 'd-boss.png', DRAGON_BOX, 22), 320), 'bx-dragon')
+    save(sized(crop(bx / 'd-boss.png', LEADER_BOX, 26), 960), 'bx-leaderboard')
+    for i, box in enumerate(CARD_BOXES, 1):
+        save(sized(crop(bx / 'd-challenges.png', box, 26), 640), f'bx-card-{i}')
 
 
 if __name__ == '__main__':

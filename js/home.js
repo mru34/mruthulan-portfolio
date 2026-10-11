@@ -15,6 +15,7 @@ export const BEATS = { line: [0.05, 0.3], pay: [0.45, 0.7] }; // the one line, t
 const SECTIONS = [
   ['hero', '.hero', 'page', () => import('./3d/hero.js')],
   ['signalbridge', '[data-scene="signalbridge"]', 'flight', () => import('./3d/chapters/signalbridge.js')],
+  ['boss-breaker', '[data-scene="boss-breaker"]', 'flight', () => import('./3d/chapters/boss-breaker.js')],
 ];
 
 const root = document.documentElement;

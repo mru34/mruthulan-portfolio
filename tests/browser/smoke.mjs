@@ -29,9 +29,10 @@ async function open({ w = 1440, h = 900, js = true, reduced = false, path = '', 
   return { page, errors };
 }
 
-// every piece of a chapter's information block is showing (not hidden, not transparent)
+// the five pieces of a chapter's information block are showing (not hidden, not transparent); a chapter's own
+// extras (Attack, the replies) are only there with the live 3D
 async function infoVisible(page, pid) {
-  return page.$eval(`#ch-${pid}`, (h) => [...h.closest('.info').children].every((el) => {
+  return page.$eval(`#ch-${pid}`, (h) => [...h.closest('.info').querySelectorAll(':scope > :is(.ch-num, .ch-name, .ch-line, .ch-res, a.btn)')].every((el) => {
     const s = getComputedStyle(el);
     return s.display !== 'none' && s.visibility !== 'hidden' && parseFloat(s.opacity) > 0.99;
   }));
@@ -291,7 +292,7 @@ scenario('SignalBridge comes alive, and its payoff shows everything', async () =
 });
 
 // a chapter's still (design/stills.mjs) is the live scene at its payoff: the visitor without the 3D sees the same
-for (const scene of ['signalbridge']) {
+for (const scene of ['signalbridge', 'boss-breaker']) {
   scenario(`${scene}: the still matches the live payoff`, async () => {
     const at = (page) => page.evaluate((scene) => {
       const s = document.querySelector(`[data-scene="${scene}"]`);
@@ -316,6 +317,30 @@ for (const scene of ['signalbridge']) {
     await stills.page.close();
   });
 }
+
+scenario('Boss Breaker: attack to defeat, and it resets above the chapter', async () => {
+  const { page, errors } = await open();
+  const go = () => page.evaluate(() => { const c = document.querySelector('[data-scene="boss-breaker"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await go();
+  await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
+  await sleep(500);
+  const hp = () => page.$eval('[data-hp]', (e) => e.textContent);
+  check(await hp() === '1,840', `HP matches the capture at the payoff (${await hp()})`);
+  await page.click('[data-attack]');
+  await sleep(300);
+  check(await hp() === '1,490', `a hit takes 350 (${await hp()})`);
+  check(await page.$eval('[data-hp-live]', (e) => e.textContent) === 'Stress Dragon: 1,490 HP', 'the HP is announced');
+  for (let i = 0; i < 6; i++) { await page.click('[data-attack]'); await sleep(80); }
+  await sleep(400);
+  check(await hp() === '0' && await page.$eval('[data-defeated]', (e) => !e.hidden), 'Stress Dragon defeated');
+  await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
+  await sleep(600);
+  await go();
+  await sleep(800);
+  check(await hp() === '1,840', `reset after scrolling back above (${await hp()})`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
 
 scenario('a page opened at #contact has nothing animating by itself', async () => {
   for (const path of ['', '#contact']) {

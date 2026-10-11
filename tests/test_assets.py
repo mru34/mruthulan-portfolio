@@ -87,3 +87,15 @@ def test_each_rendered_still_shows_its_scene(name):
         alpha = im.convert('RGBA').getchannel('A')
         drawn = sum(1 for a in alpha.get_flattened_data() if a > 200)
         assert drawn / (im.width * im.height) > 0.1, drawn
+
+
+def test_boss_breaker_crop_boxes_sit_inside_their_captures():
+    import build_3d_assets as b
+    for box in [b.DRAGON_BOX, b.LEADER_BOX, *b.CARD_BOXES]:
+        left, top, right, bottom = box
+        assert 0 <= left < right <= 2880 and 0 <= top < bottom <= 1800, box
+
+
+def test_boss_breaker_textures_exist():
+    names = ['bx-display', 'bx-phone', 'bx-dragon', 'bx-leaderboard'] + [f'bx-card-{i}' for i in range(1, 7)]
+    assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []

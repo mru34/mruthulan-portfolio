@@ -136,7 +136,7 @@ export function card(w, h, front, back, { color = 0x101a19 } = {}) {
     new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1 }));
   slab.position.z = -0.01;
   const face = (map, z, turned) => {
-    const m = new THREE.Mesh(screenGeometry(w, h, r), new THREE.MeshStandardMaterial({ map, roughness: 0.45, metalness: 0, transparent: true }));
+    const m = new THREE.Mesh(screenGeometry(w, h, r), new THREE.MeshStandardMaterial({ map, roughness: 0.85, metalness: 0, transparent: true }));
     m.position.z = z;
     if (turned) m.rotation.y = Math.PI;
     return m;

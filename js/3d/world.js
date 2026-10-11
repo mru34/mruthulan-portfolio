@@ -36,7 +36,7 @@ export function createWorld(stage, { sections, form }) {
   };
   light(0xffffff, 1.4, [-6, 8, 4], [0, 0, -10]);
   light(0xc8d2ff, 0.25, [6, -3, 4], [0, 0, -10]);
-  const rim = light(0xffffff, 1.6, [5, 5, -22], [0, 0, -8]);
+  const rim = light(0xffffff, 1.15, [5, 5, -22], [0, 0, -8]);
   const bounce = light(0xffffff, 0.35, [0, -6, -4], [0, 0, -10]);
   const glint = new THREE.PointLight(0xfff1d6, 0, 8, 1.6);
   scene.add(rig, glint);

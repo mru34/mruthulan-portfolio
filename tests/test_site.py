@@ -68,6 +68,7 @@ COPY = [
     'KnowCad', 'An AI assistant for customer service that finds answers in long documents.',
     'Champion · Autodesk Singapore Hackathon 2026',
     'Case study',
+    'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
     'Study', 'Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)',
     'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER',
     'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
@@ -195,3 +196,11 @@ def test_3d_code_fits_the_budget():
     files = [f for f in (ROOT / 'js').rglob('*.js') if f.name not in ('script.js', 'analytics.js')]
     total = sum(len(gzip.compress(f.read_bytes(), 9)) for f in files)
     assert total <= 320_000, total
+
+
+def test_boss_breaker_has_its_attack_button_and_hp_readout():
+    markup = bs.build_home()
+    sec = re.search(r'<section class="chapter" data-scene="boss-breaker".*?</section>', markup, re.S).group(0)
+    assert re.search(r'<button class="btn bx-attack" type="button" data-attack>Attack</button>', sec)
+    for hook in ('data-hp', 'data-hit', 'data-hp-live', 'data-defeated'):
+        assert hook in sec, hook
