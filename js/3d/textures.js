@@ -1,13 +1,17 @@
-// Shared pieces for the 3D: loading real captures, rounded shapes, soft contact shadows, a keyboard deck.
+// Shared pieces for the 3D: loading real captures, rounded shapes, soft contact shadows, a keyboard deck, glows
+// of light, displays, photographic prints, cards with a crop on their face, and freeing it all again.
 import * as THREE from 'three';
 
 const loader = new THREE.TextureLoader();
 
+// a real capture as a texture, already decoded (off the main thread where the browser can), so putting it on
+// the GPU later never stalls a frame on decoding
 export function loadTexture(url) {
   return new Promise((resolve, reject) => loader.load(url, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = 8;
-    resolve(t);
+    const img = t.image;
+    (img && img.decode ? img.decode().catch(() => {}) : Promise.resolve()).then(() => resolve(t));
   }, undefined, reject));
 }
 
@@ -73,4 +77,109 @@ export function keyboardTexture() {
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
+}
+
+// shared textures are made once and never freed (disposeTree skips them)
+let glowTex = null;
+function glowTexture() {
+  if (glowTex) return glowTex;
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const g = c.getContext('2d');
+  const grad = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+  grad.addColorStop(0, 'rgba(255,255,255,1)');
+  grad.addColorStop(0.35, 'rgba(255,255,255,.45)');
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 256, 256);
+  glowTex = new THREE.CanvasTexture(c);
+  glowTex.userData.shared = true;
+  return glowTex;
+}
+
+// a soft glow of light: additive, so it brightens what is behind it the way light does; never a shape
+export function glow(color, w, h = w, opacity = 0.5) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({
+    map: glowTexture(), color, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+  m.renderOrder = -1;
+  return m;
+}
+
+// a display: a dark body with a thin bezel and a lit screen showing a real capture
+export function panel(tex, w, h, { bezel = 0.07, depth = 0.08, r = 0.05 } = {}) {
+  const group = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.ExtrudeGeometry(roundedRect(w + 2 * bezel, h + 2 * bezel, r), { depth, bevelEnabled: false, curveSegments: 8 }),
+    new THREE.MeshStandardMaterial({ color: 0x0d0e10, roughness: 0.45, metalness: 0.6 }));
+  body.position.z = -depth;
+  const screen = new THREE.Mesh(screenGeometry(w, h, Math.max(0.005, r - bezel / 2)),
+    new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  screen.position.z = 0.002;
+  group.add(body, screen);
+  return { group, screen };
+}
+
+// a photographic print: the photo on white paper with a border, a hair thick
+export function print(tex, w, h, { border = 0.07, thick = 0.012 } = {}) {
+  const group = new THREE.Group();
+  const paper = new THREE.Mesh(new THREE.BoxGeometry(w + 2 * border, h + 2 * border, thick),
+    new THREE.MeshStandardMaterial({ color: 0xf3f1ec, roughness: 0.82, metalness: 0 }));
+  const photo = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.38, metalness: 0 }));
+  photo.position.z = thick / 2 + 0.001;
+  group.add(paper, photo);
+  return group;
+}
+
+// a physical card: a thin dark slab with the crop printed on its face (and another on its back)
+export function card(w, h, front, back, { color = 0x101a19 } = {}) {
+  const r = Math.min(w, h) * 0.18;
+  const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(roundedRect(w, h, r), { depth: 0.02, bevelEnabled: false, curveSegments: 10 }),
+    new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1 }));
+  slab.position.z = -0.01;
+  const face = (map, z, turned) => {
+    const m = new THREE.Mesh(screenGeometry(w, h, r), new THREE.MeshStandardMaterial({ map, roughness: 0.45, metalness: 0, transparent: true }));
+    m.position.z = z;
+    if (turned) m.rotation.y = Math.PI;
+    return m;
+  };
+  const g = new THREE.Group();
+  g.add(slab, face(front, 0.011, false));
+  if (back) g.add(face(back, -0.011, true));
+  return g;
+}
+
+// a point on the quadratic Bézier from a through control c to b
+export const bez = (a, c, b, t) => new THREE.Vector3()
+  .addScaledVector(a, (1 - t) ** 2).addScaledVector(c, 2 * (1 - t) * t).addScaledVector(b, t * t);
+
+// point a plane's texture at one box of an atlas: [u0, v0, u1, v1], v = 0 at the bottom of the image
+export function cropUV(geo, [u0, v0, u1, v1]) {
+  const uv = geo.attributes.uv;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, u0 + uv.getX(i) * (u1 - u0), v0 + uv.getY(i) * (v1 - v0));
+  uv.needsUpdate = true;
+  return geo;
+}
+
+// every texture used under `root`, once each
+export function texturesOf(root) {
+  const out = new Set();
+  root.traverse((o) => {
+    const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
+    for (const m of mats) for (const k of ['map', 'alphaMap', 'emissiveMap', 'roughnessMap', 'normalMap']) if (m[k]) out.add(m[k]);
+  });
+  return [...out];
+}
+
+// free everything under `root`: geometry, materials and their textures (shared ones stay)
+export function disposeTree(root) {
+  root.traverse((o) => {
+    if (o.isInstancedMesh) o.dispose();
+    if (o.geometry) o.geometry.dispose();
+    const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
+    for (const m of mats) {
+      for (const k of ['map', 'alphaMap', 'emissiveMap', 'roughnessMap', 'normalMap']) {
+        if (m[k] && !m[k].userData.shared) m[k].dispose();
+      }
+      m.dispose();
+    }
+  });
 }

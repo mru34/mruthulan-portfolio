@@ -173,6 +173,46 @@ scenario('Page Down still moves a screen', async () => {
   await page.close();
 });
 
+scenario('the camera holds the page pose at the top and the board sits in its box', async () => {
+  const { page } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await sleep(300);
+  const d = await page.evaluate(() => window.__world ? window.__world.debugFit('hero') : null);
+  check(d !== null && d <= 1, `hero board within 1px of its box (${d})`);
+  await page.close();
+});
+
+scenario('resizing mid-chapter keeps the camera on the path', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelectorAll('.chapter')[1]; scrollTo({ top: c.offsetTop + 0.3 * innerHeight, behavior: 'instant' }); });
+  await sleep(600);
+  await page.setViewport({ width: 900, height: 1000 });
+  await sleep(800);
+  const r = await page.evaluate(() => window.__world ? window.__world.debugCamera() : { ok: false, why: 'no world' });
+  check(r.ok, `camera matches the path after resize (${JSON.stringify(r)})`);
+  check(errors.filter((e) => !e.includes('did not load')).length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('End then Home frees what it built', async () => {
+  const { page, errors } = await open();
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await sleep(1500);
+  // free every scene, then read what is left on the GPU in the same breath (no frame can build one between):
+  // only the shared things (environment, flap atlases, glow) should remain, the same amount every time
+  const counts = () => page.evaluate(() => { if (!window.__world) return null; window.__world.freeAll(); return window.__world.counts(); });
+  const base = await counts();
+  for (let n = 0; n < 2; n++) {
+    await page.keyboard.press('End'); await sleep(3000);
+    await page.keyboard.press('Home'); await sleep(3000);
+  }
+  const after = await counts();
+  check(base && after && after.textures === base.textures && after.geometries === base.geometries,
+    `GPU memory back to start (${JSON.stringify(base)} → ${JSON.stringify(after)})`);
+  check(errors.filter((e) => !e.includes('did not load')).length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
 scenario('the board comes alive in its box', async () => {
   const { page, errors } = await open();
   await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
@@ -239,7 +279,7 @@ scenario('SignalBridge comes alive, and its payoff shows everything', async () =
     const s = document.querySelector('[data-scene="signalbridge"]');
     scrollTo({ top: s.getBoundingClientRect().top + scrollY + 0.8 * (s.offsetHeight - innerHeight), behavior: 'instant' });
   });
-  await page.waitForSelector('[data-scene="signalbridge"] [data-anchor][data-live]', { timeout: 30000 });
+  await page.waitForSelector('[data-scene="signalbridge"][data-live]', { timeout: 30000 });
   await sleep(500);
   check(await infoVisible(page, 'sb'), 'SignalBridge information fully visible at the payoff');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);

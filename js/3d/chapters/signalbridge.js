@@ -3,9 +3,8 @@
 // and lands it on the laptop as the handoff brief. Every picture is a crop of the running app's screens.
 import * as THREE from 'three';
 import { makePhone, makeLaptop } from '../devices.js';
-import { loadTexture, roundedRect, screenGeometry } from '../textures.js';
-import { fitScale } from '../../lib/fit.js';
-import { sectionProgress, clamp, lerp, Spring } from '../../lib/motion.js';
+import { loadTexture, card, bez, disposeTree } from '../textures.js';
+import { clamp, lerp, Spring } from '../../lib/motion.js';
 import { sbState } from './signalbridge-timeline.js';
 
 export const MESSAGE_BOX = [285, 240, 1122, 510];   // must match design/build_3d_assets.py (tested)
@@ -18,29 +17,8 @@ const SETS = {
   narrow: { size: { w: 4.6, h: 5.6 }, phone: { x: -1.2, y: -1.5, s: 1.15, turn: 0.2 }, laptop: { x: 0.4, y: 0.3, s: 1.0, turn: -0.2 }, gate: { x: -0.1, y: -0.45, z: 1.4, w: 2.0 } },
 };
 
-// a physical card: a thin dark slab with the crop printed on its face (and another on its back)
-function card(w, h, front, back) {
-  const r = Math.min(w, h) * 0.18;
-  const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(roundedRect(w, h, r), { depth: 0.02, bevelEnabled: false, curveSegments: 10 }),
-    new THREE.MeshStandardMaterial({ color: 0x101a19, roughness: 0.6, metalness: 0.1 }));
-  slab.position.z = -0.01;
-  const face = (map, z, turned) => {
-    const m = new THREE.Mesh(screenGeometry(w, h, r), new THREE.MeshStandardMaterial({ map, roughness: 0.45, metalness: 0, transparent: true }));
-    m.position.z = z;
-    if (turned) m.rotation.y = Math.PI;
-    return m;
-  };
-  const g = new THREE.Group();
-  g.add(slab, face(front, 0.011, false));
-  if (back) g.add(face(back, -0.011, true));
-  return g;
-}
-
-const bez = (a, c, b, t) => new THREE.Vector3()
-  .addScaledVector(a, (1 - t) ** 2).addScaledVector(c, 2 * (1 - t) * t).addScaledVector(b, t * t);
-
-export async function mount(stage, section) {
-  const box = section.querySelector('[data-anchor]');
+// (interim, until the control room replaces this module: the part 1 set, standing at the chapter's origin)
+export async function mount({ world, stage, origin }) {
   const names = ['sb-phone-consent', 'sb-phone-notified', 'sb-laptop-handoffs', 'sb-laptop-brief', 'sb-message', 'sb-consent-ask', 'sb-consent-given'];
   const [consentScreen, notified, handoffs, brief, messageTex, ask, given] = await Promise.all(names.map((n) => loadTexture(`assets/3d/${n}.webp`)));
 
@@ -48,10 +26,8 @@ export async function mount(stage, section) {
   const laptop = makeLaptop({ screen: handoffs, after: brief });
   const set = new THREE.Group();
   set.add(phone.group, laptop.group);
-  stage.scene.add(set);
-  const rim = new THREE.DirectionalLight(TEAL, 1.1);   // the project colour, as light on the edges only
-  rim.position.set(8, 4, -6);
-  stage.scene.add(rim);
+  set.position.copy(origin);
+  world.root.add(set);
 
   // the message: as wide on the phone's screen as the bubble is in the capture
   const msgW = phone.screenSize.w * ((MESSAGE_BOX[2] - MESSAGE_BOX[0]) / CAPTURE.w);
@@ -102,29 +78,23 @@ export async function mount(stage, section) {
     set.add(beam);
   }
   buildBeam();
-  narrow.addEventListener('change', () => { layout = SETS[narrow.matches ? 'narrow' : 'desk']; buildBeam(); stage.invalidate(); });
+  const onBreak = () => { layout = SETS[narrow.matches ? 'narrow' : 'desk']; buildBeam(); stage.invalidate(); };
+  narrow.addEventListener('change', onBreak);
 
   return {
-    update(now, dt) {
-      const r = section.getBoundingClientRect();
-      const vh = stage.view.h;
-      const visible = r.bottom > -0.2 * vh && r.top < 1.2 * vh;
+    group: set,
+    update(local, f) {
+      const visible = local > -1.2 && local < 1.7;
       set.visible = visible;
-      rim.visible = visible;
       if (!visible) return false;
-
-      const st = sbState(sectionProgress(r.top, r.height, vh));
-      const w = stage.boxToWorld(box);
-      set.scale.setScalar(fitScale(layout.size, w));
-      set.position.set(w.x, w.y, 0);
-      const P = stage.pointer;
+      const st = sbState(clamp(((local + 0.4) / 0.82) * 0.7));
+      const P = f.pointer;
       const mouse = P.inside && P.type === 'mouse';
       leanY.target = mouse ? P.nx * 0.05 : 0;
       leanX.target = mouse ? -P.ny * 0.04 : 0;
-      let busy = leanX.step(dt);
-      busy = leanY.step(dt) || busy;
-      const away = clamp((vh - r.bottom) / (0.6 * vh));       // after the pin: the devices turn away
-      set.rotation.set(leanX.value, leanY.value + away * 0.5, 0);
+      let busy = leanX.step(f.dt);
+      busy = leanY.step(f.dt) || busy;
+      set.rotation.set(leanX.value, leanY.value, 0);
 
       place(st);
       phone.mix(st.phoneAfter);
@@ -152,6 +122,10 @@ export async function mount(stage, section) {
       consent.scale.setScalar(Math.max(cs, 0.001) * layout.gate.w);
       consent.rotation.set(0, Math.PI * st.consent, 0);
       return busy;
+    },
+    dispose() {
+      narrow.removeEventListener('change', onBreak);
+      disposeTree(set);
     },
   };
 }

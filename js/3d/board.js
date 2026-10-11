@@ -36,6 +36,7 @@ async function atlas(ink) {
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 8;
+  t.userData.shared = true;   // every board shares the atlases; disposeTree must leave them
   return t;
 }
 

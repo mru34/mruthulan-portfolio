@@ -1,0 +1,56 @@
+// The camera script: where each scene stands along the path, its colour, and the keys the camera passes
+// through in it. t is chapter-local time in screens (-1 entering from below, 0 pinned, 0.6 pin ends, 1.6
+// gone). Every flight scene has a key at -0.4 (arriving), 0.42 (stop: the payoff), 0.6 (stop: still the
+// payoff) and 0.9 (leaving), so the words' beats and the camera agree. Units are decimetres; `at` and the
+// object positions in each chapter's module are relative to that chapter's origin.
+const hex = (n) => [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+
+export const COLORS = {
+  hero: hex(0xc9ccd6), signalbridge: hex(0x2bc4bc), 'boss-breaker': hex(0xf06a43),
+  'better-call-bhai': hex(0xe3b53a), meant: hex(0x4da3ff), knowcad: hex(0x9b87ff), page: hex(0xe8b64c),
+};
+
+export const ORIGINS = {
+  hero: [0, 0, 0], signalbridge: [0, 0, -80], 'boss-breaker': [60, 0, -160],
+  'better-call-bhai': [120, 0, -240], meant: [180, 0, -320], knowcad: [240, 0, -400], page: [300, 0, -480],
+};
+
+export const KEYS = {
+  signalbridge: [
+    { t: -0.4, at: [-1.6, -0.2, 1.05], from: [0.12, 0.06, 1], w: 0.95, h: 1.6 },
+    { t: 0.0, at: [0.0, 0.4, -0.5], from: [0.08, 0.18, 1], w: 7.5, h: 4.6 },
+    { t: 0.16, at: [-0.1, 0.9, 0.9], from: [0.0, 0.12, 1], w: 3.2, h: 2.0 },
+    { t: 0.42, at: [1.68, 0.05, -1.24], from: [-0.29, 0.25, 0.92], w: 3.3, h: 2.1, stop: true },
+    { t: 0.6, at: [1.68, 0.05, -1.24], from: [-0.29, 0.25, 0.92], w: 3.3, h: 2.1, stop: true },
+    { t: 0.9, at: [3.0, 0.8, -3.0], from: [0.55, 0.15, 1], w: 6, h: 4 },
+  ],
+  'boss-breaker': [
+    { t: -0.4, at: [0, 4.8, -5.5], from: [0, 0.05, 1], w: 13, h: 7 },
+    { t: 0.05, at: [0, 2.2, -4], from: [0.15, 0.12, 1], w: 14, h: 8.5 },
+    { t: 0.42, at: [0.6, 1.8, -3], from: [0.1, 0.14, 1], w: 15, h: 9, stop: true },
+    { t: 0.6, at: [0.6, 1.8, -3], from: [0.1, 0.14, 1], w: 15, h: 9, stop: true },
+    { t: 0.9, at: [4, 2, -6], from: [0.5, 0.2, 1], w: 12, h: 8 },
+  ],
+  'better-call-bhai': [
+    { t: -0.4, at: [-3.6, 2.4, -1.5], from: [0.45, 0.05, 1], w: 3.5, h: 5 },
+    { t: 0.0, at: [0, 0.6, 0.5], from: [0, 0.08, 1], w: 10, h: 6.2 },
+    { t: 0.42, at: [0.3, 0.4, 0.5], from: [0.05, 0.1, 1], w: 9, h: 5.6, stop: true },
+    { t: 0.6, at: [0.3, 0.4, 0.5], from: [0.05, 0.1, 1], w: 9, h: 5.6, stop: true },
+    { t: 0.9, at: [3.6, 1.2, -1.5], from: [-0.35, 0.1, 1], w: 4.5, h: 5.5 },
+  ],
+  meant: [
+    { t: -0.4, at: [0, 2.0, -1], from: [0.3, 0.5, 1], w: 12, h: 7.5 },
+    { t: 0.0, at: [-0.8, 0.5, 0.4], from: [0.35, 0.25, 1], w: 5, h: 3.2 },
+    { t: 0.42, at: [0, 0.4, 0], from: [0.45, 0.35, 1], w: 8, h: 5, stop: true },
+    { t: 0.6, at: [0, 0.4, 0], from: [0.45, 0.35, 1], w: 8, h: 5, stop: true },
+    { t: 0.9, at: [2, 1, -1], from: [-0.2, 0.3, 1], w: 9, h: 6 },
+  ],
+  knowcad: [
+    { t: -0.4, at: [0, 0, -6], from: [0, 0, 1], d: 10 },
+    { t: -0.1, at: [0.5, 0.3, -18], from: [0.05, 0.03, 1], d: 8 },
+    { t: 0.15, at: [0, 0, -28], from: [0, 0.02, 1], d: 9 },
+    { t: 0.42, at: [0, 0, -31], from: [0, 0, 1], w: 4.4, h: 3.1, stop: true },
+    { t: 0.6, at: [0, 0, -31], from: [0, 0, 1], w: 4.4, h: 3.1, stop: true },
+    { t: 0.9, at: [0, -2, -34], from: [0, 0.6, 1], d: 12 },
+  ],
+};

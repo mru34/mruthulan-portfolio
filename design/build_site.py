@@ -723,7 +723,8 @@ END_LINKS = [('gmail', 'Gmail', MAILTO, 'contact_open_mail_app'),
              ('github', 'GitHub', GITHUB, 'contact_open_github')]
 
 # The homepage chapters, in order. Every word here is in the spec's "Every word on the homepage".
-# side: where the information sits beside the 3D (left, right, bottom-left). font: the project name's own
+# side: which corner of the full-screen scene the information sits in (left, right, bottom-left).
+# extra: markup after Case study (a chapter's own button or line); hud: markup over the scene. font: the project name's own
 # typeface (assets/fonts/name-*.woff2). still: the picture shown until a chapter has its own rendered still.
 CHAPTERS = [
     dict(pid='sb', num='01', side='left', result='Champion · Dell InnovateDash 2026',
@@ -779,14 +780,14 @@ def chapter(c, first=False):
     return f'''<section class="chapter" data-scene="{p['slug']}" data-side="{c['side']}" style="--c:{p['c']};--name-font:'{c['font']}'" aria-labelledby="ch-{p['id']}">
         {work}<span class="ch-key" id="work-{p['id']}"></span>
         <div class="pin">
-          <div class="ch-stage" data-anchor>{still}<a class="ch-hit" href="{href}" tabindex="-1" aria-hidden="true" {ev}></a></div>
+          <div class="ch-stage">{still}<a class="ch-hit" href="{href}" tabindex="-1" aria-hidden="true" {ev}></a></div>
           <div class="info">
             <p class="ch-num">{c['num']}</p>
-            <h3 class="ch-name" id="ch-{p['id']}" style="view-transition-name:t-{p['id']}">{e(p['name'])}</h3>
+            <h3 class="ch-name" id="ch-{p['id']}" style="view-transition-name:t-{p['id']}"><a href="{href}" {ev}>{e(p['name'])}</a></h3>
             <p class="ch-line beat-line">{e(p['line'])}</p>
             <p class="ch-res beat-pay">{e(c['result'])}</p>
-            <a class="btn beat-pay" href="{href}" {ev}>Case study <span aria-hidden="true">→</span></a>
-          </div>
+            <a class="btn beat-pay" href="{href}" {ev}>Case study <span aria-hidden="true">→</span></a>{c.get('extra', '')}
+          </div>{c.get('hud', '')}
         </div>
       </section>'''
 

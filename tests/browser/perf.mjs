@@ -1,7 +1,8 @@
 // Smoothness with real input: a real mouse wheel (desktop) or real touch swipes (phone), the CPU slowed 4x,
-// the real GPU (a Chrome window opens). Fails on slow frames (over 33 ms), on steps in the scroll speed (jerk:
-// how much the per-frame scroll distance changes from one frame to the next), or on any frame whose 3D used a
-// different scroll value from the page. Serve the site on :8000, then: npm run perf -- desk|phone [smooth=off]
+// the real GPU (a Chrome window opens). Fails on slow frames (over 33 ms), on any frame that stalls the scroll
+// for over 100 ms, on steps in the scroll speed (jerk: how much the per-frame scroll distance changes from
+// one frame to the next), or on any frame whose 3D used a different scroll value from the page.
+// Serve the site on :8000, then: npm run perf -- desk|phone [smooth=off]
 // (smooth=off turns Lenis off, to see what the browser's own wheel scrolling measures.)
 import puppeteer from 'puppeteer-core';
 
@@ -12,6 +13,8 @@ const native = process.argv[3] === 'smooth=off';
 // the largest jerk (99th percentile, px per frame per frame) a smooth run may have: 1.5 x the worst p99
 // measured with Lenis (18-27 px over three runs, 11 Oct 2026); the browser's own wheel scrolling measures 100
 const JERK_MAX = Number(process.env.JERK_MAX || 41);
+// no single frame may stall the scroll this long (building a scene used to take 382 ms; now about 35 ms)
+const LONGEST_MAX = 100;
 const [w, h, dpr, mobile] = form === 'phone' ? [390, 844, 3, true] : [1440, 900, 1, false];
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: false, defaultViewport: null, args: [`--window-size=${w + 40},${h + 160}`] });
 const page = await browser.newPage();
@@ -45,6 +48,7 @@ const { log, frames, frozen } = await page.evaluate(() => ({
   log: window.__log.slice(10), frames: window.__frames || [], frozen: document.documentElement.classList.contains('frozen'),
 }));
 const slow = log.filter(([dt]) => dt > 33).length;
+const longest = Math.max(...log.map(([dt]) => dt));
 const v = log.map(([, y], i) => (i ? y - log[i - 1][1] : 0));
 const raw = v.map((d, i) => (i > 1 ? Math.abs(d - v[i - 1]) : 0));
 const worst = raw.indexOf(Math.max(...raw));
@@ -53,8 +57,9 @@ const jerk = [...raw].sort((a, b) => a - b);
 const p99 = jerk[Math.floor(jerk.length * 0.99)] || 0;
 const mismatched = frames.filter(([, y, used]) => y !== used).length;
 const pct = (100 * slow) / log.length;
-console.log(`${form}${native ? ' (native)' : ''}: ${log.length} frames, ${pct.toFixed(1)}% slow, jerk p99 ${p99.toFixed(1)} px, `
+console.log(`${form}${native ? ' (native)' : ''}: ${log.length} frames, ${pct.toFixed(1)}% slow, longest ${longest.toFixed(0)} ms, jerk p99 ${p99.toFixed(1)} px, `
   + `max ${(jerk.at(-1) || 0).toFixed(1)} px (around: ${around}), ${mismatched} out-of-sync frames of ${frames.length}${frozen ? ', ended on stills' : ''}`);
 await browser.close();
-const ok = (pct < 5 || frozen) && mismatched === 0 && (native || mobile || !JERK_MAX || p99 <= JERK_MAX);
+const ok = (pct < 5 || frozen) && mismatched === 0 && (native || frozen || longest <= LONGEST_MAX)
+  && (native || mobile || !JERK_MAX || p99 <= JERK_MAX);
 process.exit(ok ? 0 : 1);

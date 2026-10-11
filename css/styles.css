@@ -443,20 +443,22 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .flap-rows .row{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,1vw,14px) clamp(14px,1.6vw,24px)}
 .flap-rows .row.gold .t{color:var(--gold)}
 
-/* the chapters */
+/* the chapters: each fills the screen; its words sit in a corner over a soft shade */
 .chapter{position:relative;--name-font:var(--stmt)}
 .ch-key{position:absolute;top:0;left:0;width:1px;height:1px}
-.chapter .pin{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-areas:"info stage";align-items:center;gap:clamp(24px,4vw,72px);padding:calc(var(--bar) + clamp(16px,4vh,48px)) var(--gutter) clamp(40px,7vh,96px);max-width:var(--max);margin-inline:auto}
-.chapter[data-side="right"] .pin{grid-template-columns:minmax(0,7fr) minmax(0,5fr);grid-template-areas:"stage info"}
-.chapter[data-side="bottom-left"] .pin{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"stage" "info";align-items:end}
-.ch-stage{grid-area:stage;position:relative;aspect-ratio:16/10;min-height:0;width:100%}
-.ch-stage .still{border-radius:10px;overflow:hidden}
+.chapter .pin{position:relative;min-height:100svh;overflow:clip}
+.ch-stage{position:absolute;inset:0}
+.ch-stage .still,.ch-stage .still img{width:100%;height:100%;object-fit:cover}
 .ch-hit{position:absolute;inset:0;z-index:1}
-.info{grid-area:info;display:grid;gap:14px;justify-items:start;container-type:inline-size;position:relative;z-index:2}
+.info{position:absolute;z-index:2;display:grid;gap:14px;justify-items:start;width:min(440px,40vw);container-type:inline-size;left:var(--gutter);top:50%;translate:0 -50%}
+.info::before{content:"";position:absolute;inset:-30% -35%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(12,12,13,.82),rgba(12,12,13,0))}
+.chapter[data-side="right"] .info{left:auto;right:calc(var(--gutter) + 40px)}
+.chapter[data-side="bottom-left"] .info{top:auto;bottom:clamp(40px,8vh,96px);translate:none}
 .ch-num{font:500 16px/1 var(--mono);letter-spacing:.1em;color:var(--c)}
-.ch-name{font-family:var(--name-font),var(--stmt);font-weight:400;font-size:clamp(40px,14cqi,92px);line-height:1;letter-spacing:-.01em;color:var(--c);text-wrap:balance}
+.ch-name{font-family:var(--name-font),var(--stmt);font-weight:400;font-size:clamp(48px,18cqi,120px);line-height:1;letter-spacing:-.01em;color:var(--c);text-wrap:balance}
+.ch-name a{color:inherit}
 .ch-line{font-size:clamp(18px,1.5vw,22px);line-height:1.45;color:var(--soft);max-width:32ch}
-.ch-res{font:500 16px/1.4 var(--mono);letter-spacing:.02em;color:var(--gold)}
+.ch-res{font:500 16px/1.4 var(--mono);letter-spacing:.02em;color:var(--c)}
 .info .btn{margin-top:6px}
 .rail{display:none}
 
@@ -476,13 +478,14 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 
 @media (max-width:860px){
   .hero-board{aspect-ratio:10.12/5.07}
-  .chapter .pin,.chapter[data-side] .pin{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"stage" "info";align-items:end}
+  .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
+  .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
   .me{grid-template-columns:1fr}
   .me .portrait{max-width:320px}
 }
 
-/* stills of the 3D (design/stills.mjs): only the canvas shows, on a transparent page */
-html[data-pose],html[data-pose] body{background:transparent!important}
+/* stills of the 3D (design/stills.mjs): only the canvas shows; around the boards the page is transparent */
+html[data-pose="hero"],html[data-pose="hero"] body,html[data-pose="ending"],html[data-pose="ending"] body{background:transparent!important}
 html[data-pose] body > :not(.stage){visibility:hidden}
 
 /* with the live 3D (.has-3d, set by js/home.js): the canvas shows; every chapter is a tall section whose
@@ -490,9 +493,8 @@ html[data-pose] body > :not(.stage){visibility:hidden}
 .has-3d .stage{display:block}
 .has-3d.frozen .stage{display:none}
 .has-3d .chapter{height:160svh}
-.has-3d .chapter .pin{position:sticky;top:0;height:100svh}
-.has-3d .ch-stage{aspect-ratio:auto;height:100%}
-.has-3d .ch-stage .still{border-radius:0}
+.has-3d .chapter .pin{position:sticky;top:0;height:100svh;min-height:0}
+.has-3d:not(.frozen) .chapter[data-live] .ch-stage{display:none}
 .has-3d .ch-key{top:calc(.8 * 60svh);scroll-margin-top:calc(-1 * (var(--bar) + 16px))} /* the payoff pose: 0.8 of the 60svh each chapter stays pinned; lands exactly there despite the scroll padding */
 html.smooth{scroll-behavior:auto}
 .has-3d .beat-line{opacity:var(--b1,1);translate:0 calc((1 - var(--b1,1)) * 14px)}

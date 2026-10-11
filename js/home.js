@@ -10,11 +10,12 @@ import { createTicker } from './lib/ticker.js';
 
 export const KEY = 0.8;                                      // the payoff pose every chapter settles on
 export const BEATS = { line: [0.05, 0.3], pay: [0.45, 0.7] }; // the one line, then the result and the link
-// data-scene → its module, loaded only when its section comes near
-const SCENES = {
-  hero: () => import('./3d/hero.js'),
-  signalbridge: () => import('./3d/chapters/signalbridge.js'),
-};
+// every section with 3D, in page order: page sections hold the camera still and fit their 3D to HTML boxes,
+// flight sections are the chapters the camera flies through. Each module loads when its section comes near.
+const SECTIONS = [
+  ['hero', '.hero', 'page', () => import('./3d/hero.js')],
+  ['signalbridge', '[data-scene="signalbridge"]', 'flight', () => import('./3d/chapters/signalbridge.js')],
+];
 
 const root = document.documentElement;
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -57,53 +58,33 @@ function beats(y) {
 }
 
 async function start3D(ticker) {
-  const { createStage } = await import('./3d/stage.js');
+  const [{ createStage }, { createWorld }] = await Promise.all([import('./3d/stage.js'), import('./3d/world.js')]);
   const canvas = document.querySelector('canvas.stage');
   const stage = createStage(canvas, { ticker, maxDpr: matchMedia('(pointer: coarse)').matches ? 1.5 : 2 });
-  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stage.stop(); freeze(); });
+  const sections = SECTIONS.map(([name, sel, kind, load]) => ({ name, el: document.querySelector(sel), kind, load })).filter((x) => x.el);
+  const world = createWorld(stage, { sections, form: matchMedia('(max-width: 860px)').matches ? 'phone' : 'desk' });
+  window.__world = world;   // the smoke tests read it
+  const stopAll = () => { stage.stop(); world.freeAll(); };
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stopAll(); freeze(); });
   // ?debug=frames: after the 3D has drawn each frame, the scroll the page shows and the one the 3D used
   if (debug) {
     window.__frames = [];
-    ticker.add((now) => { window.__frames.push([now, scrollY, window.__world?.lastScroll ?? scrollY]); return false; });
-  }
-  // until the world's rig arrives (js/3d/world.js), the part 1 studio: a key from the top left, a dim fill
-  const THREE = await import('three');
-  const key = new THREE.DirectionalLight(0xffffff, 1.4);
-  key.position.set(-6, 8, 10);
-  const fill = new THREE.DirectionalLight(0xc8d2ff, 0.25);
-  fill.position.set(6, -3, 6);
-  stage.scene.add(key, fill);
-
-  const mounted = new Set();
-  async function mount(section) {
-    const name = section.dataset.scene;
-    if (mounted.has(name) || !SCENES[name]) return;
-    mounted.add(name);
-    try {
-      const mod = await SCENES[name]();
-      const part = await mod.mount(stage, section);
-      stage.add(part);
-      stage.renderNow();
-      if (!root.classList.contains('frozen')) $$('[data-anchor]', section).forEach((a) => a.setAttribute('data-live', ''));
-    } catch (err) {
-      console.warn(`3D scene "${name}" did not load; its still stays.`, err);
-    }
+    ticker.add((now) => { window.__frames.push([now, scrollY, world.lastScroll]); return false; });
   }
 
   if (pose) {
     root.dataset.pose = pose;
-    const section = document.querySelector(`[data-scene="${pose}"]`);
-    const top = section.getBoundingClientRect().top + scrollY;
-    scrollTo({ top: pose === 'hero' ? 0 : top + KEY * (section.offsetHeight - innerHeight), behavior: 'instant' });
-    await mount(section);
+    const s = sections.find((x) => x.name === pose);
+    const top = s.el.getBoundingClientRect().top + scrollY;
+    scrollTo({ top: s.kind === 'flight' ? top + 0.5 * innerHeight : pose === 'hero' ? 0 : top, behavior: 'instant' });
+    world.layout();
+    await world.pose(pose);
+    stage.add(world);
     stage.renderNow();
     root.dataset.posed = pose;
     return;
   }
-
-  const near = new IntersectionObserver((entries) => entries.forEach((en) => { if (en.isIntersecting) mount(en.target); }),
-    { rootMargin: '150% 0px 150% 0px' });
-  $$('[data-scene]').forEach((s) => near.observe(s));
+  stage.add(world);
 
   const watch = new FrameWatch();
   let scrolledAt = 0;
@@ -112,7 +93,7 @@ async function start3D(ticker) {
     if (dt === null || now - scrolledAt > 200) return;
     const verdict = watch.push(now, dt);
     if (verdict === 'lower') stage.setDpr(1);
-    else if (verdict === 'stills') { stage.stop(); freeze(); }
+    else if (verdict === 'stills') { stopAll(); freeze(); }
   });
 }
 

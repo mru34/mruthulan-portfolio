@@ -1,6 +1,7 @@
-// The hero: the name as a 3D split-flap board, fitted into .hero-board. It leans toward the mouse with a
-// warm glint following the pointer, flickers a flap under the mouse, ripples on a press, and tilts back
-// and away as the visitor scrolls on. The first frame matches the still exactly (no pointer, no lean).
+// The hero: the name as a 3D split-flap board, fitted into .hero-board (a page scene: the camera holds the page
+// pose here). It leans toward the mouse with a warm glint following the pointer, flickers a flap under the
+// mouse, ripples on a press, and as the visitor scrolls on it tilts back and rises out of the camera's way
+// while the camera flies on into SignalBridge. The first frame matches the still exactly (no pointer, no lean).
 import * as THREE from 'three';
 import { createBoard } from './board.js';
 import { fitScale } from '../lib/fit.js';
@@ -9,55 +10,69 @@ import { clamp, easeInOut } from '../lib/motion.js';
 const DESK = [{ text: 'MRUTHULAN', color: 'gold' }, { text: 'SENTHIL NATHAN', color: 'white' }];
 const PHONE = [{ text: 'MRUTHULAN', color: 'gold' }, { text: 'SENTHIL', color: 'white' }, { text: 'NATHAN', color: 'white' }];
 
-export async function mount(stage, section) {
+export async function mount({ world, stage, section }) {
   const box = section.querySelector('[data-anchor]');
   const narrow = matchMedia('(max-width: 860px)');
+  const group = new THREE.Group();
   let board = await createBoard({ rows: narrow.matches ? PHONE : DESK });
-  stage.scene.add(board.group);
+  group.add(board.group);
   // the layout follows the same breakpoint as the box's shape; rebuild when it is crossed
   // only the latest rebuild counts: a slower earlier one is thrown away when it finishes
   let generation = 0;
-  narrow.addEventListener('change', async () => {
+  let gone = false;
+  const onBreak = async () => {
     const mine = ++generation;
     const next = await createBoard({ rows: narrow.matches ? PHONE : DESK });
-    if (mine !== generation) { next.dispose(); return; }
-    stage.scene.remove(board.group);
+    if (mine !== generation || gone) { next.dispose(); return; }
+    group.remove(board.group);
     board.dispose();
     board = next;
-    stage.scene.add(board.group);
+    group.add(board.group);
     stage.invalidate();
-  });
-
-  const glint = new THREE.PointLight(0xfff1d6, 0, 8, 1.6);
-  stage.scene.add(glint);
+  };
+  narrow.addEventListener('change', onBreak);
 
   const ndc = (e) => new THREE.Vector2((e.clientX / stage.view.w) * 2 - 1, -(e.clientY / stage.view.h) * 2 + 1);
-  box.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { board.hover(board.pick(stage.camera, ndc(e))); stage.invalidate(); } });
-  box.addEventListener('pointerleave', () => board.hover(-1));
-  box.addEventListener('pointerdown', (e) => { board.ripple(board.pick(stage.camera, ndc(e))); stage.invalidate(); });
+  const onMove = (e) => { if (e.pointerType === 'mouse') { board.hover(board.pick(stage.camera, ndc(e))); stage.invalidate(); } };
+  const onLeave = () => board.hover(-1);
+  const onDown = (e) => { board.ripple(board.pick(stage.camera, ndc(e))); stage.invalidate(); };
+  box.addEventListener('pointermove', onMove);
+  box.addEventListener('pointerleave', onLeave);
+  box.addEventListener('pointerdown', onDown);
+  const glint = world.glint;
+  const debug = { fit: null };
 
   return {
-    update(now, dt) {
-      const r = box.getBoundingClientRect();
-      const vh = stage.view.h;
-      const visible = r.bottom > -vh && r.top < vh * 1.5;
-      board.group.visible = visible;
-      glint.visible = visible;
-      if (!visible) return false;
-      const w = stage.boxToWorld(box);
-      // leaving the hero: the board tilts back and rises away, tied to the scroll
-      const e = easeInOut(clamp(-section.getBoundingClientRect().top / section.offsetHeight));
+    group,
+    debug,
+    update(local, f) {
+      const w = world.boxToWorld(box, 'hero');
+      const visible = f.s < 1.6;
+      group.visible = visible;
+      if (!visible) { glint.intensity = 0; return false; }
+      // leaving the hero: the board tilts back and rises out of the camera's path, tied to the scroll
+      const e = easeInOut(clamp(f.s / 0.35));
       board.group.scale.setScalar(fitScale(board.size, w));
-      board.group.position.set(w.x, w.y + e * 1.5, -e * 6);
-      board.group.rotation.x = -e * 1.05;
-      const P = stage.pointer;
+      board.group.position.set(w.x, w.y + e * 9, w.z - e * 2);
+      board.group.rotation.x = -e * 1.2;
+      debug.fit = { el: box, x: w.x, y: w.y, z: w.z, w: board.size.w * fitScale(board.size, w), h: board.size.h * fitScale(board.size, w) };
+      const P = f.pointer;
       const mouse = P.inside && P.type === 'mouse';
       board.lean(mouse ? P.nx : 0, mouse ? P.ny : 0);
       const halfW = (stage.view.w * stage.view.k) / 2;
       const halfH = (stage.view.h * stage.view.k) / 2;
-      glint.position.set(mouse ? P.nx * halfW : 0, mouse ? P.ny * halfH : 0, 2.2);
+      glint.position.set(mouse ? P.nx * halfW : 0, mouse ? P.ny * halfH : 0, w.z + 2.2);
       glint.intensity = mouse ? 9 * (1 - e) : 0;
-      return board.update(now, dt);
+      return board.update(f.now, f.dt);
+    },
+    dispose() {
+      gone = true;
+      narrow.removeEventListener('change', onBreak);
+      box.removeEventListener('pointermove', onMove);
+      box.removeEventListener('pointerleave', onLeave);
+      box.removeEventListener('pointerdown', onDown);
+      glint.intensity = 0;
+      board.dispose();
     },
   };
 }

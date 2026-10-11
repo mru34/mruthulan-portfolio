@@ -107,7 +107,8 @@ def test_chapters_in_order_each_with_its_four_pieces_and_anchors():
         assert f'data-event="case_open" data-project="{p["id"]}"' in sec
         assert f'id="work-{p["id"]}"' in sec
         assert f'data-scene="{p["slug"]}"' in sec
-        assert 'data-anchor' in sec
+        assert 'class="ch-stage"' in sec and 'data-anchor' not in sec   # the scene fills the screen
+        assert re.search(rf'<h3 class="ch-name"[^>]*><a href="{p["slug"]}\.html"', sec), 'the name links to the case study'
     assert 'id="work"' in sections[0]
 
 
