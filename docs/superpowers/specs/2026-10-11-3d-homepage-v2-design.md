@@ -1,6 +1,6 @@
 # 3D homepage, version 2: immersive, fast, smooth
 
-Date: 11 October 2026 · Branch: `redesign-3d` · Status: approved by Mruthulan (with the Awards additions he asked for)
+Date: 11 October 2026 · Branch: `redesign-3d` · Status: approved by Mruthulan (with the Awards additions Mruthulan asked for)
 
 This replaces the flow, pacing, look, chapters and Awards of the first spec (`2026-10-11-3d-homepage-design.md`, "v1"). Where this document is silent, v1 still holds. These v1 sections stand unchanged: Rules carried over (except the two rules changed below), Every word on the homepage (with the changes below), Writing rules, Project facts, Typography, Fallbacks, Accessibility, Analytics.
 
@@ -19,7 +19,7 @@ Mruthulan reviewed part 1 (the name board and SignalBridge) and found:
 - **Too little 3D:** one project in 3D, four projects with none.
 - **Awards unchanged.**
 
-He asked for it to be clean, very interactive, fast, more eye-catching, with lots of 3D elements filling the whole screen: an immersive experience.
+Mruthulan asked for it to be clean, very interactive, fast, more eye-catching, with lots of 3D elements filling the whole screen: an immersive experience.
 
 ## What success looks like
 
@@ -282,7 +282,7 @@ All of part 1's checks stay. Changed or added:
 8. Awards photo table.
 9. Ending board and the header icons on every page.
 10. Phones, speed and accessibility passes, part 1's leftovers, stills, README.
-11. Final review against this spec, then the screenshots and recording to Mruthulan. Nothing is pushed until he says so.
+11. Final review against this spec, then the screenshots and recording to Mruthulan. Nothing is pushed until Mruthulan says so.
 
 ## Risks
 
