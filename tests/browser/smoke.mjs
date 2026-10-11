@@ -339,7 +339,7 @@ scenario('Boss Breaker: attack to defeat, and it resets above the chapter', asyn
   const hp = () => page.$eval('[data-hp]', (e) => e.textContent);
   check(await hp() === '1,840', `HP matches the capture at the payoff (${await hp()})`);
   await page.click('[data-attack]');
-  await sleep(300);
+  await page.waitForFunction(() => document.querySelector('[data-hp]').textContent === '1,490', { timeout: 5000 }).catch(() => {});   // the next frame
   check(await hp() === '1,490', `a hit takes 350 (${await hp()})`);
   check(await page.$eval('[data-hp-live]', (e) => e.textContent) === 'Stress Dragon: 1,490 HP', 'the HP is announced');
   for (let i = 0; i < 6; i++) { await page.click('[data-attack]'); await sleep(80); }
@@ -895,6 +895,22 @@ scenario('MEANT: a ctrl-click on Featured in Tamil Murasu is left to the browser
   });
   check(prevented === false, 'the page did not take over the click');
   check(await page.evaluate(() => window.__world.debugGlide && window.__world.debugGlide()) === null, 'no glide started');
+  await page.close();
+});
+
+scenario('Boss Breaker: Attack plays the front card, and six attacks go round the hand', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="boss-breaker"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
+  await sleep(500);
+  const front = () => page.evaluate(() => window.__world.mounted.get('boss-breaker').debug.front());
+  check(await front() === 0, 'challenge #1 is in front');
+  await page.click('[data-attack]');
+  await sleep(200);
+  check(await front() === 1, `after one attack, #2 is in front (${await front()})`);
+  for (let i = 0; i < 5; i++) { await page.click('[data-attack]'); await sleep(150); }
+  check(await front() === 0, `six attacks went round the hand (${await front()})`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });
 

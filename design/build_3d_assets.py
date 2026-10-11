@@ -70,8 +70,16 @@ FONT_FILES = {
 AWARD_PHOTOS = ['win-signalbridge-team', 'win-signalbridge-award', 'win-meant-handover', 'win-meant-stage',
                 'win-meant-team', 'win-knowcad-champion', 'win-knowcad-team']
 AWARD_WIDTH = 1400                    # the photos at their source's full width (at most this), lightly sharpened
-CARD_BOXES = [(145, 549, 1423, 936), (1457, 549, 2735, 936), (145, 971, 1423, 1358),
-              (1457, 971, 2735, 1358), (145, 1392, 1423, 1780), (1457, 1392, 2735, 1780)]   # challenges #6 to #1
+# Boss Breaker's six challenges, #1 to #6, as d-challenges.png shows them: the words, points, creator; each card
+# gets its own icon and an accent from the game's orange family
+CHALLENGES = [
+    ('Drink 2L of water before 6pm', 15, 'mruthulan', 'drop', (240, 106, 67)),
+    ('Walk 8,000 steps', 25, 'aisha.k', 'steps', (245, 158, 11)),
+    ('Screen off 30 minutes before bed', 20, 'mruthulan', 'moon', (251, 113, 133)),
+    ('Ten minutes of stretching after class', 10, 'jun_wei', 'stretch', (249, 115, 22)),
+    ('Cook one meal instead of ordering in', 30, 'priya.r', 'pan', (234, 179, 8)),
+    ('Eight hours of sleep, two nights running', 35, 'mruthulan', 'bed', (226, 93, 78)),
+]
 
 
 def fit(src, size):
@@ -226,6 +234,59 @@ def reply_card(text):
     return im
 
 
+def challenge_icon(d, kind, cx, cy, s, ink, bg):
+    """A plain line icon, s px across, centred on (cx, cy)."""
+    w = max(6, s // 14)
+    if kind == 'drop':
+        import math
+        pts = [(cx, cy - s * 0.5)] + [(cx + s * 0.3 * math.cos(a), cy + s * 0.15 + s * 0.3 * math.sin(a))
+                                      for a in [math.radians(-30 + k * 8) for k in range(31)]]
+        d.line(pts + [pts[0]], fill=ink, width=w, joint='curve')
+    elif kind == 'steps':
+        d.ellipse((cx - s * 0.42, cy - s * 0.05, cx - s * 0.1, cy + s * 0.5), outline=ink, width=w)
+        d.ellipse((cx + s * 0.1, cy - s * 0.5, cx + s * 0.42, cy + s * 0.05), outline=ink, width=w)
+    elif kind == 'moon':
+        r = s * 0.4
+        d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=ink)
+        d.ellipse((cx - r * 0.45, cy - r * 1.25, cx + r * 1.25, cy + r * 0.45), fill=bg)
+    elif kind == 'stretch':
+        d.ellipse((cx - s * 0.09, cy - s * 0.48, cx + s * 0.09, cy - s * 0.3), outline=ink, width=w)
+        d.line((cx, cy - s * 0.28, cx, cy + s * 0.12), fill=ink, width=w)
+        d.line((cx - s * 0.3, cy - s * 0.5, cx, cy - s * 0.2, cx + s * 0.3, cy - s * 0.5), fill=ink, width=w, joint='curve')
+        d.line((cx - s * 0.22, cy + s * 0.5, cx, cy + s * 0.12, cx + s * 0.22, cy + s * 0.5), fill=ink, width=w, joint='curve')
+    elif kind == 'pan':
+        d.ellipse((cx - s * 0.45, cy - s * 0.28, cx + s * 0.11, cy + s * 0.28), outline=ink, width=w)
+        d.line((cx + s * 0.11, cy, cx + s * 0.5, cy), fill=ink, width=w + 2)
+    elif kind == 'bed':
+        d.line((cx - s * 0.45, cy - s * 0.35, cx - s * 0.45, cy + s * 0.35), fill=ink, width=w)
+        d.rectangle((cx - s * 0.45, cy, cx + s * 0.45, cy + s * 0.18), outline=ink, width=w)
+        d.rounded_rectangle((cx - s * 0.36, cy - s * 0.16, cx - s * 0.12, cy), radius=s * 0.05, outline=ink, width=w)
+        d.line((cx + s * 0.45, cy + s * 0.18, cx + s * 0.45, cy + s * 0.35), fill=ink, width=w)
+
+
+def challenge_card(n, text, pts, by, kind, accent):
+    """Challenge #n as a game card: an accent band with its icon, the challenge, its points and who set it."""
+    W, H = 512, 720
+    im = Image.new('RGB', (W, H), (18, 22, 34))
+    d = ImageDraw.Draw(im)
+    for y in range(H):                                                   # a dark navy gradient, like the app
+        k = y / H
+        d.line((0, y, W, y), fill=(round(26 - 8 * k), round(31 - 9 * k), round(46 - 12 * k)))
+    band = tuple(round(c * 0.82) for c in accent)
+    d.rectangle((0, 0, W, 250), fill=band)
+    challenge_icon(d, kind, W / 2, 125, 150, (255, 255, 255), band)
+    d.text((40, 290), f'Challenge #{n}', font=font('geist', 30, 600), fill=(143, 152, 171))
+    ft = font('geist', 44, 700)
+    for k, line in enumerate(wrap(text, ft, W - 80)[:4]):
+        d.text((40, 336 + k * 54), line, font=ft, fill=(255, 255, 255))
+    chip = f'+{pts} pts'
+    cw = font('geist', 30, 700).getlength(chip) + 36
+    d.rounded_rectangle((40, 624, 40 + cw, 674), radius=25, fill=tuple(round(c * 0.25 + 20) for c in accent))
+    d.text((40 + cw / 2, 649), chip, font=font('geist', 30, 700), fill=accent, anchor='mm')
+    d.text((W - 40, 649), f'by {by}', font=font('geist', 26, 500), fill=(143, 152, 171), anchor='rm')
+    return im
+
+
 def save(im, name, quality=84):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f'{name}.webp'
@@ -254,8 +315,8 @@ def main():
     save(fit(bx / 'm-boss.png', (1024, 2216)), 'bx-phone')
     save(sized(crop(bx / 'd-boss.png', DRAGON_BOX, 22), 320), 'bx-dragon')   # already its source size (184 x 244)
     save(crop(bx / 'd-boss.png', LEADER_BOX, 26), 'bx-leaderboard')          # its source size, 1271 x 518
-    for i, box in enumerate(CARD_BOXES, 1):
-        save(sized(crop(bx / 'd-challenges.png', box, 26), 640), f'bx-card-{i}')
+    for i, (text, pts, by, kind, accent) in enumerate(CHALLENGES, 1):
+        save(challenge_card(i, text, pts, by, kind, accent), f'bx-card-{i}')
 
     media = ROOT / 'assets' / 'media'
     # the tablet and the partner's display are about 400 px wide on screen at most: 1024 px is plenty, and

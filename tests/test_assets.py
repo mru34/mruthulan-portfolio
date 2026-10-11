@@ -140,7 +140,7 @@ def test_each_rendered_still_shows_its_scene(name):
 
 def test_boss_breaker_crop_boxes_sit_inside_their_captures():
     import build_3d_assets as b
-    for box in [b.DRAGON_BOX, b.LEADER_BOX, *b.CARD_BOXES]:
+    for box in [b.DRAGON_BOX, b.LEADER_BOX, b.DISPLAY_CROP]:
         left, top, right, bottom = box
         assert 0 <= left < right <= 2880 and 0 <= top < bottom <= 1800, box
 
@@ -148,6 +148,21 @@ def test_boss_breaker_crop_boxes_sit_inside_their_captures():
 def test_boss_breaker_textures_exist():
     names = ['bx-display', 'bx-phone', 'bx-dragon', 'bx-leaderboard'] + [f'bx-card-{i}' for i in range(1, 7)]
     assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []
+
+
+def test_the_six_challenge_cards_are_drawn_and_each_is_different():
+    from PIL import Image, ImageChops, ImageStat
+    import build_3d_assets as b
+    assert [c[0] for c in b.CHALLENGES] == [
+        'Drink 2L of water before 6pm', 'Walk 8,000 steps', 'Screen off 30 minutes before bed',
+        'Ten minutes of stretching after class', 'Cook one meal instead of ordering in',
+        'Eight hours of sleep, two nights running']
+    ims = [Image.open(ROOT / 'assets' / '3d' / f'bx-card-{i}.webp').convert('RGB') for i in range(1, 7)]
+    assert all(im.size == (512, 720) for im in ims)
+    for i in range(6):
+        for j in range(i + 1, 6):
+            diff = ImageStat.Stat(ImageChops.difference(ims[i], ims[j])).mean
+            assert sum(diff) / 3 > 6, (i + 1, j + 1, diff)
 
 
 def test_better_call_bhai_textures_exist_and_the_scene_agrees_on_the_slots():

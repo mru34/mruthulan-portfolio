@@ -1,7 +1,7 @@
 // 02 · Boss Breaker: the raid. The game's real Boss Raid screen stands large at the back of an arena with the
-// Stress Dragon's health bar across the top; in front, the phone with the same screen, a hand of the real
-// challenge cards, and the leaderboard with each player's damage standing as a bar. The scroll drains the
-// boss to the HP in the captures; a click anywhere (or Attack) hits it for 350: a card flies into the bar,
+// Stress Dragon's health bar across the top; in front, the phone with the same screen, a hand of the six real
+// challenges as cards, and the leaderboard with each player's damage standing as a bar. The scroll drains the
+// boss to the HP in the captures; a click anywhere (or Attack) plays the front card at it for 350: the card flies into the bar, the next comes to the front,
 // the arena shakes, and at 0 the Stress Dragon is defeated. Scrolling back above the chapter resets the fight.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -9,7 +9,7 @@ import { makePhone, makeMonitor, makeStand } from '../devices.js';
 import { loadTexture, card, bez, glow, panel, contactShadow, disposeTree, nextFrame } from '../textures.js';
 import { lerp, Spring, easeInOut } from '../../lib/motion.js';
 import { onTap } from '../tap.js';
-import { bossHp, hpText, bxState, START_HP } from './boss-timeline.js';
+import { bossHp, hpText, bxState, handPose, START_HP } from './boss-timeline.js';
 
 const ORANGE = 0xf06a43;
 const FLOOR = -1.0;
@@ -77,17 +77,19 @@ export async function mount({ world, stage, section, origin, form }) {
   group.add(phone.group, stand);
 
   await nextFrame();
-  // the hand of challenge cards, fanned about a point below them
-  const pivot = new THREE.Vector3(desk ? 1.6 : 0.6, -0.2, 2.0);
+  // the hand: the six challenges as cards, held in a loose arc low in front, the next to play on top
+  const CARD = { w: 1.05, h: 1.05 * (720 / 512) };
+  const pivot = new THREE.Vector3(desk ? 1.6 : 0.4, FLOOR - 0.3, 1.2);
+  let front = 0;
   const cards = Array.from({ length: nCards }, (_, i) => {
-    const c = card(2.0, 2.0 * (194 / 640), tex[`bx-card-${i + 1}`], null, { color: 0x111521 });
+    const c = card(CARD.w, CARD.h, tex[`bx-card-${i + 1}`], null, { color: 0x121622 });
     group.add(c);
-    return c;
+    return { c, pos: new THREE.Vector3(), rz: 0, ready: false };
   });
-  const fanPose = (i, open) => {
-    const a = lerp(0, lerp(0.42, -0.42, nCards > 1 ? i / (nCards - 1) : 0.5), open);
-    const r = 1.5;
-    return { pos: new THREE.Vector3(pivot.x - Math.sin(a) * r, pivot.y + Math.cos(a) * r, pivot.z + i * 0.015), rz: a };
+  const handAt = (i, open) => {
+    const h = handPose(i, nCards, front, open);
+    const r = 2.0;
+    return { pos: new THREE.Vector3(pivot.x - Math.sin(h.a) * r, pivot.y + Math.cos(h.a) * r + h.lift, pivot.z + h.z), rz: h.a };
   };
 
   await nextFrame();
@@ -114,12 +116,14 @@ export async function mount({ world, stage, section, origin, form }) {
     live: section.querySelector('[data-hp-live]'), down: section.querySelector('[data-defeated]'),
   };
   const hpSpring = new Spring(START_HP, { stiffness: 140, damping: 20 });
-  let hits = 0, local = -1, shownHp = -1, throwN = 0, throwT = 1, hitTimer = 0, wasVisible = false;
+  let hits = 0, local = -1, shownHp = -1, throwN = 0, throwT = 1, hitTimer = 0, wasVisible = false, throwFrom = new THREE.Vector3();
   const fillEnd = () => new THREE.Vector3(fill.position.x + (BAR.len * hpSpring.value) / START_HP, BAR.at[1], BAR.at[2] + 0.3);
   function hit() {
     if (bossHp(local, hits) <= 0) return;
     hits += 1;
-    throwN = (throwN + 1) % nCards;
+    throwN = front;
+    throwFrom = cards[front].pos.clone();   // where it left the hand
+    front = (front + 1) % nCards;           // the next comes to the front while it flies
     throwT = 0;
     world.shake(18);
     hud.hit.textContent = '−350';
@@ -137,6 +141,7 @@ export async function mount({ world, stage, section, origin, form }) {
     group,
     debug: {
       fill: () => fill.scale.x,
+      front: () => front,
       anchors: {
         screenLeft: new THREE.Vector3(-DISPLAY.w / 2, DISPLAY.y, DISPLAY.z).add(origin),
         screenRight: new THREE.Vector3(DISPLAY.w / 2, DISPLAY.y, DISPLAY.z).add(origin),
@@ -144,7 +149,7 @@ export async function mount({ world, stage, section, origin, form }) {
     },
     update(t, f) {
       local = t;
-      if (t < -0.6 && hits) { hits = 0; hud.live.textContent = ''; }
+      if (t < -0.6 && hits) { hits = 0; front = 0; hud.live.textContent = ''; }
       const visible = t > -1.2 && t < 1.7;
       group.visible = visible;
       const hp = bossHp(t, hits);
@@ -168,18 +173,34 @@ export async function mount({ world, stage, section, origin, form }) {
       hud.box.style.transform = `translate(${((p.x + 1) / 2) * innerWidth}px, ${((1 - p.y) / 2) * f.vh - pinTop}px) translate(-50%, -100%)`;
       fill.visible = hpSpring.value > 1;
       bars.forEach((b) => { b.scale.y = Math.max(0.001, st.bars); });
-      // the hand opens with the scroll; the thrown card flies to the end of the bar and comes back
-      if (throwT < 1) { throwT = Math.min(1, throwT + f.dt / 520); busy = true; }
-      cards.forEach((c, i) => {
-        const { pos, rz } = fanPose(i, st.cards);
-        c.position.copy(pos);
-        c.rotation.set(-0.25, 0, rz);
-        c.visible = st.cards > 0.02 || i === 0;
+      // the hand opens with the scroll; the played card flies to the end of the bar and back to the back of the hand,
+      // and the others slide to their new places
+      if (throwT < 1) { throwT = Math.min(1, throwT + f.dt / 620); busy = true; }
+      const ease = 1 - Math.exp(-f.dt / 90);
+      cards.forEach((cd, i) => {
+        const want = handAt(i, st.cards);
+        if (!cd.ready) { cd.pos.copy(want.pos); cd.rz = want.rz; cd.ready = true; }
+        if (cd.pos.distanceToSquared(want.pos) > 1e-7 || Math.abs(cd.rz - want.rz) > 1e-4) {
+          cd.pos.lerp(want.pos, ease);
+          cd.rz += (want.rz - cd.rz) * ease;
+          busy = true;
+        }
+        cd.c.position.copy(cd.pos);
+        cd.c.rotation.set(-0.3, 0, cd.rz);
+        cd.c.visible = st.cards > 0.02 || i === front;
         if (i === throwN && throwT < 1) {
-          const k = throwT < 0.5 ? easeInOut(throwT * 2) : easeInOut((1 - throwT) * 2);
           const end = fillEnd();
-          c.position.copy(bez(pos, pos.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 2.5, 1.5)), end, k));
-          c.rotation.set(-0.25 + k * 0.4, k * 3, rz * (1 - k));
+          if (throwT < 0.5) {
+            const k = easeInOut(throwT * 2);
+            cd.c.position.copy(bez(throwFrom, throwFrom.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 2.5, 1.5)), end, k));
+            cd.c.rotation.set(-0.3 + k * 0.4, k * 3, cd.rz * (1 - k));
+          } else {
+            const k = easeInOut((throwT - 0.5) * 2);
+            cd.c.position.copy(bez(end, end.clone().lerp(want.pos, 0.5).add(new THREE.Vector3(0, 1.5, 1)), want.pos, k));
+            cd.c.rotation.set(-0.3 + (1 - k) * 0.4, (1 - k) * 3, cd.rz * k);
+          }
+          cd.pos.copy(cd.c.position);   // the hand takes it back from where it is
+          cd.c.visible = true;
         }
       });
       return busy;
