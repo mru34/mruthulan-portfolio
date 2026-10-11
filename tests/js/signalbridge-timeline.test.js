@@ -27,3 +27,11 @@ test('the message reaches the consent card before it turns, and the laptop after
   assert.equal(at(0.55).toLaptop, 0);
   assert.equal(at(0.66).toLaptop, 1);
 });
+
+test('chapter-local time: nothing has started on arrival, everything is done by the payoff key', async () => {
+  const { sbLocal } = await import('../../js/3d/chapters/signalbridge-timeline.js');
+  const a = sbLocal(-0.4), z = sbLocal(0.42);
+  for (const v of Object.values(a)) assert.equal(v, 0);
+  for (const v of Object.values(z)) assert.equal(v, 1);
+  assert.deepEqual(sbLocal(0.6), z);
+});

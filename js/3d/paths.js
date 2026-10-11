@@ -2,7 +2,8 @@
 // through in it. t is chapter-local time in screens (-1 entering from below, 0 pinned, 0.6 pin ends, 1.6
 // gone). Every flight scene has a key at -0.4 (arriving), 0.42 (stop: the payoff), 0.6 (stop: still the
 // payoff) and 0.9 (leaving), so the words' beats and the camera agree. Units are decimetres; `at` and the
-// object positions in each chapter's module are relative to that chapter's origin.
+// object positions in each chapter's module are relative to that chapter's origin. A key's `phone` fields
+// replace its own on phone screens (the words sit along the bottom there, not in a corner).
 const hex = (n) => [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 
 export const COLORS = {
@@ -17,12 +18,12 @@ export const ORIGINS = {
 
 export const KEYS = {
   signalbridge: [
-    { t: -0.4, at: [-1.6, -0.2, 1.05], from: [0.12, 0.06, 1], w: 0.95, h: 1.6 },
-    { t: 0.0, at: [0.0, 0.4, -0.5], from: [0.08, 0.18, 1], w: 7.5, h: 4.6 },
-    { t: 0.16, at: [-0.1, 0.9, 0.9], from: [0.0, 0.12, 1], w: 3.2, h: 2.0 },
-    { t: 0.42, at: [1.68, 0.05, -1.24], from: [-0.29, 0.25, 0.92], w: 3.3, h: 2.1, stop: true },
-    { t: 0.6, at: [1.68, 0.05, -1.24], from: [-0.29, 0.25, 0.92], w: 3.3, h: 2.1, stop: true },
-    { t: 0.9, at: [3.0, 0.8, -3.0], from: [0.55, 0.15, 1], w: 6, h: 4 },
+    { t: -0.3, at: [-1.85, 0.25, 0.95], from: [0.12, 0.06, 1], w: 1.2, h: 1.75, phone: { at: [-1.55, 0.05, 0.95], w: 1.0, h: 2.2 } },
+    { t: 0.0, at: [-0.4, 0.5, -1.0], from: [0.08, 0.18, 1], w: 8, h: 5, phone: { at: [0, 0.3, -1], w: 5, h: 8 } },
+    { t: 0.16, at: [-0.8, 1.05, 0.9], from: [0.0, 0.12, 1], w: 3.6, h: 2.2, phone: { at: [-0.1, 0.6, 0.9], w: 1.8, h: 3 } },
+    { t: 0.42, at: [0.7, 0.3, -1.0], from: [-0.2, 0.22, 1], w: 6.0, h: 3.7, stop: true, phone: { at: [1.65, -0.3, -1.2], w: 3.2, h: 4 } },
+    { t: 0.6, at: [0.7, 0.3, -1.0], from: [-0.2, 0.22, 1], w: 6.0, h: 3.7, stop: true, phone: { at: [1.65, -0.3, -1.2], w: 3.2, h: 4 } },
+    { t: 0.9, at: [3.2, 0.9, -3.2], from: [0.55, 0.15, 1], w: 6, h: 4 },
   ],
   'boss-breaker': [
     { t: -0.4, at: [0, 4.8, -5.5], from: [0, 0.05, 1], w: 13, h: 7 },

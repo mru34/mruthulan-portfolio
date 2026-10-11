@@ -167,6 +167,10 @@ scenario('the wheel inside the viewer never scrolls the page', async () => {
 
 scenario('Page Down still moves a screen', async () => {
   const { page } = await open();
+  // once the page has settled: under software rendering (these tests) a key pressed in the second after the
+  // first scenes are built is lost; on a real GPU it scrolls at once (checked headful, 11 Oct 2026)
+  await page.waitForSelector('[data-scene="signalbridge"][data-live]', { timeout: 30000 });
+  await sleep(1500);
   await page.keyboard.press('PageDown');
   await sleep(900);
   check(await page.evaluate(() => scrollY > innerHeight * 0.6), 'moved down');
@@ -234,10 +238,10 @@ scenario('the board survives the breakpoint', async () => {
 });
 
 // mean difference per channel (0-255) between two PNG screenshots, measured in the page
-async function meanDiff(page, a, b) {
-  return page.evaluate(async (a, b) => {
-    const load = (src) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.src = `data:image/png;base64,${src}`; });
-    const [ia, ib] = await Promise.all([load(a), load(b)]);
+async function meanDiff(page, a, b, typeB = 'png') {
+  return page.evaluate(async (a, b, typeB) => {
+    const load = (src, type) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.src = `data:image/${type};base64,${src}`; });
+    const [ia, ib] = await Promise.all([load(a, 'png'), load(b, typeB)]);
     const c = new OffscreenCanvas(ia.width, ia.height);
     const g = c.getContext('2d', { willReadFrequently: true });
     g.drawImage(ia, 0, 0);
@@ -248,7 +252,7 @@ async function meanDiff(page, a, b) {
     let s = 0;
     for (let i = 0; i < da.length; i += 4) s += Math.abs(da[i] - db[i]) + Math.abs(da[i + 1] - db[i + 1]) + Math.abs(da[i + 2] - db[i + 2]);
     return s / ((da.length / 4) * 3);
-  }, a, b);
+  }, a, b, typeB);
 }
 
 scenario('the live board takes over from its still without a visible change', async () => {
@@ -286,6 +290,33 @@ scenario('SignalBridge comes alive, and its payoff shows everything', async () =
   await page.close();
 });
 
+// a chapter's still (design/stills.mjs) is the live scene at its payoff: the visitor without the 3D sees the same
+for (const scene of ['signalbridge']) {
+  scenario(`${scene}: the still matches the live payoff`, async () => {
+    const at = (page) => page.evaluate((scene) => {
+      const s = document.querySelector(`[data-scene="${scene}"]`);
+      scrollTo({ top: s.getBoundingClientRect().top + scrollY + 0.5 * innerHeight, behavior: 'instant' });
+    }, scene);
+    const live = await open();
+    await at(live.page);
+    await live.page.waitForSelector(`[data-scene="${scene}"][data-live]`, { timeout: 30000 });
+    await sleep(800);
+    const hide = (page) => page.addStyleTag({ content: 'body > :not(.stage){visibility:hidden!important}' });
+    await hide(live.page);
+    const b = await live.page.screenshot({ encoding: 'base64' });
+    const stills = await open({ path: '?mode=stills' });
+    const a = await stills.page.evaluate(async (scene) => {
+      const img = document.querySelector(`[data-scene="${scene}"] .still img`);
+      const r = await fetch(img.currentSrc || img.src); const blob = await r.blob();
+      return await new Promise((res) => { const f = new FileReader(); f.onload = () => res(String(f.result).split(',')[1]); f.readAsDataURL(blob); });
+    }, scene);
+    const d = await meanDiff(live.page, b, a, 'webp');
+    check(d < 2, `still and live payoff differ by ${d.toFixed(2)} (under 2)`);
+    await live.page.close();
+    await stills.page.close();
+  });
+}
+
 scenario('a page opened at #contact has nothing animating by itself', async () => {
   for (const path of ['', '#contact']) {
     const page = await browser.newPage();
@@ -306,7 +337,8 @@ scenario('the header logo shows when it has keyboard focus, and without JavaScri
   const { page } = await open();
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
-  await sleep(400);
+  // the logo fades in over .3s; give a busy page time to finish the fade
+  await page.waitForFunction(() => { const a = document.activeElement; return a.classList.contains('logo') && parseFloat(getComputedStyle(a).opacity) > 0.99; }, { timeout: 3000 }).catch(() => {});
   const focused = await page.evaluate(() => { const a = document.activeElement; return a.classList.contains('logo') ? parseFloat(getComputedStyle(a).opacity) : -1; });
   check(focused > 0.99, `focused logo is visible (opacity ${focused})`);
   await page.close();

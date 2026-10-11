@@ -1,5 +1,5 @@
 // The SignalBridge chapter's choreography, as a function of how far through it the visitor has scrolled
-// (0..1). The beats of the words are in js/home.js: the line from 0.25, the result and link from 0.6.
+// (0..1); sbLocal maps the chapter-local time the world passes to it.
 import { ramp, easeOut, easeInOut } from '../../lib/motion.js';
 
 export function sbState(p) {
@@ -17,3 +17,7 @@ export function sbState(p) {
     phoneAfter: ramp(p, 0.53, 0.57),          // the phone shows "Worker notified"
   };
 }
+
+// chapter-local time (screens: -0.4 arriving, 0.42 the payoff) → the choreography above, which runs over
+// p = 0..0.7
+export const sbLocal = (local) => sbState(Math.min(1, Math.max(0, ((local + 0.4) / 0.82) * 0.7)));

@@ -44,9 +44,32 @@ def test_signalbridge_textures_exist_within_their_sizes(name, limit):
             assert im.getpixel((im.width // 2, im.height // 2))[3] == 255
 
 
-def test_signalbridge_textures_fit_the_chapter_budget():
-    total = sum((ROOT / 'assets' / '3d' / f'{n}.webp').stat().st_size for n in SB)
-    assert total <= 400_000, total
+SB_WALL = {'sb-wall-radar': (1280, 800), 'sb-wall-cases': (1280, 800), 'sb-wall-chat': (1280, 800),
+           'sb-wall-supervisor': (1280, 800), 'sb-wall-preview': (1280, 800), 'sb-phone-preview': (768, 1662)}
+
+
+@pytest.mark.parametrize('name,limit', SB_WALL.items())
+def test_signalbridge_wall_textures_exist_within_their_sizes(name, limit):
+    from PIL import Image
+    path = ROOT / 'assets' / '3d' / f'{name}.webp'
+    assert path.exists(), path
+    with Image.open(path) as im:
+        assert im.width <= limit[0] and im.height <= limit[1], im.size
+
+
+def test_signalbridge_crops_leave_out_the_teammates_name_and_the_dev_badge():
+    import build_3d_assets as b
+    assert b.SUPERVISOR_CROP[3] <= 1500          # "Signed in as" sits below this in d-supervisor.png
+    assert b.DESK_CROP[3] <= 1650 and b.CHAT_CROP[3] <= 1650 and b.PHONE_CROP[3] <= 2400   # the dev badge sits below
+
+
+def chapter_bytes(prefix):
+    return sum(p.stat().st_size for p in (ROOT / 'assets' / '3d').glob(f'{prefix}-*.webp'))
+
+
+@pytest.mark.parametrize('prefix', ['sb', 'bx', 'bb', 'mt', 'kc', 'aw'])
+def test_each_chapter_fits_its_texture_budget(prefix):
+    assert chapter_bytes(prefix) <= 600_000, chapter_bytes(prefix)
 
 
 def test_the_scene_and_the_builder_agree_on_the_message_crop():

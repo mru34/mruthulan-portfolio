@@ -14,7 +14,7 @@ function screens(w, h, r, a, b) {
   const next = new THREE.Mesh(geo, lit(b, { transparent: true, opacity: 0, depthWrite: false }));
   next.position.z = 0.0005;
   next.visible = false;
-  const glass = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.2, depthWrite: false }));
+  const glass = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.08, depthWrite: false }));
   glass.position.z = 0.001;
   const group = new THREE.Group();
   group.add(front, next, glass);

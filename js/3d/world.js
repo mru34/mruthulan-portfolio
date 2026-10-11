@@ -74,7 +74,8 @@ export function createWorld(stage, { sections, form }) {
     for (const s of sections) {
       if (s.kind !== 'flight' || !KEYS[s.name]) continue;
       const o = ORIGINS[s.name];
-      for (const k of KEYS[s.name]) {
+      for (const key of KEYS[s.name]) {
+        const k = form === 'phone' && key.phone ? { ...key, ...key.phone } : key;
         keys.push({ ...k, t: bases[s.name] + k.t, at: [k.at[0] + o[0], k.at[1] + o[1], k.at[2] + o[2]], color: COLORS[s.name] });
       }
     }

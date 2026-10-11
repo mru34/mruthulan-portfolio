@@ -1,7 +1,8 @@
 // One screenshot of the homepage, for looking at the 3D while building it.
 //   node tests/browser/shot.mjs --out=../portfolio-tools/shots3d/hero.png [--size=1440x900]
-//        [--at=signalbridge:0.4 | --y=400] [--hover=720,300] [--path=?mode=stills]
-// The pointer is held "down" so the snap does not move the page while the picture is taken.
+//        [--at=signalbridge:0.42 | --y=400] [--hover=720,300] [--path=?mode=stills]
+// --at=name:t scrolls to chapter-local time t (screens from where the section's top meets the top of the
+// screen: -0.4 arriving, 0.42 the payoff) and waits for the scene to be live.
 import puppeteer from 'puppeteer-core';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,15 +21,14 @@ page.on('console', (m) => { if (['error', 'warning'].includes(m.type())) console
 await page.setViewport({ width: w, height: h, isMobile: w < 768, hasTouch: w < 768 });
 await page.evaluateOnNewDocument(() => { try { localStorage.setItem('mruthulan-analytics-choice', 'deny'); } catch {} });
 await page.goto(BASE + arg('path', ''), { waitUntil: 'networkidle0' });
-await page.evaluate(() => dispatchEvent(new PointerEvent('pointerdown')));
 const at = arg('at', '');
 if (at) {
-  const [scene, p] = at.split(':');
-  await page.evaluate((scene, p) => {
+  const [scene, t] = at.split(':');
+  await page.evaluate((scene, t) => {
     const s = document.querySelector(`[data-scene="${scene}"]`);
-    const top = s.getBoundingClientRect().top + scrollY;
-    scrollTo({ top: top + Number(p) * Math.max(0, s.offsetHeight - innerHeight), behavior: 'instant' });
-  }, scene, p);
+    scrollTo({ top: s.getBoundingClientRect().top + scrollY + Number(t) * innerHeight, behavior: 'instant' });
+  }, scene, t);
+  await page.waitForSelector(`[data-scene="${scene}"][data-live]`, { timeout: 30000 }).catch(() => console.error('not live'));
 }
 const y = arg('y', '');
 if (y) await page.evaluate((y) => scrollTo({ top: y, behavior: 'instant' }), Number(y));
