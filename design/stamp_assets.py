@@ -1,4 +1,4 @@
-"""Stamp the stylesheet and script links in every page with a short hash of
+"""Stamp the stylesheet, script and tab-icon links in every page with a short hash of
 their contents: css/styles.css?v=1a2b3c4d.
 
 GitHub Pages lets browsers keep CSS and JS for ten minutes. Without a stamp,
@@ -14,7 +14,7 @@ import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-ASSETS = ['css/styles.css', 'js/script.js', 'js/analytics.js']
+ASSETS = ['css/styles.css', 'js/script.js', 'js/analytics.js', 'assets/favicon.svg']   # the tab icon too: browsers keep it long
 
 
 def stamps():
