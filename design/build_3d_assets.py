@@ -5,7 +5,8 @@
 Reads the raw captures in ../portfolio-tools/card-shots/raw (outside this repository; raw files are never
 published) and the site's own media, and writes WebP files to assets/3d/. Crops are cut from the real screens
 with rounded corners, so each piece is exactly what the app showed. Nothing is drawn or invented here (except the crisp parts drawn from the apps' real words: Better Call
-Bhai's times, MEANT's reply cards, Boss Breaker's challenge cards, and KnowCad's example console and pages): the
+Bhai's times, Boss Breaker's challenge cards, and KnowCad's example console and pages; MEANT's word tiles and reply
+cards are drawn by design/build_meant_tiles.mjs from MEANT's own boards, colours and Mulberry symbols): the
 one composite (sb-consent-given) is the app's own "Worker notified" pill, centred on a plate of the consent
 card's own background colour, the same size as the card.
 
@@ -44,11 +45,11 @@ DISPLAY_CROP = (100, 0, 2780, 1120)   # the Boss Raid page's content (header, ra
 # 7 down (20 in all, 10:30 12:00 12:30 14:30 17:00 taken, 15:00 chosen). The phone field in these captures is
 # the "+65 XXXX XXXX" placeholder; no number is published.
 SLOT_GRID = (116, 784, 1054, 1850)
-# MEANT, in pixels of the 1600 x 1000 captures assets/media/meant-shot-1 (the tablet with the four replies) and
-# meant-shot-3 (the word board, coloured by word type): the four reply tiles, and the board's top three rows
+# MEANT, in pixels of the 1600 x 1000 capture assets/media/meant-shot-1 (the tablet with the four replies): the
+# four reply tiles. The word tiles and the reply cards themselves are drawn by design/build_meant_tiles.mjs.
 REPLY_BOXES = [(56, 332, 522, 548), (534, 332, 1000, 548), (56, 558, 522, 774), (534, 558, 1000, 774)]
 REPLIES = ['Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice']
-WORD_GRID = (76, 230, 1524, 676)      # 8 x 3 tiles: each 172 x 144, 182.1 x 150.5 apart, starting 2 px in
+MT_DRAWN = RAW / 'mt'                 # build_meant_tiles.mjs's PNGs: words.png (8 x 6 tiles, 256 x 214 each), reply-*.png
 # The partner display could not be captured showing each reply: the receiver needs the whole MEANT core
 # running. So each reply is written onto the real "Give me a moment" capture (meant-shot-2), in the display's
 # own typeface (Inter 800, from the MEANT repository), colour and size, centred where that sentence is.
@@ -65,13 +66,13 @@ FONT_FILES = {
     'geist': ROOT / 'assets' / 'fonts' / 'geist-latin.woff2',
     'mono': ROOT / 'assets' / 'fonts' / 'jetbrains-mono-400-500-latin.woff2',
     'knowcad': ROOT / 'assets' / 'fonts' / 'name-knowcad.woff2',
-    'inter-600': MEANT_FONT.with_name('inter-latin-600-normal.woff2'),
 }
 # Awards: each event's real photos, printed on the table (the keys of data/media.json)
 AWARD_PHOTOS = ['win-signalbridge-team', 'win-signalbridge-award', 'win-meant-handover', 'win-meant-stage',
                 'win-meant-team', 'win-knowcad-champion', 'win-knowcad-team']
-AWARD_WIDTH = 900                     # the photos at most this wide (1.5x their largest size on screen at 1920 px,
-                                      # and a GPU upload short enough not to stall a frame), lightly sharpened
+AWARD_WIDTH = 1200                    # the photos at most this wide (about 2x their size on screen at 1440 px, and an
+                                      # upload short enough not to cost a long frame), lightly sharpened
+SCREEN = (1600, 1000)                 # a desktop capture on a 3D screen, sharpened: larger ones cost a long frame on upload
 # Boss Breaker's six challenges, #1 to #6, as d-challenges.png shows them: the words, points, creator; each card
 # gets its own icon and an accent from the game's orange family
 CHALLENGES = [
@@ -230,24 +231,6 @@ def partner_reply(text):
 def sharpen(im):
     """A light unsharp mask: textures are drawn smaller than they are, and minifying softens edges."""
     return im.filter(ImageFilter.UnsharpMask(radius=1.2, percent=60, threshold=2))
-
-
-def reply_card(text):
-    """One of the tablet's four replies as a clean card: white (the 3D card rounds its corners), a small dish icon,
-    the reply in MEANT's own Inter 600."""
-    W, H = 640, 296
-    im = Image.new('RGB', (W, H), (255, 255, 255))
-    d = ImageDraw.Draw(im)
-    ink = (74, 79, 87)
-    d.chord((284, 52, 356, 108), 0, 180, outline=ink, width=6)          # the bowl
-    d.line((276, 80, 364, 80), fill=ink, width=6)                        # its rim
-    for x in (306, 320, 334):                                            # steam
-        d.line((x, 68, x - 5, 58, x, 48, x - 5, 38), fill=ink, width=4, joint='curve')
-    size = 72                                                            # one size for all four: the longest fits
-    while font('inter-600', size).getlength(max(REPLIES, key=len)) > W - 56:
-        size -= 2
-    d.text((W / 2, 190), text, font=font('inter-600', size), fill=(31, 35, 40), anchor='mm')
-    return im
 
 
 def challenge_icon(d, kind, cx, cy, s, ink, bg):
@@ -417,7 +400,7 @@ def plaster():
     return Image.merge('RGB', [tile.point(lambda v, f=f: round(v * f)) for f in (0.27, 0.24, 0.2)])
 
 
-def save(im, name, quality=84):
+def save(im, name, quality=90):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f'{name}.webp'
     im.save(path, 'WEBP', quality=quality, method=6)
@@ -428,8 +411,8 @@ def main():
     sb = RAW / 'sb'
     save(fit(sb / 'm-consent.png', (768, 1662)), 'sb-phone-consent')
     save(fit(sb / 'm-youth-chat.png', (768, 1662)), 'sb-phone-notified')
-    save(fit(sb / 'd-worker-handoffs.png', (1600, 1000)), 'sb-laptop-handoffs')
-    save(fit(ROOT / 'assets' / 'media' / 'signalbridge-shot-2.webp', (1600, 1000)), 'sb-laptop-brief')
+    save(sharpen(fit(sb / 'd-worker-handoffs.png', SCREEN)), 'sb-laptop-handoffs')
+    save(sharpen(fit(ROOT / 'assets' / 'media' / 'signalbridge-shot-2.webp', (1600, 1000))), 'sb-laptop-brief')   # its full size
     save(crop(sb / 'm-consent.png', MESSAGE_BOX, 54), 'sb-message')
     ask = crop(sb / 'm-consent.png', ASK_BOX, 36)
     save(ask, 'sb-consent-ask')
@@ -437,10 +420,10 @@ def main():
     for raw, name, box in (('d-worker-signal-radar', 'sb-wall-radar', DESK_CROP), ('d-worker-cases', 'sb-wall-cases', DESK_CROP),
                            ('d-youth-chat', 'sb-wall-chat', CHAT_CROP), ('d-worker-handoffs', 'sb-wall-handoffs', DESK_CROP),
                            ('d-supervisor', 'sb-wall-supervisor', SUPERVISOR_CROP)):
-        save(fit_crop(sb / f'{raw}.png', box, (1280, 800)), name)
+        save(sharpen(fit_crop(sb / f'{raw}.png', box, SCREEN)), name)
 
     bx = RAW / 'bx'
-    # sized to 1.5x their largest size on screen, so each goes to the GPU without stalling a frame
+    # sized to about 1.5x their largest size on screen and sharpened, so each goes to the GPU without a long frame
     save(sharpen(fit_crop(bx / 'd-boss.png', DISPLAY_CROP, (1600, 1600))), 'bx-display')
     save(fit(bx / 'm-boss.png', (768, 1662)), 'bx-phone')
     save(sized(crop(bx / 'd-boss.png', DRAGON_BOX, 22), 320), 'bx-dragon')   # already its source size (184 x 244)
@@ -449,16 +432,16 @@ def main():
         save(challenge_card(i, text, pts, by, kind, accent).resize((384, 540), Image.LANCZOS), f'bx-card-{i}')   # drawn at 512
 
     media = ROOT / 'assets' / 'media'
-    # the tablet and the partner's display are about 400 px wide on screen at most: 1024 px is plenty, and
-    # smaller textures go to the GPU without stalling a frame
-    save(fit(media / 'meant-shot-1.webp', (1280, 800)), 'mt-tablet')
+    # the tablet is about 400 px wide on screen at most (800 on a high-density display): its full 1600 px capture,
+    # sharpened, keeps its small words readable; the partner's display shows one large sentence
+    save(sharpen(fit(media / 'meant-shot-1.webp', (1600, 1000))), 'mt-tablet')
     save(fit(media / 'meant-shot-2.webp', (1024, 640)), 'mt-partner-wait')
     for i, text in enumerate(REPLIES, 1):
         save(sized(partner_reply(text), 1024), f'mt-partner-{i}')
-    for i, text in enumerate(REPLIES, 1):
-        save(reply_card(text), f'mt-reply-{i}')
-    save(fit_crop(media / 'meant-shot-3.webp', WORD_GRID, (1448, 446)), 'mt-words')
-    save(sharpen(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8.webp', (1024, 817))), 'mt-paper', quality=82)   # from the full scan
+    for i in range(1, 5):
+        save(fit(MT_DRAWN / f'reply-{i}.png', (640, 296)), f'mt-reply-{i}', quality=90)
+    save(sharpen(sized(Image.open(MT_DRAWN / 'words.png').convert('RGB'), 1536)), 'mt-words', quality=90)   # 192 x 160 a tile
+    save(sharpen(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8.webp', (1400, 1117))), 'mt-paper', quality=88)   # from the full scan: it can be picked up
 
     for state in range(4):
         save(kc_console(state).resize((1024, 640), Image.LANCZOS), f'kc-console-{state}')   # drawn at 1600, kept at 1024
@@ -468,13 +451,13 @@ def main():
     for key in AWARD_PHOTOS:
         with Image.open(media / f'{key}.webp') as src:
             width = min(src.width, AWARD_WIDTH)
-        save(sharpen(fit(media / f'{key}.webp', (width, width * 2))), f'aw-{key}', quality=80)
+        save(sharpen(fit(media / f'{key}.webp', (width, width * 2))), f'aw-{key}', quality=88)
     save(plaster(), 'aw-wall', quality=80)
 
     bb = RAW / 'bcb'
     for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):
         save(fit(bb / 'bcb-shots' / f'{name}.png', (768, 1662)), f'bb-phone-{i}')
-    save(fit(bb / 'desk-booking.png', (1600, 1000)), 'bb-laptop')
+    save(sharpen(fit(bb / 'desk-booking.png', SCREEN)), 'bb-laptop')
     save(slot_atlas(), 'bb-times', quality=90)
 
 

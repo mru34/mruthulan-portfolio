@@ -1,4 +1,4 @@
-// The ending: OPEN TO A SWE INTERNSHIP / 2027/28 as a 3D split-flap board, fitted into .end-board (a page
+// The ending: OPEN TO INTERNSHIPS / 2027/28 as a 3D split-flap board, fitted into .end-board (a page
 // scene: the camera holds the page pose). Built from the same parts as the name board: it leans toward the
 // mouse, flickers a flap under it, and ripples from a tap. A drag or a swipe that starts on it is not a tap.
 import * as THREE from 'three';
@@ -6,8 +6,8 @@ import { createBoard } from './board.js';
 import { fitScale } from '../lib/fit.js';
 import { onTap } from './tap.js';
 
-const DESK = [{ text: 'OPEN TO A SWE INTERNSHIP', color: 'gold' }, { text: '2027/28', color: 'white' }];
-const PHONE = [{ text: 'OPEN TO A', color: 'gold' }, { text: 'SWE', color: 'gold' }, { text: 'INTERNSHIP', color: 'gold' }, { text: '2027/28', color: 'white' }];
+const DESK = [{ text: 'OPEN TO INTERNSHIPS', color: 'gold' }, { text: '2027/28', color: 'white' }];
+const PHONE = [{ text: 'OPEN TO', color: 'gold' }, { text: 'INTERNSHIPS', color: 'gold' }, { text: '2027/28', color: 'white' }];
 
 export async function mount({ world, stage, section }) {
   const box = section.querySelector('.end-board');

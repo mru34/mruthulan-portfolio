@@ -113,18 +113,19 @@ scenario('focus shows the whole information block', async () => {
   await page.focus('.chapter:nth-of-type(3) .info a.btn');
   await sleep(100);
   const op = await page.$eval('.chapter:nth-of-type(3) .info a.btn', (a) => parseFloat(getComputedStyle(a).opacity));
-  check(op > 0.99, `focused Case study link is visible (opacity ${op})`);
+  check(op > 0.99, `focused More info link is visible (opacity ${op})`);
   await page.close();
 });
 
-scenario('pacing: at most 12 screens, and SignalBridge pays off within 2.5', async () => {
+// 14: five rooms of 1.6 screens, and a calm flight between each two (0.6 of a screen with only the 3D)
+scenario('pacing: at most 14 screens, and SignalBridge pays off within 2.5', async () => {
   const { page } = await open();
   const r = await page.evaluate(() => {
     const c = document.querySelector('.chapter'), pin = c.querySelector('.pin');
     return { screens: (document.documentElement.scrollHeight - innerHeight) / innerHeight,
              pay: (c.offsetTop + 0.7 * (c.offsetHeight - pin.offsetHeight)) / innerHeight };
   });
-  check(r.screens <= 12, `scroll length ${r.screens.toFixed(2)} screens`);
+  check(r.screens <= 14, `scroll length ${r.screens.toFixed(2)} screens`);
   check(r.pay <= 2.5, `SignalBridge's result fully shown at ${r.pay.toFixed(2)} screens`);
   await page.close();
 });
@@ -153,7 +154,9 @@ scenario('the wheel glides through Lenis', async () => {
 scenario('a header link glides and lands exactly', async () => {
   const { page } = await open();
   await page.click('.nav a[href$="#work"]');
-  await sleep(2000);
+  // the glide starts at once (while the first rooms are still being built, which software rendering makes slow)
+  await sleep(300);
+  await page.waitForFunction(() => window.__lenis && !window.__lenis.isScrolling, { timeout: 10000 }).catch(() => {});
   const r = await page.evaluate(() => {
     const k = document.getElementById('work');
     return { y: scrollY, want: Math.round(k.getBoundingClientRect().top + scrollY - parseFloat(getComputedStyle(k).scrollMarginTop) - (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0)) };
@@ -508,7 +511,7 @@ scenario('the internship board comes alive in its box at the end, and a swipe ac
   await sleep(500);
   const d = await page.evaluate(() => window.__world.debugFit('ending'));
   check(d !== null && d <= 1, `the board is within 1px of its box (${d})`);
-  check(await page.evaluate(() => window.__world.mounted.get('ending').debug.text()) === 'OPEN TO A SWE INTERNSHIP / 2027/28', 'it reads the sentence');
+  check(await page.evaluate(() => window.__world.mounted.get('ending').debug.text()) === 'OPEN TO INTERNSHIPS / 2027/28', 'it reads the sentence');
   const box = await page.$eval('#contact .end-board', (e) => { const r = e.getBoundingClientRect(); return { x: r.x + r.width * 0.3, y: r.y + r.height / 2 }; });
   await page.mouse.move(box.x, box.y);
   await page.mouse.down();

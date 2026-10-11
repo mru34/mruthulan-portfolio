@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { GLYPHS, glyphIndex, glyphUV, flickerSequence, tileState, layoutRows, scrubState, scrubSeq } from '../../js/3d/flap.js';
 
 test('every letter of the boards is a glyph', () => {
-  for (const ch of 'MRUTHULAN SENTHIL NATHAN OPEN TO A SWE INTERNSHIP 2027/28') assert.ok(GLYPHS.includes(ch), ch);
+  for (const ch of 'MRUTHULAN SENTHIL NATHAN OPEN TO INTERNSHIPS 2027/28') assert.ok(GLYPHS.includes(ch), ch);
   assert.equal(GLYPHS.length, 41);
   assert.equal(glyphIndex(' '), 0);
   assert.equal(glyphIndex('a'), glyphIndex('A'));

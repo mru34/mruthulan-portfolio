@@ -47,7 +47,7 @@ function pagesAtlas() {
   }
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 8;
+  t.anisotropy = 16;   // three caps it at what the GPU offers
   return t;
 }
 

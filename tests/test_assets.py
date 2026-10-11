@@ -44,8 +44,8 @@ def test_signalbridge_textures_exist_within_their_sizes(name, limit):
             assert im.getpixel((im.width // 2, im.height // 2))[3] == 255
 
 
-SB_WALL = {'sb-wall-radar': (1280, 800), 'sb-wall-cases': (1280, 800), 'sb-wall-chat': (1280, 800),
-           'sb-wall-supervisor': (1280, 800), 'sb-wall-handoffs': (1280, 800)}
+SB_WALL = {'sb-wall-radar': (1600, 1000), 'sb-wall-cases': (1600, 1000), 'sb-wall-chat': (1600, 1000),
+           'sb-wall-supervisor': (1600, 1000), 'sb-wall-handoffs': (1600, 1000)}
 
 
 @pytest.mark.parametrize('name,limit', SB_WALL.items())
@@ -118,7 +118,8 @@ def chapter_bytes(prefix):
     return sum(p.stat().st_size for p in (ROOT / 'assets' / '3d').glob(f'{prefix}-*.webp'))
 
 
-BUDGET = {'sb': 600_000, 'bx': 600_000, 'bb': 600_000, 'mt': 600_000, 'kc': 600_000, 'aw': 1_000_000}
+# each chapter's textures, in bytes (WebP at 90, screens sharpened, the newspaper and the photos larger)
+BUDGET = {'sb': 900_000, 'bx': 600_000, 'bb': 600_000, 'mt': 900_000, 'kc': 600_000, 'aw': 1_200_000}
 
 
 @pytest.mark.parametrize('prefix,limit', BUDGET.items())
@@ -207,20 +208,35 @@ def test_meant_textures_exist_and_their_boxes_sit_inside_the_captures():
     import build_3d_assets as b
     names = ['mt-tablet', 'mt-partner-wait', 'mt-words', 'mt-paper'] + [f'mt-partner-{i}' for i in range(1, 5)] + [f'mt-reply-{i}' for i in range(1, 5)]
     assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []
-    for box in [*b.REPLY_BOXES, b.WORD_GRID]:
+    for box in b.REPLY_BOXES:
         left, top, right, bottom = box
         assert 0 <= left < right <= 1600 and 0 <= top < bottom <= 1000, box
 
 
-def test_meant_reply_cards_are_drawn_white_cards_and_the_paper_is_sharper():
+def test_meant_reply_cards_are_white_cards_with_an_ink_edge_and_the_paper_is_full_size():
     from PIL import Image, ImageStat
     for i in range(1, 5):
         with Image.open(ROOT / 'assets' / '3d' / f'mt-reply-{i}.webp') as im:
             assert im.size == (640, 296), im.size
-            assert min(im.getpixel((8, 8))[:3]) >= 250, 'the card is white to its edge (the 3D card rounds it)'
-            assert ImageStat.Stat(im.convert('L')).mean[0] > 200
+            assert max(im.getpixel((3, im.height // 2))[:3]) <= 40, "MEANT's ink edge (the 3D card rounds it)"
+            assert min(im.getpixel((40, 40))[:3]) >= 250, 'a white card'
+            assert ImageStat.Stat(im.convert('L')).mean[0] > 180
     with Image.open(ROOT / 'assets' / '3d' / 'mt-paper.webp') as im:
-        assert im.width >= 1024, im.size
+        assert im.width >= 1400, im.size
+
+
+def test_meant_word_tiles_are_drawn_from_meant_and_the_scene_agrees_on_the_atlas():
+    """build_meant_tiles.mjs draws 8 x 6 tiles of 256 x 214, edge to edge, on MEANT's ink; meant.js crops the same."""
+    from PIL import Image
+    mjs = (ROOT / 'design' / 'build_meant_tiles.mjs').read_text(encoding='utf-8')
+    js = (ROOT / 'js' / '3d' / 'chapters' / 'meant.js').read_text(encoding='utf-8')
+    assert 'export const ATLAS = { cols: 8, rows: 6, w: 256, h: 214 };' in mjs
+    assert 'const WORDS = { cols: 8, rows: 6, w: 256, h: 214, r: 30 };' in js
+    assert 'border-radius:30px' in mjs
+    with Image.open(ROOT / 'assets' / '3d' / 'mt-words.webp') as im:
+        assert im.size == (1536, 963), im.size   # the 2048 x 1284 drawing, at 192 x 160 a tile
+        assert max(im.convert('RGB').getpixel((1, 1))) <= 40, 'outside the rounded corner is ink, never white'
+    assert 'Mulberry Symbols © Steve Lee, licensed under CC BY-SA 4.0' in mjs
 
 
 def test_the_meant_scene_and_the_builder_agree_on_the_reply_tiles():

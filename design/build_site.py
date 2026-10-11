@@ -490,7 +490,13 @@ def header(home, current=None, prefix=''):
   </header>"""
 
 
-def footer(home='', prefix=''):
+# MEANT's word board and its pictures are Mulberry Symbols, whose licence asks for this line wherever they appear
+MULBERRY = ('MEANT’s symbols: <a href="https://mulberrysymbols.org" target="_blank" rel="noopener noreferrer">Mulberry Symbols</a> '
+            '© Steve Lee, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>')
+
+
+def footer(home='', prefix='', credit=''):
+    credit = f'\n    <p class="foot-credit">{credit}</p>' if credit else ''
     return f"""<footer class="wrap">
     <div class="foot">
       <span><b>Mruthulan Senthil Nathan</b> · Singapore</span>
@@ -500,7 +506,7 @@ def footer(home='', prefix=''):
         <a href="{prefix}privacy.html">Privacy</a>
         <a href="#top">Back to top ↑</a>
       </nav>
-    </div>
+    </div>{credit}
   </footer>"""
 
 
@@ -714,7 +720,7 @@ END_LINKS = [('gmail', 'Gmail', MAILTO, 'contact_open_mail_app'),
 
 # The homepage chapters, in order. Every word here is in the spec's "Every word on the homepage".
 # side: which corner of the full-screen scene the information sits in (left, right, bottom-left).
-# extra: markup after Case study (a chapter's own button or line); hud: markup over the scene. font: the project name's own
+# extra: markup after More info (a chapter's own button or line); hud: markup over the scene. font: the project name's own
 # typeface (assets/fonts/name-*.woff2). still: the picture shown until a chapter has its own rendered still.
 # KnowCad's example (the chapter's 3D draws the same words; tests/test_assets.py checks they agree)
 KC_QUERY = 'Licence “in use on another device” after moving to new laptops'
@@ -805,7 +811,7 @@ def chapter(c, first=False):
             <h3 class="ch-name" id="ch-{p['id']}" style="view-transition-name:t-{p['id']}"><a href="{href}" {ev}>{e(p['name'])}</a></h3>
             <p class="ch-line beat-line">{e(p['line'])}</p>
             <p class="ch-res beat-pay">{e(c['result'])}</p>
-            <a class="btn beat-pay" href="{href}" {ev}>Case study <span aria-hidden="true">→</span></a>{c.get('extra', '')}
+            <a class="btn beat-pay" href="{href}" {ev}>More info <span aria-hidden="true">→</span></a>{c.get('extra', '')}
           </div>{c.get('hud', '')}
         </div>
       </section>'''
@@ -867,15 +873,14 @@ def build_home():
 
     <section class="end wrap" id="contact" data-sec="contact" aria-labelledby="contact-title">
       <div class="end-board" data-anchor>{end_board()}</div>
-      <p class="sr-only">Open to a SWE internship, 2027/28</p>
-      <h2 class="big" id="contact-title">Reach out</h2>
+      <h2 class="sr-only" id="contact-title">Open to internships, 2027/28</h2>
       <ul class="end-links">{end_links}</ul>
       <p class="end-mail"><span data-mail>{EMAIL}</span><button class="btn" type="button" data-copy="{EMAIL}">Copy</button></p>
       <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
     </section>
   </main>
 
-  {footer()}
+  {footer(credit=MULBERRY)}
   {VIEWER}
 </body>
 </html>
@@ -953,7 +958,7 @@ def build_case(p):
     </div>
   </main>
 
-  {footer('index.html')}
+  {footer('index.html', credit=MULBERRY if p['id'] == 'mt' else '')}
   {VIEWER}
 </body>
 </html>

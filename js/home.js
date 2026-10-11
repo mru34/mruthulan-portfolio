@@ -149,6 +149,7 @@ if (live) {
         duration: 1.1, easing: (t) => 1 - (1 - t) ** 4,
         onComplete: () => { if (!land.hasAttribute('tabindex')) land.setAttribute('tabindex', '-1'); land.focus({ preventScroll: true }); },
       });
+      ticker.invalidate();   // the loop may be asleep: wake it, or the glide waits for the next thing that moves
     });
   }
   // any scroll keeps the loop running for three more frames, so frames come back to back while the page moves

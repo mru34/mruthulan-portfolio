@@ -102,7 +102,9 @@ export function createWorld(stage, { sections, form }) {
     const mid = y + vh / 2;
     const i = spans.findIndex(([a, b]) => a <= mid && b > mid);
     if (i >= 0) return i;
-    return spans.length && mid < spans[0][0] ? 0 : sections.length - 1;
+    // before a section, or in the flight between two rooms (a stretch that belongs to no section): the next one
+    const next = spans.findIndex(([a]) => a > mid);
+    return next >= 0 ? next : sections.length - 1;
   }
 
   const anchorsOf = (s) => [s.el, ...s.el.querySelectorAll('[data-anchor]')];

@@ -67,7 +67,7 @@ COPY = [
     '2nd runner-up · Dell InnovateFest 2026',
     'KnowCad', 'An AI assistant for customer service that finds answers in long documents.',
     'Champion · Autodesk Singapore Hackathon 2026',
-    'Case study',
+    'More info',
     'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
     'Next photo', 'Licence “in use on another device” after moving to new laptops', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
     'Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028',
@@ -75,11 +75,11 @@ COPY = [
     'I study IT at Singapore Polytechnic. I build for one real person first: a youth worker at midnight, '
     'someone who can’t rely on their speech, a barber with a full day of bookings.',
     'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
-    'Reach out', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
+    'Open to internships, 2027/28', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
         'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo',
-        'Who won the Autodesk Singapore Hackathon 2026?', '(expected)']
+        'Who won the Autodesk Singapore Hackathon 2026?', '(expected)', 'Reach out', 'SWE internship']
 BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',
           'crafted', 'unlock', 'robust', 'delve']
 
@@ -106,7 +106,7 @@ def test_chapters_in_order_each_with_its_four_pieces_and_anchors():
     for c, sec in zip(bs.CHAPTERS, sections):
         p = bs.BY_ID[c['pid']]
         t = text_of(sec)
-        for piece in (c['num'], p['name'], p['line'], c['result'], 'Case study'):
+        for piece in (c['num'], p['name'], p['line'], c['result'], 'More info'):
             assert piece in t, (p['id'], piece)
         assert f'href="{p["slug"]}.html"' in sec
         assert f'data-event="case_open" data-project="{p["id"]}"' in sec
@@ -250,14 +250,14 @@ def test_the_placing_box_has_the_widest_board_s_shape():
 
 
 def test_the_ending_board_has_a_box_shaped_like_its_layout():
-    """The 3D internship board is fitted into .end-board: two rows on a laptop (23.95 x 3.42), four on a
-    phone (11.21 x 6.72), from js/3d/flap.js layoutRows."""
+    """The 3D internship board is fitted into .end-board: two rows on a laptop (19.76 x 3.42), three on a
+    phone (12.3 x 5.07), from js/3d/flap.js layoutRows."""
     css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
-    assert 'aspect-ratio:23.95/3.42' in css and 'aspect-ratio:11.21/6.72' in css
+    assert 'aspect-ratio:19.76/3.42' in css and 'aspect-ratio:12.3/5.07' in css
     end = bs.build_home()
     end = end[end.index('id="contact"'):end.index('</main>')]
     assert 'class="end-board" data-anchor' in end
-    assert '<p class="sr-only">Open to a SWE internship, 2027/28</p>' in end
+    assert '<h2 class="sr-only" id="contact-title">Open to internships, 2027/28</h2>' in end
 
 
 def test_every_page_header_links_to_linkedin_and_github():
