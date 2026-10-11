@@ -1,241 +1,234 @@
-// Awards: the photo table (a page scene: the camera holds the page pose, and every object is fitted to its HTML
-// box, so the 3D and the words always line up). Each win is a stack of its real photos, printed with a white
-// border, on a long dark table; as the section arrives the stacks stand up one after another, a soft light
-// brightening over each, and each placing turns up on a small gold flip-board, all tied to the scroll. Point at
-// a stack and its prints lift and fan out with a gloss that follows the pointer; flick the top print and it
-// slides off with momentum, settles and tucks under the stack, showing the next photo (Next photo does the
-// same from the keyboard); tap a print to open it full size.
+// Awards: the gallery wall (a page scene: the camera holds the page pose, and every object is fitted to its HTML
+// box, so the 3D and the words line up). A dark, warm wall runs behind the section; each win is a framed shadow
+// box of its real photos (a thin dark-gold moulding, an off-white mat, the photos stacked behind the mat's window,
+// shown exactly as shot) under its own spotlight, with its placing on a small gold flip-board below like a
+// plaque. As the section scrolls in the spotlights come up one after another and the boards turn to their
+// placings, all tied to the scroll. Point at a frame and it tilts toward the pointer under a brighter light. Next
+// photo (or a drag past a third of the photo) lifts the front photo out past the frame's edge and slips it in
+// behind the others, showing the next; a short drag springs back; a tap opens the photo full size.
 import * as THREE from 'three';
 import { createBoard } from './board.js';
-import { loadTexture, print, glow, disposeTree, nextFrame } from './textures.js';
+import { loadTexture, glow, disposeTree, nextFrame } from './textures.js';
 import { fitScale } from '../lib/fit.js';
-import { Spring, lerp } from '../lib/motion.js';
-import { flickStep } from '../lib/physics.js';
-import { mulberry32 } from '../lib/scatter.js';
-import { awState, awProgress } from './awards-timeline.js';
+import { Spring } from '../lib/motion.js';
+import { awState, awProgress, slidePose, SLIDE_MS, REST_Z, LIFT_Z, GAP_Z } from './awards-timeline.js';
 import { onTap } from './tap.js';
 
-const GOLD = 0xe8b64c;
-const UNIT = 1;   // prints are built one unit wide and scaled to their box each frame
+const WARM = 0xffd49a;
+const FRAME = { w: 1, h: 1 / 1.5, mould: 0.045, depth: 0.06 };   // built one unit wide, scaled to its 3:2 box
+const OPEN = { w: 0.8, h: 0.8 / 1.5 };                            // the mat's window
+
+// the wall fades out at its edges into the page's own dark
+function fadeMap() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const g = c.getContext('2d');
+  const img = g.createImageData(256, 256);
+  const edge = (u) => Math.min(1, Math.min(u, 1 - u) / 0.18);
+  for (let y = 0; y < 256; y++) {
+    for (let x = 0; x < 256; x++) {
+      const a = edge(x / 255) * edge(y / 255);
+      const i = (y * 256 + x) * 4;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = Math.round(a * a * (3 - 2 * a) * 255);
+      img.data[i + 3] = 255;
+    }
+  }
+  g.putImageData(img, 0, 0);
+  return new THREE.CanvasTexture(c);
+}
+
+// a shadow-box frame: dark-gold moulding, an off-white mat with a window, a dark back
+function frameBox() {
+  const g = new THREE.Group();
+  const gold = new THREE.MeshStandardMaterial({ color: 0x5a4320, metalness: 0.85, roughness: 0.4 });
+  const { w, h, mould: m, depth: d } = FRAME;
+  const bar = (bw, bh, x, y) => { const b = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, d), gold); b.position.set(x, y, d / 2); g.add(b); };
+  bar(w, m, 0, h / 2 - m / 2);
+  bar(w, m, 0, -h / 2 + m / 2);
+  bar(m, h - 2 * m, -w / 2 + m / 2, 0);
+  bar(m, h - 2 * m, w / 2 - m / 2, 0);
+  const iw = w - 2 * m, ih = h - 2 * m;
+  const shape = new THREE.Shape();
+  shape.moveTo(-iw / 2, -ih / 2); shape.lineTo(iw / 2, -ih / 2); shape.lineTo(iw / 2, ih / 2); shape.lineTo(-iw / 2, ih / 2); shape.lineTo(-iw / 2, -ih / 2);
+  const hole = new THREE.Path();
+  hole.moveTo(-OPEN.w / 2, -OPEN.h / 2); hole.lineTo(-OPEN.w / 2, OPEN.h / 2); hole.lineTo(OPEN.w / 2, OPEN.h / 2); hole.lineTo(OPEN.w / 2, -OPEN.h / 2); hole.lineTo(-OPEN.w / 2, -OPEN.h / 2);
+  shape.holes.push(hole);
+  const mat = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshStandardMaterial({ color: 0xeee9df, roughness: 0.95, metalness: 0 }));
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ color: 0x0e0d0b, roughness: 1 }));
+  back.position.z = -0.08;
+  g.add(mat, back);
+  return g;
+}
+
+// a photo on thin white paper, big enough to fill the window, shown exactly as shot (not lit)
+function photo(tex) {
+  const a = tex.image.width / tex.image.height;
+  const pw = Math.max(OPEN.w, OPEN.h * a) * 1.02, ph = pw / a;
+  const g = new THREE.Group();
+  const paper = new THREE.Mesh(new THREE.PlaneGeometry(pw + 0.03, ph + 0.03), new THREE.MeshBasicMaterial({ color: 0xf4f2ed }));
+  const pic = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+  pic.position.z = 0.001;
+  g.add(paper, pic);
+  return g;
+}
 
 export async function mount({ world, stage, section }) {
   const items = [...section.querySelectorAll('.aw')];
   const group = new THREE.Group();
-  const table = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshStandardMaterial({ color: 0x15120c, roughness: 0.6, metalness: 0.25 }));
-  table.rotation.x = -Math.PI / 2;
-  group.add(table);
+  const wallTex = await loadTexture('assets/3d/aw-wall.webp');
+  wallTex.wrapS = wallTex.wrapT = THREE.RepeatWrapping;
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshStandardMaterial({ map: wallTex, alphaMap: fadeMap(), transparent: true, depthWrite: false, roughness: 0.95, metalness: 0 }));
+  wall.renderOrder = -2;
+  group.add(wall);
 
-  const stacks = [];
+  const frames = [];
   for (const [i, el] of items.entries()) {
     const stackEl = el.querySelector('.aw-stack'), placeEl = el.querySelector('.aw-place');
     const shots = [...stackEl.querySelectorAll('.shot')];
     const tex = await Promise.all(shots.map((s) => loadTexture(`assets/3d/aw-${s.dataset.photo}.webp`)));
-    const r = mulberry32(i + 3);
-    const prints = tex.map((t) => {
-      const a = t.image.width / t.image.height;
-      const g = print(t, UNIT * Math.min(1, a / 1.5), (UNIT * Math.min(1, a / 1.5)) / a, { border: 0.045, thick: 0.008 });
-      const holder = new THREE.Group();   // the print's resting jitter; the print itself moves on flicks
-      holder.add(g);
-      holder.rotation.z = (r() - 0.5) * 0.08;
-      holder.position.set((r() - 0.5) * 0.03, (r() - 0.5) * 0.03, 0);
-      return { g, holder, a };
-    });
-    const stack = new THREE.Group();     // stands on the table at the box's bottom edge, rotating up about it
-    const inner = new THREE.Group();     // the prints, lifted half a box above that edge
-    stack.add(inner);
-    prints.forEach((p) => inner.add(p.holder));
-    const pool = glow(GOLD, 1, 1, 0);
-    pool.rotation.x = -Math.PI / 2;
-    const halo = glow(GOLD, 1, 1, 0);
-    const gloss = glow(0xffffff, 1, 1, 0);
+    const frame = frameBox();
+    const prints = tex.map((t) => { const p = photo(t); frame.add(p); return p; });
+    const pool = glow(WARM, 1, 1, 0), beam = glow(WARM, 1, 1, 0);
     const text = placeEl.textContent.trim().toUpperCase();
     const board = await createBoard({ rows: [{ text, color: 'gold' }], scrub: true });
-    group.add(stack, pool, halo, gloss, board.group);
+    group.add(pool, beam, frame, board.group);
     const top = shots.findIndex((s) => s.hasAttribute('data-on'));
-    stacks.push({
-      el, stackEl, placeEl, shots, prints, stack, inner, pool, halo, gloss, board, tex,
-      order: prints.map((_, k) => (k + Math.max(0, top)) % prints.length),   // order[0] is on top
-      lift: new Spring(0, { stiffness: 140, damping: 20 }), fan: new Spring(0, { stiffness: 120, damping: 20 }),
+    frames.push({
+      i, el, stackEl, placeEl, shots, prints, frame, pool, beam, board, tex,
+      order: prints.map((_, k) => (k + Math.max(0, top)) % prints.length),   // order[0] is in front
       tiltX: new Spring(0, { stiffness: 120, damping: 20 }), tiltY: new Spring(0, { stiffness: 120, damping: 20 }),
-      hover: null, drag: null, fly: null, tuck: null, fromDrag: false,
+      bright: new Spring(0, { stiffness: 120, damping: 20 }),
+      hover: null, drag: null, slide: null, back: null, pending: undefined, byHand: false, fromDrag: false,
     });
     await nextFrame();
   }
   world.root.add(group);
 
-  // the box's world rectangle and the scale a print needs to fill it (the box is the photo frame, 3:2)
   const fitOf = (s) => world.boxToWorld(s.stackEl, 'page');
   let k = stage.view.k;
-
-  function startFly(s, v) {
-    s.fly = { x: 0, y: 0, vx: v.vx, vy: v.vy, rot: 0, vr: v.vr, resting: false };
-    stage.invalidate();
-  }
+  const reorder = (s, top) => { s.order = s.prints.map((_, j) => (j + top) % s.prints.length); };
+  // the gallery script (js/script.js) is the one source of truth: it moves data-on and tells us
   function onGal(s, e) {
     if (s.fromDrag) { s.fromDrag = false; reorder(s, e.detail.index); return; }
-    if (s.fly || s.tuck) { reorder(s, e.detail.index); return; }
     s.pending = e.detail.index;
-    const w = fitOf(s).w;
-    startFly(s, { vx: w * 1.6, vy: w * 0.25, vr: 1.4 });   // the top print is flicked off by the button
-  }
-  function reorder(s, top) {
-    s.order = s.prints.map((_, j) => (j + top) % s.prints.length);
+    if (s.slide) return;   // the latest press wins when this slide lands
+    s.drag = null;
+    s.back = null;
+    s.slide = { t: 0, dir: 1, fromX: 0, fromZ: REST_Z, pi: s.order[0] };
+    stage.invalidate();
   }
   const listeners = [];
   const on = (el, type, fn, opts) => { el.addEventListener(type, fn, opts); listeners.push([el, type, fn, opts]); };
-  stacks.forEach((s, i) => {
+  frames.forEach((s) => {
     on(s.stackEl, 'gal:show', (e) => onGal(s, e));
     on(s.stackEl, 'pointermove', (e) => {
       const r = s.stackEl.getBoundingClientRect();
       s.hover = { u: (e.clientX - r.left) / r.width - 0.5, v: (e.clientY - r.top) / r.height - 0.5 };
-      if (s.drag && e.pointerId === s.drag.id) {
-        const now = performance.now();
-        const dt = Math.max(1, now - s.drag.t);
-        s.drag.vx = lerp(s.drag.vx, (e.clientX - s.drag.lx) / dt, 0.5);
-        s.drag.vy = lerp(s.drag.vy, (e.clientY - s.drag.ly) / dt, 0.5);
-        s.drag.lx = e.clientX; s.drag.ly = e.clientY; s.drag.t = now;
-        s.drag.dx = e.clientX - s.drag.x0; s.drag.dy = e.clientY - s.drag.y0;
-      }
+      if (s.drag && e.pointerId === s.drag.id) { s.drag.dx = e.clientX - s.drag.x0; s.drag.dy = e.clientY - s.drag.y0; }
       stage.invalidate();
     });
     on(s.stackEl, 'pointerleave', () => { s.hover = null; stage.invalidate(); });
     on(s.stackEl, 'pointerdown', (e) => {
-      if (e.button !== 0 || e.target.closest('button') || s.fly || s.tuck) return;
-      s.drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, lx: e.clientX, ly: e.clientY, t: performance.now(), vx: 0, vy: 0, dx: 0, dy: 0 };
+      if (e.button !== 0 || e.target.closest('button') || s.slide || s.back) return;
+      s.drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0 };
       s.stackEl.setPointerCapture(e.pointerId);
-      e.preventDefault();   // a press here is a drag of the print, not a text selection or a link follow
+      e.preventDefault();   // a press here is a drag of the photo, not a text selection or a link follow
     });
     const release = (e, cancelled) => {
       const d = s.drag;
       if (!d || e.pointerId !== d.id) return;
       s.drag = null;
-      const moved = Math.hypot(d.dx, d.dy);
-      if (!cancelled && moved < 6) { s.shots[s.order[0]].click(); return; }   // a tap: the photo full size
-      const speed = Math.hypot(d.vx, d.vy);
-      const w = fitOf(s).w;
-      if (!cancelled && (moved * k > 0.25 * w || speed > 0.6)) {
-        s.fly = { x: d.dx * k, y: -d.dy * k, vx: d.vx * 1000 * k, vy: -d.vy * 1000 * k, rot: 0, vr: d.vx * 2, resting: false };
-        s.flyByHand = true;
+      if (!cancelled && Math.hypot(d.dx, d.dy) < 6) { s.shots[s.order[0]].click(); return; }   // a tap: full size
+      const x = (d.dx * k) / fitOf(s).w;   // in the frame's units (the frame is one unit wide)
+      if (!cancelled && Math.abs(x) > OPEN.w / 3) {
+        s.slide = { t: 0, dir: Math.sign(x), fromX: x, fromZ: LIFT_Z, pi: s.order[0] };
+        s.byHand = true;
       } else {
-        s.back = { x: d.dx * k, y: -d.dy * k, t: 0 };   // not far enough: it springs back
+        s.back = { x, t: 0 };   // not far enough: it springs back
       }
       stage.invalidate();
     };
     on(s.stackEl, 'pointerup', (e) => release(e, false));
     on(s.stackEl, 'pointercancel', (e) => release(e, true));   // a touch that turned into a scroll
-    // the placing's board flickers under the mouse and ripples on a press, like the name board
+    // the placing's board flickers under the mouse and ripples on a tap, like the name board
     const ndc = (e) => new THREE.Vector2((e.clientX / stage.view.w) * 2 - 1, -(e.clientY / stage.view.h) * 2 + 1);
     on(s.placeEl, 'pointermove', (e) => { if (e.pointerType === 'mouse') { s.board.hover(s.board.pick(stage.camera, ndc(e))); stage.invalidate(); } });
     on(s.placeEl, 'pointerleave', () => s.board.hover(-1));
     s.offTap = onTap(s.placeEl, (e) => { s.board.ripple(s.board.pick(stage.camera, ndc(e))); stage.invalidate(); });
     s.next = s.stackEl.querySelector('[data-gal-step]');
-    s.i = i;
   });
 
   const debug = {
-    boardText: (i) => stacks[i].board.text(),
-    resting: (i) => !stacks[i].fly && !stacks[i].tuck && !stacks[i].drag && !stacks[i].back,
-    topPhoto: (i) => stacks[i].shots[stacks[i].order[0]].dataset.photo,
+    boardText: (i) => frames[i].board.text(),
+    resting: (i) => !frames[i].slide && !frames[i].drag && !frames[i].back,
+    topPhoto: (i) => frames[i].shots[frames[i].order[0]].dataset.photo,
   };
   return {
     group,
     debug,
-    warm: stacks.flatMap((s) => s.tex),
+    warm: [...frames.flatMap((s) => s.tex), wallTex],
     update(local, f) {
       k = stage.view.k;
       let busy = false;
-      const boxes = stacks.map(fitOf);
+      const boxes = frames.map(fitOf);
       const visible = boxes.some((b) => Math.abs(b.y - world.origin('page').y) < 40);
       group.visible = visible;
       if (!visible) return false;
       const arrival = awProgress(world.top('awards'), f.vh);
-      // the table under all three stacks, running back into the dark
-      const left = Math.min(...boxes.map((b) => b.x - b.w / 2)), right = Math.max(...boxes.map((b) => b.x + b.w / 2));
-      const bottom = Math.min(...boxes.map((b) => b.y - b.h / 2));
       const z0 = boxes[0].z;
-      const narrow = boxes.length > 1 && Math.abs(boxes[0].y - boxes[1].y) > boxes[0].h;   // one stack per row
-      const tw = (right - left) * (narrow ? 1.5 : 1.25);
-      if (narrow) {
-        // on a phone the stacks are a column: the table stands behind them, running down the screen
-        const topMost = Math.max(...boxes.map((b) => b.y + b.h / 2));
-        table.rotation.x = 0;
-        table.scale.set(tw, topMost - bottom + boxes[0].h * 1.2, 1);
-        table.position.set((left + right) / 2, (topMost + bottom) / 2, z0 - 0.5);
-      } else {
-        table.rotation.x = -Math.PI / 2;
-        table.scale.set(tw, 40, 1);
-        table.position.set((left + right) / 2, bottom - 0.01, z0 + 1.5 - 20);
-      }
-      stacks.forEach((s, i) => {
+      // the wall behind every frame and its words, fading into the page at its edges
+      const left = Math.min(...boxes.map((b) => b.x - b.w / 2)), right = Math.max(...boxes.map((b) => b.x + b.w / 2));
+      const top = Math.max(...boxes.map((b) => b.y + b.h / 2)), bottom = Math.min(...boxes.map((b) => b.y - b.h / 2));
+      const ww = (right - left) * 1.6, wh = top - bottom + boxes[0].h * 2.4;
+      wall.scale.set(ww, wh, 1);
+      wall.position.set((left + right) / 2, (top + bottom) / 2, z0 - 0.3);
+      wallTex.repeat.set(ww / (boxes[0].w * 0.6), wh / (boxes[0].w * 0.6));
+      frames.forEach((s, i) => {
         const b = boxes[i];
         const st = awState(arrival, i);
-        // the stack: prints scaled to fill the box, standing up about the box's bottom edge
-        const scale = fitScale({ w: UNIT, h: UNIT / 1.5 }, b) * 0.94;
-        s.stack.position.set(b.x, b.y - b.h / 2, z0);
-        s.stack.rotation.x = -(1 - st.stand) * Math.PI / 2;
-        s.inner.position.set(0, b.h / 2, 0);
-        s.inner.scale.setScalar(scale);
-        // hover: the top print lifts and leans toward the pointer, the ones under it fan out
-        const h = s.hover && !s.drag && !s.fly && !s.tuck ? s.hover : null;
-        s.lift.target = h ? 1 : 0;
-        s.fan.target = h ? 1 : 0;
-        s.tiltX.target = h ? h.v * 0.18 : 0;
-        s.tiltY.target = h ? h.u * 0.24 : 0;
-        for (const sp of [s.lift, s.fan, s.tiltX, s.tiltY]) busy = sp.step(f.dt) || busy;
-        // a flick: the top print slides off with momentum, settles, then tucks under the stack
-        if (s.fly) {
-          Object.assign(s.fly, flickStep(s.fly, f.dt, { friction: 3.6 }));
-          busy = true;
-          if (s.fly.resting || Math.hypot(s.fly.x, s.fly.y) > b.w * 1.6) { s.tuck = { from: { ...s.fly }, t: 0 }; s.fly = null; }
-        } else if (s.tuck) {
-          s.tuck.t = Math.min(1, s.tuck.t + f.dt / 350);
-          busy = true;
-          if (s.tuck.t >= 1) {
-            s.tuck = null;
-            if (s.flyByHand) { s.flyByHand = false; s.fromDrag = true; s.next.click(); }   // the gallery moves on (and tells us)
-            else if (s.pending !== undefined) { reorder(s, s.pending); s.pending = undefined; }
-          }
-        } else if (s.back) {
-          s.back.t = Math.min(1, s.back.t + f.dt / 260);
-          busy = true;
-          if (s.back.t >= 1) s.back = null;
-        }
+        const scale = fitScale({ w: FRAME.w, h: FRAME.h }, b);
+        s.frame.scale.setScalar(scale);
+        s.frame.position.set(b.x, b.y, z0);
+        // hover: the frame tilts toward the pointer (at most 4° each way) and its light brightens
+        const h = s.hover && !s.drag && !s.slide ? s.hover : null;
+        s.tiltX.target = h ? h.v * 0.14 : 0;
+        s.tiltY.target = h ? h.u * 0.14 : 0;
+        s.bright.target = h ? 1 : 0;
+        for (const sp of [s.tiltX, s.tiltY, s.bright]) busy = sp.step(f.dt) || busy;
+        s.frame.rotation.set(s.tiltX.value, s.tiltY.value, 0);
+        // the photos: stacked behind the window; the front one follows a drag, springs back, or slides
+        if (s.slide) { s.slide.t = Math.min(1, s.slide.t + f.dt / SLIDE_MS); busy = true; }
+        else if (s.back) { s.back.t = Math.min(1, s.back.t + f.dt / 260); busy = true; }
         const n = s.prints.length;
         s.order.forEach((pi, depth) => {
           const p = s.prints[pi];
-          const isTop = depth === 0;
-          p.holder.position.z = -depth * 0.025;
-          p.holder.rotation.z = (p.holder.userData.rz ??= p.holder.rotation.z) + (depth ? (depth - (n - 1) / 2) * 0.06 * s.fan.value : 0);
-          p.g.position.set(0, 0, 0);
-          p.g.rotation.set(0, 0, 0);
-          if (!isTop) return;
-          p.g.position.z = s.lift.value * 0.12;
-          p.g.rotation.set(s.tiltX.value, s.tiltY.value, 0);
-          const toLocal = 1 / scale;
-          if (s.drag) p.g.position.set(s.drag.dx * k * toLocal, -s.drag.dy * k * toLocal, 0.15);
-          if (s.fly) { p.g.position.set(s.fly.x * toLocal, s.fly.y * toLocal, 0.15); p.g.rotation.z = s.fly.rot; }
-          if (s.back) { const e = 1 - (1 - s.back.t) ** 3; p.g.position.set(s.back.x * toLocal * (1 - e), s.back.y * toLocal * (1 - e), 0.15 * (1 - e)); }
-          if (s.tuck) {
-            const e = s.tuck.t * s.tuck.t * (3 - 2 * s.tuck.t);
-            p.g.position.set(lerp(s.tuck.from.x * toLocal, 0, e), lerp(s.tuck.from.y * toLocal, 0, e), lerp(0.15, -n * 0.025 - 0.02, e));
-            p.g.rotation.z = lerp(s.tuck.from.rot, 0, e);
+          p.position.set(0, 0, REST_Z - depth * GAP_Z);
+          if (depth !== 0) return;
+          if (s.drag) p.position.set((s.drag.dx * k) / b.w, 0, LIFT_Z);
+          else if (s.back) {
+            const e = 1 - (1 - s.back.t) ** 3;
+            p.position.set(s.back.x * (1 - e), 0, LIFT_Z + (REST_Z - LIFT_Z) * e);
           }
         });
-        // the light over the stack and the gloss that follows the pointer
-        const glowBoost = s.lift.value * 0.25;
-        s.pool.visible = !narrow;
-        s.pool.position.set(b.x, bottom + 0.005, z0 + 0.4);
-        s.pool.scale.set(b.w * 1.6, b.w * 1.1, 1);
-        s.pool.material.opacity = 0.32 * st.pool + glowBoost * 0.4;
-        s.halo.position.set(b.x, b.y, z0 - 0.6);
-        s.halo.scale.set(b.w * 1.5, b.h * 1.7, 1);
-        s.halo.material.opacity = 0.16 * st.pool + glowBoost * 0.2;
-        s.gloss.visible = Boolean(h);
-        if (h) {
-          s.gloss.position.set(b.x + h.u * b.w * 0.9, b.y - h.v * b.h * 0.9 + 0, z0 + 0.2);
-          s.gloss.scale.setScalar(b.w * 0.55);
-          s.gloss.material.opacity = 0.1 * s.lift.value;
+        if (s.slide) {
+          const pose = slidePose(s.slide.t, { w: OPEN.w, dir: s.slide.dir, back: REST_Z - n * GAP_Z, fromX: s.slide.fromX, fromZ: s.slide.fromZ });
+          s.prints[s.slide.pi].position.set(pose.x, 0, pose.z);
+          if (s.slide.t >= 1) {
+            s.slide = null;
+            if (s.byHand) { s.byHand = false; s.fromDrag = true; s.pending = undefined; s.next.click(); }   // the gallery moves on (and tells us)
+            else if (s.pending !== undefined) { reorder(s, s.pending); s.pending = undefined; }
+          }
         }
+        if (s.back && s.back.t >= 1) s.back = null;
+        // the spotlight: a warm pool on the wall around the frame and a soft beam above it
+        const lit = st.light;
+        s.pool.position.set(b.x, b.y + b.h * 0.12, z0 - 0.28);
+        s.pool.scale.set(b.w * 1.9, b.h * 2.3, 1);
+        s.pool.material.opacity = 0.2 * lit + 0.1 * s.bright.value;
+        s.beam.position.set(b.x, b.y + b.h * 1.05, z0 - 0.29);
+        s.beam.scale.set(b.w * 0.7, b.h * 2.2, 1);
+        s.beam.material.opacity = 0.07 * lit + 0.04 * s.bright.value;
+        s.pool.visible = s.beam.visible = lit > 0.001 || s.bright.value > 0.001;
         // the placing on its flip-board, turned up with the scroll
         const pb = world.boxToWorld(s.placeEl, 'page');
         s.board.group.scale.setScalar(fitScale(s.board.size, pb));
@@ -247,7 +240,7 @@ export async function mount({ world, stage, section }) {
     },
     dispose() {
       listeners.forEach(([el, type, fn, opts]) => el.removeEventListener(type, fn, opts));
-      stacks.forEach((s) => { s.offTap(); s.board.dispose(); });
+      frames.forEach((s) => { s.offTap(); s.board.dispose(); });
       world.root.remove(group);
       disposeTree(group);
     },

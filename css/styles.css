@@ -149,8 +149,8 @@ p{margin:0}
 .hs-m{display:none}
 
 /* ------------------------------------------------------------- awards: three cards */
-/* the awards: three stacks of photos side by side, each over its placing (with the live 3D the stacks are prints on
-   a table and the placings flip-boards, fitted into .aw-stack and .aw-place) */
+/* the awards: three stacks of photos side by side, each over its placing (with the live 3D each stack is a framed
+   shadow box on a gallery wall and each placing a flip-board, fitted into .aw-stack and .aw-place) */
 .aw-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(28px,3.4vw,56px);margin-top:clamp(24px,4vh,48px)}
 .win{position:relative;padding:26px 0 28px;display:grid;gap:8px;align-content:start;scroll-margin-top:calc(var(--bar) + 16px)}
 .win .org{margin-bottom:16px}

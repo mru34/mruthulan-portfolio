@@ -464,7 +464,7 @@ scenario('KnowCad: a swipe that starts on a source page does not bring it forwar
   await page.close();
 });
 
-scenario('Awards: the boards land on their placings, Next photo flicks, a tap opens the viewer', async () => {
+scenario('Awards: the boards land on their placings, Next photo slides, a tap opens the viewer', async () => {
   const { page, errors } = await open();
   await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop - 0.1 * innerHeight, behavior: 'instant' }); });
   await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 });
@@ -476,7 +476,7 @@ scenario('Awards: the boards land on their placings, Next photo flicks, a tap op
   await page.click('#win-dell [data-gal-step]');
   await page.waitForFunction(() => window.__world.mounted.get('awards').debug.resting(1), { timeout: 10000 }).catch(() => {});
   check(await top() !== before, `Next photo moved to the next one (${before} → ${await top()})`);
-  check(await page.evaluate(() => window.__world.mounted.get('awards').debug.resting(1)), 'the flicked print settled');
+  check(await page.evaluate(() => window.__world.mounted.get('awards').debug.resting(1)), 'the photo settled');
   check(await page.evaluate(() => window.__world.mounted.get('awards').debug.topPhoto(1)) === await top(), 'the 3D stack shows the same photo on top');
   const box = await page.$eval('#win-sp .aw-stack', (e) => { const r = e.getBoundingClientRect(); return { x: r.x + r.width * 0.4, y: r.y + r.height * 0.4 }; });
   await page.mouse.click(box.x, box.y);
@@ -965,6 +965,45 @@ scenario('Boss Breaker: Attack plays the front card, and six attacks go round th
   check(await front() === 1, `after one attack, #2 is in front (${await front()})`);
   for (let i = 0; i < 5; i++) { await page.click('[data-attack]'); await sleep(150); }
   check(await front() === 0, `six attacks went round the hand (${await front()})`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('Awards: a short drag springs back, a long drag moves to the next photo', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop - 0.1 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 });
+  await sleep(800);
+  const box = await page.$eval('#win-sp .aw-stack', (e) => { const r = e.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; });
+  const top = () => page.$eval('#win-sp .shot[data-on]', (a) => a.dataset.photo);
+  const drag = async (dx) => {
+    await page.mouse.move(box.x + box.w * 0.5, box.y + box.h * 0.45);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.w * 0.5 + dx, box.y + box.h * 0.45, { steps: 8 });
+    await page.mouse.up();
+  };
+  const before = await top();
+  await drag(40);
+  await page.waitForFunction(() => window.__world.mounted.get('awards').debug.resting(0), { timeout: 8000 }).catch(() => {});
+  check(await top() === before, 'a short drag springs back');
+  await drag(box.w * 0.45);
+  await page.waitForFunction((b) => document.querySelector('#win-sp .shot[data-on]').dataset.photo !== b && window.__world.mounted.get('awards').debug.resting(0), { timeout: 10000 }, before).catch(() => {});
+  check(await top() !== before, `a long drag moved to the next photo (${before} → ${await top()})`);
+  check(await page.evaluate(() => window.__world.mounted.get('awards').debug.topPhoto(0)) === await top(), 'the 3D frame shows the same photo in front');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('Awards: Next photo pressed three times quickly ends on the gallery’s photo', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop - 0.1 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 });
+  await sleep(800);
+  for (let i = 0; i < 3; i++) { await page.click('#win-dell [data-gal-step]'); await sleep(50); }
+  await page.waitForFunction(() => window.__world.mounted.get('awards').debug.resting(1), { timeout: 10000 }).catch(() => {});
+  await sleep(200);
+  const html = await page.$eval('#win-dell .shot[data-on]', (a) => a.dataset.photo);
+  check(await page.evaluate(() => window.__world.mounted.get('awards').debug.topPhoto(1)) === html, `the frame shows the gallery’s photo (${html})`);
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });

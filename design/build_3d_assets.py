@@ -403,6 +403,19 @@ def kc_source(i):
     return im
 
 
+def plaster():
+    """A dark, warm plaster tile for the Awards wall: soft noise that repeats without a seam."""
+    rng = random.Random(5)
+    base = Image.new('L', (512, 512))
+    base.putdata([max(0, min(255, round(128 + rng.gauss(0, 18)))) for _ in range(512 * 512)])
+    big = Image.new('L', (1536, 1536))
+    for x in range(3):
+        for y in range(3):
+            big.paste(base, (x * 512, y * 512))
+    tile = big.filter(ImageFilter.GaussianBlur(2.2)).crop((512, 512, 1024, 1024))
+    return Image.merge('RGB', [tile.point(lambda v, f=f: round(v * f)) for f in (0.27, 0.24, 0.2)])
+
+
 def save(im, name, quality=84):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f'{name}.webp'
@@ -455,6 +468,7 @@ def main():
         with Image.open(media / f'{key}.webp') as src:
             width = min(src.width, AWARD_WIDTH)
         save(sharpen(fit(media / f'{key}.webp', (width, width * 2))), f'aw-{key}', quality=80)
+    save(plaster(), 'aw-wall', quality=80)
 
     bb = RAW / 'bcb'
     for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):

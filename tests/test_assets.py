@@ -242,6 +242,14 @@ def test_the_knowcad_example_agrees_everywhere():
     assert re.search(r'SOURCES = \[([^\]]+)\]', js).group(1) == ', '.join(f"'{s}'" for s in b.KC_SOURCES)
 
 
+def test_the_awards_wall_is_a_dark_warm_tile():
+    from PIL import Image, ImageStat
+    with Image.open(ROOT / 'assets' / '3d' / 'aw-wall.webp') as im:
+        assert im.size == (512, 512)
+        r, g, b = ImageStat.Stat(im.convert('RGB')).mean
+        assert r < 60 and r > b, (r, g, b)
+
+
 def test_every_award_photo_has_its_print_and_the_awards_list_agrees():
     import build_3d_assets as b
     import build_site as bs
