@@ -237,3 +237,21 @@ def test_the_placing_box_has_the_widest_board_s_shape():
     js/3d/flap.js layoutRows gives 13.85 x 1.77)."""
     css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
     assert '.aw-place{' in css and 'aspect-ratio:13.85/1.77' in css
+
+
+def test_the_ending_board_has_a_box_shaped_like_its_layout():
+    """The 3D internship board is fitted into .end-board: two rows on a laptop (23.95 x 3.42), four on a
+    phone (11.21 x 6.72), from js/3d/flap.js layoutRows."""
+    css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
+    assert 'aspect-ratio:23.95/3.42' in css and 'aspect-ratio:11.21/6.72' in css
+    end = bs.build_home()
+    end = end[end.index('id="contact"'):end.index('</main>')]
+    assert 'class="end-board" data-anchor' in end
+    assert '<p class="sr-only">Open to a SWE internship, 2027/28</p>' in end
+
+
+def test_every_page_header_links_to_linkedin_and_github():
+    for name, markup in pages().items():
+        head = markup[markup.index('<header'):markup.index('</header>')]
+        assert f'href="{bs.LINKEDIN}"' in head and 'aria-label="LinkedIn"' in head, name
+        assert f'href="{bs.GITHUB}"' in head and 'aria-label="GitHub"' in head, name

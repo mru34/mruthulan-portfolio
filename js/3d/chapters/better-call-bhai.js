@@ -142,12 +142,12 @@ export async function mount({ world, stage, section, origin, form }) {
     if (e.target.closest('a, button')) return;
     const hit = world.ray(e.clientX, e.clientY).intersectObjects(poles.map((p) => p.glass), false)[0];
     if (!hit) return;
-    drag = { k: poles.findIndex((p) => p.glass === hit.object), x: e.clientX, t: performance.now(), vel: 0, id: e.pointerId };
+    drag = { k: poles.findIndex((p) => p.glass === hit.object), x: e.clientX, t: e.timeStamp, vel: 0, id: e.pointerId };
     pin.setPointerCapture(e.pointerId);
   };
   const onMove = (e) => {
     if (!drag || e.pointerId !== drag.id) return;
-    const now = performance.now();
+    const now = e.timeStamp;   // when the pointer moved, not when this ran: a busy page handles moves late
     const turn = (e.clientX - drag.x) * 0.02;
     const s = spins[drag.k];
     s.angle += turn;

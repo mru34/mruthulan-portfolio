@@ -479,12 +479,14 @@ def header(home, current=None, prefix=''):
       <a class="logo cn" href="{h or ''}#top">Mruthulan</a>
       <nav class="nav" aria-label="Main">{''.join(nav(s, l) for s, l in links)}<span class="nav-ink" aria-hidden="true"></span></nav>
       <div class="top-acts">
+        <a class="icon-only" href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin" aria-label="LinkedIn">{icon('linkedin')}</a>
+        <a class="icon-only" href="{GITHUB}"{ext(GITHUB)} data-event="contact_open_github" aria-label="GitHub">{icon('github')}</a>
         <a class="btn resume" href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
         <a class="btn solid contact-btn" href="{h}#contact">Contact</a>
         <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
-    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></nav>
+    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin">LinkedIn ↗</a><a href="{GITHUB}"{ext(GITHUB)} data-event="contact_open_github">GitHub ↗</a></nav>
   </header>"""
 
 
@@ -520,18 +522,6 @@ def body_open(page, style=''):
 
 # ------------------------------------------------------------------ home
 
-def tiles(text):
-    i = 0
-    words = []
-    for w in text.split():
-        cells = ''
-        for ch in w:
-            cells += f'<span class="t" style="--i:{i}" data-ch="{ch}">{ch}</span>'
-            i += 1
-        words.append(f'<span class="w" aria-hidden="true">{cells}</span>')
-    return ''.join(words)
-
-
 # The organisers' logos sit on each result (Dell InnovateDash was held at SP, so it shows both). Official files, shown in white; they
 # name where the event was held and link nowhere. (file, alt, width, height)
 LOGOS = {
@@ -539,6 +529,7 @@ LOGOS = {
     'dell': ('dell.svg', 'Dell Technologies', 169, 22),
     'autodesk': ('autodesk.svg', 'Autodesk', 166, 17),
 }
+
 
 
 def sechead(sid, title):
@@ -775,10 +766,13 @@ def still_picture(scene, alt='', eager=False):
 
 
 def hero_board():
-    """The name, as the board's rendered still; flap tiles in the page until that still exists."""
-    return still_picture('hero', eager=True) or (
-        '<div class="tiles flap-rows" aria-hidden="true">'
-        f'<div class="row gold">{tiles("MRUTHULAN")}</div><div class="row">{tiles("SENTHIL NATHAN")}</div></div>')
+    """The name, as the board's rendered still (design/stills.mjs; tests/test_assets.py requires it)."""
+    return still_picture('hero', eager=True) or ''
+
+
+def end_board():
+    """The internship board, as its rendered still (design/stills.mjs; tests/test_assets.py requires it)."""
+    return still_picture('ending') or ''
 
 
 def chapter(c, first=False):
@@ -858,7 +852,7 @@ def build_home():
     </section>
 
     <section class="end wrap" id="contact" data-sec="contact" aria-labelledby="contact-title">
-      <div class="tiles flap-rows end-board" aria-hidden="true"><div class="row gold">{tiles('OPEN TO A SWE INTERNSHIP')}</div><div class="row">{tiles('2027/28')}</div></div>
+      <div class="end-board" data-anchor>{end_board()}</div>
       <p class="sr-only">Open to a SWE internship, 2027/28</p>
       <h2 class="big" id="contact-title">Reach out</h2>
       <ul class="end-links">{end_links}</ul>

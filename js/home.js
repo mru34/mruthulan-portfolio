@@ -20,6 +20,7 @@ const SECTIONS = [
   ['meant', '[data-scene="meant"]', 'flight', () => import('./3d/chapters/meant.js')],
   ['knowcad', '[data-scene="knowcad"]', 'flight', () => import('./3d/chapters/knowcad.js')],
   ['awards', '#awards', 'page', () => import('./3d/awards.js')],
+  ['ending', '#contact', 'page', () => import('./3d/ending.js')],
 ];
 
 const root = document.documentElement;

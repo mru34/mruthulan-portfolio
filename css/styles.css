@@ -88,15 +88,12 @@ p{margin:0}
 .nav-ink{position:absolute;left:0;bottom:2px;height:2px;width:100px;background:var(--ink);opacity:0;transform-origin:0 50%;transform:scaleX(0);transition:transform .45s var(--ease),opacity .3s}
 .top-acts{margin-left:auto;display:flex;gap:10px;align-items:center}
 .menu-btn{display:none}
+.icon-only{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:999px;color:var(--soft);transition:color .2s,background-color .2s}
+.icon-only svg{width:20px;height:20px;fill:currentColor}
+@media (hover:hover){.icon-only:hover{color:var(--ink);background:var(--surf)}}
 .menu{display:none}
 
 /* ------------------------------------------------------------- hero */
-.tiles .t{transition:background-color .3s,translate .3s var(--ease)}
-@media (hover:hover){.tiles .t:hover{background:#2A2A2F;translate:0 -4px}}
-.tiles{--tw:clamp(24px,min(calc((100vw - 2 * var(--gutter) - 44px) / 9),max(4.4vw,34px)),64px);display:flex;flex-wrap:wrap;gap:clamp(8px,1vw,14px) clamp(16px,2vw,28px);margin-top:22px;perspective:900px}
-.tiles .w{display:flex;gap:clamp(3px,.35vw,5px)}
-.tiles .t{width:var(--tw);aspect-ratio:3/4.1;background:var(--flap);color:var(--flap-ink);border-radius:clamp(3px,.45vw,6px);display:grid;place-items:center;font:700 calc(var(--tw) * .8)/1 var(--disp);font-stretch:75%;position:relative;overflow:hidden;box-shadow:inset 0 -2px 0 rgba(0,0,0,.35)}
-.tiles .t::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#050505}
 
 /* type roles: statements in Bricolage, reading text in Geist, proof in mono; emphasis is weight and gold, never italics */
 .case-hl,.text-page .lead{font-family:var(--stmt);font-weight:600;font-variation-settings:"opsz" 96;letter-spacing:-.025em;color:var(--ink)}
@@ -324,7 +321,7 @@ p{margin:0}
   body{font-size:17.5px}
   .top-in{gap:12px}
   .logo{font-size:24px}
-  .nav,.top-acts .resume,.top-acts .contact-btn{display:none}
+  .nav,.top-acts .resume,.top-acts .contact-btn,.top-acts .icon-only{display:none}
   .menu-btn{display:inline-flex}
   .menu{display:block;position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--hair);padding:8px var(--gutter) 20px}
   .menu[hidden]{display:none}
@@ -367,7 +364,6 @@ p{margin:0}
   .menu a:active{background:var(--surf)}
 }
 @media (max-width:860px) and (max-height:740px){
-  .tiles{margin-top:12px;row-gap:6px}
 }
 
 /* ------------------------------------------------------------- touch: every standalone link is at least 44px tall */
@@ -402,7 +398,6 @@ p{margin:0}
   .nav{font-size:17px;gap:32px}
   .btn{min-height:52px;padding:0 22px;font-size:17px}
   .eyebrow,.crumb,.facts dt,.note,.cap,.press figcaption,.foot{font-size:17px}
-  .tiles{--tw:clamp(24px,min(calc((100vw - 2 * var(--gutter) - 44px) / 9),max(5vw,34px)),78px);row-gap:clamp(8px,.8vw,12px)}
   .sechead h2{font-size:clamp(64px,7.2vw,104px)}
   .win .ev,.facts dd{font-size:18px}
   .win h3{font-size:clamp(34px,3.4vw,52px)}
@@ -430,10 +425,6 @@ p{margin:0}
 @media (hover:hover){.icon-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}}
 html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible){opacity:0;pointer-events:none}
 
-/* flap tiles in rows (the hero until its still exists; the ending board) */
-.flap-rows{display:grid;gap:clamp(8px,1vw,14px);justify-items:center;margin-top:0}
-.flap-rows .row{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,1vw,14px) clamp(14px,1.6vw,24px)}
-.flap-rows .row.gold .t{color:var(--gold)}
 
 /* the chapters: each fills the screen; its words sit in a corner over a soft shade */
 .chapter{position:relative;--name-font:var(--stmt)}
@@ -483,11 +474,13 @@ html:not(.has-3d) .mt-picks,.frozen .mt-picks{display:none}
 
 /* the ending: the internship board, Reach out, the links */
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}
-.end-board{--tw:clamp(18px,calc((100vw - 2 * var(--gutter)) / 30),44px)}
+.end-board{width:min(100%,1240px);aspect-ratio:23.95/3.42;contain:size;display:grid;place-items:center}
+.end-board .still img{width:100%;height:auto}
 .end-mail{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center;font:500 clamp(17px,1.8vw,22px)/1.3 var(--mono);color:var(--soft)}
 
 @media (max-width:860px){
   .hero-board{aspect-ratio:10.12/5.07}
+  .end-board{aspect-ratio:11.21/6.72}
   .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
   .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
   .me{grid-template-columns:1fr}

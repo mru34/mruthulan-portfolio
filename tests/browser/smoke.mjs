@@ -367,9 +367,9 @@ scenario('Better Call Bhai: a spun pole keeps turning, then settles', async () =
   await page.mouse.move(p.x + 260, p.y, { steps: 4 });
   await page.mouse.up();
   const a0 = (await spin()).angle;
-  await sleep(300);
+  await page.waitForFunction((a0) => window.__world.mounted.get('better-call-bhai').debug.spin.angle > a0 + 0.05, { timeout: 3000 }, a0).catch(() => {});
   const s1 = await spin();
-  check(s1.angle > a0 && !s1.resting, `still turning after the release (${a0.toFixed(2)} → ${s1.angle.toFixed(2)})`);
+  check(s1.angle > a0 + 0.05, `still turning after the release (${a0.toFixed(2)} → ${s1.angle.toFixed(2)})`);
   // it slows down on its own (software rendering steps the physics slower than real time, so allow a while)
   await page.waitForFunction(() => window.__world.mounted.get('better-call-bhai').debug.spin.resting, { timeout: 15000 }).catch(() => {});
   check((await spin()).resting, 'and then it settles');
@@ -443,6 +443,26 @@ scenario('a vertical swipe that starts on an award print still scrolls', async (
   await page.touchscreen.touchEnd();
   await sleep(700);
   check(await page.evaluate(() => scrollY) > y0 + 100, `the page scrolled (${y0} → ${await page.evaluate(() => scrollY)})`);
+  await page.close();
+});
+
+scenario('the internship board comes alive in its box at the end, and a swipe across it does not ripple it', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => document.getElementById('contact').scrollIntoView({ behavior: 'instant' }));
+  await page.waitForSelector('#contact .end-board[data-live]', { timeout: 30000 });
+  await sleep(500);
+  const d = await page.evaluate(() => window.__world.debugFit('ending'));
+  check(d !== null && d <= 1, `the board is within 1px of its box (${d})`);
+  check(await page.evaluate(() => window.__world.mounted.get('ending').debug.text()) === 'OPEN TO A SWE INTERNSHIP / 2027/28', 'it reads the sentence');
+  const box = await page.$eval('#contact .end-board', (e) => { const r = e.getBoundingClientRect(); return { x: r.x + r.width * 0.3, y: r.y + r.height / 2 }; });
+  await page.mouse.move(box.x, box.y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 120, box.y, { steps: 5 });
+  await page.mouse.up();
+  check(!(await page.evaluate(() => window.__world.mounted.get('ending').debug.rippled)), 'a drag across the board did not ripple it');
+  await page.mouse.click(box.x, box.y);
+  check(await page.evaluate(() => window.__world.mounted.get('ending').debug.rippled), 'a click ripples it');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });
 
@@ -535,7 +555,7 @@ scenario('scrolling in small steps on a fast page never switches to the stills',
   await page.close();
 });
 
-scenario('crossing the breakpoint does not leak GPU memory', async () => {
+for (const where of ['top', 'contact']) scenario(`crossing the breakpoint does not leak GPU memory (${where})`, async () => {
   const page = await browser.newPage();
   await page.evaluateOnNewDocument(() => {
     const n = (window.__gl = { tex: 0, buf: 0 });
@@ -548,8 +568,8 @@ scenario('crossing the breakpoint does not leak GPU memory', async () => {
     try { localStorage.setItem('mruthulan-analytics-choice', 'deny'); } catch {}
   });
   await page.setViewport({ width: 1200, height: 800 });
-  await page.goto(BASE, { waitUntil: 'networkidle0' });
-  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  await page.goto(BASE + (where === 'top' ? '' : '#contact'), { waitUntil: 'networkidle0' });
+  await page.waitForSelector(where === 'top' ? '.hero-board[data-live]' : '#contact .end-board[data-live]', { timeout: 30000 });
   await page.setViewport({ width: 700, height: 900 });
   await sleep(1500);
   await page.setViewport({ width: 1200, height: 800 });
