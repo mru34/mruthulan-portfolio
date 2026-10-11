@@ -6,7 +6,7 @@ a visitor who had the site open before a release gets the new page with the
 old stylesheet (or the reverse) and sees it half-styled. With a stamp, a page
 always asks for the exact files it was published with.
 
-Run it after changing css/ or js/ (build_cases_v4.py runs it too):
+design/build_site.py runs it on every build; on its own:
     python design/stamp_assets.py
 """
 import hashlib

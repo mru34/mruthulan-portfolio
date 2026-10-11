@@ -49,7 +49,7 @@ event text. The `3:2` in the markup only shapes the drawn fallback.
 | `<project>-demo` | 16:9 | ≤ 8s, muted | Case page. Set `poster` to one of the screenshots; it is used as the still under reduced motion. |
 
 Project keys are the case-page slugs: `signalbridge`, `meant`,
-`better-call-bhai`, `boss-breaker`, `loomy`. Better Call Bhai's three shots are
+`better-call-bhai`, `boss-breaker`, `knowcad`. Better Call Bhai's three shots are
 the booking flow in order: choosing a service, picking a slot, the confirmation.
 
 KnowCad has no product screenshot slot on purpose — the repository and the
@@ -69,11 +69,8 @@ photo, the LinkedIn post and a public description instead.
 
 ## Not in this folder
 
-`assets/deck/loomy-01.jpg` … `loomy-10.jpg` are renders of
-`assets/Loomy-Pitch-Deck.pdf`, one per page, used by the inline deck viewer on
-the Loomy case page. Re-export them if the deck changes; the viewer reads the
-file list from the page, not from `media.json`.
+The homepage's 3D textures are not media slots: `design/build_3d_assets.py` makes them in
+`assets/3d/` from the raw captures (kept outside this repository) and from the photos here.
 
-The Better Call Bhai testimonial is not a media slot. It stays unpublished
-until the shop owner's exact approved words and chosen attribution exist —
-`OWNER_QUOTE` and `OWNER_ATTRIBUTION` in `design/build_cases_v4.py`.
+The Better Call Bhai testimonial is not a media slot: it is the owner's own message, kept in
+`data/content.json` with a note of what was cut.

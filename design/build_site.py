@@ -3,7 +3,7 @@
 
     python design/build_site.py
 
-Writes index.html, the six case pages, privacy.html and 404.html, makes
+Writes index.html, the five case pages, privacy.html and 404.html, makes
 800px-wide copies of large images for phones (originals are never touched),
 then stamps the CSS and JS links (stamp_assets.py).
 
@@ -172,19 +172,6 @@ TESTIMONIAL = ((_T['quote'], f"{_T['attribution']}, {_T.get('role', '')}".strip(
 ABOUT_PERSONAL = (CONTENT.get('aboutPersonal', {}).get('text')
                   if CONTENT.get('aboutPersonal', {}).get('status') == 'ready' else None)
 
-LOOMY_SLIDES = [
-    ('loomy-01.jpg', 'Title slide: Loomy, a social thrifting app that helps reduce waste and make fashion more sustainable.'),
-    ('loomy-02.jpg', 'Problem: unwearable clothes sitting in closets, rising clothing prices, and accessibility and sizing problems when thrifting.'),
-    ('loomy-03.jpg', 'Market validation, after interviewing 30+ people aged 15 to 25: what potential users said about convenience, incentives and slow platforms.'),
-    ('loomy-04.jpg', 'Solution: a trading platform built around an AI-powered online closet for finding your style and trading unworn clothes.'),
-    ('loomy-05.jpg', 'The product, in three parts: a community aspect, profiling, and a smart digital wardrobe.'),
-    ('loomy-06.jpg', 'Revenue model: a freemium tier, paid convenience services, and commissions on in-app purchases.'),
-    ('loomy-07.jpg', 'Competition: where Loomy sits against existing resale platforms on price.'),
-    ('loomy-08.jpg', 'Timeline: four quarters of planned milestones, with target user numbers and a projected first-year revenue figure.'),
-    ('loomy-09.jpg', 'Team slide: six members with their roles, listing Mru as prototype designer.'),
-    ('loomy-10.jpg', 'Closing slide: thank you, with the Loomy contact details.'),
-]
-
 
 def sec(eyebrow, heading, body, sid=None):
     i = f' id="{sid}"' if sid else ''
@@ -231,36 +218,11 @@ def quote(q, who):
             'emoji removed and one sentence left out, marked with an ellipsis</footer></blockquote>')
 
 
-def tally(count, label):
-    marks = '<i></i>' * count
-    return (f'<div class="tally"><span class="num" aria-hidden="true">{count}+</span>'
-            f'<div><p>{e(label)}</p><div class="marks" aria-hidden="true">{marks}</div></div></div>')
-
-
-def deck():
-    slides = ''.join(
-        f'<a class="deck-slide" href="assets/deck/{src}" data-zoom="Loomy pitch deck · slide {i + 1} of {len(LOOMY_SLIDES)}" '
-        f'data-alt="{e(alt)}"{" data-on" if i == 0 else ""}>'
-        f'<img src="assets/deck/{src}" width="1655" height="931" alt="{e(alt)}" decoding="async"'
-        f'{"" if i == 0 else " loading=" + chr(34) + "lazy" + chr(34)}></a>'
-        for i, (src, alt) in enumerate(LOOMY_SLIDES))
-    return ('<div class="deck" id="deck" data-deck tabindex="0" role="group" aria-roledescription="carousel" '
-            'aria-label="Loomy pitch deck, use the arrow keys to move between slides">'
-            f'<div class="deck-stage">{slides}</div>'
-            '<div class="deck-bar">'
-            '<button class="btn" type="button" data-deck-prev aria-label="Previous slide">←</button>'
-            '<button class="btn" type="button" data-deck-next aria-label="Next slide">→</button>'
-            f'<span class="count">Slide <b data-deck-now>1</b> of {len(LOOMY_SLIDES)}</span>'
-            '<a class="link" href="assets/Loomy-Pitch-Deck.pdf" target="_blank" rel="noopener" '
-            'data-event="deck_open" data-project="lm">Open the full deck (PDF) ↗</a>'
-            '</div><p class="sr-only" data-deck-live aria-live="polite"></p></div>')
-
-
 PROJECTS = [
     dict(
         id='sb', slug='signalbridge', name='SignalBridge', type='Hackathon', c='#2BC4BC',
         board=('HACKATHON', 'CHAMPION'),
-        line='Youth support that keeps the context and asks before anything is shared.',
+        line='After-hours chat for young people. Nothing reaches a youth worker until they say yes.',
         role='Youth-facing chat and consent flow, its API routes, the Discord integration',
         result='Dell InnovateDash 2026 — Champion',
         event='Dell InnovateDash 2026 · Champion',
@@ -294,9 +256,73 @@ PROJECTS = [
         ],
     ),
     dict(
+        id='bx', slug='boss-breaker', name='Boss Breaker', type='Solo build', c='#F06A43',
+        board=('SOLO BUILD', 'COMPLETED'),
+        line='Wellness challenges, played as a boss fight.',
+        role='Solo build: frontend, API, database and game logic',
+        result='Full-stack coursework build',
+        event='Back-end development module · coursework',
+        proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
+        preview='boss-breaker-dashboard', cover=('browser', 'boss-breaker-dashboard'),
+        desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
+              'Built with JavaScript, Node.js and MySQL.'),
+        og='A full-stack wellness game with challenges, points and boss raids.',
+        hl='Wellness challenges, played as a boss fight.',
+        st=('A full-stack build for a back-end development module assignment: complete wellness challenges to earn points, then '
+            'spend them against a shared boss.'),
+        actions=[('View the code ↗', 'https://github.com/mru34/bedca2', None)],
+        facts=[('My role', 'Built it alone: frontend, API, database and game logic'),
+               ('Stack', 'JavaScript · Node.js · MySQL'),
+               ('Status', 'Coursework · source on GitHub')],
+        lead=('boss-breaker-dashboard', None),
+        scene='boss-breaker-case',
+        sections=lambda: [
+            sec('The loop', 'Four mechanics, one habit.', steps([
+                ('Challenges', 'A wellness action is how you earn anything.'),
+                ('Points', 'Added on the server, so the browser cannot cheat.'),
+                ('Boss raids', 'Spend points against a shared boss, with a damage leaderboard.'),
+                ('Progression', 'Everything lives in MySQL, so it survives a refresh.')])),
+            sec('In play', 'What a session looks like.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
+                + note('Run locally on a fresh database with demo data. Every commit in the public repository is mine.')),
+        ],
+    ),
+    dict(
+        id='bb', slug='better-call-bhai', name='Better Call Bhai', type='Client build', c='#E3B53A',
+        board=('CLIENT', 'PILOT'),
+        line='Online booking for a barbershop in Singapore.',
+        role='Solo build: design, frontend, API, database and deployment',
+        result='Deployed pilot',
+        event='Client build · Deployed pilot',
+        proof=('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None),
+        preview='better-call-bhai-shot-1', cover=('device', 'better-call-bhai-shot-1'),
+        desc=('Better Call Bhai case study: an appointment booking site for a local barbershop, deployed '
+              'on Render and in a pilot with the shop.'),
+        og='An appointment booking site for a local barbershop, in a pilot with the shop.',
+        hl='Barber bookings, minus the back-and-forth.',
+        st=('Customers pick a service, a day and an open slot and confirm on the site, with their booking '
+            'details one tap away on WhatsApp. The shop is piloting it; most bookings still come in through '
+            'WhatsApp for now.'),
+        actions=[('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None)],
+        facts=[('My role', 'Built it alone: design, frontend, Express API, SQLite database, admin page and deployment'),
+               ('Status', 'Deployed pilot, for a barbershop in Singapore'),
+               ('Stack', 'JavaScript · Node.js / Express · SQLite · hosted on Render')],
+        lead=('better-call-bhai-shot-1', 'The deployed site, on a laptop and a phone'),
+        scene='better-call-bhai-case',
+        sections=lambda: [
+            sec('Before and after', 'The whole job was removing a conversation.', compare(
+                ('Before: WhatsApp', ['Message the shop to ask what is free.', 'Wait for a reply.',
+                                      'Agree a time.', 'Confirm again closer to the day.']),
+                ('After: the site', ['Open the site.', 'Pick an open slot.', 'Confirm.']))),
+            sec('Evidence', 'The booking flow, end to end.',
+                shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'], one=True)
+                + note('Run locally with test bookings, so no customer appears.')
+                + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
+        ],
+    ),
+    dict(
         id='mt', slug='meant', name='MEANT', type='Hackathon', c='#4DA3FF',
         board=('HACKATHON', '2ND RUNNER-UP'),
-        line='Real-time reply suggestions for AAC users. The user picks every word.',
+        line='Helps people who can’t rely on their speech reply in time. They choose every word.',
         role='UI and UX, the Singaporean TTS voice with a teammate, presenting the build',
         result='Dell InnovateFest 2026 — Second runner-up · S$3,000',
         event='Dell InnovateFest 2026 · Second runner-up',
@@ -337,42 +363,9 @@ PROJECTS = [
         ],
     ),
     dict(
-        id='bb', slug='better-call-bhai', name='Better Call Bhai', type='Client build', c='#E3B53A',
-        board=('CLIENT', 'PILOT'),
-        line='Appointment booking for a local barbershop.',
-        role='Solo build: design, frontend, API, database and deployment',
-        result='Deployed pilot',
-        event='Client build · Deployed pilot',
-        proof=('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None),
-        preview='better-call-bhai-shot-1', cover=('device', 'better-call-bhai-shot-1'),
-        desc=('Better Call Bhai case study: an appointment booking site for a local barbershop, deployed '
-              'on Render and in a pilot with the shop.'),
-        og='An appointment booking site for a local barbershop, in a pilot with the shop.',
-        hl='Barber bookings, minus the back-and-forth.',
-        st=('Customers pick a service, a day and an open slot and confirm on the site, with their booking '
-            'details one tap away on WhatsApp. The shop is piloting it; most bookings still come in through '
-            'WhatsApp for now.'),
-        actions=[('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None)],
-        facts=[('My role', 'Built it alone: design, frontend, Express API, SQLite database, admin page and deployment'),
-               ('Status', 'Deployed pilot, for a barbershop in Singapore'),
-               ('Stack', 'JavaScript · Node.js / Express · SQLite · hosted on Render')],
-        lead=('better-call-bhai-shot-1', 'The deployed site, on a laptop and a phone'),
-        scene='better-call-bhai-case',
-        sections=lambda: [
-            sec('Before and after', 'The whole job was removing a conversation.', compare(
-                ('Before: WhatsApp', ['Message the shop to ask what is free.', 'Wait for a reply.',
-                                      'Agree a time.', 'Confirm again closer to the day.']),
-                ('After: the site', ['Open the site.', 'Pick an open slot.', 'Confirm.']))),
-            sec('Evidence', 'The booking flow, end to end.',
-                shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'], one=True)
-                + note('Run locally with test bookings, so no customer appears.')
-                + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
-        ],
-    ),
-    dict(
         id='kc', slug='knowcad', name='KnowCad', type='Hackathon', c='#9B87FF',
         board=('HACKATHON', 'CHAMPION'),
-        line='A retrieval-based AI assistant for customer service.',
+        line='An AI assistant for customer service that finds answers in long documents.',
         role='Built and delivered the presentation',
         result='Autodesk Singapore Hackathon 2026 — Champion',
         event='Autodesk Singapore Hackathon 2026 · Champion',
@@ -398,66 +391,6 @@ PROJECTS = [
                 + note('The product is private, so the proof is the award and my post.')),
         ],
     ),
-    dict(
-        id='bx', slug='boss-breaker', name='Boss Breaker', type='Solo build', c='#F06A43',
-        board=('SOLO BUILD', 'COMPLETED'),
-        line='Wellness challenges, played as a boss fight.',
-        role='Solo build: frontend, API, database and game logic',
-        result='Full-stack coursework build',
-        event='Back-end development module · coursework',
-        proof=('View the code ↗', 'https://github.com/mru34/bedca2', None),
-        preview='boss-breaker-dashboard', cover=('browser', 'boss-breaker-dashboard'),
-        desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
-              'Built with JavaScript, Node.js and MySQL.'),
-        og='A full-stack wellness game with challenges, points and boss raids.',
-        hl='Wellness challenges, played as a boss fight.',
-        st=('A full-stack build for a back-end development module assignment: complete wellness challenges to earn points, then '
-            'spend them against a shared boss.'),
-        actions=[('View the code ↗', 'https://github.com/mru34/bedca2', None)],
-        facts=[('My role', 'Built it alone: frontend, API, database and game logic'),
-               ('Stack', 'JavaScript · Node.js · MySQL'),
-               ('Status', 'Coursework · source on GitHub')],
-        lead=('boss-breaker-dashboard', None),
-        scene='boss-breaker-case',
-        sections=lambda: [
-            sec('The loop', 'Four mechanics, one habit.', steps([
-                ('Challenges', 'A wellness action is how you earn anything.'),
-                ('Points', 'Added on the server, so the browser cannot cheat.'),
-                ('Boss raids', 'Spend points against a shared boss, with a damage leaderboard.'),
-                ('Progression', 'Everything lives in MySQL, so it survives a refresh.')])),
-            sec('In play', 'What a session looks like.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
-                + note('Run locally on a fresh database with demo data. Every commit in the public repository is mine.')),
-        ],
-    ),
-    dict(
-        id='lm', slug='loomy', name='Loomy', type='Concept', c='#3DBB7A',
-        board=('CONCEPT', 'PITCH DECK'),
-        line='A social thrifting app concept to cut clothing waste.',
-        role='Prototype designer',
-        result='Research and a pitch deck',
-        event='Product concept',
-        proof=('Read the pitch deck →', 'loomy.html#deck', None),
-        preview=None, cover=('slide', 'loomy-01.jpg'),
-        desc='Loomy case study: a social thrifting product concept, researched by a team of six and pitched with a deck.',
-        og='A social thrifting concept, researched by a team of six and pitched with a deck.',
-        hl='Thrifting, with a community attached.',
-        st='A social thrifting app concept to cut clothing waste, researched by our team of six and pitched with a deck.',
-        actions=[('Read the pitch deck ↓', '#deck', None)],
-        facts=[('My role', 'Prototype designer'),
-               ('Team', 'Six members'),
-               ('Status', 'Product concept, not shipped')],
-        lead=None,
-        sections=lambda: [
-            sec('Research first', 'Thirty conversations before a single screen.',
-                tally(30, 'people aged 15 to 25 interviewed by the team before any product was designed.')
-                + para('The research decided what the product should be. The interviews were the team’s work.')),
-            sec('The pitch', 'Ten slides, as we pitched them.',
-                deck()
-                + '<p class="projection">The timeline slide’s <strong>targets and first-year revenue are '
-                  'projections we pitched</strong>, not results. None of those numbers have happened.</p>',
-                sid=None),
-        ],
-    ),
 ]
 BY_ID = {p['id']: p for p in PROJECTS}
 
@@ -474,12 +407,35 @@ def og_image(path):
     return f"{SITE}/assets/og/{card.name}?v={hashlib.sha1(card.read_bytes()).hexdigest()[:8]}"
 
 
-def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False, prefix=''):
+def module_map():
+    """The homepage's ES modules. Every module URL carries a hash of the file's contents (?v=…), so a browser
+    never mixes modules from two releases (GitHub Pages lets them be cached for ten minutes)."""
+    import hashlib
+    imports = {}
+    for f in sorted((ROOT / 'js').rglob('*.js')):
+        rel = f.relative_to(ROOT).as_posix()
+        if rel in ('js/script.js', 'js/analytics.js'):
+            continue
+        h = hashlib.sha1(f.read_bytes().replace(b'\r\n', b'\n')).hexdigest()[:8]
+        imports[f'./{rel}'] = f'./{rel}?v={h}'
+        if rel.startswith('js/vendor/three/addons/'):
+            imports['three/addons/' + rel.removeprefix('js/vendor/three/addons/')] = f'./{rel}?v={h}'
+    imports['three'] = imports['./js/vendor/three/three.module.min.js']
+    imports['lenis'] = imports['./js/vendor/lenis/lenis.min.js']
+    return imports
+
+
+def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False, prefix='', modules=False):
     canonical = f'{SITE}/{path}'
     image = og_image(path)
     meta_robots = '\n  <meta name="robots" content="noindex">' if noindex else ''
     ld_html = (f'\n  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>'
                if ld else '')
+    mods = ''
+    if modules:
+        imap = module_map()
+        mods = (f'\n  <script type="importmap">{json.dumps({"imports": imap}, separators=(",", ":"))}</script>'
+                f'\n  <script type="module" src="{imap["./js/home.js"]}"></script>')
     return f"""<!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -504,7 +460,7 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <link rel="stylesheet" href="{prefix}css/styles.css">
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script src="{prefix}js/script.js" defer></script>
-  <script src="{prefix}js/analytics.js" defer></script>{ld_html}
+  <script src="{prefix}js/analytics.js" defer></script>{mods}{ld_html}
 </head>"""
 
 
@@ -523,16 +479,24 @@ def header(home, current=None, prefix=''):
       <a class="logo cn" href="{h or ''}#top">Mruthulan</a>
       <nav class="nav" aria-label="Main">{''.join(nav(s, l) for s, l in links)}<span class="nav-ink" aria-hidden="true"></span></nav>
       <div class="top-acts">
+        <a class="icon-only" href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin" aria-label="LinkedIn">{icon('linkedin')}</a>
+        <a class="icon-only" href="{GITHUB}"{ext(GITHUB)} data-event="contact_open_github" aria-label="GitHub">{icon('github')}</a>
         <a class="btn resume" href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
         <a class="btn solid contact-btn" href="{h}#contact">Contact</a>
         <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
-    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></nav>
+    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin">LinkedIn ↗</a><a href="{GITHUB}"{ext(GITHUB)} data-event="contact_open_github">GitHub ↗</a></nav>
   </header>"""
 
 
-def footer(home='', prefix=''):
+# MEANT's word board and its pictures are Mulberry Symbols, whose licence asks for this line wherever they appear
+MULBERRY = ('MEANT’s symbols: <a href="https://mulberrysymbols.org" target="_blank" rel="noopener noreferrer">Mulberry Symbols</a> '
+            '© Steve Lee, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>')
+
+
+def footer(home='', prefix='', credit=''):
+    credit = f'\n    <p class="foot-credit">{credit}</p>' if credit else ''
     return f"""<footer class="wrap">
     <div class="foot">
       <span><b>Mruthulan Senthil Nathan</b> · Singapore</span>
@@ -542,7 +506,7 @@ def footer(home='', prefix=''):
         <a href="{prefix}privacy.html">Privacy</a>
         <a href="#top">Back to top ↑</a>
       </nav>
-    </div>
+    </div>{credit}
   </footer>"""
 
 
@@ -564,18 +528,6 @@ def body_open(page, style=''):
 
 # ------------------------------------------------------------------ home
 
-def tiles(text):
-    i = 0
-    words = []
-    for w in text.split():
-        cells = ''
-        for ch in w:
-            cells += f'<span class="t" style="--i:{i}" data-ch="{ch}">{ch}</span>'
-            i += 1
-        words.append(f'<span class="w" aria-hidden="true">{cells}</span>')
-    return ''.join(words)
-
-
 # The organisers' logos sit on each result (Dell InnovateDash was held at SP, so it shows both). Official files, shown in white; they
 # name where the event was held and link nowhere. (file, alt, width, height)
 LOGOS = {
@@ -583,6 +535,7 @@ LOGOS = {
     'dell': ('dell.svg', 'Dell Technologies', 169, 22),
     'autodesk': ('autodesk.svg', 'Autodesk', 166, 17),
 }
+
 
 
 def sechead(sid, title):
@@ -703,9 +656,10 @@ def hotspots(f):
         </section>'''
 
 
-# ------------------------------------------------------------------ awards: three cards
-# Each card: the organisers' logos, the event's photos (arrows, swipe, and a slow advance
-# while nobody is touching them), the placing, the event, the project and my post about it.
+# ------------------------------------------------------------------ awards: three stacks of photos
+# Each award: a stack of the event's photos (Next photo moves the top one to the back; with the live 3D the
+# stack is real prints on a table, flicked by hand), its placing (a flip-board with the live 3D), the event,
+# the project, my post about it, and the organisers' logos.
 AWARDS = [
     ('sb', 'win-sp', 'Champion', 'Dell InnovateDash 2026', [], ['dell', 'sp'],
      ['win-signalbridge-team', 'win-signalbridge-award'], POST_SP),
@@ -722,110 +676,147 @@ def award(pid, anchor, place, event, facts, logos, photos, post):
         f'<img src="assets/logos/{s}" alt="{e(a)}" width="{w}" height="{h}" loading="lazy" decoding="async">' for s, a, w, h in (LOGOS[k] for k in logos))
     shots = ''.join(
         f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" data-alt="{e(MEDIA[k]["alt"])}" '
-        f'data-group="{anchor}"{" data-on" if n == 0 else ""} aria-label="View full size: {e(MEDIA[k]["caption"])}">'
+        f'data-group="{anchor}" data-photo="{k}"{" data-on" if n == 0 else ""} aria-label="View full size: {e(MEDIA[k]["caption"])}">'
         f'{pic(k, "(max-width: 860px) 86vw, 30vw", cls="ph")}</a>' for n, k in enumerate(photos))
-    nav = (f'<div class="gal-nav"><button class="gal-arrow" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
-           f'<button class="gal-arrow" type="button" data-gal-step="1" aria-label="Next photo">→</button></div>') if len(photos) > 1 else ''
     fact = ''.join(f' <span class="fact">{e(x)}</span>' for x in facts)
-    return f'''<article class="win arrive" id="{anchor}" style="--c:{p['c']}">
-          <div class="org">{org}</div>
-          <div class="gal" data-gal><div class="gal-main">{shots}{nav}</div><span class="sr-only" aria-live="polite" data-gal-live></span></div>
-          <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true">{e(place)}</span></h3>
+    return f'''<article class="win aw" id="{anchor}" style="--c:{p['c']}">
+          <div class="aw-stack gal" data-anchor data-gal><div class="gal-main">{shots}</div><button class="btn aw-next" type="button" data-gal-step="1">Next photo</button><span class="sr-only" aria-live="polite" data-gal-live></span></div>
+          <div class="aw-place" data-anchor><h3 class="cn">{e(place)}</h3></div>
           <p class="ev">{e(event)}{fact}</p>
           <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a><a class="link" href="{post}"{ext(post)} data-event="proof_post_click" data-project="{pid}">LinkedIn post ↗</a></p>
+          <div class="org">{org}</div>
         </article>'''
 
 
 # ------------------------------------------------------------------ the project list and the board
-# Loomy is a concept with a pitch deck and no build, so it stays off the homepage; its case
-# page is still reachable from the other case pages.
-HOME_PROJECTS = [p for p in PROJECTS if p['id'] != 'lm']
+# ------------------------------------------------------------------ home
 
-
-# The homepage cards: a picture, the one-line pitch and a short result tag. What I built on each
-# project is said once, on its case page.
-# A 'scene' card shows a whole picture of the product: real local captures, uncropped, framed in
-# devices on a backdrop in the project's colour (made by portfolio-tools/card-shots), with a small
-# inlined copy behind it so the card is never empty while it loads. The award card shows a photo.
-CARDS = {
-    'sb': dict(img='signalbridge-card', frame='scene', z=1, x=50, y=50, tag='Champion · Dell InnovateDash 2026'),
-    'bx': dict(img='boss-breaker-card', frame='scene', z=1, x=50, y=50, tag='Coursework · code on GitHub'),
-    'bb': dict(img='better-call-bhai-card', frame='scene', z=1, x=50, y=50, tag='Live pilot with the shop'),
-    'mt': dict(img='meant-card', frame='scene', z=1, x=50, y=50, tag='2nd runner-up · Dell InnovateFest 2026'),
-    'kc': dict(img='win-knowcad-champion', frame='award', z=1.0, x=50, y=35, tag='Champion · Autodesk Hackathon 2026',
-               part='My part: the presentation. Autodesk engineers led the code.'),
+# Icons, inlined and drawn in the text colour (never in brand colours). GitHub and Gmail: Simple Icons
+# 16.34.0 (CC0). LinkedIn and the résumé page: Bootstrap Icons 1.11.3 (MIT, assets/ICONS-LICENSE.txt).
+ICONS = {
+    'github': ('0 0 24 24', 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'),
+    'gmail': ('0 0 24 24', 'M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z'),
+    'linkedin': ('0 0 16 16', 'M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z'),
+    'resume': ('0 0 16 16', 'M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z'),
 }
-FEATURED_CARDS = ['sb', 'bx']
-MORE_CARDS = ['bb', 'mt', 'kc']
 
 
-def project_card(pid, big):
-    p, d = BY_ID[pid], CARDS[pid]
-    m = MEDIA[d['img']]
-    z = d['z']
-    sizes = f'(max-width: 860px) {round(100 * z)}vw, {round((46 if big else 30) * z)}vw'
-    shot = pic(d['img'], sizes, alt=m['alt'] if d['frame'] == 'award' else '', cls='ph')
-    crop = f'--z:{d["z"]};--x:{d["x"]}%;--y:{d["y"]}%'
-    if d['frame'] == 'award':
-        stage = (f'<div class="pc-stage is-award"><figure class="pc-photo" style="{crop}"><div class="pc-print">{shot}'
-                 f'<span class="pc-chip">Award photo</span></div></figure></div>')
-    elif d['frame'] == 'scene':
-        stage = f'<div class="pc-stage is-scene"><div class="pc-shot" style="background-image:url({poster(d["img"])})">{shot}</div></div>'
-    else:
-        bar = (f'<span class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>{e(p["name"])}</span></span>'
-               if d['frame'] == 'browser' else '')
-        whole = ' is-whole' if z == 1 else ''
-        # the poster is the whole screenshot, so it is only used on cards that show it whole
-        under = f' style="background-image:url({poster(d["img"])})"' if d.get('poster') and z == 1 else ''
-        stage = f'<div class="pc-stage{whole}"><div class="pc-frame is-{d["frame"]}" style="{crop}">{bar}<div class="pc-shot"{under}>{shot}</div></div></div>'
-    picked = ' data-picked' if pid == HOME_PROJECTS[0]['id'] else ''  # the project the board opens on
-    return (f'<li><a class="pcard{" is-big" if big else ""}" id="work-{pid}" href="{p["slug"]}.html" style="--c:{p["c"]}"{picked} '
-            f'data-project="{pid}" data-event="case_open">{stage}'
-            f'<span class="pc-body"><span class="pc-type">{e(p["type"])}</span><span class="nm cn">{e(p["name"])}</span>'
-            f'<span class="pc-line">{e(p["line"])}</span>'
-            + (f'<span class="pc-part">{e(d["part"])}</span>' if d.get('part') else '')
-            + f'<span class="pc-res">{e(d["tag"])}</span>'
-            f'<span class="pc-go">Case study <span class="ar" aria-hidden="true">→</span></span></span>'
-            f'<span class="pc-tag" aria-hidden="true">On the board</span></a></li>')
+def icon(name):
+    box, d = ICONS[name]
+    return f'<svg viewBox="{box}" aria-hidden="true" focusable="false"><path d="{d}"/></svg>'
 
 
-# The board is drawn in the page already showing the first project, so it is never blank while the
-# script loads; the script then spins it to another one.
-def flaps(col, word, n=16):
-    w = word.upper().ljust(n)[:n]
-    return f'<div class="flaps{" status" if col == "status" else ""}" data-col="{col}" data-n="{n}">' + ''.join(
-        f'<span>{e(ch) if ch != " " else ""}</span>' for ch in w) + '</div>'
+def icon_link(name, label, href, event):
+    target = ' target="_blank" rel="noopener"' if href == RESUME else ext(href)
+    return f'<a class="icon-btn" href="{e(href)}"{target} data-event="{event}">{icon(name)}<span>{e(label)}</span></a>'
 
 
-def board_result(p):
-    """What the board says under the flaps; the script writes the same markup after each spin."""
-    return (f'<span class="sw" style="--c:{p["c"]}"></span>'
-            f'<a class="link" href="{p["slug"]}.html" data-event="case_open" data-project="{p["id"]}">Case study <span class="ar">→</span></a>')
+HERO_LINKS = [('linkedin', 'LinkedIn', LINKEDIN, 'contact_open_linkedin'),
+              ('github', 'GitHub', GITHUB, 'contact_open_github'),
+              ('resume', 'Résumé', RESUME, 'resume_click')]
+END_LINKS = [('gmail', 'Gmail', MAILTO, 'contact_open_mail_app'),
+             ('linkedin', 'LinkedIn', LINKEDIN, 'contact_open_linkedin'),
+             ('github', 'GitHub', GITHUB, 'contact_open_github')]
+
+# The homepage chapters, in order. Every word here is in the spec's "Every word on the homepage".
+# side: which corner of the full-screen scene the information sits in (left, right, bottom-left).
+# extra: markup after More info (a chapter's own button or line); hud: markup over the scene. font: the project name's own
+# typeface (assets/fonts/name-*.woff2). still: the picture shown until a chapter has its own rendered still.
+# KnowCad's example (the chapter's 3D draws the same words; tests/test_assets.py checks they agree)
+KC_QUERY = 'Licence “in use on another device” after moving to new laptops'
+
+CHAPTERS = [
+    dict(pid='sb', num='01', side='left', result='Champion · Dell InnovateDash 2026',
+         font='Name SignalBridge', still='signalbridge-card',
+         alt='SignalBridge on a phone and a laptop: the youth’s SafeNight chat showing Worker notified, '
+             'and the worker’s handoff brief for Mira Tan, a fictional youth.'),
+    dict(pid='bx', num='02', side='right', result='Solo build · code on GitHub',
+         font='Name Boss Breaker', still='boss-breaker-card',
+         alt='Boss Breaker’s Boss Raid screen on a large display and on a phone, the Stress Dragon’s health bar '
+             'at 1,840 of 5,000 HP, a hand of challenge cards and the leaderboard.',
+         extra='<button class="btn bx-attack" type="button" data-attack>Attack</button>',
+         hud='<div class="bx-hud" aria-hidden="true"><p class="bx-hit" data-hit></p><p class="bx-boss">Stress Dragon</p>'
+             '<p class="bx-hp"><span data-hp>1,840</span> / 5,000 HP</p>'
+             '<p class="bx-down" data-defeated hidden>Stress Dragon defeated</p></div>'
+             '<p class="sr-only" aria-live="polite" data-hp-live></p>'),
+    dict(pid='bb', num='03', side='bottom-left', result='Solo build · in a pilot with the shop',
+         font='Name Better Call Bhai', still='better-call-bhai-card',
+         alt='Better Call Bhai on a phone showing Booking Confirmed, between two yellow, black and white barber poles, '
+             'with the day’s time slots behind it and 15:00 chosen.'),
+    dict(pid='mt', num='04', side='right', result='2nd runner-up · Dell InnovateFest 2026',
+         font='Name MEANT', still='meant-card',
+         alt='MEANT on a café table: the tablet showing four suggested replies, the partner’s display showing '
+             'Give me a moment, and the Tamil Murasu page, with word tiles from the board around them.',
+         extra='<a class="link mt-press" href="meant.html#press">Featured in Tamil Murasu</a>'
+               '<div class="mt-picks" role="group" aria-label="Pick a reply">'
+               + ''.join(f'<button class="mt-pick" type="button" data-reply="{i}">{r}</button>'
+                         for i, r in enumerate(['Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice']))
+               + '</div><p class="sr-only" aria-live="polite" data-partner-live></p>'),
+    dict(pid='kc', num='05', side='left', result='Champion · Autodesk Singapore Hackathon 2026',
+         font='Name KnowCad', still='win-knowcad-champion',
+         alt='KnowCad at a support rep’s desk: a customer asks why their licence shows as in use on another '
+             'device, and KnowCad’s suggested answer cites three manuals pulled from the shelves around the desk, '
+             'Licensing p. 42, Admin Handbook p. 118 and Troubleshooting p. 7. The question, manuals and answer are an example.',
+         extra=f'<p class="kc-q" aria-hidden="true"><span data-typed>{e(KC_QUERY)}</span>'
+               f'<i class="kc-caret"></i></p><p class="sr-only">{e(KC_QUERY)}</p>'),
+]
+
+ABOUT_INTRO = ('I study IT at Singapore Polytechnic. I build for one real person first: a youth worker at midnight, '
+               'someone who can’t rely on their speech, a barber with a full day of bookings.')
+ABOUT_FACTS = [
+    ('Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028', ''),
+    ('Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER', ''),
+    ('Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL', 'mono'),
+]
 
 
-def board_data():
-    d = {p['id']: dict(name=p['name'], type=p['type'], line=p['line'], c=p['c'], board=list(p['board']),
-                       href=f"{p['slug']}.html") for p in HOME_PROJECTS}
-    return json.dumps(d, ensure_ascii=False).replace('</', '<\\/')
+def still_picture(scene, alt='', eager=False):
+    """The rendered still of a 3D scene (design/stills.mjs), desk and phone versions, or None until it is made."""
+    from PIL import Image
+    folder = ROOT / 'assets' / '3d' / 'stills'
+    desk, phone = folder / f'{scene}-desk.webp', folder / f'{scene}-phone.webp'
+    if not (desk.exists() and phone.exists()):
+        return None
+    with Image.open(desk) as a, Image.open(phone) as b:
+        (dw, dh), (pw, ph) = a.size, b.size
+    load = ' fetchpriority="high"' if eager else ' loading="lazy"'
+    return (f'<picture class="still"><source media="(max-width: 860px)" srcset="assets/3d/stills/{phone.name}" '
+            f'width="{pw}" height="{ph}"><img src="assets/3d/stills/{desk.name}" width="{dw}" height="{dh}" '
+            f'alt="{e(alt)}" decoding="async"{load}></picture>')
 
 
-# The results, briefly, on the first screen: each links to its case page; Awards below has the photos.
-HERO_RESULTS = [('Champion', 'Dell InnovateDash 2026', 'sb', ''),
-                ('Champion', 'Autodesk Singapore Hackathon 2026', 'kc', ''),
-                ('2nd runner-up', 'Dell InnovateFest 2026', 'mt', ''),
-                ('Featured', 'Tamil Murasu, 28 September 2026', 'mt', '#press')]
+def hero_board():
+    """The name, as the board's rendered still (design/stills.mjs; tests/test_assets.py requires it)."""
+    return still_picture('hero', eager=True) or ''
 
 
-def hero_results():
-    rows = ''.join(f'<li><a href="{BY_ID[pid]["slug"]}.html{frag}" style="--c:{BY_ID[pid]["c"]}" data-event="case_open" '
-                   f'data-project="{pid}"><b class="cn">{e(place)}</b><span>{e(what)}<span class="sr-only">, </span><i>{e(BY_ID[pid]["name"])}</i></span></a></li>'
-                   for place, what, pid, frag in HERO_RESULTS)
-    return f'<ul class="results-list" aria-label="Results">{rows}</ul>'
+def end_board():
+    """The internship board, as its rendered still (design/stills.mjs; tests/test_assets.py requires it)."""
+    return still_picture('ending') or ''
 
 
-# The stack line under the intro lists only what the projects here use: TypeScript (SignalBridge's Next.js
-# screens, MEANT's tablet client), React/Next.js (SignalBridge), Node.js/Express (Boss Breaker, Better Call
-# Bhai), Python/FastAPI (SignalBridge routes and tests), SQL (PostgreSQL, MySQL, SQLite).
+def chapter(c, first=False):
+    p = BY_ID[c['pid']]
+    href = f"{p['slug']}.html"
+    ev = f'data-event="case_open" data-project="{p["id"]}"'
+    still = still_picture(p['slug'], c.get('alt') or MEDIA[c['still']]['alt']) or pic(
+        c['still'], '(max-width: 860px) 100vw, 58vw', cls='still')
+    work = '<span class="ch-key" id="work"></span>' if first else ''
+    return f'''<section class="chapter" data-scene="{p['slug']}" data-side="{c['side']}" style="--c:{p['c']};--name-font:'{c['font']}'" aria-labelledby="ch-{p['id']}">
+        {work}<span class="ch-key" id="work-{p['id']}"></span>
+        <div class="pin">
+          <div class="ch-stage">{still}<a class="ch-hit" href="{href}" tabindex="-1" aria-hidden="true" {ev}></a></div>
+          <div class="info">
+            <p class="ch-num">{c['num']}</p>
+            <h3 class="ch-name" id="ch-{p['id']}" style="view-transition-name:t-{p['id']}"><a href="{href}" {ev}>{e(p['name'])}</a></h3>
+            <p class="ch-line beat-line">{e(p['line'])}</p>
+            <p class="ch-res beat-pay">{e(c['result'])}</p>
+            <a class="btn beat-pay" href="{href}" {ev}>More info <span aria-hidden="true">→</span></a>{c.get('extra', '')}
+          </div>{c.get('hud', '')}
+        </div>
+      </section>'''
+
+
 def build_home():
     ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': 'Mruthulan Senthil Nathan',
           'alternateName': ['Mruthulan', 'Senthil Nathan Mruthulan'], 'url': f'{SITE}/',
@@ -833,97 +824,64 @@ def build_home():
           'affiliation': {'@type': 'CollegeOrUniversity', 'name': 'Singapore Polytechnic'},
           'address': {'@type': 'PostalAddress', 'addressCountry': 'SG'},
           'sameAs': [LINKEDIN, GITHUB]}
-    about_personal = f'<p>{e(ABOUT_PERSONAL)}</p>' if ABOUT_PERSONAL else ''
+    chapters = '\n      '.join(chapter(c, first=(i == 0)) for i, c in enumerate(CHAPTERS))
+    rail = '<ol class="rail" aria-hidden="true">' + ''.join(
+        f'<li style="--c:{BY_ID[c["pid"]]["c"]}"></li>' for c in CHAPTERS) + '</ol>'
+    hero_links = ''.join(f'<li>{icon_link(*link)}</li>' for link in HERO_LINKS)
+    end_links = ''.join(f'<li>{icon_link(*link)}</li>' for link in END_LINKS)
+
+    def fact(term, text, cls):
+        cls = f' class="{cls}"' if cls else ''
+        return f'<div><dt>{e(term)}</dt><dd{cls}>{e(text)}</dd></div>'
+    facts = ''.join(fact(*f) for f in ABOUT_FACTS)
     return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
                  'Mruthulan Senthil Nathan, Year 2 IT at Singapore Polytechnic, builds full-stack products. Five projects, what I built on each, and three hackathon results.',
                  '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
-                 og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld)}
+                 og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld, modules=True)}
 {body_open('home')}
+  <canvas class="stage" aria-hidden="true"></canvas>
   {header('')}
 
   <main id="main">
-    <div class="wrap">
-      <section class="hero" aria-labelledby="name">
-        <p class="eyebrow">Year 2 IT · Singapore Polytechnic</p>
-        <h1 class="tiles" id="name" data-name><span class="sr-only">Mruthulan Senthil Nathan</span>{tiles('MRUTHULAN SENTHIL NATHAN')}</h1>
-        <div class="hero-intro">
-          <div class="hero-text">
-          <p class="lede">I build full-stack products, from the interface people use <em>to the API and database behind it.</em></p>
-          <p class="seeking"><i aria-hidden="true"></i>Looking for a year-long software engineering internship, 2027/2028</p>
-          <p class="stack" aria-label="Stack">TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL</p>
-          <div class="acts"><a class="btn" href="#work">See all projects</a><a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a></div>
-          </div>
-          {hero_results()}
-        </div>
-        <div data-hero-end aria-hidden="true"></div>
-      </section>
-    </div>
-
-    <section class="sec wrap" id="work" data-sec="work" aria-labelledby="work-title">
-      <div class="work-top">
-        {sechead('work-title', 'Projects')}
-        <section class="board" data-board data-first="{HOME_PROJECTS[0]['id']}" aria-labelledby="board-title">
-          <div class="board-head"><h3 class="eyebrow" id="board-title">Now showing</h3></div>
-          <div class="fids" aria-hidden="true">
-            <div><span class="lab">Project</span>{flaps('name', HOME_PROJECTS[0]['name'])}</div>
-            <div><span class="lab">Type</span>{flaps('type', HOME_PROJECTS[0]['board'][0])}</div>
-            <div><span class="lab">Result</span>{flaps('status', HOME_PROJECTS[0]['board'][1])}</div>
-          </div>
-          <div class="board-foot"><button class="btn solid" type="button" data-spin>Spin a project</button><div class="result" data-result>{board_result(HOME_PROJECTS[0])}</div></div>
-          <p class="sr-only" role="status" aria-live="polite" data-spin-live></p>
-        </section>
-      </div>
-      <ul class="pgrid pfeat">{''.join(project_card(pid, True) for pid in FEATURED_CARDS)}</ul>
-      <ul class="pgrid pmore">{''.join(project_card(pid, False) for pid in MORE_CARDS)}</ul>
+    <section class="hero wrap" data-scene="hero" aria-labelledby="name">
+      <h1 class="sr-only" id="name">Mruthulan Senthil Nathan</h1>
+      <div class="hero-board" data-anchor>{hero_board()}</div>
+      <ul class="hero-links" aria-label="Links">{hero_links}</ul>
+      <div data-hero-end aria-hidden="true"></div>
     </section>
+
+    <div class="chapters" data-sec="work">
+      {chapters}
+    </div>
+    {rail}
 
     <section class="sec wrap" id="awards" data-sec="awards" aria-labelledby="awards-title">
       <span id="results"></span><span id="wins"></span><span id="recognition"></span>
       {sechead('awards-title', 'Awards')}
-      <div class="score" data-track aria-label="Awards">
+      <div class="aw-row" aria-label="Awards">
         {''.join(award(*a) for a in AWARDS)}
       </div>
-      <div class="track-nav" data-track-nav><button class="gal-arrow" type="button" data-slide="-1" aria-label="Previous award">←</button>
-        <span class="track-dots" aria-hidden="true">{'<i></i>' * len(AWARDS)}</span><span class="gal-count" data-slide-now aria-live="polite">1 / {len(AWARDS)}</span>
-        <button class="gal-arrow" type="button" data-slide="1" aria-label="Next award">→</button></div>
     </section>
 
     <section class="sec wrap" id="about" data-sec="about" aria-labelledby="about-title">
-      {sechead('about-title', 'About')}
-      <div class="about">
-        {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait arrive')}
-        <div class="text arrive">
-          <p class="lead">I care about the last mile: whether someone can actually use the result, <em>whether it survives failure</em>, and whether I can explain the decisions clearly.</p>
-          {about_personal}
-        </div>
+      <h2 class="big" id="about-title">About</h2>
+      <div class="me">
+        {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait')}
+        <div class="me-text"><p class="me-intro">{e(ABOUT_INTRO)}</p><dl class="facts3" id="credentials">{facts}</dl></div>
       </div>
-      <dl class="creds" id="credentials">
-        <div><dt>Study</dt><dd><b>Diploma in Information Technology</b><span>Singapore Polytechnic · 2025 – 2028 (expected)</span></dd></div>
-        <div><dt>Leadership</dt><dd><b>Secretary, Youth Harmony Chapter subcommittee</b><span>Singapore Polytechnic</span></dd>
-          <dd><b>Class Chairman and SP ACER</b><span>Open House 2026 and First Steps with SP</span></dd></div>
-      </dl>
     </section>
 
-    <section class="talk" id="contact" data-sec="contact" aria-labelledby="contact-title">
-      <div class="wrap talk-in">
-        <h2 class="cn" id="contact-title"><span class="sr-only">Let’s talk.</span><span aria-hidden="true">Let’s talk.</span></h2>
-        <div class="mail-row">
-          <a class="mail-big" href="{e(MAILTO)}" data-mail data-event="contact_open_mail_app">{EMAIL}</a>
-          <button class="btn solid" type="button" data-copy="{EMAIL}">Copy email address</button>
-        </div>
-        <div class="acts">
-          <a class="btn" href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">Message me on LinkedIn ↗</a>
-          <a class="btn" href="{GITHUB}" target="_blank" rel="noopener noreferrer" data-event="contact_open_github">GitHub ↗</a>
-          <a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
-        </div>
-        <p class="status" role="status" aria-live="polite" data-copy-status></p>
-      </div>
+    <section class="end wrap" id="contact" data-sec="contact" aria-labelledby="contact-title">
+      <div class="end-board" data-anchor>{end_board()}</div>
+      <h2 class="sr-only" id="contact-title">Open to internships, 2027/28</h2>
+      <ul class="end-links">{end_links}</ul>
+      <p class="end-mail"><span data-mail>{EMAIL}</span><button class="btn" type="button" data-copy="{EMAIL}">Copy</button></p>
+      <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
     </section>
   </main>
 
-  {footer()}
+  {footer(credit=MULBERRY)}
   {VIEWER}
-  <script type="application/json" id="projects-data">{board_data()}</script>
 </body>
 </html>
 """
@@ -965,8 +923,8 @@ def build_case(p):
         capt = f'<span class="cap-wide">{capt}</span><span class="cap-phone">{e(PHONE_SCENES[key])}</span>'
     picture =(f'<figure class="lead-fig{kind}">{lead}'
                f'<figcaption class="cap">{capt}</figcaption></figure>') if key else ''
-    # back to the project's row in the list (Loomy is not on the homepage, so back to the list)
-    back = f"index.html#work-{p['id']}" if p in HOME_PROJECTS else 'index.html#work'
+    # back to the project's place on the homepage
+    back = f"index.html#work-{p['id']}"
     ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['name'],
           'description': p['og'], 'url': f"{SITE}/{p['slug']}.html",
           'author': {'@type': 'Person', 'name': 'Mruthulan Senthil Nathan', 'url': f'{SITE}/'}}
@@ -1000,7 +958,7 @@ def build_case(p):
     </div>
   </main>
 
-  {footer('index.html')}
+  {footer('index.html', credit=MULBERRY if p['id'] == 'mt' else '')}
   {VIEWER}
 </body>
 </html>
