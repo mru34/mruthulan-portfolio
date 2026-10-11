@@ -8,7 +8,7 @@ const BASE = process.env.BASE || 'http://127.0.0.1:8000/';
 const OUT = '../portfolio-tools/review-gate/';
 fs.mkdirSync(`${OUT}frames`, { recursive: true });
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--hide-scrollbars'] });
-const MOMENTS = [['hero', 0], ['fly', 0.5], ['signalbridge', 0.05], ['signalbridge', 0.3], ['signalbridge', 0.45], ['signalbridge', 0.53], ['signalbridge', 0.8]];
+const MOMENTS = [['hero', 0], ['signalbridge', 0.05], ['signalbridge', 0.3], ['signalbridge', 0.45], ['signalbridge', 0.53], ['signalbridge', 0.8]];
 const goTo = (page, scene, p) => page.evaluate((scene, p) => {
   const s = document.querySelector(`[data-scene="${scene}"]`);
   scrollTo({ top: s.getBoundingClientRect().top + scrollY + p * Math.max(0, s.offsetHeight - innerHeight), behavior: 'instant' });

@@ -1,6 +1,7 @@
-// One renderer, one fixed canvas behind the page, one studio light for everything. It draws only when
-// something changed (scroll, pointer, a spring still settling) and sleeps otherwise, so nothing moves
-// by itself and a phone is not kept busy.
+// One renderer, one fixed canvas behind the page, and the environment the studio light reflects. It draws as
+// one job of the page's single frame loop (js/lib/ticker.js), only when something changed (scroll, pointer,
+// a spring still settling), so nothing moves by itself and a phone is not kept busy. The lights belong to
+// the world's rig (js/3d/world.js), which travels with the camera.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { worldPerPixel, rectToWorld } from '../lib/fit.js';
@@ -8,7 +9,7 @@ import { worldPerPixel, rectToWorld } from '../lib/fit.js';
 export const FOV = 30;
 export const CAM_Z = 20;
 
-export function createStage(canvas, { maxDpr = 2 } = {}) {
+export function createStage(canvas, { maxDpr = 2, ticker } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -18,12 +19,6 @@ export function createStage(canvas, { maxDpr = 2 } = {}) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.45;
   pmrem.dispose();
-  // the studio: a soft key from the top left and a dim cool fill; project colour only ever comes in as rim light
-  const key = new THREE.DirectionalLight(0xffffff, 1.4);
-  key.position.set(-6, 8, 10);
-  const fill = new THREE.DirectionalLight(0xc8d2ff, 0.25);
-  fill.position.set(6, -3, 6);
-  scene.add(key, fill);
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200);
   camera.position.set(0, 0, CAM_Z);
@@ -33,27 +28,18 @@ export function createStage(canvas, { maxDpr = 2 } = {}) {
   const parts = new Set();
   const hooks = new Set();
   let dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
-  let raf = 0;
-  let last = 0;     // for the springs: reset when the loop sleeps, so a pause is never one huge step
-  let prev = 0;     // for the watchdog: never reset, so it sees how long frames really take
   let stopped = false;
 
-  function invalidate() {
-    if (!raf && !stopped) raf = requestAnimationFrame(frame);
-  }
-  function frame(now) {
-    raf = 0;
-    const dt = last ? Math.min(now - last, 100) : 16;
-    const gap = prev ? now - prev : 0;
-    last = now;
-    prev = now;
+  // frame hooks get the real time since the previous frame, or null after an idle pause (not a slow frame)
+  ticker.add((now, dt, gap) => {
+    if (stopped) return false;
     let busy = false;
     for (const p of parts) busy = p.update(now, dt) || busy;
     renderer.render(scene, camera);
-    // frame hooks get the real time since the previous frame, or null after an idle pause (not a slow frame)
-    for (const h of hooks) h(now, gap > 0 && gap < 500 ? gap : null);
-    if (busy) invalidate(); else last = 0;
-  }
+    for (const h of hooks) h(now, gap);
+    return busy;
+  });
+  const invalidate = ticker.invalidate;
   function resize() {
     view.w = window.innerWidth;
     view.h = window.innerHeight;
@@ -87,7 +73,11 @@ export function createStage(canvas, { maxDpr = 2 } = {}) {
     boxToWorld: (el) => rectToWorld(el.getBoundingClientRect(), view.w, view.h, view.k),
     setDpr(n) { dpr = Math.min(window.devicePixelRatio || 1, n); resize(); },
     // draw right now, outside the loop: the first frame of a scene, and stills
-    renderNow() { for (const p of parts) p.update(performance.now(), 16); renderer.render(scene, camera); },
-    stop() { stopped = true; cancelAnimationFrame(raf); raf = 0; },
+    renderNow() {
+      if (stopped) return;
+      for (const p of parts) p.update(performance.now(), 16);
+      renderer.render(scene, camera);
+    },
+    stop() { stopped = true; },
   };
 }

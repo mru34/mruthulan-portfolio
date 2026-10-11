@@ -421,6 +421,7 @@ def module_map():
         if rel.startswith('js/vendor/three/addons/'):
             imports['three/addons/' + rel.removeprefix('js/vendor/three/addons/')] = f'./{rel}?v={h}'
     imports['three'] = imports['./js/vendor/three/three.module.min.js']
+    imports['lenis'] = imports['./js/vendor/lenis/lenis.min.js']
     return imports
 
 
@@ -821,10 +822,6 @@ def build_home():
       <div class="hero-board" data-anchor>{hero_board()}</div>
       <ul class="hero-links" aria-label="Links">{hero_links}</ul>
       <div data-hero-end aria-hidden="true"></div>
-    </section>
-
-    <section class="fly" data-scene="fly" aria-labelledby="work-title">
-      <div class="pin"><h2 class="big" id="work-title">Five projects.</h2></div>
     </section>
 
     <div class="chapters" data-sec="work">

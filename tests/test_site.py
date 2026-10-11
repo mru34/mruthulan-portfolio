@@ -59,7 +59,6 @@ def test_case_pages_cycle_through_five_in_homepage_order():
 
 
 COPY = [
-    'Five projects.',
     'SignalBridge', 'After-hours chat for young people. Nothing reaches a youth worker until they say yes.',
     'Champion · Dell InnovateDash 2026',
     'Boss Breaker', 'Wellness challenges, played as a boss fight.', 'Solo build · code on GitHub',
@@ -75,7 +74,7 @@ COPY = [
     'Reach out', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
-        'Year 2 IT', 'See all projects', 'last mile', 'Now showing']
+        'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.']
 BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',
           'crafted', 'unlock', 'robust', 'delve']
 
@@ -114,7 +113,7 @@ def test_chapters_in_order_each_with_its_four_pieces_and_anchors():
 
 def test_hero_and_ending_carry_the_links_with_their_events():
     markup = bs.build_home()
-    hero = markup[markup.index('<section class="hero'):markup.index('<section class="fly')]
+    hero = markup[markup.index('<section class="hero'):markup.index('<div class="chapters')]
     end = markup[markup.index('id="contact"'):markup.index('</main>')]
     for href, event in ((bs.LINKEDIN, 'contact_open_linkedin'), (bs.GITHUB, 'contact_open_github'),
                         (bs.RESUME, 'resume_click')):
@@ -175,6 +174,7 @@ def test_import_map_points_every_module_at_a_stamped_file_that_exists():
         assert (ROOT / path.removeprefix('./')).exists(), (spec, url)
         assert re.fullmatch(r'[0-9a-f]{8}', stamp), (spec, url)
     assert imports['three'].startswith('./js/vendor/three/three.module.min.js?v=')
+    assert imports['lenis'].startswith('./js/vendor/lenis/lenis.min.js?v=')
     assert re.search(r'<script type="module" src="\./js/home\.js\?v=[0-9a-f]{8}"></script>', markup)
 
 
@@ -193,4 +193,4 @@ def test_3d_code_fits_the_budget():
     import gzip
     files = [f for f in (ROOT / 'js').rglob('*.js') if f.name not in ('script.js', 'analytics.js')]
     total = sum(len(gzip.compress(f.read_bytes(), 9)) for f in files)
-    assert total <= 260_000, total
+    assert total <= 320_000, total

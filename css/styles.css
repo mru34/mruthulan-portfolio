@@ -443,9 +443,6 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .flap-rows .row{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,1vw,14px) clamp(14px,1.6vw,24px)}
 .flap-rows .row.gold .t{color:var(--gold)}
 
-/* "Five projects." */
-.fly .pin{min-height:50svh;display:grid;place-items:center;padding-inline:var(--gutter);text-align:center}
-
 /* the chapters */
 .chapter{position:relative;--name-font:var(--stmt)}
 .ch-key{position:absolute;top:0;left:0;width:1px;height:1px}
@@ -488,18 +485,16 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 html[data-pose],html[data-pose] body{background:transparent!important}
 html[data-pose] body > :not(.stage){visibility:hidden}
 
-/* with the live 3D (.has-3d, set by js/home.js): the canvas shows; "Five projects." and every chapter are tall
-   sections whose content stays pinned while the scroll drives it; a chapter's words arrive in beats */
+/* with the live 3D (.has-3d, set by js/home.js): the canvas shows; every chapter is a tall section whose
+   content stays pinned while the scroll drives it; a chapter's words arrive in beats */
 .has-3d .stage{display:block}
 .has-3d.frozen .stage{display:none}
-.has-3d .fly{height:200vh}
-.has-3d .fly .pin{position:sticky;top:0;height:100vh;min-height:0}
-.has-3d .fly .big{transform:translateY(calc((.5 - var(--p,.5)) * 24vh)) scale(calc(.94 + var(--p,.5) * .12))}
-.has-3d .chapter{height:250vh}
-.has-3d .chapter .pin{position:sticky;top:0;height:100vh}
+.has-3d .chapter{height:160svh}
+.has-3d .chapter .pin{position:sticky;top:0;height:100svh}
 .has-3d .ch-stage{aspect-ratio:auto;height:100%}
 .has-3d .ch-stage .still{border-radius:0}
-.has-3d .ch-key{top:120vh;scroll-margin-top:calc(-1 * (var(--bar) + 16px))} /* the payoff pose: 0.8 of the 150vh each chapter stays pinned; lands exactly there despite the scroll padding */
+.has-3d .ch-key{top:calc(.8 * 60svh);scroll-margin-top:calc(-1 * (var(--bar) + 16px))} /* the payoff pose: 0.8 of the 60svh each chapter stays pinned; lands exactly there despite the scroll padding */
+html.smooth{scroll-behavior:auto}
 .has-3d .beat-line{opacity:var(--b1,1);translate:0 calc((1 - var(--b1,1)) * 14px)}
 .has-3d .beat-pay{opacity:var(--b2,1);translate:0 calc((1 - var(--b2,1)) * 14px)}
 .has-3d .info:focus-within :is(.beat-line,.beat-pay){opacity:1;translate:none}

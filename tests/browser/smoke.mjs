@@ -74,7 +74,7 @@ scenario('?mode=stills and reduced motion both get the stills', async () => {
 scenario('live: tall pinned chapters and a stage', async () => {
   const { page, errors } = await open();
   check(await page.evaluate(() => document.documentElement.classList.contains('has-3d')), 'html.has-3d');
-  check(await page.$eval('.chapter', (c) => Math.abs(c.offsetHeight - 2.5 * innerHeight) < 2), 'a chapter is 250vh');
+  check(await page.$eval('.chapter', (c) => Math.abs(c.offsetHeight - 1.6 * innerHeight) < 2), 'a chapter is 160svh');
   check(await page.$eval('canvas.stage', (c) => getComputedStyle(c).display === 'block'), 'canvas showing');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
@@ -104,18 +104,72 @@ scenario('focus shows the whole information block', async () => {
   await page.close();
 });
 
-scenario('the snap never pulls back', async () => {
+scenario('pacing: at most 12 screens, and SignalBridge pays off within 2.5', async () => {
   const { page } = await open();
-  const y0 = await page.evaluate(() => {
-    const c = document.querySelectorAll('.chapter')[1];
-    const key = c.getBoundingClientRect().top + scrollY + 0.8 * (c.offsetHeight - innerHeight);
-    scrollTo({ top: key + 120, behavior: 'instant' });
-    return key + 120;
+  const r = await page.evaluate(() => {
+    const c = document.querySelector('.chapter'), pin = c.querySelector('.pin');
+    return { screens: (document.documentElement.scrollHeight - innerHeight) / innerHeight,
+             pay: (c.offsetTop + 0.7 * (c.offsetHeight - pin.offsetHeight)) / innerHeight };
   });
-  await page.mouse.wheel({ deltaY: 100 });
-  await sleep(700);
-  const y1 = await page.evaluate(() => scrollY);
-  check(y1 >= y0, `stayed at or past where the visitor scrolled (${y0} → ${y1})`);
+  check(r.screens <= 12, `scroll length ${r.screens.toFixed(2)} screens`);
+  check(r.pay <= 2.5, `SignalBridge's result fully shown at ${r.pay.toFixed(2)} screens`);
+  await page.close();
+});
+
+scenario('the page never moves by itself', async () => {
+  const { page } = await open();
+  await page.evaluate(() => { const c = document.querySelectorAll('.chapter')[1]; scrollTo({ top: c.offsetTop + 100, behavior: 'instant' }); });
+  await sleep(150);
+  const y0 = await page.evaluate(() => scrollY);
+  await sleep(1200);
+  check(await page.evaluate(() => scrollY) === y0, 'still where it was left');
+  await page.close();
+});
+
+scenario('the wheel glides through Lenis', async () => {
+  const { page } = await open();
+  await page.mouse.move(720, 450);
+  await page.mouse.wheel({ deltaY: 300 });
+  await sleep(50);
+  check(await page.evaluate(() => window.__lenis?.isScrolling === 'smooth'), 'Lenis is gliding');
+  await sleep(1500);
+  check(await page.evaluate(() => scrollY) > 250, 'and arrives');
+  await page.close();
+});
+
+scenario('a header link glides and lands exactly', async () => {
+  const { page } = await open();
+  await page.click('.nav a[href$="#work"]');
+  await sleep(2000);
+  const r = await page.evaluate(() => {
+    const k = document.getElementById('work');
+    return { y: scrollY, want: Math.round(k.getBoundingClientRect().top + scrollY - parseFloat(getComputedStyle(k).scrollMarginTop) - (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0)) };
+  });
+  check(Math.abs(r.y - r.want) <= 1, `landed at ${r.y}, link points at ${r.want}`);
+  await sleep(800);
+  check(await page.evaluate(() => scrollY) === r.y, 'and stayed');
+  await page.close();
+});
+
+scenario('the wheel inside the viewer never scrolls the page', async () => {
+  const { page } = await open();
+  await page.evaluate(() => document.getElementById('awards').scrollIntoView({ behavior: 'instant' }));
+  await sleep(300);
+  await page.evaluate(() => document.querySelector('#awards a[data-zoom]').click());
+  await sleep(300);
+  const y0 = await page.evaluate(() => scrollY);
+  await page.mouse.move(720, 450);
+  await page.mouse.wheel({ deltaY: 400 });
+  await sleep(800);
+  check(await page.evaluate(() => scrollY) === y0, 'page stayed put behind the viewer');
+  await page.close();
+});
+
+scenario('Page Down still moves a screen', async () => {
+  const { page } = await open();
+  await page.keyboard.press('PageDown');
+  await sleep(900);
+  check(await page.evaluate(() => scrollY > innerHeight * 0.6), 'moved down');
   await page.close();
 });
 
@@ -265,6 +319,19 @@ scenario('slow frames while scrolling switch to the stills', async () => {
   await page.close();
 });
 
+scenario('scrolling in small steps on a fast page never switches to the stills', async () => {
+  // wheel ticks and slow drags arrive tens of milliseconds apart: the time between them is not a slow frame
+  const { page } = await open({ w: 600, h: 400 });
+  await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
+  const end = Date.now() + 6000;
+  while (Date.now() < end) {
+    await page.evaluate(() => scrollBy(0, 30));
+    await sleep(70);
+  }
+  check(!(await page.evaluate(() => document.documentElement.classList.contains('frozen'))), 'still live after six seconds of small steps');
+  await page.close();
+});
+
 scenario('crossing the breakpoint does not leak GPU memory', async () => {
   const page = await browser.newPage();
   await page.evaluateOnNewDocument(() => {
@@ -294,25 +361,6 @@ scenario('crossing the breakpoint does not leak GPU memory', async () => {
   const after = await page.evaluate(() => ({ ...window.__gl }));
   check(after.tex - before.tex <= 1 && after.buf - before.buf <= 10,
     `six more crossings: +${after.tex - before.tex} textures, +${after.buf - before.buf} buffers alive`);
-  await page.close();
-});
-
-scenario('a finger resting on the screen is never moved by the snap', async () => {
-  const { page } = await open({ w: 390, h: 844 });
-  const y0 = await page.evaluate(() => {
-    const c = document.querySelectorAll('.chapter')[1];
-    const key = c.getBoundingClientRect().top + scrollY + 0.8 * (c.offsetHeight - innerHeight);
-    scrollTo({ top: key - 200, behavior: 'instant' });
-    return key - 200;
-  });
-  await page.touchscreen.touchStart(200, 400);
-  // a browser cancels the pointer as soon as a touch starts to pan; the finger is still down
-  await page.evaluate(() => dispatchEvent(new PointerEvent('pointercancel', { pointerType: 'touch' })));
-  await page.evaluate(() => scrollBy(0, 10));
-  await sleep(600);
-  const y1 = await page.evaluate(() => scrollY);
-  check(Math.abs(y1 - (y0 + 10)) <= 2, `page stayed under the finger (${y0 + 10} → ${y1})`);
-  await page.touchscreen.touchEnd();
   await page.close();
 });
 
