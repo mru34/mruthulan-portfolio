@@ -1,6 +1,6 @@
 # 3D homepage, version 2: immersive, fast, smooth
 
-Date: 11 October 2026 · Branch: `redesign-3d` · Status: design approved in chat by Mruthulan; this write-up awaits review
+Date: 11 October 2026 · Branch: `redesign-3d` · Status: approved by Mruthulan (with the Awards additions he asked for)
 
 This replaces the flow, pacing, look, chapters and Awards of the first spec (`2026-10-11-3d-homepage-design.md`, "v1"). Where this document is silent, v1 still holds. These v1 sections stand unchanged: Rules carried over (except the two rules changed below), Every word on the homepage (with the changes below), Writing rules, Project facts, Typography, Fallbacks, Accessibility, Analytics.
 
@@ -181,11 +181,18 @@ Every screen is a real capture, cropped or resized by `design/build_3d_assets.py
   - the organisers' logos
 
   On a laptop, the three stacks sit side by side. On phones, they are one per row, and the table runs down the screen.
-- **Scroll:** as the section arrives, the camera glides down from KnowCad's archive onto the table. The stacks stand up to face the visitor, tied to the scroll.
+- **The placings as flip-boards:** each stack has a small gold split-flap board built from the name board's parts: **CHAMPION**, **2ND RUNNER-UP**, **CHAMPION**.
+  - As its stack arrives, the board turns through letters and lands on the placing, tied to the scroll so that scrolling back turns it back. Nothing turns on page load.
+  - It flickers under the mouse and ripples on a tap, like the hero.
+  - The HTML placing stays for screen readers and the stills, hidden visually while the board is live.
+- **Scroll, so it flows:** the section flows on from KnowCad without a break.
+  - The camera glides down from KnowCad's archive onto the table, and the colour warms from violet to gold.
+  - The three stacks then stand up one after another, each a little later in the scroll than the one before, with a soft spotlight brightening over each as it stands.
 - **Touch:**
-  - drag or flick the top print off a stack to see the next one; the last one returns the stack to the start
-  - a *Next photo* button per stack does the same from the keyboard
-  - clicking a print opens the existing full-screen viewer at that photo
+  - **Hover:** the prints lift toward the mouse and fan out slightly, with a gloss that follows the pointer, and the spotlight over that stack brightens.
+  - **Flick:** drag or flick the top print off a stack. It slides across the table with momentum, spins a little, settles, and tucks back under the stack, showing the next photo. The last one brings the stack back to the start.
+  - **Keyboard:** a *Next photo* button on each stack does the same.
+  - **Click:** clicking a print opens the existing full-screen viewer at that photo.
 - **Replaces:** the carousels, arrows, dots and photos that advance by themselves.
 
 ### Ending: the internship board
@@ -256,7 +263,7 @@ All of part 1's checks stay. Changed or added:
 - **Every interaction:** smoke tests for:
   - Boss Breaker's attack down to *defeated* and its reset
   - MEANT's pick from the keyboard
-  - Awards' *Next photo* and the viewer opening
+  - Awards: the flip-boards landing on their placings, *Next photo*, a flicked print settling, the viewer opening
   - the pole spin settling
   - the KnowCad sheets returning after the cursor leaves
 - **No GPU leaks:** after scrolling top to bottom and back twice, the texture and geometry counts return to where they started.
