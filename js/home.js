@@ -18,6 +18,7 @@ const SECTIONS = [
   ['boss-breaker', '[data-scene="boss-breaker"]', 'flight', () => import('./3d/chapters/boss-breaker.js')],
   ['better-call-bhai', '[data-scene="better-call-bhai"]', 'flight', () => import('./3d/chapters/better-call-bhai.js')],
   ['meant', '[data-scene="meant"]', 'flight', () => import('./3d/chapters/meant.js')],
+  ['knowcad', '[data-scene="knowcad"]', 'flight', () => import('./3d/chapters/knowcad.js')],
 ];
 
 const root = document.documentElement;

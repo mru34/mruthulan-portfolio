@@ -69,7 +69,7 @@ COPY = [
     'Champion · Autodesk Singapore Hackathon 2026',
     'Case study',
     'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
-    'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
+    'Who won the Autodesk Singapore Hackathon 2026?', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
     'Study', 'Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)',
     'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER',
     'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
@@ -214,3 +214,10 @@ def test_meant_has_its_four_replies_as_buttons_and_the_press_link():
         assert f'<button class="mt-pick" type="button" data-reply="{i}">{reply}</button>' in sec, reply
     assert '<a class="link mt-press" href="meant.html#press">Featured in Tamil Murasu</a>' in sec
     assert 'data-partner-live' in sec
+
+
+def test_knowcad_asks_its_question_in_full_without_the_3d():
+    markup = bs.build_home()
+    sec = re.search(r'<section class="chapter" data-scene="knowcad".*?</section>', markup, re.S).group(0)
+    assert '<span data-typed>Who won the Autodesk Singapore Hackathon 2026?</span>' in sec
+    assert '<p class="sr-only">Who won the Autodesk Singapore Hackathon 2026?</p>' in sec

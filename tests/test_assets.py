@@ -126,3 +126,11 @@ def test_the_meant_scene_and_the_builder_agree_on_the_reply_tiles():
     js = (ROOT / 'js' / '3d' / 'chapters' / 'meant.js').read_text(encoding='utf-8')
     found = [tuple(map(int, m)) for m in re.findall(r'\[(\d+), (\d+), (\d+), (\d+)\]', js.split('REPLY_BOXES = ')[1].split(';')[0])]
     assert found == b.REPLY_BOXES
+
+
+def test_the_knowcad_champion_photo_is_ready():
+    from PIL import Image
+    path = ROOT / 'assets' / '3d' / 'kc-champion.webp'
+    assert path.exists()
+    with Image.open(path) as im:
+        assert im.width <= 1179 and im.height <= 705

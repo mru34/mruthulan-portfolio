@@ -748,7 +748,9 @@ CHAPTERS = [
                          for i, r in enumerate(['Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice']))
                + '</div><p class="sr-only" aria-live="polite" data-partner-live></p>'),
     dict(pid='kc', num='05', side='left', result='Champion · Autodesk Singapore Hackathon 2026',
-         font='Name KnowCad', still='win-knowcad-champion'),
+         font='Name KnowCad', still='win-knowcad-champion',
+         extra='<p class="kc-q" aria-hidden="true"><span data-typed>Who won the Autodesk Singapore Hackathon 2026?</span>'
+               '<i class="kc-caret"></i></p><p class="sr-only">Who won the Autodesk Singapore Hackathon 2026?</p>'),
 ]
 
 ABOUT_FACTS = [

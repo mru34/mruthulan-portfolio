@@ -65,6 +65,15 @@ for (const [w, h] of [[1440, 900], [390, 844]]) {
   });
 }
 
+scenario('at 390px the words of every chapter fit the screen', async () => {
+  const { page } = await open({ w: 390, h: 844, path: '?mode=stills' });
+  const over = await page.$$eval('.chapter .info', (infos) => infos.flatMap((info) =>
+    [...info.querySelectorAll(':scope > *')].filter((el) => el.getBoundingClientRect().width && el.getBoundingClientRect().right > innerWidth + 1)
+      .map((el) => `${info.closest('.chapter').dataset.scene} ${el.className || el.tagName} ${Math.round(el.getBoundingClientRect().right)}`)));
+  check(over.length === 0, `nothing runs past the right edge (${over.join(', ')})`);
+  await page.close();
+});
+
 scenario('?mode=stills and reduced motion both get the stills', async () => {
   for (const opts of [{ path: '?mode=stills' }, { reduced: true }]) {
     const { page, errors } = await open(opts);
@@ -295,7 +304,7 @@ scenario('SignalBridge comes alive, and its payoff shows everything', async () =
 });
 
 // a chapter's still (design/stills.mjs) is the live scene at its payoff: the visitor without the 3D sees the same
-for (const scene of ['signalbridge', 'boss-breaker', 'better-call-bhai', 'meant']) {
+for (const scene of ['signalbridge', 'boss-breaker', 'better-call-bhai', 'meant', 'knowcad']) {
   scenario(`${scene}: the still matches the live payoff`, async () => {
     const at = (page) => page.evaluate((scene) => {
       const s = document.querySelector(`[data-scene="${scene}"]`);
@@ -379,6 +388,23 @@ scenario('MEANT: a reply picked from the keyboard reaches the partner display', 
   await page.waitForFunction(() => window.__world.mounted.get('meant').debug.shown === 2, { timeout: 8000 }).catch(() => {});
   check(await page.$eval('[data-partner-live]', (e) => e.textContent) === 'Partner display: Char siew rice', 'announced');
   check(await page.evaluate(() => window.__world.mounted.get('meant').debug.shown) === 2, 'the partner display shows it');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('KnowCad: the sheets part for the cursor and come back when it leaves', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="knowcad"]'); scrollTo({ top: c.offsetTop - 0.2 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="knowcad"][data-live]', { timeout: 30000 });
+  await sleep(500);
+  const typed = await page.$eval('[data-typed]', (e) => e.textContent);
+  check(typed.length > 0 && typed.length < 46, `the question is part-typed at this point (${JSON.stringify(typed)})`);
+  for (const [x, y] of [[620, 420], [700, 450], [780, 480], [860, 500]]) { await page.mouse.move(x, y); await sleep(60); }
+  await sleep(300);
+  check(await page.evaluate(() => window.__world.mounted.get('knowcad').debug.parted() > 0.05), 'some sheets moved aside');
+  await page.evaluate(() => document.documentElement.dispatchEvent(new PointerEvent('pointerleave')));
+  await page.waitForFunction(() => window.__world.mounted.get('knowcad').debug.parted() < 0.001, { timeout: 8000 }).catch(() => {});
+  check(await page.evaluate(() => window.__world.mounted.get('knowcad').debug.parted() < 0.001), 'all back in place');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });

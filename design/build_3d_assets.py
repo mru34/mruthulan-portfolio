@@ -175,6 +175,8 @@ def main():
     save(fit_crop(media / 'meant-shot-3.webp', WORD_GRID, (1448, 446)), 'mt-words')
     save(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8-1200.webp', (1200, 960)), 'mt-paper')
 
+    save(fit(media / 'win-knowcad-champion.webp', (1179, 705)), 'kc-champion')
+
     bb = RAW / 'bcb'
     for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):
         save(fit(bb / 'bcb-shots' / f'{name}.png', (768, 1662)), f'bb-phone-{i}')
