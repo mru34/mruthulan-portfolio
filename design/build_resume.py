@@ -58,6 +58,7 @@ S = dict(
     bullet=ParagraphStyle('bullet', fontName='Sans', fontSize=9.3, leading=11.9, textColor=NAVY,
                           leftIndent=9, firstLineIndent=-7, spaceBefore=0.5),
 )
+S['line'] = ParagraphStyle('line', parent=S['bullet'], fontSize=9.2)   # the awards, experience and leadership lines
 
 
 def link(url, text):
@@ -97,7 +98,7 @@ PROJECTS = [
      '2nd Runner-Up, polytechnic category (S$3,000), Dell InnovateFest 2026 | Featured in Tamil Murasu',
      ['Designed the UI and interaction flows: colour-coded symbol boards, search across the whole vocabulary '
       'when a prediction is wrong, and setup that stays out of the conversation.',
-      'Fixed a stuck mic, a silent send and a black camera so the live demo could not stall; worked on the '
+      'Fixed a stuck mic, a silent send and a black camera before the live demo; worked on the '
       'Singaporean text-to-speech voice with a teammate and presented the build.']),
 ]
 
@@ -146,13 +147,11 @@ def build(phone=None, out=OUT):
         block += [Paragraph(result, S['result'])] if result else []
         block += [Paragraph(f'• {b}', S['bullet']) for b in bullets]
         story += ([Spacer(1, 4)] if k else []) + [KeepTogether(block)]
-    story += section('Awards')
-    story += [Paragraph(f'• <b>{t}</b>{d}', S['bullet']) for t, d in AWARDS]
-    story += section('Experience and Leadership')
-    story += [Paragraph(f'• <b>{t}</b>{d}', S['bullet']) for t, d in EXPERIENCE]
+    story += section('Awards, Experience and Leadership')
+    story += [Paragraph(f'• <b>{t}</b>{d}', S['line']) for t, d in AWARDS + EXPERIENCE]
 
     doc = SimpleDocTemplate(
-        str(out), pagesize=A4, leftMargin=57, rightMargin=57, topMargin=30, bottomMargin=30,
+        str(out), pagesize=A4, leftMargin=50, rightMargin=50, topMargin=30, bottomMargin=30,
         title='Mruthulan Senthil Nathan - Internship Resume 2027 2028', author='Mruthulan Senthil Nathan',
         subject='One-page resume for software engineering and full-stack internships',
         keywords='software engineering, full-stack, internship, Singapore Polytechnic',
