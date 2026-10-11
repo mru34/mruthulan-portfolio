@@ -99,3 +99,14 @@ def test_boss_breaker_crop_boxes_sit_inside_their_captures():
 def test_boss_breaker_textures_exist():
     names = ['bx-display', 'bx-phone', 'bx-dragon', 'bx-leaderboard'] + [f'bx-card-{i}' for i in range(1, 7)]
     assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []
+
+
+def test_better_call_bhai_textures_exist_and_the_scene_agrees_on_the_slot_grid():
+    import build_3d_assets as b
+    names = [f'bb-phone-{i}' for i in range(1, 5)] + ['bb-laptop', 'bb-slots']
+    assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []
+    left, top, right, bottom = b.SLOT_GRID
+    assert 0 <= left < right <= 1170 and 0 <= top < bottom <= 2532
+    js = (ROOT / 'js' / '3d' / 'chapters' / 'better-call-bhai.js').read_text(encoding='utf-8')
+    m = re.search(r'SLOT_GRID = \[(\d+), (\d+), (\d+), (\d+)\]', js)
+    assert m and tuple(map(int, m.groups())) == b.SLOT_GRID

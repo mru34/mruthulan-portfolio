@@ -48,3 +48,13 @@ test('stop cancels the next frame and ignores invalidate', () => {
   t.stop(); t.invalidate();
   assert.equal(f.pending, 0);
 });
+
+test('a slow frame in the middle of motion is reported however long it took; a wake-up after sleeping is not', () => {
+  const f = fakeRaf(); const t = createTicker(f.raf, f.caf); const gaps = [];
+  let busy = true;
+  t.add((now, dt, gap) => { gaps.push(gap); return busy; });
+  f.run(1000); f.run(2500);          // the second frame took 1.5 s while the page was moving
+  busy = false; f.run(2516);         // the loop goes to sleep after this frame
+  t.invalidate(); f.run(2700);       // woken by an event 184 ms later: idle time, not a frame
+  assert.deepEqual(gaps, [null, 1500, 16, null]);
+});

@@ -17,3 +17,9 @@ test('slow frames ask for a lower resolution, then for the stills, then nothing 
   assert.deepEqual(second.filter((v) => v !== 'ok'), ['stills']);
   assert.ok(run(w, 4400, 3000, 80).every((v) => v === 'ok'));
 });
+
+test('frames each longer than the whole window still count: lower at once, then the stills', () => {
+  const w = new FrameWatch({ slowMs: 40, windowMs: 2000 });
+  assert.equal(w.push(3000, 3000), 'lower');
+  assert.equal(w.push(6000, 3000), 'stills');
+});

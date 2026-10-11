@@ -35,6 +35,10 @@ PHONE_CROP = (0, 0, 1170, 2380)       # m-youth-preview: above the dev badge
 # same as the phone captures). The leaderboard names and the challenges' creators are the app's seeded players.
 DRAGON_BOX = (176, 406, 360, 650)     # the Stress Dragon's portrait card
 LEADER_BOX = (1460, 350, 2731, 868)   # the leaderboard: mruthulan 1,240 · priya.r 760 · aisha.k 560 · jun_wei 360 · ethan.t 240
+# Better Call Bhai, in pixels of the 1170 x 2532 phone capture m3-slots.png: the day's time slots, 3 across and
+# 7 down (20 in all, 10:30 12:00 12:30 14:30 17:00 taken, 15:00 chosen). The phone field in these captures is
+# the "+65 XXXX XXXX" placeholder; no number is published.
+SLOT_GRID = (116, 784, 1054, 1850)
 CARD_BOXES = [(145, 549, 1423, 936), (1457, 549, 2735, 936), (145, 971, 1423, 1358),
               (1457, 971, 2735, 1358), (145, 1392, 1423, 1780), (1457, 1392, 2735, 1780)]   # challenges #6 to #1
 
@@ -108,6 +112,12 @@ def main():
     save(sized(crop(bx / 'd-boss.png', LEADER_BOX, 26), 960), 'bx-leaderboard')
     for i, box in enumerate(CARD_BOXES, 1):
         save(sized(crop(bx / 'd-challenges.png', box, 26), 640), f'bx-card-{i}')
+
+    bb = RAW / 'bcb'
+    for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):
+        save(fit(bb / 'bcb-shots' / f'{name}.png', (768, 1662)), f'bb-phone-{i}')
+    save(fit(bb / 'desk-booking.png', (1600, 1000)), 'bb-laptop')
+    save(fit_crop(bb / 'bcb-shots' / 'm3-slots.png', SLOT_GRID, (938, 1066)), 'bb-slots')
 
 
 if __name__ == '__main__':

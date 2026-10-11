@@ -16,6 +16,7 @@ const SECTIONS = [
   ['hero', '.hero', 'page', () => import('./3d/hero.js')],
   ['signalbridge', '[data-scene="signalbridge"]', 'flight', () => import('./3d/chapters/signalbridge.js')],
   ['boss-breaker', '[data-scene="boss-breaker"]', 'flight', () => import('./3d/chapters/boss-breaker.js')],
+  ['better-call-bhai', '[data-scene="better-call-bhai"]', 'flight', () => import('./3d/chapters/better-call-bhai.js')],
 ];
 
 const root = document.documentElement;
@@ -87,11 +88,10 @@ async function start3D(ticker) {
   }
   stage.add(world);
 
+  // frames that run back to back (the page moving) are measured; the time the loop spends asleep is not
   const watch = new FrameWatch();
-  let scrolledAt = 0;
-  addEventListener('scroll', () => { scrolledAt = performance.now(); }, { passive: true });
   stage.onFrame((now, dt) => {
-    if (dt === null || now - scrolledAt > 200) return;
+    if (dt === null || window.__noWatchdog) return;   // __noWatchdog: the smoke tests, which render in software
     const verdict = watch.push(now, dt);
     if (verdict === 'lower') stage.setDpr(1);
     else if (verdict === 'stills') { stopAll(); freeze(); }
@@ -133,12 +133,12 @@ if (live) {
       lenis.scrollTo(Math.round(y), { duration: 1.1, easing: (t) => 1 - (1 - t) ** 4 });
     });
   }
-  // any scroll keeps the loop running for a moment, so frames come back to back while the page moves: the
-  // watchdog then measures real frames, never the pause between two wheel ticks
-  let movingUntil = 0;
-  addEventListener('scroll', () => { movingUntil = performance.now() + 120; ticker.invalidate(); }, { passive: true });
+  // any scroll keeps the loop running for three more frames, so frames come back to back while the page moves
+  // (however slow they are): the watchdog then measures real frames, never the pause between two wheel ticks
+  let moving = 0;
+  addEventListener('scroll', () => { moving = 3; ticker.invalidate(); }, { passive: true });
   addEventListener('resize', () => { measure(); ticker.invalidate(); });
   measure();
-  ticker.add((now) => { beats(scrollY); return now < movingUntil; });
+  ticker.add(() => { beats(scrollY); return moving-- > 0; });
   start3D(ticker).catch((err) => { console.warn('The 3D stage did not start; showing the stills.', err); freeze(); });
 }

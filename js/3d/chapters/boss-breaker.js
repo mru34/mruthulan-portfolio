@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { makePhone, makeMonitor, makeStand } from '../devices.js';
-import { loadTexture, card, bez, glow, panel, contactShadow, disposeTree } from '../textures.js';
+import { loadTexture, card, bez, glow, panel, contactShadow, disposeTree, nextFrame } from '../textures.js';
 import { lerp, Spring, easeInOut } from '../../lib/motion.js';
 import { bossHp, hpText, bxState, START_HP } from './boss-timeline.js';
 
@@ -45,6 +45,7 @@ export async function mount({ world, stage, section, origin, form }) {
   displayShadow.position.set(0, FLOOR + 0.004, -7);
   group.add(display.group, post(-3.6), post(3.6), displayShadow);
 
+  await nextFrame();
   // the health bar: a dark track, the fill growing from its left end, the dragon's portrait at the start
   const track = new THREE.Mesh(new RoundedBoxGeometry(BAR.len + 0.12, 0.46, 0.3, 3, 0.1), new THREE.MeshStandardMaterial({ color: 0x1b1716, roughness: 0.5, metalness: 0.4 }));
   track.position.set(...BAR.at);
@@ -58,6 +59,7 @@ export async function mount({ world, stage, section, origin, form }) {
   barGlow.position.set(BAR.at[0], BAR.at[1], BAR.at[2] - 0.2);
   group.add(track, fill, dragon, barGlow);
 
+  await nextFrame();
   // the phone on its stand
   const phone = makePhone({ screen: tex['bx-phone'] });
   phone.group.position.set(-2.4, FLOOR + 0.04 + 0.72, 2.2);
@@ -67,6 +69,7 @@ export async function mount({ world, stage, section, origin, form }) {
   stand.rotation.y = 0.3;
   group.add(phone.group, stand);
 
+  await nextFrame();
   // the hand of challenge cards, fanned about a point below them
   const pivot = new THREE.Vector3(desk ? 1.6 : 0.6, -0.2, 2.0);
   const cards = Array.from({ length: nCards }, (_, i) => {
@@ -80,6 +83,7 @@ export async function mount({ world, stage, section, origin, form }) {
     return { pos: new THREE.Vector3(pivot.x - Math.sin(a) * r, pivot.y + Math.cos(a) * r, pivot.z + i * 0.015), rz: a };
   };
 
+  await nextFrame();
   // the leaderboard on its post, and a bar of each player's damage in front of it
   const bars = [];
   if (desk) {

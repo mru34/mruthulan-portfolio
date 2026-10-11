@@ -107,8 +107,13 @@ export function createWorld(stage, { sections, form }) {
       const part = await mod.mount({ THREE, world: api, stage, section: s.el, form, origin: origins[s.name] ?? origins.page, invalidate: stage.invalidate });
       // shaders compile and textures go to the GPU before the scene shows, a frame at a time
       if (part.group.parent) part.group.parent.remove(part.group);
-      if (stillWanted()) await renderer.compileAsync(part.group, camera, scene);
-      for (const tex of texturesOf(part.group)) {
+      // one piece at a time, a frame apart, so compiling never stalls the scroll
+      for (const piece of [...part.group.children]) {
+        if (!stillWanted()) break;
+        await renderer.compileAsync(piece, camera, scene);
+        await nextFrame();
+      }
+      for (const tex of new Set([...texturesOf(part.group), ...(part.warm || [])])) {
         if (!stillWanted()) break;
         renderer.initTexture(tex);
         await nextFrame();
@@ -159,6 +164,14 @@ export function createWorld(stage, { sections, form }) {
       const [l, t] = px(fit.x - fit.w / 2, fit.y + fit.h / 2);
       const [rr, b] = px(fit.x + fit.w / 2, fit.y - fit.h / 2);
       return Math.max(Math.abs(l - r.left), Math.abs(t - r.top), Math.abs(rr - r.right), Math.abs(b - r.bottom));
+    },
+    // where one of a scene's named points (part.debug.anchors) is on screen, in CSS pixels
+    debugProject(name, key) {
+      const part = mounted.get(name);
+      const a = part && part.debug && part.debug.anchors && part.debug.anchors[key];
+      if (!a) return null;
+      const v = a.clone().project(camera);
+      return { x: ((v.x + 1) / 2) * view.w, y: ((1 - v.y) / 2) * view.h };
     },
     debugCamera() {
       layout();

@@ -5,16 +5,20 @@ export function createTicker(raf = (fn) => requestAnimationFrame(fn), caf = (id)
   const jobs = [];
   let id = 0;
   let last = 0;     // for springs: reset when the loop sleeps, so a pause is never one huge step
-  let prev = 0;     // for the watchdog: never reset, so it sees how long frames really take
+  let prev = 0;     // when the previous frame ran
+  let moving = false;   // whether the previous frame asked for this one straight away
   let stopped = false;
   function frame(now) {
     id = 0;
     const dt = last ? Math.min(now - last, 100) : 16;
-    const gap = prev ? now - prev : 0;
+    // for the watchdog: how long this frame really took, however long that was, but only when frames ran back
+    // to back; after the loop slept, the time since the last frame is idle time, not a slow frame (null)
+    const gap = moving && prev ? now - prev : null;
     last = now;
     prev = now;
     let busy = false;
-    for (const job of [...jobs]) busy = job(now, dt, gap > 0 && gap < 500 ? gap : null) || busy;
+    for (const job of [...jobs]) busy = job(now, dt, gap) || busy;
+    moving = busy;
     if (busy) invalidate(); else last = 0;
   }
   function invalidate() { if (!id && !stopped) id = raf(frame); }

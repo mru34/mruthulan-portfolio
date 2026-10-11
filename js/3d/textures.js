@@ -4,6 +4,9 @@ import * as THREE from 'three';
 
 const loader = new THREE.TextureLoader();
 
+// waits for the next frame: a scene that builds a lot yields between parts, so building never stalls a frame
+export const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
+
 // a real capture as a texture, already decoded (off the main thread where the browser can), so putting it on
 // the GPU later never stalls a frame on decoding
 export function loadTexture(url) {

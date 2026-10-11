@@ -11,8 +11,11 @@ const failures = [];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function check(ok, label) { console.log(`  ${ok ? '✓' : '✗'} ${label}`); if (!ok) failures.push(label); }
 
-async function open({ w = 1440, h = 900, js = true, reduced = false, path = '', block = null, init = null } = {}) {
+// software rendering (SwiftShader) is slow in the chapters' rooms, so the frame watchdog would rightly send
+// those pages to the stills; it is off unless a scenario is about the watchdog itself
+async function open({ w = 1440, h = 900, js = true, reduced = false, path = '', block = null, init = null, watchdog = false } = {}) {
   const page = await browser.newPage();
+  if (!watchdog) await page.evaluateOnNewDocument(() => { window.__noWatchdog = true; });
   if (init) await page.evaluateOnNewDocument(init);
   const errors = [];
   page.on('pageerror', (err) => errors.push(String(err)));
@@ -292,7 +295,7 @@ scenario('SignalBridge comes alive, and its payoff shows everything', async () =
 });
 
 // a chapter's still (design/stills.mjs) is the live scene at its payoff: the visitor without the 3D sees the same
-for (const scene of ['signalbridge', 'boss-breaker']) {
+for (const scene of ['signalbridge', 'boss-breaker', 'better-call-bhai']) {
   scenario(`${scene}: the still matches the live payoff`, async () => {
     const at = (page) => page.evaluate((scene) => {
       const s = document.querySelector(`[data-scene="${scene}"]`);
@@ -338,6 +341,29 @@ scenario('Boss Breaker: attack to defeat, and it resets above the chapter', asyn
   await go();
   await sleep(800);
   check(await hp() === '1,840', `reset after scrolling back above (${await hp()})`);
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('Better Call Bhai: a spun pole keeps turning, then settles', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="better-call-bhai"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="better-call-bhai"][data-live]', { timeout: 30000 });
+  await sleep(500);
+  const p = await page.evaluate(() => window.__world.debugProject('better-call-bhai', 'pole0'));
+  check(p !== null && p.x > 0 && p.x < 1440 && p.y > 0 && p.y < 900, `the left pole is on screen (${JSON.stringify(p)})`);
+  const spin = () => page.evaluate(() => window.__world.mounted.get('better-call-bhai').debug.spin);
+  await page.mouse.move(p.x, p.y);
+  await page.mouse.down();
+  await page.mouse.move(p.x + 260, p.y, { steps: 4 });
+  await page.mouse.up();
+  const a0 = (await spin()).angle;
+  await sleep(300);
+  const s1 = await spin();
+  check(s1.angle > a0 && !s1.resting, `still turning after the release (${a0.toFixed(2)} → ${s1.angle.toFixed(2)})`);
+  // it slows down on its own (software rendering steps the physics slower than real time, so allow a while)
+  await page.waitForFunction(() => window.__world.mounted.get('better-call-bhai').debug.spin.resting, { timeout: 15000 }).catch(() => {});
+  check((await spin()).resting, 'and then it settles');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
 });
@@ -401,7 +427,7 @@ scenario('a link lands exactly on the payoff pose and stays there', async () => 
 });
 
 scenario('slow frames while scrolling switch to the stills', async () => {
-  const { page } = await open();
+  const { page } = await open({ watchdog: true });
   await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
   const cdp = await page.createCDPSession();
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 20 });
@@ -417,12 +443,14 @@ scenario('slow frames while scrolling switch to the stills', async () => {
 });
 
 scenario('scrolling in small steps on a fast page never switches to the stills', async () => {
-  // wheel ticks and slow drags arrive tens of milliseconds apart: the time between them is not a slow frame
-  const { page } = await open({ w: 600, h: 400 });
+  // wheel ticks and slow drags arrive tens of milliseconds apart: the time between them is not a slow frame.
+  // Small steps keep the page on the name board, whose frames are fast even in software rendering (the
+  // chapters' rooms are not, there, and going to the stills in them would be right)
+  const { page } = await open({ w: 600, h: 400, watchdog: true });
   await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
   const end = Date.now() + 6000;
   while (Date.now() < end) {
-    await page.evaluate(() => scrollBy(0, 30));
+    await page.evaluate(() => scrollBy(0, 3));
     await sleep(70);
   }
   check(!(await page.evaluate(() => document.documentElement.classList.contains('frozen'))), 'still live after six seconds of small steps');

@@ -5,7 +5,7 @@
 // capture or a crop of the running app (design/build_3d_assets.py); every object is built at real size.
 import * as THREE from 'three';
 import { makePhone, makeLaptop, makeMonitor, makeStand } from '../devices.js';
-import { loadTexture, card, bez, glow, disposeTree } from '../textures.js';
+import { loadTexture, card, bez, glow, disposeTree, nextFrame } from '../textures.js';
 import { lerp, Spring } from '../../lib/motion.js';
 import { sbLocal } from './signalbridge-timeline.js';
 
@@ -53,6 +53,7 @@ export async function mount({ world, stage, section, origin, form }) {
     group.add(under);
   }
 
+  await nextFrame();
   const phone = makePhone({ screen: tex['sb-phone-consent'], after: tex['sb-phone-notified'] });
   phone.group.position.set(...PHONE_AT);
   phone.group.rotation.set(-0.2, 0.25, 0);
