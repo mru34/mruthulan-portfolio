@@ -34,7 +34,8 @@ export function createStage(canvas, { maxDpr = 2 } = {}) {
   const hooks = new Set();
   let dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
   let raf = 0;
-  let last = 0;
+  let last = 0;     // for the springs: reset when the loop sleeps, so a pause is never one huge step
+  let prev = 0;     // for the watchdog: never reset, so it sees how long frames really take
   let stopped = false;
 
   function invalidate() {
@@ -43,11 +44,14 @@ export function createStage(canvas, { maxDpr = 2 } = {}) {
   function frame(now) {
     raf = 0;
     const dt = last ? Math.min(now - last, 100) : 16;
+    const gap = prev ? now - prev : 0;
     last = now;
+    prev = now;
     let busy = false;
     for (const p of parts) busy = p.update(now, dt) || busy;
     renderer.render(scene, camera);
-    for (const h of hooks) h(now, dt);
+    // frame hooks get the real time since the previous frame, or null after an idle pause (not a slow frame)
+    for (const h of hooks) h(now, gap > 0 && gap < 500 ? gap : null);
     if (busy) invalidate(); else last = 0;
   }
   function resize() {

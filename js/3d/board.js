@@ -75,8 +75,12 @@ function show(tile, st) {
   tile.hinge.rotation.x = Math.PI * easeIn(st.t);    // a flap falls: slow to start, fast at the end
 }
 
+// the atlases do not depend on the rows, so every board shares one pair (made once, never thrown away)
+let atlases = null;
+
 export async function createBoard({ rows }) {
-  const [goldMap, whiteMap] = await Promise.all([atlas(INK.gold), atlas(INK.white)]);
+  atlases ??= Promise.all([atlas(INK.gold), atlas(INK.white)]);
+  const [goldMap, whiteMap] = await atlases;
   const flap = (map) => new THREE.MeshStandardMaterial({ map, roughness: 0.55, metalness: 0.12 });
   const mats = { gold: flap(goldMap), white: flap(whiteMap) };
   const { tiles: spots, size } = layoutRows(rows, { tileH: TILE_H });
@@ -117,6 +121,13 @@ export async function createBoard({ rows }) {
   return {
     group,
     size,
+    // free this board's geometry and materials (the shared atlases stay)
+    dispose() {
+      group.traverse((o) => { if (o.isInstancedMesh) o.dispose(); else if (o.geometry) o.geometry.dispose(); });
+      housing.geometry.dispose();
+      pins.geometry.dispose();
+      for (const m of [mats.gold, mats.white, housing.material, pins.material]) m.dispose();
+    },
     pick(camera, ndc) {
       ray.setFromCamera(ndc, camera);
       const hit = ray.intersectObjects(pickables, false)[0];

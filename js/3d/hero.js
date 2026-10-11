@@ -15,9 +15,14 @@ export async function mount(stage, section) {
   let board = await createBoard({ rows: narrow.matches ? PHONE : DESK });
   stage.scene.add(board.group);
   // the layout follows the same breakpoint as the box's shape; rebuild when it is crossed
+  // only the latest rebuild counts: a slower earlier one is thrown away when it finishes
+  let generation = 0;
   narrow.addEventListener('change', async () => {
+    const mine = ++generation;
     const next = await createBoard({ rows: narrow.matches ? PHONE : DESK });
+    if (mine !== generation) { next.dispose(); return; }
     stage.scene.remove(board.group);
+    board.dispose();
     board = next;
     stage.scene.add(board.group);
     stage.invalidate();

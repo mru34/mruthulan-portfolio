@@ -127,7 +127,7 @@ async function start3D() {
   let scrolledAt = 0;
   addEventListener('scroll', () => { scrolledAt = performance.now(); }, { passive: true });
   stage.onFrame((now, dt) => {
-    if (now - scrolledAt > 200) return;
+    if (dt === null || now - scrolledAt > 200) return;
     const verdict = watch.push(now, dt);
     if (verdict === 'lower') stage.setDpr(1);
     else if (verdict === 'stills') { stage.stop(); freeze(); }
