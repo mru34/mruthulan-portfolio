@@ -150,15 +150,12 @@ p{margin:0}
 @media (hover:none){.hs-hint .fine{display:none}.hs-hint .touch{display:inline}}
 .no-js .hs-hint{display:none}
 .hs-m{display:none}
-.gal-arrow{width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--hair);background:none;color:var(--ink);font:500 18px/1 var(--body);display:grid;place-items:center;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s,transform .15s var(--ease)}
-@media (hover:hover){.gal-arrow:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}}
-.gal-arrow:active{transform:scale(.92);background:var(--ink);color:var(--bg)}
-.gal-count{min-width:48px;text-align:center;font-size:16px;color:var(--grey);font-variant-numeric:tabular-nums}
 
 /* ------------------------------------------------------------- awards: three cards */
-.score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:56px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+/* the awards: three stacks of photos side by side, each over its placing (with the live 3D the stacks are prints on
+   a table and the placings flip-boards, fitted into .aw-stack and .aw-place) */
+.aw-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(28px,3.4vw,56px);margin-top:clamp(24px,4vh,48px)}
 .win{position:relative;padding:26px 0 28px;display:grid;gap:8px;align-content:start;scroll-margin-top:calc(var(--bar) + 16px)}
-.win+.win::before{content:"";position:absolute;left:-28px;top:0;bottom:0;border-left:1px solid var(--hair)}
 .win .org{margin-bottom:16px}
 .win .org img{opacity:.78;transition:opacity .3s}
 .win:hover .org img{opacity:1}
@@ -170,9 +167,12 @@ p{margin:0}
 .gal .ph{width:100%;height:100%;border-radius:0}
 .gal .ph img{transition:scale .6s var(--ease)}
 @media (hover:hover){.gal-main:hover .shot[data-on] img{scale:1.05}}
-.gal-nav{position:absolute;right:10px;bottom:10px;z-index:2;display:flex;gap:6px}
-.gal-nav .gal-arrow{background:rgba(12,12,13,.72);border-color:rgba(255,255,255,.2)}
-.no-js .gal-nav{display:none}
+.aw-stack{position:relative;touch-action:pan-y}
+.aw-next{position:absolute;right:10px;bottom:10px;z-index:2;min-height:44px;background:rgba(12,12,13,.72)}
+.no-js .aw-next{display:none}
+.aw-place{width:100%;aspect-ratio:13.85/1.77;display:grid;align-items:center;justify-items:center}
+.has-3d:not(.frozen) .aw-stack[data-live] .gal-main,.has-3d:not(.frozen) .aw-stack[data-live] .shot[data-on],.has-3d:not(.frozen) .aw-place[data-live] h3{visibility:hidden}
+.has-3d:not(.frozen) .aw-stack[data-live]{cursor:grab}
 .no-js .gal .shot{position:static;opacity:1;visibility:visible;scale:1;margin-bottom:8px}
 .no-js .gal-main{aspect-ratio:auto;overflow:visible;background:none}
 .no-js .gal .ph{aspect-ratio:3/2}
@@ -183,7 +183,6 @@ p{margin:0}
 .win .pr a{display:inline-flex;gap:8px;align-items:center;font-weight:600;color:var(--ink)}
 .win .pr a + a{font-weight:500;color:var(--soft)}
 .win .pr .sw{width:9px;height:9px;background:var(--c)}
-.track-nav{display:none}
 
 
 /* ------------------------------------------------------------- sections */
@@ -351,15 +350,8 @@ p{margin:0}
   .hs-m-card{display:grid;gap:4px;padding:14px 16px;border-radius:10px;background:#0E0E10;border:1px solid color-mix(in srgb,var(--c) 45%,#333)}
   .hs-m-card code{font:400 15px/1.5 var(--mono);color:#E8E8EA;white-space:pre-wrap;overflow-wrap:anywhere}
   .crumb-ev{display:none}
-  .score{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;margin-inline:calc(-1 * var(--gutter));padding:4px var(--gutter);scroll-padding-inline:var(--gutter);border:0}
-  .score::-webkit-scrollbar{display:none}
-  .win{flex:0 0 86%;scroll-snap-align:start;padding:16px 16px 18px;border:1px solid var(--hair);border-radius:12px;background:var(--surf)}
-  .win+.win::before{display:none}
+  .aw-row{grid-template-columns:minmax(0,1fr);row-gap:clamp(40px,7vh,72px)}
   .win h3{font-size:34px}
-  .track-nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px}
-  .track-dots{display:flex;gap:6px}
-  .track-dots i{width:7px;height:7px;border-radius:99px;background:var(--hair);transition:width .3s var(--ease),background-color .3s}
-  .track-dots i[data-on]{width:20px;background:var(--gold)}
   .press{grid-template-columns:1fr}
   .facts{grid-template-columns:1fr}
   .facts div,.facts div+div{padding:12px 0;border-left:0}
@@ -427,7 +419,7 @@ p{margin:0}
 .big{font:700 clamp(44px,7.4vw,120px)/.95 var(--stmt);letter-spacing:-.035em;color:var(--ink);text-wrap:balance}
 .still{display:block;width:100%;height:100%}
 .still img{width:100%;height:100%;object-fit:contain}
-[data-anchor][data-live] > :not(.ch-hit){visibility:hidden} /* the live 3D now draws this box */
+[data-anchor][data-live] > :not(.ch-hit,.aw-next){visibility:hidden} /* the live 3D now draws this box (its own button stays) */
 
 /* hero: the name, then three links */
 .hero{min-height:calc(100svh - var(--bar));display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;align-items:center;gap:clamp(24px,5vh,56px);padding-block:clamp(24px,6vh,72px)}

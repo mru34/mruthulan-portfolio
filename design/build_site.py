@@ -659,9 +659,10 @@ def hotspots(f):
         </section>'''
 
 
-# ------------------------------------------------------------------ awards: three cards
-# Each card: the organisers' logos, the event's photos (arrows, swipe, and a slow advance
-# while nobody is touching them), the placing, the event, the project and my post about it.
+# ------------------------------------------------------------------ awards: three stacks of photos
+# Each award: a stack of the event's photos (Next photo moves the top one to the back; with the live 3D the
+# stack is real prints on a table, flicked by hand), its placing (a flip-board with the live 3D), the event,
+# the project, my post about it, and the organisers' logos.
 AWARDS = [
     ('sb', 'win-sp', 'Champion', 'Dell InnovateDash 2026', [], ['dell', 'sp'],
      ['win-signalbridge-team', 'win-signalbridge-award'], POST_SP),
@@ -678,17 +679,15 @@ def award(pid, anchor, place, event, facts, logos, photos, post):
         f'<img src="assets/logos/{s}" alt="{e(a)}" width="{w}" height="{h}" loading="lazy" decoding="async">' for s, a, w, h in (LOGOS[k] for k in logos))
     shots = ''.join(
         f'<a class="shot" href="assets/media/{MEDIA[k]["src"]}" data-zoom="{e(MEDIA[k]["caption"])}" data-alt="{e(MEDIA[k]["alt"])}" '
-        f'data-group="{anchor}"{" data-on" if n == 0 else ""} aria-label="View full size: {e(MEDIA[k]["caption"])}">'
+        f'data-group="{anchor}" data-photo="{k}"{" data-on" if n == 0 else ""} aria-label="View full size: {e(MEDIA[k]["caption"])}">'
         f'{pic(k, "(max-width: 860px) 86vw, 30vw", cls="ph")}</a>' for n, k in enumerate(photos))
-    nav = (f'<div class="gal-nav"><button class="gal-arrow" type="button" data-gal-step="-1" aria-label="Previous photo">←</button>'
-           f'<button class="gal-arrow" type="button" data-gal-step="1" aria-label="Next photo">→</button></div>') if len(photos) > 1 else ''
     fact = ''.join(f' <span class="fact">{e(x)}</span>' for x in facts)
-    return f'''<article class="win arrive" id="{anchor}" style="--c:{p['c']}">
-          <div class="org">{org}</div>
-          <div class="gal" data-gal><div class="gal-main">{shots}{nav}</div><span class="sr-only" aria-live="polite" data-gal-live></span></div>
-          <h3 class="cn"><span class="sr-only">{e(place)}</span><span aria-hidden="true">{e(place)}</span></h3>
+    return f'''<article class="win aw" id="{anchor}" style="--c:{p['c']}">
+          <div class="aw-stack gal" data-anchor data-gal><div class="gal-main">{shots}</div><button class="btn aw-next" type="button" data-gal-step="1">Next photo</button><span class="sr-only" aria-live="polite" data-gal-live></span></div>
+          <div class="aw-place" data-anchor><h3 class="cn">{e(place)}</h3></div>
           <p class="ev">{e(event)}{fact}</p>
           <p class="pr"><a class="link" href="{p['slug']}.html" data-event="case_open" data-project="{pid}"><i class="sw"></i>{e(p['name'])}</a><a class="link" href="{post}"{ext(post)} data-event="proof_post_click" data-project="{pid}">LinkedIn post ↗</a></p>
+          <div class="org">{org}</div>
         </article>'''
 
 
@@ -845,12 +844,9 @@ def build_home():
     <section class="sec wrap" id="awards" data-sec="awards" aria-labelledby="awards-title">
       <span id="results"></span><span id="wins"></span><span id="recognition"></span>
       {sechead('awards-title', 'Awards')}
-      <div class="score" data-track aria-label="Awards">
+      <div class="aw-row" aria-label="Awards">
         {''.join(award(*a) for a in AWARDS)}
       </div>
-      <div class="track-nav" data-track-nav><button class="gal-arrow" type="button" data-slide="-1" aria-label="Previous award">←</button>
-        <span class="track-dots" aria-hidden="true">{'<i></i>' * len(AWARDS)}</span><span class="gal-count" data-slide-now aria-live="polite">1 / {len(AWARDS)}</span>
-        <button class="gal-arrow" type="button" data-slide="1" aria-label="Next award">→</button></div>
     </section>
 
     <section class="sec wrap" id="about" data-sec="about" aria-labelledby="about-title">

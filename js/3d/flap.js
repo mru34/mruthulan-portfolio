@@ -1,7 +1,8 @@
-// The split-flap letters: the glyphs a board can show, what a tile shows at any moment, and where the
-// tiles of a board go. Pure, so it is tested; js/3d/board.js draws it.
+// The split-flap letters: the glyphs a board can show, what a tile shows at any moment (by the clock, or by the
+// scroll), and where the tiles of a board go. Pure, so it is tested; js/3d/board.js draws it.
+import { mulberry32 } from '../lib/scatter.js';
 
-export const GLYPHS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/.·';
+export const GLYPHS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/.·-';
 export const glyphIndex = (ch) => Math.max(0, GLYPHS.indexOf(String(ch).toUpperCase()));
 
 // uv box of a glyph's top or bottom half in an atlas of cols x rows cells (v = 1 at the top of the image)
@@ -38,6 +39,20 @@ export function tileState(seq, start, turnMs, now) {
   const k = Math.floor((now - start) / turnMs);
   if (k >= turns) return { from: seq[turns], to: seq[turns], t: 1, done: true };
   return { from: seq[k], to: seq[k + 1], t: (now - start - k * turnMs) / turnMs, done: false };
+}
+
+// what a tile shows when a scroll position x (0..1) is turning it through `seq`: scrolling back turns it back
+export function scrubState(seq, x) {
+  const turns = seq.length - 1;
+  if (x <= 0 || turns <= 0) return { from: seq[0], to: seq[0], t: 1, done: true };
+  if (x >= 1) return { from: seq[turns], to: seq[turns], t: 1, done: true };
+  const pos = x * turns, k = Math.floor(pos);
+  return { from: seq[k], to: seq[k + 1], t: pos - k, done: false };
+}
+
+// a blank, then `steps` letters from a seeded flicker, then the letter: the same for the same seed
+export function scrubSeq(final, steps, seed) {
+  return [' ', ...flickerSequence(final, steps, mulberry32(seed)).slice(1)];
 }
 
 // tile centres for rows of text. Tiles are 1 wide and `tileH` tall, `gap` apart; a space is a wider gap.

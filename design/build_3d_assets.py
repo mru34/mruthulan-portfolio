@@ -49,6 +49,9 @@ WORD_GRID = (76, 230, 1524, 676)      # 8 x 3 tiles: each 172 x 144, 182.1 x 150
 # own typeface (Inter 800, from the MEANT repository), colour and size, centred where that sentence is.
 MEANT_FONT = ROOT.parent / 'meant-DellInnovateFest' / 'meant' / 'web' / 'src' / 'assets' / 'fonts' / 'inter-latin-800-normal.woff2'
 FONT_CACHE = ROOT.parent / 'portfolio-tools' / 'fonts-src' / 'inter-800.ttf'
+# Awards: each event's real photos, printed on the table (the keys of data/media.json)
+AWARD_PHOTOS = ['win-signalbridge-team', 'win-signalbridge-award', 'win-meant-handover', 'win-meant-stage',
+                'win-meant-team', 'win-knowcad-champion', 'win-knowcad-team']
 CARD_BOXES = [(145, 549, 1423, 936), (1457, 549, 2735, 936), (145, 971, 1423, 1358),
               (1457, 971, 2735, 1358), (145, 1392, 1423, 1780), (1457, 1392, 2735, 1780)]   # challenges #6 to #1
 
@@ -176,6 +179,8 @@ def main():
     save(fit(media / 'press' / 'tamil-murasu-2026-09-28-p8-1200.webp', (1200, 960)), 'mt-paper')
 
     save(fit(media / 'win-knowcad-champion.webp', (1179, 705)), 'kc-champion')
+    for key in AWARD_PHOTOS:
+        save(fit(media / f'{key}.webp', (1024, 1024)), f'aw-{key}')
 
     bb = RAW / 'bcb'
     for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):

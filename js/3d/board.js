@@ -3,10 +3,10 @@
 // the new bottom on its back, as a real departures board does.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { GLYPHS, glyphIndex, glyphUV, flickerSequence, tileState, layoutRows } from './flap.js';
+import { GLYPHS, glyphIndex, glyphUV, flickerSequence, tileState, layoutRows, scrubState, scrubSeq } from './flap.js';
 import { Spring, easeIn } from '../lib/motion.js';
 
-const COLS = 8, ROWS = 5, CELL_W = 128, CELL_H = 176, TILE_H = 1.37;
+const COLS = 8, ROWS = 6, CELL_W = 128, CELL_H = 176, TILE_H = 1.37;
 const INK = { gold: '#E8B64C', white: '#F2F2F2' };
 
 // every glyph printed on a flap, with the flap's slight shading; one atlas per ink colour
@@ -66,6 +66,7 @@ function show(tile, st) {
   const key = `${st.from}${st.to}${st.done ? 1 : st.t.toFixed(3)}`;
   if (key === tile.shown) return;
   tile.shown = key;
+  tile.now = st.done ? st.to : st.from;   // the letter a reader sees on this tile right now
   const uv = (ch, half) => glyphUV(glyphIndex(ch), half, COLS, ROWS);
   setUV(tile.top.geometry, uv(st.to, 'top'));
   setUV(tile.bottom.geometry, uv(st.done ? st.to : st.from, 'bottom'));
@@ -79,7 +80,7 @@ function show(tile, st) {
 // the atlases do not depend on the rows, so every board shares one pair (made once, never thrown away)
 let atlases = null;
 
-export async function createBoard({ rows }) {
+export async function createBoard({ rows, scrub = false }) {
   atlases ??= Promise.all([atlas(INK.gold), atlas(INK.white)]);
   const [goldMap, whiteMap] = await atlases;
   const flap = (map) => new THREE.MeshStandardMaterial({ map, roughness: 0.55, metalness: 0.12 });
@@ -107,7 +108,7 @@ export async function createBoard({ rows }) {
     t.top.userData.tile = i;
     t.bottom.userData.tile = i;
     body.add(t.group);
-    const tile = Object.assign(t, { ch: s.ch, x: s.x, y: s.y, anim: null });
+    const tile = Object.assign(t, { ch: s.ch, x: s.x, y: s.y, anim: null, seq: scrub ? scrubSeq(s.ch, 3, i + 1) : null });
     show(tile, { from: s.ch, to: s.ch, t: 1, done: true });
     return tile;
   });
@@ -148,6 +149,18 @@ export async function createBoard({ rows }) {
       for (const t of tiles) {
         t.anim = { seq: flickerSequence(t.ch, 2), start: now + Math.hypot(t.x - o.x, t.y - o.y) * 30, turnMs: 80 };
       }
+    },
+    // what the board reads right now, with the spaces between words
+    text() {
+      let k = 0;
+      return rows.map((r) => [...r.text].map((ch) => (ch === ' ' ? ' ' : tiles[k++].now)).join('')).join(' / ');
+    },
+    // a board turned by the scroll: x 0 shows blanks, 1 the letters; the tiles turn one after another, left to
+    // right, and scrolling back turns them back
+    scrub(x) {
+      tiles.forEach((t, i) => {
+        if (!t.anim) show(t, scrubState(t.seq, Math.min(1, Math.max(0, x * 1.4 - (i / tiles.length) * 0.4))));
+      });
     },
     lean(nx, ny) { leanY.target = nx * 0.07; leanX.target = -ny * 0.05; },
     update(now, dt) {

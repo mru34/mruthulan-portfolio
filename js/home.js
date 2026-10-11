@@ -19,6 +19,7 @@ const SECTIONS = [
   ['better-call-bhai', '[data-scene="better-call-bhai"]', 'flight', () => import('./3d/chapters/better-call-bhai.js')],
   ['meant', '[data-scene="meant"]', 'flight', () => import('./3d/chapters/meant.js')],
   ['knowcad', '[data-scene="knowcad"]', 'flight', () => import('./3d/chapters/knowcad.js')],
+  ['awards', '#awards', 'page', () => import('./3d/awards.js')],
 ];
 
 const root = document.documentElement;

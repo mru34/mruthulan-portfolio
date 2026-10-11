@@ -215,68 +215,40 @@
     new IntersectionObserver(([en], o) => { if (en.isIntersecting) { o.disconnect(); layers.forEach(warm); } }, { rootMargin: '600px' }).observe(f);
   });
 
-  /* ---------------------------------------------------------- swipe rows (the awards, on phones) */
-  $$('[data-track]').forEach((row) => {
-    const nav = row.parentElement.querySelector('[data-track-nav]');
-    if (!nav) return;
-    const slides = [...row.children], dots = $$('.track-dots i', nav), now = $('[data-slide-now]', nav);
-    let idx = 0;
-    const setNow = (n) => {
-      idx = n;
-      dots.forEach((d, k) => d.toggleAttribute('data-on', k === n));
-      now.textContent = `${n + 1} / ${slides.length}`;
-    };
-    setNow(0);
-    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) setNow(slides.indexOf(en.target)); }), { root: row, threshold: 0.6 });
-    slides.forEach((sl) => io.observe(sl));
-    $$('[data-slide]', nav).forEach((btn) => btn.addEventListener('click', () => {
-      const n = Math.max(0, Math.min(slides.length - 1, idx + +btn.dataset.slide));
-      row.scrollTo({ left: slides[n].offsetLeft - slides[0].offsetLeft, behavior: still() ? 'auto' : 'smooth' });
-    }));
-  });
-
   /* ---------------------------------------------------------- award photos */
-  // Arrows, the arrow keys or a swipe move between an event's photos; a tap opens the viewer.
-  // While a card is in view and nobody is pointing at or using it, its photos move on slowly by
-  // themselves (not with reduced motion); touching a card's photos stops that card for good.
-  $$('[data-gal]').forEach((gal, gi) => {
+  // Next photo, the arrow keys or a swipe move between an event's photos; a tap opens the viewer. Nothing moves
+  // by itself. Each change is announced to the page (gal:show), so the live 3D stack can follow it.
+  $$('[data-gal]').forEach((gal) => {
     const main = $('.gal-main', gal), shots = $$('.shot', gal);
     const live = $('[data-gal-live]', gal);
     if (shots.length < 2) return;
-    let i = 0, used = false, over = false, seen = false;
-    const show = (n, quiet) => {
+    let i = 0;
+    const show = (n) => {
       const hadFocus = shots.includes(document.activeElement);
       i = (n + shots.length) % shots.length;
       shots.forEach((sh, k) => sh.toggleAttribute('data-on', k === i));
-      if (!quiet) live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
+      live.textContent = `Photo ${i + 1} of ${shots.length}: ${shots[i].dataset.zoom}`;
       if (hadFocus) shots[i].focus();
+      gal.dispatchEvent(new CustomEvent('gal:show', { detail: { index: i } }));
     };
-    const byHand = (n) => { used = true; show(n); };
-    new IntersectionObserver(([en]) => {
-      seen = en.isIntersecting;
-      if (seen) shots.forEach((sh) => warm($('img', sh)));
-    }, { threshold: 0.5 }).observe(main);
-    $$('[data-gal-step]', gal).forEach((btn) => btn.addEventListener('click', () => byHand(i + +btn.dataset.galStep)));
+    new IntersectionObserver(([en], o) => {
+      if (en.isIntersecting) { o.disconnect(); shots.forEach((sh) => warm($('img', sh))); }
+    }, { threshold: 0.2 }).observe(main);
+    $$('[data-gal-step]', gal).forEach((btn) => btn.addEventListener('click', () => show(i + +btn.dataset.galStep)));
     gal.addEventListener('keydown', (e) => {
       if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-      byHand(i + (e.key === 'ArrowLeft' ? -1 : 1));
+      show(i + (e.key === 'ArrowLeft' ? -1 : 1));
       e.preventDefault();
     });
-    gal.addEventListener('pointerenter', () => { over = true; });
-    gal.addEventListener('pointerleave', () => { over = false; });
     let x0 = null, y0 = 0, swiped = false;
-    main.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { x0 = e.clientX; y0 = e.clientY; used = true; } });
+    main.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { x0 = e.clientX; y0 = e.clientY; } });
     main.addEventListener('pointerup', (e) => {
       if (x0 === null) return;
       const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
-      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { byHand(dx < 0 ? i + 1 : i - 1); swiped = true; setTimeout(() => { swiped = false; }, 60); }
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { show(dx < 0 ? i + 1 : i - 1); swiped = true; setTimeout(() => { swiped = false; }, 60); }
     });
     main.addEventListener('pointercancel', () => { x0 = null; });
     main.addEventListener('click', (e) => { if (swiped) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
-    if (still()) return;
-    setTimeout(() => setInterval(() => {
-      if (!used && !over && seen && !document.hidden && !gal.contains(document.activeElement) && !$('[data-viewer]')?.open) show(i + 1, true);
-    }, 5200), gi * 1700);
   });
 
   /* ---------------------------------------------------------- tilt */

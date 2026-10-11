@@ -69,14 +69,14 @@ COPY = [
     'Champion · Autodesk Singapore Hackathon 2026',
     'Case study',
     'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
-    'Who won the Autodesk Singapore Hackathon 2026?', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
+    'Next photo', 'Who won the Autodesk Singapore Hackathon 2026?', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
     'Study', 'Diploma in Information Technology, Singapore Polytechnic, 2025 – 2028 (expected)',
     'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman and SP ACER',
     'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
     'Reach out', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
-        'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.']
+        'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo']
 BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',
           'crafted', 'unlock', 'robust', 'delve']
 
@@ -221,3 +221,19 @@ def test_knowcad_asks_its_question_in_full_without_the_3d():
     sec = re.search(r'<section class="chapter" data-scene="knowcad".*?</section>', markup, re.S).group(0)
     assert '<span data-typed>Who won the Autodesk Singapore Hackathon 2026?</span>' in sec
     assert '<p class="sr-only">Who won the Autodesk Singapore Hackathon 2026?</p>' in sec
+
+
+def test_awards_are_three_stacks_with_their_placing_boxes_and_no_carousel():
+    markup = bs.build_home()
+    sec = markup[markup.index('id="awards"'):markup.index('id="about"')]
+    assert 'data-track' not in sec and 'data-slide' not in sec and 'track-dots' not in sec
+    assert sec.count('class="aw-stack gal" data-anchor data-gal') == 3
+    assert sec.count('class="aw-place" data-anchor') == 3
+    assert sec.count('<button class="btn aw-next" type="button" data-gal-step="1">Next photo</button>') == 3
+
+
+def test_the_placing_box_has_the_widest_board_s_shape():
+    """The flip-boards are fitted into .aw-place: its shape is the widest placing's board (2ND RUNNER-UP,
+    js/3d/flap.js layoutRows gives 13.85 x 1.77)."""
+    css = (ROOT / 'css' / 'styles.css').read_text(encoding='utf-8')
+    assert '.aw-place{' in css and 'aspect-ratio:13.85/1.77' in css

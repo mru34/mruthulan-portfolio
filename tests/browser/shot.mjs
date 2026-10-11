@@ -25,10 +25,10 @@ const at = arg('at', '');
 if (at) {
   const [scene, t] = at.split(':');
   await page.evaluate((scene, t) => {
-    const s = document.querySelector(`[data-scene="${scene}"]`);
+    const s = document.querySelector(scene.startsWith('#') ? scene : `[data-scene="${scene}"]`);
     scrollTo({ top: s.getBoundingClientRect().top + scrollY + Number(t) * innerHeight, behavior: 'instant' });
   }, scene, t);
-  await page.waitForSelector(`[data-scene="${scene}"][data-live]`, { timeout: 30000 }).catch(() => console.error('not live'));
+  await page.waitForSelector(scene.startsWith('#') ? `${scene}[data-live]` : `[data-scene="${scene}"][data-live]`, { timeout: 30000 }).catch(() => console.error('not live'));
 }
 const y = arg('y', '');
 if (y) await page.evaluate((y) => scrollTo({ top: y, behavior: 'instant' }), Number(y));

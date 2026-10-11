@@ -409,6 +409,43 @@ scenario('KnowCad: the sheets part for the cursor and come back when it leaves',
   await page.close();
 });
 
+scenario('Awards: the boards land on their placings, Next photo flicks, a tap opens the viewer', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop - 0.1 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 });
+  await sleep(800);
+  const board = (i) => page.evaluate((i) => window.__world.mounted.get('awards').debug.boardText(i), i);
+  check(await board(0) === 'CHAMPION' && await board(1) === '2ND RUNNER-UP' && await board(2) === 'CHAMPION', `the boards read their placings (${await board(1)})`);
+  const top = () => page.$eval('#win-dell .shot[data-on]', (a) => a.dataset.photo);
+  const before = await top();
+  await page.click('#win-dell [data-gal-step]');
+  await page.waitForFunction(() => window.__world.mounted.get('awards').debug.resting(1), { timeout: 10000 }).catch(() => {});
+  check(await top() !== before, `Next photo moved to the next one (${before} → ${await top()})`);
+  check(await page.evaluate(() => window.__world.mounted.get('awards').debug.resting(1)), 'the flicked print settled');
+  check(await page.evaluate(() => window.__world.mounted.get('awards').debug.topPhoto(1)) === await top(), 'the 3D stack shows the same photo on top');
+  const box = await page.$eval('#win-sp .aw-stack', (e) => { const r = e.getBoundingClientRect(); return { x: r.x + r.width * 0.4, y: r.y + r.height * 0.4 }; });
+  await page.mouse.click(box.x, box.y);
+  await sleep(500);
+  check(await page.$eval('[data-viewer]', (d) => d.open), 'a tap opened the viewer');
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('a vertical swipe that starts on an award print still scrolls', async () => {
+  const { page } = await open({ w: 390, h: 844 });
+  await page.evaluate(() => { const a = document.getElementById('awards'); scrollTo({ top: a.offsetTop, behavior: 'instant' }); });
+  await page.waitForSelector('#awards .aw-stack[data-live]', { timeout: 30000 });
+  await sleep(600);
+  const y0 = await page.evaluate(() => scrollY);
+  const box = await page.$eval('#win-sp .aw-stack', (e) => { const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
+  await page.touchscreen.touchStart(box.x, box.y);
+  for (let k = 1; k <= 8; k++) { await page.touchscreen.touchMove(box.x, box.y - k * 40); await sleep(16); }
+  await page.touchscreen.touchEnd();
+  await sleep(700);
+  check(await page.evaluate(() => scrollY) > y0 + 100, `the page scrolled (${y0} → ${await page.evaluate(() => scrollY)})`);
+  await page.close();
+});
+
 scenario('a page opened at #contact has nothing animating by itself', async () => {
   for (const path of ['', '#contact']) {
     const page = await browser.newPage();

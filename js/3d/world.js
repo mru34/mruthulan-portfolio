@@ -144,6 +144,8 @@ export function createWorld(stage, { sections, form }) {
     root, rig, glint, mounted, layout, boxToWorld,
     get lastScroll() { return lastScroll; },
     origin: (name) => origins[name].clone(),
+    // a section's top, in CSS pixels from the top of the screen, from the cached layout (no layout read)
+    top(name) { const i = sections.findIndex((x) => x.name === name); return i < 0 ? 0 : spans[i][0] - scrollY; },
     shake(a) { shakeS.velocity += a; stage.invalidate(); },
     ray(clientX, clientY) {
       const r = new THREE.Raycaster();

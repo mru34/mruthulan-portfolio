@@ -134,3 +134,10 @@ def test_the_knowcad_champion_photo_is_ready():
     assert path.exists()
     with Image.open(path) as im:
         assert im.width <= 1179 and im.height <= 705
+
+
+def test_every_award_photo_has_its_print_and_the_awards_list_agrees():
+    import build_3d_assets as b
+    import build_site as bs
+    assert sorted(b.AWARD_PHOTOS) == sorted(k for a in bs.AWARDS for k in a[6])
+    assert [k for k in b.AWARD_PHOTOS if not (ROOT / 'assets' / '3d' / f'aw-{k}.webp').exists()] == []
