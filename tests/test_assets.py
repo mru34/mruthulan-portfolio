@@ -45,7 +45,7 @@ def test_signalbridge_textures_exist_within_their_sizes(name, limit):
 
 
 SB_WALL = {'sb-wall-radar': (1280, 800), 'sb-wall-cases': (1280, 800), 'sb-wall-chat': (1280, 800),
-           'sb-wall-supervisor': (1280, 800), 'sb-wall-preview': (1280, 800), 'sb-phone-preview': (768, 1662)}
+           'sb-wall-supervisor': (1280, 800), 'sb-wall-handoffs': (1280, 800), 'sb-phone-preview': (768, 1662)}
 
 
 @pytest.mark.parametrize('name,limit', SB_WALL.items())
@@ -63,13 +63,55 @@ def test_signalbridge_crops_leave_out_the_teammates_name_and_the_dev_badge():
     assert b.DESK_CROP[3] <= 1650 and b.CHAT_CROP[3] <= 1650 and b.PHONE_CROP[3] <= 2400   # the dev badge sits below
 
 
+def test_no_signalbridge_wall_screen_is_light():
+    """The youth app's preview is white cards; in a dark control room it glares. Every wall screen is dark."""
+    from PIL import Image, ImageStat
+    walls = sorted((ROOT / 'assets' / '3d').glob('sb-wall-*.webp'))
+    assert [p.name for p in walls] == ['sb-wall-cases.webp', 'sb-wall-chat.webp', 'sb-wall-handoffs.webp',
+                                       'sb-wall-radar.webp', 'sb-wall-supervisor.webp']
+    for p in walls:
+        with Image.open(p) as im:
+            assert ImageStat.Stat(im.convert('L')).mean[0] < 70, p.name
+
+
+MIN_WIDTH = {'bx-display': 2048, 'bx-leaderboard': 1271, 'bx-phone': 1024}
+
+
+@pytest.mark.parametrize('name,width', MIN_WIDTH.items())
+def test_sharp_textures_are_wide_enough(name, width):
+    from PIL import Image
+    with Image.open(ROOT / 'assets' / '3d' / f'{name}.webp') as im:
+        assert im.width >= width, im.size
+
+
+def test_award_photos_are_at_their_full_resolution():
+    from PIL import Image
+    import build_3d_assets as b
+    for key in b.AWARD_PHOTOS:
+        with (Image.open(ROOT / 'assets' / 'media' / f'{key}.webp') as src,
+              Image.open(ROOT / 'assets' / '3d' / f'aw-{key}.webp') as out):
+            assert out.width == min(src.width, b.AWARD_WIDTH), (key, out.size, src.size)
+
+
+def test_the_boss_breaker_scene_and_the_builder_agree_on_the_display_crop():
+    import build_3d_assets as b
+    js = (ROOT / 'js' / '3d' / 'chapters' / 'boss-breaker.js').read_text(encoding='utf-8')
+    m = re.search(r'DISPLAY_CROP = \[(\d+), (\d+), (\d+), (\d+)\]', js)
+    assert m and tuple(map(int, m.groups())) == b.DISPLAY_CROP
+    left, top, right, bottom = b.DISPLAY_CROP
+    assert 0 <= left < right <= 2880 and 0 <= top < bottom <= 1800
+
+
 def chapter_bytes(prefix):
     return sum(p.stat().st_size for p in (ROOT / 'assets' / '3d').glob(f'{prefix}-*.webp'))
 
 
-@pytest.mark.parametrize('prefix', ['sb', 'bx', 'bb', 'mt', 'kc', 'aw'])
-def test_each_chapter_fits_its_texture_budget(prefix):
-    assert chapter_bytes(prefix) <= 600_000, chapter_bytes(prefix)
+BUDGET = {'sb': 600_000, 'bx': 600_000, 'bb': 600_000, 'mt': 600_000, 'kc': 600_000, 'aw': 1_000_000}
+
+
+@pytest.mark.parametrize('prefix,limit', BUDGET.items())
+def test_each_chapter_fits_its_texture_budget(prefix, limit):
+    assert chapter_bytes(prefix) <= limit, chapter_bytes(prefix)
 
 
 def test_the_scene_and_the_builder_agree_on_the_message_crop():

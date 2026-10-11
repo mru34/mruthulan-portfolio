@@ -10,13 +10,15 @@ card's own background colour, the same size as the card.
 
 SignalBridge's control room (checked 11 Oct 2026): the extra screens show only the app's fictional people (Mira
 Tan, Jay Lim, Dan Ng, Afiq Rahman, Marcus Lee), the worker "Mru" and @signalbridge.test addresses. Left out:
-d-worker-cockpit and d-cockpit (a Telegram chat ID and a Discord webhook field), d-worker-youths (a 404 page).
+d-worker-cockpit and d-cockpit (a Telegram chat ID and a Discord webhook field), d-worker-youths (a 404 page),
+and d-youth-preview on the wall (the youth app's white cards glare in a dark room; the handoffs list stands there
+instead).
 The supervisor view is cropped above its "Signed in as" corner, which names a teammate; every screen is cropped
 above the Next.js dev badge in its bottom-left corner.
 """
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT.parent / 'portfolio-tools' / 'card-shots' / 'raw'
@@ -35,6 +37,7 @@ PHONE_CROP = (0, 0, 1170, 2380)       # m-youth-preview: above the dev badge
 # same as the phone captures). The leaderboard names and the challenges' creators are the app's seeded players.
 DRAGON_BOX = (176, 406, 360, 650)     # the Stress Dragon's portrait card
 LEADER_BOX = (1460, 350, 2731, 868)   # the leaderboard: mruthulan 1,240 · priya.r 760 · aisha.k 560 · jun_wei 360 · ethan.t 240
+DISPLAY_CROP = (100, 0, 2780, 1120)   # the Boss Raid page's content (header, raid card, leaderboard), without the empty lower half
 # Better Call Bhai, in pixels of the 1170 x 2532 phone capture m3-slots.png: the day's time slots, 3 across and
 # 7 down (20 in all, 10:30 12:00 12:30 14:30 17:00 taken, 15:00 chosen). The phone field in these captures is
 # the "+65 XXXX XXXX" placeholder; no number is published.
@@ -52,6 +55,7 @@ FONT_CACHE = ROOT.parent / 'portfolio-tools' / 'fonts-src' / 'inter-800.ttf'
 # Awards: each event's real photos, printed on the table (the keys of data/media.json)
 AWARD_PHOTOS = ['win-signalbridge-team', 'win-signalbridge-award', 'win-meant-handover', 'win-meant-stage',
                 'win-meant-team', 'win-knowcad-champion', 'win-knowcad-team']
+AWARD_WIDTH = 1400                    # the photos at their source's full width (at most this), lightly sharpened
 CARD_BOXES = [(145, 549, 1423, 936), (1457, 549, 2735, 936), (145, 971, 1423, 1358),
               (1457, 971, 2735, 1358), (145, 1392, 1423, 1780), (1457, 1392, 2735, 1780)]   # challenges #6 to #1
 
@@ -137,10 +141,15 @@ def partner_reply(text):
     return im
 
 
-def save(im, name):
+def sharpen(im):
+    """A light unsharp mask: textures are drawn smaller than they are, and minifying softens edges."""
+    return im.filter(ImageFilter.UnsharpMask(radius=1.2, percent=60, threshold=2))
+
+
+def save(im, name, quality=84):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f'{name}.webp'
-    im.save(path, 'WEBP', quality=84, method=6)
+    im.save(path, 'WEBP', quality=quality, method=6)
     print(f'wrote {path.name:26} {im.size[0]:5} x {im.size[1]:<5} {path.stat().st_size:7} bytes')
 
 
@@ -155,16 +164,16 @@ def main():
     save(ask, 'sb-consent-ask')
     save(plate(crop(sb / 'm-youth-chat.png', PILL_BOX, 39), ask), 'sb-consent-given')
     for raw, name, box in (('d-worker-signal-radar', 'sb-wall-radar', DESK_CROP), ('d-worker-cases', 'sb-wall-cases', DESK_CROP),
-                           ('d-youth-chat', 'sb-wall-chat', CHAT_CROP), ('d-youth-preview', 'sb-wall-preview', DESK_CROP),
+                           ('d-youth-chat', 'sb-wall-chat', CHAT_CROP), ('d-worker-handoffs', 'sb-wall-handoffs', DESK_CROP),
                            ('d-supervisor', 'sb-wall-supervisor', SUPERVISOR_CROP)):
         save(fit_crop(sb / f'{raw}.png', box, (1280, 800)), name)
     save(fit_crop(sb / 'm-youth-preview.png', PHONE_CROP, (768, 1662)), 'sb-phone-preview')
 
     bx = RAW / 'bx'
-    save(fit(bx / 'd-boss.png', (1600, 1000)), 'bx-display')
-    save(fit(bx / 'm-boss.png', (768, 1662)), 'bx-phone')
-    save(sized(crop(bx / 'd-boss.png', DRAGON_BOX, 22), 320), 'bx-dragon')
-    save(sized(crop(bx / 'd-boss.png', LEADER_BOX, 26), 960), 'bx-leaderboard')
+    save(sharpen(fit_crop(bx / 'd-boss.png', DISPLAY_CROP, (2048, 2048))), 'bx-display')
+    save(fit(bx / 'm-boss.png', (1024, 2216)), 'bx-phone')
+    save(sized(crop(bx / 'd-boss.png', DRAGON_BOX, 22), 320), 'bx-dragon')   # already its source size (184 x 244)
+    save(crop(bx / 'd-boss.png', LEADER_BOX, 26), 'bx-leaderboard')          # its source size, 1271 x 518
     for i, box in enumerate(CARD_BOXES, 1):
         save(sized(crop(bx / 'd-challenges.png', box, 26), 640), f'bx-card-{i}')
 
@@ -182,7 +191,9 @@ def main():
 
     save(fit(media / 'win-knowcad-champion.webp', (1179, 705)), 'kc-champion')
     for key in AWARD_PHOTOS:
-        save(fit(media / f'{key}.webp', (1024, 1024)), f'aw-{key}')
+        with Image.open(media / f'{key}.webp') as src:
+            width = min(src.width, AWARD_WIDTH)
+        save(sharpen(fit(media / f'{key}.webp', (width, width * 2))), f'aw-{key}', quality=80)
 
     bb = RAW / 'bcb'
     for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):

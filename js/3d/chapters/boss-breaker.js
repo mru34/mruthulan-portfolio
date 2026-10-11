@@ -13,8 +13,13 @@ import { bossHp, hpText, bxState, START_HP } from './boss-timeline.js';
 
 const ORANGE = 0xf06a43;
 const FLOOR = -1.0;
-const BAR = { len: 11, at: [0, 6.2, -5.6] };
+const BAR = { len: 9, at: [0.3, 6.2, -5.6] };
 const DAMAGE = [1240, 760, 560, 360, 240];   // the leaderboard in the capture
+// the big screen's crop of d-boss.png (the page's content, not its empty lower half): must match
+// design/build_3d_assets.py (tested)
+export const DISPLAY_CROP = [100, 0, 2780, 1120];
+const DISPLAY = { w: 11, y: 3.5, z: -7 };
+const DISPLAY_H = (DISPLAY.w * (DISPLAY_CROP[3] - DISPLAY_CROP[1])) / (DISPLAY_CROP[2] - DISPLAY_CROP[0]);
 
 export async function mount({ world, stage, section, origin, form }) {
   const desk = form === 'desk';
@@ -35,16 +40,17 @@ export async function mount({ world, stage, section, origin, form }) {
   group.add(floor, pool, behind);
 
   // the big screen on two posts
-  const display = panel(tex['bx-display'], 9.6, 6.0);
-  display.group.position.set(0, 2.6, -7);
+  const display = panel(tex['bx-display'], DISPLAY.w, DISPLAY_H);
+  display.group.position.set(0, DISPLAY.y, DISPLAY.z);
+  const postH = DISPLAY.y - DISPLAY_H / 2 - FLOOR;
   const post = (x) => {
-    const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.6 - 3.0 - FLOOR, 0.12), new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.7 }));
-    p.position.set(x, (FLOOR + (2.6 - 3.0)) / 2, -7.1);
+    const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, postH, 0.12), new THREE.MeshStandardMaterial({ color: 0x15171a, roughness: 0.4, metalness: 0.7 }));
+    p.position.set(x, FLOOR + postH / 2, DISPLAY.z - 0.1);
     return p;
   };
-  const displayShadow = contactShadow(10, 2.2, 0.6);
-  displayShadow.position.set(0, FLOOR + 0.004, -7);
-  group.add(display.group, post(-3.6), post(3.6), displayShadow);
+  const displayShadow = contactShadow(DISPLAY.w + 0.4, 2.2, 0.6);
+  displayShadow.position.set(0, FLOOR + 0.004, DISPLAY.z);
+  group.add(display.group, post(-4.2), post(4.2), displayShadow);
 
   await nextFrame();
   // the health bar: a dark track, the fill growing from its left end, the dragon's portrait at the start
@@ -63,10 +69,10 @@ export async function mount({ world, stage, section, origin, form }) {
   await nextFrame();
   // the phone on its stand
   const phone = makePhone({ screen: tex['bx-phone'] });
-  phone.group.position.set(-2.4, FLOOR + 0.04 + 0.72, 2.2);
+  phone.group.position.set(-1.8, FLOOR + 0.04 + 0.72, 0.6);
   phone.group.rotation.set(-0.2, 0.3, 0);
   const stand = makeStand(FLOOR);
-  stand.position.set(-2.4, 0, 2.18);
+  stand.position.set(-1.8, 0, 0.58);
   stand.rotation.y = 0.3;
   group.add(phone.group, stand);
 
@@ -88,13 +94,13 @@ export async function mount({ world, stage, section, origin, form }) {
   // the leaderboard on its post, and a bar of each player's damage in front of it
   const bars = [];
   if (desk) {
-    group.add(makeMonitor(tex['bx-leaderboard'], 3.2, 960 / 391, -5.9, 1.9, -3.4, FLOOR));
+    group.add(makeMonitor(tex['bx-leaderboard'], 2.6, 1271 / 518, -3.4, 0.7, -2.6, FLOOR));
     DAMAGE.forEach((dmg, i) => {
       const h = (3.0 * dmg) / DAMAGE[0];
       const g = new RoundedBoxGeometry(0.42, h, 0.42, 2, 0.05);
       g.translate(0, h / 2, 0);
       const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: i === 0 ? 0xb8553a : 0x3a2c27, roughness: 0.45, metalness: 0.3 }));
-      m.position.set(-7.3 + i * 0.7, FLOOR, -2.0);
+      m.position.set(-5.4 + i * 0.55, FLOOR, -1.4);
       bars.push(m);
       group.add(m);
     });
@@ -129,7 +135,13 @@ export async function mount({ world, stage, section, origin, form }) {
 
   return {
     group,
-    debug: { fill: () => fill.scale.x },
+    debug: {
+      fill: () => fill.scale.x,
+      anchors: {
+        screenLeft: new THREE.Vector3(-DISPLAY.w / 2, DISPLAY.y, DISPLAY.z).add(origin),
+        screenRight: new THREE.Vector3(DISPLAY.w / 2, DISPLAY.y, DISPLAY.z).add(origin),
+      },
+    },
     update(t, f) {
       local = t;
       if (t < -0.6 && hits) { hits = 0; hud.live.textContent = ''; }

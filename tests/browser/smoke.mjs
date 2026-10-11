@@ -809,6 +809,27 @@ scenario('fix: an error in a scene sends the page to the stills instead of break
   await page.close();
 });
 
+scenario('Boss Breaker: the words never cover the big screen at the payoff', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="boss-breaker"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="boss-breaker"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const r = await page.evaluate(() => {
+    const w = window.__world;
+    const l = w.debugProject('boss-breaker', 'screenLeft'), rr = w.debugProject('boss-breaker', 'screenRight');
+    const info = document.querySelector('[data-scene="boss-breaker"] .info').getBoundingClientRect();
+    return l && rr ? { l: l.x, r: rr.x, info: info.left } : null;
+  });
+  check(r !== null, 'the big screen has anchors');
+  if (r) {
+    check(r.r <= r.info - 16, `the screen ends left of the words (${Math.round(r.r)} px, words at ${Math.round(r.info)} px)`);
+    check(r.r - r.l >= 0.45 * 1440, `the screen is at least 45% of the width (${Math.round(r.r - r.l)} px)`);
+    check(r.l >= -40, `the screen's left edge is on screen (${Math.round(r.l)} px)`);
+  }
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
 /* ------------------------------------------------------------------ run */
 const ONLY = process.env.ONLY;   // run just the scenarios whose name contains this text
 for (const [name, fn] of SCENARIOS) {

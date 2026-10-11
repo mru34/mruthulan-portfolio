@@ -24,7 +24,7 @@ const WALL = [
   ['sb-wall-radar', 2.9, 0, 0.95, -3.4, false],
   ['sb-wall-cases', 2.9, 3.5, 0.95, -3.2, false],
   ['sb-wall-supervisor', 4.2, -5.8, 2.3, -6.8, true],
-  ['sb-wall-preview', 4.0, 0, 2.4, -7.2, true],
+  ['sb-wall-handoffs', 4.0, 0, 2.4, -7.2, true],
   ['sb-phone-preview', 1.3, 5.6, 1.7, -6.6, true],
 ];
 
