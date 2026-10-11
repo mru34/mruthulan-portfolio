@@ -150,15 +150,30 @@ def test_boss_breaker_textures_exist():
     assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []
 
 
-def test_better_call_bhai_textures_exist_and_the_scene_agrees_on_the_slot_grid():
+def test_better_call_bhai_textures_exist_and_the_scene_agrees_on_the_slots():
     import build_3d_assets as b
-    names = [f'bb-phone-{i}' for i in range(1, 5)] + ['bb-laptop', 'bb-slots']
+    names = [f'bb-phone-{i}' for i in range(1, 5)] + ['bb-laptop', 'bb-times']
     assert [n for n in names if not (ROOT / 'assets' / '3d' / f'{n}.webp').exists()] == []
+    assert not (ROOT / 'assets' / '3d' / 'bb-slots.webp').exists(), 'the screenshot crop is gone'
     left, top, right, bottom = b.SLOT_GRID
     assert 0 <= left < right <= 1170 and 0 <= top < bottom <= 2532
     js = (ROOT / 'js' / '3d' / 'chapters' / 'better-call-bhai.js').read_text(encoding='utf-8')
     m = re.search(r'SLOT_GRID = \[(\d+), (\d+), (\d+), (\d+)\]', js)
     assert m and tuple(map(int, m.groups())) == b.SLOT_GRID
+    m = re.search(r'TAKEN = \[([\d, ]+)\]', js)
+    assert m and tuple(int(x) for x in m.group(1).split(',')) == b.SLOT_TAKEN
+
+
+def test_the_time_atlas_is_crisp_text_on_clear_ground():
+    from PIL import Image
+    import build_3d_assets as b
+    with Image.open(ROOT / 'assets' / '3d' / 'bb-times.webp') as im:
+        assert im.size == (1280, 640) and im.mode == 'RGBA'
+        assert im.getpixel((2, 2))[3] == 0, 'the ground is clear'
+        cell = im.crop((0, 0, 320, 128))          # 10:00, free: white text
+        assert cell.getchannel('A').getextrema()[1] == 255
+    assert len(b.SLOT_TIMES) == 20 and b.SLOT_TIMES[b.SLOT_CHOSEN] == '15:00'
+    assert [b.SLOT_TIMES[i] for i in b.SLOT_TAKEN] == ['10:30', '12:00', '12:30', '14:30', '17:00']
 
 
 def test_meant_textures_exist_and_their_boxes_sit_inside_the_captures():

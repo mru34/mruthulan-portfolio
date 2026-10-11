@@ -371,7 +371,7 @@ scenario('Better Call Bhai: a spun pole keeps turning, then settles', async () =
   const s1 = await spin();
   check(s1.angle > a0 + 0.05, `still turning after the release (${a0.toFixed(2)} → ${s1.angle.toFixed(2)})`);
   // it slows down on its own (software rendering steps the physics slower than real time, so allow a while)
-  await page.waitForFunction(() => window.__world.mounted.get('better-call-bhai').debug.spin.resting, { timeout: 15000 }).catch(() => {});
+  await page.waitForFunction(() => window.__world.mounted.get('better-call-bhai').debug.spin.resting, { timeout: 25000 }).catch(() => {});
   check((await spin()).resting, 'and then it settles');
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();
@@ -825,6 +825,26 @@ scenario('Boss Breaker: the words never cover the big screen at the payoff', asy
     check(r.r <= r.info - 16, `the screen ends left of the words (${Math.round(r.r)} px, words at ${Math.round(r.info)} px)`);
     check(r.r - r.l >= 0.45 * 1440, `the screen is at least 45% of the width (${Math.round(r.r - r.l)} px)`);
     check(r.l >= -40, `the screen's left edge is on screen (${Math.round(r.l)} px)`);
+  }
+  check(errors.length === 0, `no errors ${errors.join(' | ')}`);
+  await page.close();
+});
+
+scenario('Better Call Bhai: a time slot lifts under the mouse and settles when it leaves', async () => {
+  const { page, errors } = await open();
+  await page.evaluate(() => { const c = document.querySelector('[data-scene="better-call-bhai"]'); scrollTo({ top: c.offsetTop + 0.5 * innerHeight, behavior: 'instant' }); });
+  await page.waitForSelector('[data-scene="better-call-bhai"][data-live]', { timeout: 30000 });
+  await sleep(600);
+  const p = await page.evaluate(() => window.__world.debugProject('better-call-bhai', 'slot0'));
+  check(p !== null, 'the 10:00 pill has an anchor');
+  if (p) {
+    const lift = () => page.evaluate(() => window.__world.mounted.get('better-call-bhai').debug.lift(0));
+    await page.mouse.move(p.x, p.y);
+    await page.waitForFunction(() => window.__world.mounted.get('better-call-bhai').debug.lift(0) > 0.5, { timeout: 5000 }).catch(() => {});
+    check(await lift() > 0.5, `the 10:00 pill lifted (${(await lift()).toFixed(2)})`);
+    await page.mouse.move(5, 890);
+    await page.waitForFunction(() => window.__world.mounted.get('better-call-bhai').debug.lift(0) < 0.02, { timeout: 5000 }).catch(() => {});
+    check(await lift() < 0.02, 'and settled back when the mouse left');
   }
   check(errors.length === 0, `no errors ${errors.join(' | ')}`);
   await page.close();

@@ -52,6 +52,19 @@ WORD_GRID = (76, 230, 1524, 676)      # 8 x 3 tiles: each 172 x 144, 182.1 x 150
 # own typeface (Inter 800, from the MEANT repository), colour and size, centred where that sentence is.
 MEANT_FONT = ROOT.parent / 'meant-DellInnovateFest' / 'meant' / 'web' / 'src' / 'assets' / 'fonts' / 'inter-latin-800-normal.woff2'
 FONT_CACHE = ROOT.parent / 'portfolio-tools' / 'fonts-src' / 'inter-800.ttf'
+# Better Call Bhai's day, as in m3-slots.png: 20 slots, 3 across; taken ones struck through, 15:00 chosen
+SLOT_TIMES = ['10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+              '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30']
+SLOT_TAKEN = (1, 4, 5, 9, 14)         # 10:30 12:00 12:30 14:30 17:00
+SLOT_CHOSEN = 10                      # 15:00
+SLOT_CELL = (320, 128)                # one pill's face in the atlas: twice its size on screen at the payoff
+# fonts for drawn text: the site's own (variable) faces, and MEANT's Inter
+FONT_FILES = {
+    'geist': ROOT / 'assets' / 'fonts' / 'geist-latin.woff2',
+    'mono': ROOT / 'assets' / 'fonts' / 'jetbrains-mono-400-500-latin.woff2',
+    'knowcad': ROOT / 'assets' / 'fonts' / 'name-knowcad.woff2',
+    'inter-600': MEANT_FONT.with_name('inter-latin-600-normal.woff2'),
+}
 # Awards: each event's real photos, printed on the table (the keys of data/media.json)
 AWARD_PHOTOS = ['win-signalbridge-team', 'win-signalbridge-award', 'win-meant-handover', 'win-meant-stage',
                 'win-meant-team', 'win-knowcad-champion', 'win-knowcad-team']
@@ -108,6 +121,54 @@ def inter():
         f.flavor = None
         f.save(FONT_CACHE)
     return FONT_CACHE
+
+
+def font(name, size, weight=None):
+    """One of FONT_FILES at `size` px (and `weight`, for the variable ones), converted once to TrueType."""
+    from PIL import ImageFont
+    src = FONT_FILES[name]
+    ttf = FONT_CACHE.parent / f'{src.stem}.ttf'
+    if not ttf.exists():
+        from fontTools.ttLib import TTFont
+        ttf.parent.mkdir(parents=True, exist_ok=True)
+        f = TTFont(src)
+        f.flavor = None
+        f.save(ttf)
+    ft = ImageFont.truetype(str(ttf), size)
+    if weight is not None:
+        ft.set_variation_by_axes([weight])
+    return ft
+
+
+def wrap(text, ft, width):
+    """`text` broken into lines no wider than `width` px in `ft`."""
+    lines, line = [], ''
+    for word in text.split():
+        trial = f'{line} {word}'.strip()
+        if ft.getlength(trial) <= width:
+            line = trial
+        else:
+            lines.append(line)
+            line = word
+    lines.append(line)
+    return lines
+
+
+def slot_atlas():
+    """The day's times, crisp, in a 4 x 5 atlas for the 3D pills: white on the free ones, dimmed and struck
+    through on the taken ones, dark on the chosen yellow 15:00."""
+    W, H = SLOT_CELL
+    im = Image.new('RGBA', (4 * W, 5 * H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    ft = font('geist', 64, 600)
+    for i, t in enumerate(SLOT_TIMES):
+        cx, cy = (i % 4) * W + W / 2, (i // 4) * H + H / 2
+        ink = (21, 21, 21, 255) if i == SLOT_CHOSEN else (255, 255, 255, 110) if i in SLOT_TAKEN else (255, 255, 255, 255)
+        d.text((cx, cy), t, font=ft, fill=ink, anchor='mm')
+        if i in SLOT_TAKEN:
+            half = ft.getlength(t) / 2 + 8
+            d.line((cx - half, cy + 2, cx + half, cy + 2), fill=(255, 255, 255, 140), width=5)
+    return im
 
 
 def partner_reply(text):
@@ -199,7 +260,7 @@ def main():
     for i, name in enumerate(['m1-hero', 'm2-form', 'm3-slots', 'm4-confirmed'], 1):
         save(fit(bb / 'bcb-shots' / f'{name}.png', (768, 1662)), f'bb-phone-{i}')
     save(fit(bb / 'desk-booking.png', (1600, 1000)), 'bb-laptop')
-    save(fit_crop(bb / 'bcb-shots' / 'm3-slots.png', SLOT_GRID, (938, 1066)), 'bb-slots')
+    save(slot_atlas(), 'bb-times', quality=90)
 
 
 if __name__ == '__main__':
