@@ -23,8 +23,10 @@ const CAPTURE = { w: 1600, h: 1000 };
 // by 30 px; MEANT's ink is the colour of the tile's edge
 const WORDS = { cols: 8, rows: 6, w: 256, h: 214, r: 30 };
 const INK = 0x17181c;
-// the newspaper's centre on the table, and how far it is turned there
-const PAPER_AT = [0.55, 0.068, 1.7], PAPER_YAW = 0.32;
+// the newspaper's centre on the table, and how far it is turned there; the table's top is at TABLE_TOP, and no
+// sheet of the paper ever goes lower than PAPER_CLEAR above it (the lowest sheet lies 0.018 under the centre)
+const TABLE_TOP = 0.06, PAPER_CLEAR = 0.01;
+const PAPER_AT = [0.55, TABLE_TOP + PAPER_CLEAR + 0.018, 1.7], PAPER_YAW = 0.32;
 // where the camera stands at MEANT's payoff (relative to the table; measured from js/3d/paths.js's keys) and how
 // its screen is shared out to the word tiles: a cols x rows grid between heights v (-1 bottom, 1 top), less the
 // box `clear` (u0, v0, u1, v1) where the chapter's words are
@@ -196,6 +198,14 @@ export async function mount({ world, stage, section, origin, form }) {
   const paper = new THREE.Group();
   paper.position.set(...PAPER_AT);
   paper.add(news.group);
+  // the corners of a box around all four sheets, in the paper's space: the table holds the paper up by them
+  const sheetsBox = new THREE.Box3();
+  news.group.children.forEach((m) => { m.geometry.computeBoundingBox(); sheetsBox.union(m.geometry.boundingBox.clone().translate(m.position)); });
+  news.group.updateMatrix();
+  const corners = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => new THREE.Vector3(
+    i & 1 ? sheetsBox.max.x : sheetsBox.min.x, i & 2 ? sheetsBox.max.y : sheetsBox.min.y, i & 4 ? sheetsBox.max.z : sheetsBox.min.z,
+  ).applyMatrix4(news.group.matrix));
+  const corner = new THREE.Vector3();
   group.add(paper);
   world.root.add(group);
 
@@ -368,6 +378,12 @@ export async function mount({ world, stage, section, origin, form }) {
       const k = lift.value;
       paper.position.set(PAPER_AT[0] - 0.25 * k, PAPER_AT[1] + 1.25 * k, PAPER_AT[2] + 0.55 * k);
       paper.rotation.set(1.05 * k + pitch.value, -PAPER_YAW * k + yaw.value, 0, 'YXZ');
+      // turned while it is still low (or settling back after it is let go), an edge would go into the table: the
+      // table holds it up
+      paper.updateMatrix();
+      let low = Infinity;
+      for (const c of corners) low = Math.min(low, corner.copy(c).applyMatrix4(paper.matrix).y);
+      if (low < TABLE_TOP + PAPER_CLEAR) paper.position.y += TABLE_TOP + PAPER_CLEAR - low;
       // the word tiles drift with the scroll, the nearer ones more (never by themselves)
       words.forEach((w) => { w.m.position.y = w.y + (st.words - 0.25) * w.depth * 0.6; });
       return busy;

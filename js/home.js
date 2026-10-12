@@ -52,6 +52,9 @@ function beats(y) {
   lay.forEach((L, i) => {
     const top = L.top - y;
     if (top + L.h < -vh || top > 2 * vh) return;
+    // its name's own typeface may load now: on the first frame for a page that opens mid-way (Back, a link to a
+    // chapter), not only once the 3D starts building the chapter, so the name does not change font in view
+    chapters[i].classList.add('near');
     const p = sectionProgress(top, L.h, L.pin);
     chapters[i].style.setProperty('--b1', ramp(p, ...BEATS.line).toFixed(3));
     chapters[i].style.setProperty('--b2', ramp(p, ...BEATS.pay).toFixed(3));
@@ -108,6 +111,11 @@ async function start3D(ticker) {
 
 if (live) {
   const ticker = createTicker();
+  // leaving for a case page and coming Back (or hiding the tab) mid-motion must not read as one very slow frame
+  // (two such returns sent the watchdog to the stills)
+  addEventListener('pagehide', ticker.away);
+  addEventListener('pageshow', ticker.back);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) ticker.away(); else ticker.back(); });
   // a page opened at #work-sb (or #work) lands on that chapter's payoff pose: the tall sections exist only
   // now that .has-3d is on, so make the jump again
   if (location.hash && !pose) {

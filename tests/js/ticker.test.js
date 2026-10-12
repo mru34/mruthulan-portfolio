@@ -58,3 +58,19 @@ test('a slow frame in the middle of motion is reported however long it took; a w
   t.invalidate(); f.run(2700);       // woken by an event 184 ms later: idle time, not a frame
   assert.deepEqual(gaps, [null, 1500, 16, null]);
 });
+
+test('time the page spent away (another page, the browser cache, a hidden tab) is not a frame', () => {
+  const f = fakeRaf(); const t = createTicker(f.raf, f.caf); const got = [];
+  t.add((now, dt, gap) => { got.push([dt, gap]); return true; });   // mid-motion when the visitor leaves
+  f.run(1000); f.run(1016);
+  t.away();                          // pagehide / the tab hidden
+  assert.equal(f.pending, 0, 'no frame runs while the page is away');
+  t.invalidate();                    // a frame the browser draws as it leaves (the view transition) wakes nothing
+  assert.equal(f.pending, 0);
+  t.back();                          // pageshow / the tab shown again
+  t.back();
+  assert.equal(f.pending, 1, 'one frame on return');
+  f.run(9000);
+  f.run(9016);
+  assert.deepEqual(got, [[16, null], [16, 16], [16, null], [16, 16]]);
+});
