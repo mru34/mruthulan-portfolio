@@ -16,7 +16,7 @@ import { KEYS, ORIGINS, COLORS } from './paths.js';
 import { glow, texturesOf } from './textures.js';
 
 const BG = 0x0c0c0d;
-const GLIDE_NEAR = 2.2;   // how close the press glide stops to the paper (decimetres)
+const GLIDE_NEAR = 2.2;   // how close a glide stops to its point (decimetres), unless it is told
 const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
 
 export function createWorld(stage, { sections, form }) {
@@ -179,12 +179,13 @@ export function createWorld(stage, { sections, form }) {
     // a section's top, in CSS pixels from the top of the screen, from the cached layout (no layout read)
     top(name) { const i = sections.findIndex((x) => x.name === name); return i < 0 ? 0 : spans[i][0] - scrollY; },
     shake(a) { shakeS.velocity += a; stage.invalidate(); },
-    // the camera glides toward `point` over `ms` and holds there; the scroll (or coming back to the page) takes it back
+    // the camera glides toward `point` over `ms`, stopping `near` from it, and holds there; the scroll (or coming back
+    // to the page) takes it back
     // it resolves with how it ended: 'done', 'scrolled' (the visitor scrolled away), 'restored' (the page came back
     // from the browser's cache) or 'replaced' (another glide started)
-    glideTo(point, ms = 600) {
+    glideTo(point, ms = 600, near = GLIDE_NEAR) {
       if (glide) glide.resolve('replaced');
-      return new Promise((resolve) => { glide = { to: point.toArray(), t: 0, ms, y: scrollY, resolve, done: false }; stage.invalidate(); });
+      return new Promise((resolve) => { glide = { to: point.toArray(), near, t: 0, ms, y: scrollY, resolve, done: false }; stage.invalidate(); });
     },
     endGlide(why = 'ended') { if (glide) { glide.resolve(why); glide = null; stage.invalidate(); } },
     glideT: () => (glide ? glide.t : null),   // how far the glide is (0..1), or null when there is none
@@ -268,7 +269,7 @@ export function createWorld(stage, { sections, form }) {
         if (Math.abs(y - glide.y) > vh * 0.25) api.endGlide('scrolled');   // a smooth scroll's last few pixels do not count
         else {
           glide.t = Math.min(1, glide.t + (dt || 16) / glide.ms);
-          const g = glidePose(camPos.toArray(), camAt.toArray(), glide.to, glide.t, GLIDE_NEAR);
+          const g = glidePose(camPos.toArray(), camAt.toArray(), glide.to, glide.t, glide.near);
           camPos.fromArray(g.pos);
           camAt.fromArray(g.at);
           if (glide.t < 1) busy = true;
