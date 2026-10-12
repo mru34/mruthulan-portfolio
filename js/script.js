@@ -356,6 +356,27 @@
 
   if (page !== 'home') return;
 
+  /* ---------------------------------------------------------- home: about's numbers */
+  // Each number is a row of split-flap tiles: under the mouse, or on a tap, they flicker through a few digits and
+  // land back on the number, like the name board. Never by themselves, and not with reduced motion.
+  $$('.me-stats li[data-flap]').forEach((li) => {
+    const tiles = $$('.flaps i', li);
+    const want = li.dataset.flap;
+    let timer = 0;
+    const flick = () => {
+      if (still() || timer) return;
+      let step = 0;
+      timer = setInterval(() => {
+        step += 1;
+        const done = step >= 7;
+        tiles.forEach((t, k) => { t.textContent = done ? want[k] : String(Math.floor(Math.random() * 10)); });
+        if (done) { clearInterval(timer); timer = 0; }
+      }, 55);
+    };
+    li.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') flick(); });
+    li.addEventListener('click', flick);
+  });
+
   /* ---------------------------------------------------------- home: header */
   // The gold logo stays hidden while the name board fills the screen (CSS), and the header gets its
   // line once the page has moved past the hero.

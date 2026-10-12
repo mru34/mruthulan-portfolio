@@ -763,12 +763,31 @@ CHAPTERS = [
                f'<i class="kc-caret"></i></p><p class="sr-only">{e(KC_QUERY)}</p>'),
 ]
 
-ABOUT_INTRO = ('I study IT at Singapore Polytechnic. I build for one real person first: a youth worker at midnight, '
-               'someone who can’t rely on their speech, a barber with a full day of bookings.')
+# About: who the projects were for (in gold), the record in numbers, how I work (each line is a thing a project
+# above shows, and the résumé says), then the facts. Every word comes from the résumé or the projects' own pages.
+ABOUT_INTRO = ('I build for one real person first: *a youth worker at midnight*, *someone who can’t rely on their '
+               'speech*, *a barber with a full day of bookings*.')
+# number, what it counts: shown as split-flap tiles that flicker under the pointer (js/script.js)
+ABOUT_STATS = [('5', 'projects'), ('3', 'hackathon awards'), ('2', 'champion titles'), ('1', 'newspaper feature')]
+ABOUT_HOW = [
+    ('Start with one person.', 'I built SignalBridge’s consent screen: a youth’s note reaches their worker only after '
+                               'the youth has read it and said yes.'),
+    ('Make the demo hard to break.', 'Before MEANT’s live demo I fixed a stuck mic, a silent send and a black camera.'),
+    ('Keep the rules on the server.', 'In Boss Breaker the server works out points and boss damage, so the browser '
+                                      'can’t cheat.'),
+    ('Then explain it.', 'I built and delivered the winning presentation at the Autodesk Singapore Hackathon 2026.'),
+]
 ABOUT_FACTS = [
+    ('Looking for', 'A year-long software engineering internship · 2027/28', ''),
     ('Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028', ''),
     ('Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER', ''),
-    ('Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL', 'mono'),
+]
+# as the résumé groups it
+ABOUT_STACK = [
+    ('Languages', 'TypeScript, JavaScript, Python, Java, SQL'),
+    ('Web', 'React, Next.js, Node.js, Express, FastAPI, REST APIs, HTML/CSS'),
+    ('Databases', 'PostgreSQL, MySQL, SQLite'),
+    ('Tools', 'Git, GitHub, pytest, Render'),
 ]
 
 
@@ -836,6 +855,13 @@ def build_home():
         cls = f' class="{cls}"' if cls else ''
         return f'<div><dt>{e(term)}</dt><dd{cls}>{e(text)}</dd></div>'
     facts = ''.join(fact(*f) for f in ABOUT_FACTS)
+    stack = ''.join(f'<span><b>{e(k)}</b> {e(v)}</span>' for k, v in ABOUT_STACK)
+    facts += f'<div><dt>Stack</dt><dd class="stack">{stack}</dd></div>'
+    stats = ''.join(
+        f'<li data-flap="{n}"><span class="flaps" aria-hidden="true">{"".join(f"<i>{d}</i>" for d in n)}</span>'
+        f'<span class="stat-what" aria-hidden="true">{e(what)}</span><span class="sr-only">{n} {e(what)}</span></li>'
+        for n, what in ABOUT_STATS)
+    how = ''.join(f'<li><b>{e(head)}</b> {e(body)}</li>' for head, body in ABOUT_HOW)
     return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
                  'Mruthulan Senthil Nathan, Year 2 IT at Singapore Polytechnic, builds full-stack products. Five projects, what I built on each, and three hackathon results.',
                  '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
@@ -869,7 +895,13 @@ def build_home():
       <h2 class="big" id="about-title">About</h2>
       <div class="me">
         {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait')}
-        <div class="me-text"><p class="me-intro">{e(ABOUT_INTRO)}</p><dl class="facts3" id="credentials">{facts}</dl></div>
+        <div class="me-text">
+          <p class="me-intro">{emph(ABOUT_INTRO)}</p>
+          <ul class="me-stats" aria-label="In numbers">{stats}</ul>
+          <h3 class="me-how-title">How I work</h3>
+          <ol class="me-how">{how}</ol>
+          <dl class="facts3" id="credentials">{facts}</dl>
+        </div>
       </div>
     </section>
 

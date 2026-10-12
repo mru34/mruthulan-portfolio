@@ -117,15 +117,16 @@ scenario('focus shows the whole information block', async () => {
   await page.close();
 });
 
-// 14: five rooms of 1.6 screens, and a calm flight between each two (0.6 of a screen with only the 3D)
-scenario('pacing: at most 14 screens, and SignalBridge pays off within 2.5', async () => {
+// 15: five rooms of 1.6 screens, a calm flight between each two (0.6 of a screen with only the 3D), and an
+// About that reads as a person (how I work, the record), not three rows
+scenario('pacing: at most 15 screens, and SignalBridge pays off within 2.5', async () => {
   const { page } = await open();
   const r = await page.evaluate(() => {
     const c = document.querySelector('.chapter'), pin = c.querySelector('.pin');
     return { screens: (document.documentElement.scrollHeight - innerHeight) / innerHeight,
              pay: (c.offsetTop + 0.7 * (c.offsetHeight - pin.offsetHeight)) / innerHeight };
   });
-  check(r.screens <= 14, `scroll length ${r.screens.toFixed(2)} screens`);
+  check(r.screens <= 15, `scroll length ${r.screens.toFixed(2)} screens`);
   check(r.pay <= 2.5, `SignalBridge's result fully shown at ${r.pay.toFixed(2)} screens`);
   await page.close();
 });
