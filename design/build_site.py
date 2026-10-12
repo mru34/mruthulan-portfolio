@@ -26,7 +26,9 @@ RESUME = 'assets/Mruthulan-Senthil-Nathan-Resume.pdf'
 EMAIL = 'mruthulansenthilnathan@gmail.com'
 LINKEDIN = 'https://www.linkedin.com/in/mruthulan/'
 GITHUB = 'https://github.com/mru34'
-MAILTO = f'mailto:{EMAIL}?subject=Portfolio%20enquiry'
+# the Gmail button opens Gmail's own compose page (address and subject filled in) in a new tab: a mailto: link
+# needs a mail app set up on the computer, and on many (Windows especially) there is none, so it did nothing
+GMAIL = f'https://mail.google.com/mail/?view=cm&fs=1&to={EMAIL}&su=Portfolio%20enquiry'
 POST_SP = 'https://lnkd.in/p/dCBs22kx'        # Dell InnovateDash at SP / SignalBridge
 POST_DELL = 'https://lnkd.in/p/dZQiUX3z'      # Dell InnovateFest / MEANT
 POST_AUTODESK = 'https://lnkd.in/p/dQW9Pg_v'  # Autodesk hackathon / KnowCad
@@ -714,7 +716,7 @@ def icon_link(name, label, href, event):
 HERO_LINKS = [('linkedin', 'LinkedIn', LINKEDIN, 'contact_open_linkedin'),
               ('github', 'GitHub', GITHUB, 'contact_open_github'),
               ('resume', 'Résumé', RESUME, 'resume_click')]
-END_LINKS = [('gmail', 'Gmail', MAILTO, 'contact_open_mail_app'),
+END_LINKS = [('gmail', 'Gmail', GMAIL, 'contact_open_mail_app'),
              ('linkedin', 'LinkedIn', LINKEDIN, 'contact_open_linkedin'),
              ('github', 'GitHub', GITHUB, 'contact_open_github')]
 

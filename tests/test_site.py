@@ -124,7 +124,7 @@ def test_hero_and_ending_carry_the_links_with_their_events():
     for href, event in ((bs.LINKEDIN, 'contact_open_linkedin'), (bs.GITHUB, 'contact_open_github'),
                         (bs.RESUME, 'resume_click')):
         assert f'href="{href}"' in hero and f'data-event="{event}"' in hero
-    for href, event in ((bs.MAILTO, 'contact_open_mail_app'), (bs.LINKEDIN, 'contact_open_linkedin'),
+    for href, event in ((bs.GMAIL, 'contact_open_mail_app'), (bs.LINKEDIN, 'contact_open_linkedin'),
                         (bs.GITHUB, 'contact_open_github')):
         assert f'href="{bs.e(href)}"' in end and f'data-event="{event}"' in end
     assert f'data-copy="{bs.EMAIL}"' in end
