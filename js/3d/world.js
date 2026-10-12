@@ -56,7 +56,10 @@ export function createWorld(stage, { sections, form }) {
   let keys = [], bases = {}, pageStart = 99, vh = 1, unit = 1, aspect = 1, form0 = form;
   let place = null;      // where the page is in the story (section and fraction), kept for a resize
   let laidOut = { w: 0, h: 0 };
-  const heroEnd = 0.4;
+  const heroEnd = 0.6;
+  // the camera holds the page pose for the first part of the hero's scroll, so the name board goes up with the
+  // page (and its links) before the camera turns and flies on (js/3d/hero.js tilts it away from then on)
+  const HERO_HOLD = 0.3;
   let lastScroll = 0;
   const lookX = new Spring(0, { stiffness: 60, damping: 16 });
   const lookY = new Spring(0, { stiffness: 60, damping: 16 });
@@ -78,7 +81,8 @@ export function createWorld(stage, { sections, form }) {
     const awards = sections.findIndex((s) => s.name === 'awards');
     pageStart = awards >= 0 ? spans[awards][0] / unit - 0.6 : 99;
     const pagePose = (t) => ({ t, at: [...ORIGINS.page], from: [0, 0, 1], d: CAM_Z, stop: true, color: COLORS.page });
-    keys = [{ t: 0, at: [...ORIGINS.hero], from: [0, 0, 1], d: CAM_Z, stop: true, color: COLORS.hero }];
+    const heroPose = (t) => ({ t, at: [...ORIGINS.hero], from: [0, 0, 1], d: CAM_Z, stop: true, color: COLORS.hero });
+    keys = [heroPose(0), heroPose(HERO_HOLD)];
     for (const s of sections) {
       if (s.kind !== 'flight' || !KEYS[s.name]) continue;
       const o = ORIGINS[s.name];
@@ -237,10 +241,15 @@ export function createWorld(stage, { sections, form }) {
       lastScroll = y;
       const s = y / unit;
       { const i = current(y); place = { i, frac: (y - spans[i][0]) / Math.max(1, spans[i][1] - spans[i][0]) }; }
-      // the scenes near the visitor exist; far ones are freed
+      // the scenes near the visitor exist; far ones are freed. The one on screen is built first and its
+      // neighbours only once it is live (or has failed), so the two never share the frames: on arrival the
+      // name board goes live sooner, and the first scroll is not slowed by the next room being built
       const cur = current(y);
+      const here = sections[cur];
+      mountScene(here);
+      const settled = mounted.has(here.name) || here.el.hasAttribute('data-failed');
       sections.forEach((sec, i) => {
-        if (Math.abs(i - cur) <= 1) mountScene(sec);
+        if (i !== cur && Math.abs(i - cur) <= 1 && settled) mountScene(sec);
         else if (Math.abs(i - cur) >= 3) free(sec);
       });
       // the camera

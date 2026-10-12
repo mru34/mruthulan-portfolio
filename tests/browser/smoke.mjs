@@ -640,9 +640,11 @@ scenario('slow frames while scrolling switch to the stills', async () => {
 
 scenario('scrolling in small steps on a fast page never switches to the stills', async () => {
   // wheel ticks and slow drags arrive tens of milliseconds apart: the time between them is not a slow frame.
-  // Small steps keep the page on the name board, whose frames are fast even in software rendering (the
-  // chapters' rooms are not, there, and going to the stills in them would be right)
-  const { page } = await open({ w: 600, h: 400, watchdog: true });
+  // Small steps keep the page on the name board (which now stays in view while the page moves). In software
+  // rendering the board takes about 40 ms a frame at 600 x 400, right on the watchdog's limit, so a smaller
+  // window keeps its frames fast and the test about the gaps (the chapters' rooms are slow there, and going
+  // to the stills in them would be right)
+  const { page } = await open({ w: 480, h: 320, watchdog: true });
   await page.waitForSelector('.hero-board[data-live]', { timeout: 20000 });
   const end = Date.now() + 6000;
   while (Date.now() < end) {

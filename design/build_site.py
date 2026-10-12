@@ -387,7 +387,7 @@ PROJECTS = [
                 ('Everything', 'Knowledge spread across long documents, none of it indexed.'),
                 ('What is relevant', 'Retrieval narrows it to the passages that matter.'),
                 ('The answer', 'One answer with its source, and a human still reviewing.')])),
-            sec('Proof', 'The result, and the team behind it.', shots(['win-knowcad-team'], one=True)
+            sec('Proof', 'The result.', shots(['win-knowcad-team'], one=True)
                 + note('The product is private, so the proof is the award and my post.')),
         ],
     ),

@@ -67,6 +67,7 @@ async function start3D(ticker) {
   const [{ createStage }, { createWorld }] = await Promise.all([import('./3d/stage.js'), import('./3d/world.js')]);
   const canvas = document.querySelector('canvas.stage');
   const stage = createStage(canvas, { ticker, maxDpr: matchMedia('(pointer: coarse)').matches ? 1.5 : 2 });
+  await stage.envReady;   // its shaders compile in parallel; the page scrolls meanwhile
   const sections = SECTIONS.map(([name, sel, kind, load]) => ({ name, el: document.querySelector(sel), kind, load })).filter((x) => x.el);
   const world = createWorld(stage, { sections, form: matchMedia('(max-width: 860px)').matches ? 'phone' : 'desk' });
   window.__world = world;   // the smoke tests read it
@@ -114,19 +115,27 @@ if (live) {
     if (target) target.scrollIntoView({ block: 'start', behavior: 'instant' });
   }
   let lenis = null;
-  if (params.get('smooth') !== 'off' && !pose) {
+  const smooth = params.get('smooth') !== 'off' && !pose;
+  // Lenis starts once the 3D stage is set up, not before: its wheel listener holds every wheel turn until the
+  // page's script is free, and setting up the stage keeps it busy for a moment, so a visitor who scrolls the
+  // moment the page opens would wait for it. Until then the browser scrolls the page by itself.
+  const startLenis = async () => {
     const { default: Lenis } = await import('lenis');
+    if (root.classList.contains('frozen')) return;   // the stills: the browser's own scrolling stays
     lenis = new Lenis({
       autoRaf: false, lerp: 0.1, smoothWheel: true, syncTouch: false, anchors: false,
       prevent: (node) => Boolean(node.closest('dialog[open], [data-lenis-prevent]')),
     });
     root.classList.add('smooth');
+    window.__lenis = lenis;   // the smoke tests read isScrolling
+    ticker.invalidate();
+  };
+  if (smooth) {
     // Lenis runs on the loop's own clock: after the loop has slept, its first step is one frame long, not the
     // whole pause (which made the first wheel notch of a gesture land in one frame)
     let clock = 0;
     ticker.add((now, dt) => { clock += dt; lenis?.raf(clock); return lenis?.isScrolling === 'smooth'; });
     addEventListener('wheel', ticker.invalidate, { passive: true });
-    window.__lenis = lenis;   // the smoke tests read isScrolling
     // a stopped 3D must never leave the wheel smoothed by nothing: back to the browser's own scrolling
     onFreeze = () => { lenis?.destroy(); lenis = null; window.__lenis = null; root.classList.remove('smooth'); };
     // the page holds still behind the photo viewer
@@ -159,5 +168,6 @@ if (live) {
   addEventListener('resize', () => { measure(); ticker.invalidate(); });
   measure();
   ticker.add(() => { beats(scrollY); return moving-- > 0; });
-  start3D(ticker).catch((err) => { console.warn('The 3D stage did not start; showing the stills.', err); freeze(); });
+  start3D(ticker).then(() => { if (smooth) return startLenis(); })
+    .catch((err) => { console.warn('The 3D stage did not start; showing the stills.', err); freeze(); });
 }
