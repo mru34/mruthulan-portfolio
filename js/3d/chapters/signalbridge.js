@@ -102,6 +102,8 @@ export async function mount({ world, stage, section, origin, form }) {
     }
   });
 
+  const from = new THREE.Vector3(), ctrl = new THREE.Vector3(), at = new THREE.Vector3();   // the message's path, every frame
+  const UP_TO_GATE = new THREE.Vector3(0, 0.5, 0.3), UP_TO_LAPTOP = new THREE.Vector3(0, 0.4, 0.5);
   return {
     group,
     debug: { anchors: { laptopScreen: E.clone().add(origin), phoneScreen: S.clone().add(origin), gate: G.clone().add(origin) } },
@@ -121,8 +123,8 @@ export async function mount({ world, stage, section, origin, form }) {
       message.visible = st.lift > 0 && st.toLaptop < 1;
       if (message.visible) {
         const pos = st.toGate < 1
-          ? bez(S.clone().lerp(S1, st.lift), S1.clone().lerp(Gm, 0.5).add(new THREE.Vector3(0, 0.5, 0.3)), Gm, st.toGate)
-          : bez(Gm, Gm.clone().lerp(E, 0.5).add(new THREE.Vector3(0, 0.4, 0.5)), E, st.toLaptop);
+          ? bez(from.copy(S).lerp(S1, st.lift), ctrl.copy(S1).lerp(Gm, 0.5).add(UP_TO_GATE), Gm, st.toGate, at)
+          : bez(Gm, ctrl.copy(Gm).lerp(E, 0.5).add(UP_TO_LAPTOP), E, st.toLaptop, at);
         // as wide as the bubble on the phone, then most of the card's width at the gate, then small into the laptop
         const atGate = (GATE.w * 0.8) / msgW;
         message.position.copy(pos);

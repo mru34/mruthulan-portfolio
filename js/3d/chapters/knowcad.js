@@ -119,6 +119,8 @@ export async function mount({ world, stage, section, origin, form }) {
     books.find((b) => b.stack && b.top),
   ];
   [1, 2, 4].forEach((title, i) => { matched[i].title = title; });
+  // under it on the desk, two other manuals, never a second Troubleshooting (nor the two from the shelves)
+  books.filter((b) => b.stack && !b.top).forEach((b, k) => { b.title = [0, 3][k % 2]; });   // Installation Guide, Release Notes
 
   const pagesMat = new THREE.MeshStandardMaterial({ color: 0xd9d5e6, roughness: 0.9 });
   const spineMat = new THREE.MeshStandardMaterial({ map: tex['kc-spines'], roughness: 0.65 });
@@ -210,7 +212,9 @@ export async function mount({ world, stage, section, origin, form }) {
     return m;
   });
   const r2 = mulberry32(29);
-  const loose = scatter(nLoose, 23, { x: [-4.2, 4.2], y: [FLOOR + 0.6, 4], z: [-19, -1] }, 1.6).map(([x, y, z], i) => ({
+  // (a phone has half the shelf units: its pages stay between them, not in the open by the desk, where the camera
+  // passes close as it comes down to the desk)
+  const loose = scatter(nLoose, 23, { x: [-4.2, 4.2], y: [FLOOR + 0.6, 4], z: desk ? [-19, -1] : [-15, -1] }, 1.6).map(([x, y, z], i) => ({
     mesh: looseMeshes[i % 4], k: Math.floor(i / 4), pos: new THREE.Vector3(Math.abs(x) < 1.6 ? Math.sign(x || 1) * (1.6 + Math.abs(x) * 0.8) : x, y, z),
     quat: new THREE.Quaternion().setFromEuler(new THREE.Euler((r2() - 0.5) * 0.7, (r2() - 0.5) * 1.3, (r2() - 0.5) * 0.4)),
     off: new THREE.Vector3(), aim: new THREE.Vector3(),
@@ -240,7 +244,8 @@ export async function mount({ world, stage, section, origin, form }) {
   let local = -1;
   const offTap = onTap(pin, (e) => {
     if (e.target.closest('a, button')) return;
-    const hit = world.ray(e.clientX, e.clientY).intersectObjects([...pages.map((p) => p.m), ...shelves], false)[0];
+    // (a source page still in its manual is hidden, and must not catch the tap meant for the manual)
+    const hit = world.ray(e.clientX, e.clientY).intersectObjects([...pages.filter((p) => p.m.visible).map((p) => p.m), ...shelves], false)[0];
     if (!hit) return;
     if (hit.object.userData.page !== undefined) {
       if (kcState(local).pull < 1) return;
@@ -285,7 +290,7 @@ export async function mount({ world, stage, section, origin, form }) {
     });
   }
 
-  const tmp = new THREE.Object3D(), face = new THREE.Object3D();
+  const tmp = new THREE.Object3D(), face = new THREE.Object3D(), camL = new THREE.Vector3();
   const debug = {
     parted: () => Math.max(0, ...loose.map((s) => s.off.length())),
     state: () => ({ ...kcState(local) }),
@@ -326,12 +331,12 @@ export async function mount({ world, stage, section, origin, form }) {
       [st.ticket, st.search, st.answer].forEach((o, k) => { overlays[k].material.opacity = o; overlays[k].visible = o > 0.001; });
       lights.forEach((g) => { g.material.opacity = 0.45 * st.light; g.visible = st.light > 0.001; });
       let busy = false;
-      const camLocal = group.worldToLocal(f.camera.position.clone());
+      const camLocal = group.worldToLocal(camL.copy(f.camera.position));
       pages.forEach((p) => {
         busy = p.fwd.step(f.dt) || busy;
         p.m.visible = st.pull > 0.01;
         if (!p.m.visible) return;
-        tmp.position.copy(bez(p.from, p.ctrl, p.rest, st.pull));
+        bez(p.from, p.ctrl, p.rest, st.pull, tmp.position);
         tmp.quaternion.copy(p.fromQ).slerp(p.restQ, ramp(st.pull, p.turnFrom, 1));
         if (p.fwd.value > 0.001) {
           face.position.copy(tmp.position);
@@ -350,7 +355,11 @@ export async function mount({ world, stage, section, origin, form }) {
         b.mesh.instanceMatrix.needsUpdate = true;
         if (s.target === 0 && s.value < 0.001) pulls.delete(b);
       }
-      aimAway(f);
+      // a phone's camera backs out down the aisle for its long view of the desk, and the loose pages would brush
+      // the edges of that view: they go once the camera is deep in the aisle, where none of them is on screen
+      const pagesOut = desk || t < 0.15;
+      looseMeshes.forEach((m) => { m.visible = pagesOut; });
+      if (pagesOut) aimAway(f);
       const k = Math.min(1, f.dt / 120);
       let moved = false;
       loose.forEach((s) => {

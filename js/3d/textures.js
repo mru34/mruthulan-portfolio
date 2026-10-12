@@ -165,8 +165,8 @@ export function card(w, h, front, back, { color = 0x101a19 } = {}) {
   return g;
 }
 
-// a point on the quadratic Bézier from a through control c to b
-export const bez = (a, c, b, t) => new THREE.Vector3()
+// a point on the quadratic Bézier from a through control c to b (into `out`, which must not be a, c or b)
+export const bez = (a, c, b, t, out = new THREE.Vector3()) => out.set(0, 0, 0)
   .addScaledVector(a, (1 - t) ** 2).addScaledVector(c, 2 * (1 - t) * t).addScaledVector(b, t * t);
 
 // point a plane's texture at one box of an atlas: [u0, v0, u1, v1], v = 0 at the bottom of the image

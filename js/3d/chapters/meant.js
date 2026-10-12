@@ -14,6 +14,7 @@ import { lerp, Spring } from '../../lib/motion.js';
 import { mulberry32 } from '../../lib/scatter.js';
 import { mtState, REPLIES } from './meant-timeline.js';
 import { FOV } from '../stage.js';
+import { fitNear } from '../../lib/glide.js';
 import { onTap } from '../tap.js';
 
 // the reply tiles in the 1600 x 1000 tablet capture: must match design/build_3d_assets.py (tested)
@@ -140,7 +141,7 @@ export async function mount({ world, stage, section, origin, form }) {
     const lift = new Spring(0, { stiffness: 160, damping: 20 });
     group.add(c);
     c.traverse((o) => { if (o.isMesh) o.userData.reply = i; });
-    return { c, from, to, scaleOnTablet, lift };
+    return { c, from, to, scaleOnTablet, lift, rest: new THREE.Vector3() };
   });
   await nextFrame();
 
@@ -244,7 +245,13 @@ export async function mount({ world, stage, section, origin, form }) {
         if (t !== last) { last = t; still = 0; } else if (++still >= 3) { clearInterval(watch); r('stalled'); }
       }, 250);
     });
-    const why = await Promise.race([world.glideTo(news.top.getWorldPosition(new THREE.Vector3()), 600), stalled]);
+    // the glide ends with the whole page just filling the screen, whatever its shape and the angle it is seen at
+    const to = news.top.getWorldPosition(new THREE.Vector3());
+    news.top.geometry.computeBoundingBox();
+    const { min, max } = news.top.geometry.boundingBox;
+    const corners = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => new THREE.Vector3(i & 1 ? max.x : min.x, i & 2 ? max.y : min.y, i & 4 ? max.z : min.z).applyMatrix4(news.top.matrixWorld).toArray());
+    const near = fitNear(corners, to.toArray(), stage.camera.position.toArray(), FOV, stage.view.w / stage.view.h);
+    const why = await Promise.race([world.glideTo(to, 600, near), stalled]);
     clearInterval(watch);
     if (id !== pressId || why === 'restored') return;   // the visitor came back to this page meanwhile
     location.href = pressLink.href;
@@ -355,7 +362,9 @@ export async function mount({ world, stage, section, origin, form }) {
       tiles.forEach((tile, i) => {
         tile.lift.target = i === hovered || i === focused ? 1 : 0;
         busy = tile.lift.step(f.dt) || busy;
-        const rest = tile.from.clone().lerp(tile.to, st.rise).add(new THREE.Vector3(0, tile.lift.value * 0.15, tile.lift.value * 0.15));
+        const rest = tile.rest.copy(tile.from).lerp(tile.to, st.rise);
+        rest.y += tile.lift.value * 0.15;
+        rest.z += tile.lift.value * 0.15;
         const s = lerp(tile.scaleOnTablet, 1, st.rise) * (1 + tile.lift.value * 0.06);
         tile.c.visible = i !== shown;
         if (i === flying) {
