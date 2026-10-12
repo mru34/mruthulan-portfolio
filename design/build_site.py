@@ -461,9 +461,18 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{prefix}css/styles.css">
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
+  <script>{BACK_FADE}</script>
   <script src="{prefix}js/script.js" defer></script>
   <script src="{prefix}js/analytics.js" defer></script>{mods}{ld_html}
 </head>"""
+
+
+# Back and Forward fade plainly between pages; the project title morphs into the case page only when a link is
+# followed (css/styles.css drops the title's view-transition-name for type `back`). Inline in <head>: pagereveal
+# can fire before a deferred script runs.
+BACK_FADE = ("for(const t of['pageswap','pagereveal'])addEventListener(t,(e)=>{"
+             "const a=t==='pageswap'?e.activation:window.navigation&&navigation.activation;"
+             "if(e.viewTransition&&e.viewTransition.types&&a&&a.navigationType==='traverse')e.viewTransition.types.add('back')})")
 
 
 def header(home, current=None, prefix=''):

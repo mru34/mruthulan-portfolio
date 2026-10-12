@@ -384,6 +384,10 @@ p{margin:0}
   @view-transition{navigation:auto}
   ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}
+  /* Back and Forward are a plain fade: the title morphs only when a link is followed (the type is set in <head>) */
+  @supports selector(:active-view-transition-type(back)){
+    html:active-view-transition-type(back) .ch-name,html:active-view-transition-type(back) .case-title{view-transition-name:none!important}
+  }
   @supports (animation-timeline: scroll()){
     .progress{animation:read linear both;animation-timeline:scroll(root block)}
   }

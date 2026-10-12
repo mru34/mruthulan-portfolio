@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { glow, panel, screenGeometry, cropUV, loadTexture, bez, disposeTree, nextFrame } from '../textures.js';
 import { scatter, mulberry32 } from '../../lib/scatter.js';
-import { Spring } from '../../lib/motion.js';
+import { Spring, ramp } from '../../lib/motion.js';
 import { onTap } from '../tap.js';
 import { kcState, QUESTION } from './knowcad-timeline.js';
 
@@ -23,6 +23,7 @@ const SCREEN = { w: 4.4, h: 2.75, x: 1.4, y: 0.55, z: -33.6 };
 const PAGE = { w: 1.1, h: 1.1 * (780 / 600) };
 const LOOSE = { w: 0.85, h: 1.1 };
 const PART_R = 2.0;
+const AISLE = 4.6;   // the shelves' front edges stand this far either side of the aisle's middle (x)
 // where the three source pages come to rest: two standing beside the screen, one lying on the desk
 const REST = [
   { p: [4.0, 0.95, -32.9], r: [0, -0.35, 0.05] },
@@ -181,9 +182,16 @@ export async function mount({ world, stage, section, origin, form }) {
     const look = new THREE.Object3D();
     look.position.copy(b.pos);
     look.lookAt(b.pos.clone().add(b.out));
+    // from a shelf, it starts just clear of the shelf's front (a manual's spine is half its depth out from its
+    // centre, a little behind the boards' front edges), first moves out into the aisle and turns once it is out, so
+    // it never passes through a board or the manuals beside it; from the stack on the desk it rises straight off
+    const shelved = b.side !== undefined;
+    const from = b.pos.clone().addScaledVector(b.out, shelved ? 0.5 + 0.3 : 0.6);
+    const rest = new THREE.Vector3(...REST[i].p);
     return {
-      m, from: b.pos.clone().addScaledVector(b.out, 0.6), fromQ: look.quaternion.clone(),
-      rest: new THREE.Vector3(...REST[i].p), restQ: new THREE.Quaternion().setFromEuler(new THREE.Euler(...REST[i].r)),
+      m, from, fromQ: look.quaternion.clone(), turnFrom: shelved ? 0.2 : 0,
+      ctrl: shelved ? from.clone().addScaledVector(b.out, 1.6).add(new THREE.Vector3(0, 0.5, 0)) : from.clone().lerp(rest, 0.5).add(new THREE.Vector3(0, 1.4, 0.8)),
+      rest, restQ: new THREE.Quaternion().setFromEuler(new THREE.Euler(...REST[i].r)),
       fwd: new Spring(0, { stiffness: 150, damping: 20 }),
     };
   });
@@ -207,6 +215,18 @@ export async function mount({ world, stage, section, origin, form }) {
     quat: new THREE.Quaternion().setFromEuler(new THREE.Euler((r2() - 0.5) * 0.7, (r2() - 0.5) * 1.3, (r2() - 0.5) * 0.4)),
     off: new THREE.Vector3(), aim: new THREE.Vector3(),
   }));
+  // how far each loose page reaches from its centre across the aisle and down, as it is turned
+  loose.forEach((s) => {
+    s.reach = [0, 0];
+    for (const [cx, cy] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+      v3.set((cx * LOOSE.w) / 2, (cy * LOOSE.h) / 2, 0).applyQuaternion(s.quat);
+      s.reach[0] = Math.max(s.reach[0], Math.abs(v3.x));
+      s.reach[1] = Math.max(s.reach[1], Math.abs(v3.y));
+    }
+    // and none hangs over the shelves' front edge, where a push up or down would slide it into a shelf
+    const lim = AISLE - 0.05 - s.reach[0];
+    s.pos.x = Math.max(-lim, Math.min(lim, s.pos.x));
+  });
   const placeLoose = () => {
     loose.forEach((s) => s.mesh.setMatrixAt(s.k, m4.compose(v3.copy(s.pos).add(s.off), s.quat, one)));
     looseMeshes.forEach((m) => { m.instanceMatrix.needsUpdate = true; });
@@ -258,6 +278,10 @@ export async function mount({ world, stage, section, origin, form }) {
       const d = rel.length();
       if (d < PART_R && d > 1e-4) s.aim.copy(rel.multiplyScalar(((PART_R - d) * 0.6) / d));
       else s.aim.set(0, 0, 0);
+      // pushed aside, a page stops at the shelves and above the floor
+      const side = AISLE - 0.05 - s.reach[0];
+      s.aim.x = Math.max(-side, Math.min(side, s.pos.x + s.aim.x)) - s.pos.x;
+      s.aim.y = Math.max(s.aim.y, Math.min(0, FLOOR + 0.05 + s.reach[1] - s.pos.y));
     });
   }
 
@@ -307,9 +331,8 @@ export async function mount({ world, stage, section, origin, form }) {
         busy = p.fwd.step(f.dt) || busy;
         p.m.visible = st.pull > 0.01;
         if (!p.m.visible) return;
-        const ctrl = p.from.clone().lerp(p.rest, 0.5).add(new THREE.Vector3(0, 1.4, 0.8));
-        tmp.position.copy(bez(p.from, ctrl, p.rest, st.pull));
-        tmp.quaternion.copy(p.fromQ).slerp(p.restQ, st.pull);
+        tmp.position.copy(bez(p.from, p.ctrl, p.rest, st.pull));
+        tmp.quaternion.copy(p.fromQ).slerp(p.restQ, ramp(st.pull, p.turnFrom, 1));
         if (p.fwd.value > 0.001) {
           face.position.copy(tmp.position);
           face.lookAt(camLocal);
