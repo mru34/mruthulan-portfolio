@@ -1,7 +1,7 @@
 // The hero: the name as a 3D split-flap board, fitted into .hero-board (a page scene: the camera holds the page
 // pose here). It leans toward the mouse with a warm glint following the pointer, flickers a flap under the
-// mouse, ripples on a tap, and as the visitor scrolls on it tilts back and rises out of the camera's way
-// while the camera flies on into SignalBridge. The first frame matches the still exactly (no pointer, no lean).
+// mouse, ripples on a tap; as the visitor scrolls it first goes up with the page, then tilts back and rises out
+// of the camera's way while the camera flies on into SignalBridge. The first frame matches the still exactly (no pointer, no lean).
 import * as THREE from 'three';
 import { createBoard } from './board.js';
 import { fitScale } from '../lib/fit.js';
@@ -51,8 +51,9 @@ export async function mount({ world, stage, section }) {
       const visible = f.s < 1.6;
       group.visible = visible;
       if (!visible) { glint.intensity = 0; return false; }
-      // leaving the hero: the board tilts back and rises out of the camera's path, tied to the scroll
-      const e = easeInOut(clamp(f.s / 0.35));
+      // leaving the hero: until 0.3 of a screen the camera holds still and the board goes up with the page, like
+      // the links under it; then, as the camera turns to fly on, it tilts back and rises out of the camera's path
+      const e = easeInOut(clamp((f.s - 0.3) / 0.25));
       board.group.scale.setScalar(fitScale(board.size, w));
       board.group.position.set(w.x, w.y + e * 9, w.z - e * 2);
       board.group.rotation.x = -e * 1.2;

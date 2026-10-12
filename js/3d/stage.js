@@ -9,16 +9,60 @@ import { worldPerPixel, rectToWorld } from '../lib/fit.js';
 export const FOV = 30;
 export const CAM_Z = 20;
 
+// The studio light the scenes reflect: a room, rendered into a prefiltered environment map. Rendering it compiles
+// four shaders, and compiled the usual way (one after another, the page waiting) that held the page still for
+// a moment just as it opened, the moment a visitor starts to scroll. So they are compiled first in parallel,
+// off the page's own thread (KHR_parallel_shader_compile, through compileAsync), each for the state the map is
+// rendered in (its render target, no tone mapping), and the render itself then compiles nothing. This reaches
+// into three.js's PMREMGenerator (0.186, vendored): if those parts are not there, the map is simply rendered.
+async function environment(renderer, scene) {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const room = new RoomEnvironment();
+  try {
+    if (pmrem._setSize && pmrem._allocateTargets) {
+      pmrem._setSize(256);
+      const rt = pmrem._allocateTargets();
+      // the roughness filter loops over a fixed 256 samples, and Windows' shader compiler (through ANGLE) writes
+      // that loop out 256 times, which alone takes most of a second; a bound it cannot know in advance keeps the
+      // loop a loop. The same 256 samples, the same map.
+      const ggx = pmrem._ggxMaterial;
+      const LOOP = 'for(uint i = 0u; i < uint(GGX_SAMPLES); i++)';
+      if (ggx && ggx.fragmentShader.includes(LOOP)) {
+        ggx.uniforms.samples = { value: 256 };
+        ggx.fragmentShader = ggx.fragmentShader
+          .replace('uniform sampler2D envMap;', 'uniform sampler2D envMap;\n\t\t\tuniform int samples;')
+          .replace(LOOP, 'for(uint i = 0u; i < uint(samples); i++)');
+        ggx.needsUpdate = true;
+      }
+      const flat = new THREE.OrthographicCamera(0, 1, 0, 1, 0, 1);
+      const quad = (m) => new THREE.Mesh(new THREE.BufferGeometry(), m);
+      const backdrop = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial({ side: THREE.BackSide, depthWrite: false, depthTest: false }));
+      const toneMapping = renderer.toneMapping;
+      renderer.toneMapping = THREE.NoToneMapping;
+      renderer.setRenderTarget(rt);
+      const jobs = [room, backdrop, quad(pmrem._ggxMaterial), quad(pmrem._blurMaterial)]
+        .filter((o) => o.isScene || o.material)
+        .map((o) => renderer.compileAsync(o, new THREE.PerspectiveCamera(90, 1, 0.1, 100)));
+      renderer.setRenderTarget(null);
+      renderer.toneMapping = toneMapping;
+      await Promise.all(jobs);
+      rt.dispose();
+      backdrop.geometry.dispose();
+      backdrop.material.dispose();
+    }
+  } catch { /* the render below compiles what it needs */ }
+  scene.environment = pmrem.fromScene(room, 0.04).texture;
+  pmrem.dispose();
+}
+
 export function createStage(canvas, { maxDpr = 2, ticker } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.NeutralToneMapping;
 
   const scene = new THREE.Scene();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.45;
-  pmrem.dispose();
+  const envReady = environment(renderer, scene);
 
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200);
   camera.position.set(0, 0, CAM_Z);
@@ -73,6 +117,7 @@ export function createStage(canvas, { maxDpr = 2, ticker } = {}) {
 
   return {
     renderer, scene, camera, view, pointer,
+    envReady,   // resolves once the studio light's reflections exist: build no scene before it
     add(part) { parts.add(part); invalidate(); },
     remove(part) { parts.delete(part); invalidate(); },
     onFrame(fn) { hooks.add(fn); return () => hooks.delete(fn); },
