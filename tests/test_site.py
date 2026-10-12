@@ -72,14 +72,19 @@ COPY = [
     'Next photo', 'Licence “in use on another device” after moving to new laptops', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
     'Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028',
     'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER',
-    'I study IT at Singapore Polytechnic. I build for one real person first: a youth worker at midnight, '
-    'someone who can’t rely on their speech, a barber with a full day of bookings.',
-    'Stack', 'TypeScript · React / Next.js · Node.js / Express · Python / FastAPI · SQL',
+    'I build for one real person first:', 'a youth worker at midnight',   # the three people are in gold
+    'someone who can’t rely on their speech', 'a barber with a full day of bookings',
+    '5 projects', '3 hackathon awards', '2 champion titles', '1 newspaper feature',
+    'How I work', 'Start with one person.', 'Make the demo hard to break.', 'Keep the rules on the server.',
+    'Then explain it.', 'Before MEANT’s live demo I fixed a stuck mic, a silent send and a black camera.',
+    'Looking for', 'A year-long software engineering internship · 2027/28',
+    'Stack', 'TypeScript, JavaScript, Python, Java, SQL', 'PostgreSQL, MySQL, SQLite',
     'Open to internships, 2027/28', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
         'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo',
-        'Who won the Autodesk Singapore Hackathon 2026?', '(expected)', 'Reach out', 'SWE internship']
+        'Who won the Autodesk Singapore Hackathon 2026?', '(expected)', 'Reach out', 'SWE internship',
+        'I study IT at Singapore Polytechnic. I build']
 BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',
           'crafted', 'unlock', 'robust', 'delve']
 
@@ -271,3 +276,12 @@ def test_every_chapter_still_has_its_own_description():
     for c in bs.CHAPTERS:
         assert c.get('alt'), c['pid']
         assert bs.BY_ID[c['pid']]['name'].split()[0] in c['alt'] or c['pid'] == 'kc', c['pid']
+
+
+def test_about_numbers_match_the_record():
+    """The flap tiles count what the page shows: five projects, three hackathon results (two of them Champion),
+    one newspaper feature (Tamil Murasu)."""
+    assert dict((w, int(n)) for n, w in bs.ABOUT_STATS) == {
+        'projects': len(bs.PROJECTS), 'hackathon awards': 3, 'champion titles': 2, 'newspaper feature': 1}
+    results = [p['result'] for p in bs.PROJECTS if p['type'] == 'Hackathon']
+    assert len(results) == 3 and sum('Champion' in r for r in results) == 2
