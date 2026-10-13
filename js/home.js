@@ -99,11 +99,12 @@ async function start3D(ticker) {
   }
   stage.add(world);
 
-  // frames that run back to back (the page moving) are measured; the time the loop spends asleep is not
+  // frames that run back to back (the page moving) are measured; the time the loop spends asleep is not. While a
+  // scene is being built a frame may take twice as long (js/lib/watchdog.js)
   const watch = new FrameWatch();
   stage.onFrame((now, dt) => {
     if (dt === null || window.__noWatchdog) return;   // __noWatchdog: the smoke tests, which render in software
-    const verdict = watch.push(now, dt);
+    const verdict = watch.push(now, dt, world.building() ? 2 : 1);
     if (verdict === 'lower') stage.setDpr(1);
     else if (verdict === 'stills') { stopAll(); freeze(); }
   });

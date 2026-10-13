@@ -226,6 +226,7 @@ export function createWorld(stage, { sections, form }) {
       return { ok: off < 1e-3, off };
     },
     get form() { return form0; },
+    building: () => pending.size > 0,   // a scene is being built (its frames are slow once, not for good)
     debugBuilding: () => pending.size,   // scenes still being built
     onRestore: null,
     // where the page is: the section across the middle of the screen and the time into it, in screens
