@@ -1,5 +1,5 @@
 # Checks the site and publishes it to mruthulan.com. Only the pages and what they load are
-# published (the HTML pages, css/, js/, assets/, robots.txt, sitemap.xml): the generator,
+# published (the HTML pages, the service worker sw.js, css/, js/, assets/, robots.txt, sitemap.xml): the generator,
 # design files, data and notes stay in the repository and off the website.
 name: Check and publish
 
@@ -37,7 +37,7 @@ jobs:
       - name: Collect the public files
         run: |
           mkdir _site
-          cp ./*.html CNAME robots.txt sitemap.xml _site/
+          cp ./*.html sw.js CNAME robots.txt sitemap.xml _site/
           cp -r css js assets _site/
 
       - name: Every link and image on every page resolves

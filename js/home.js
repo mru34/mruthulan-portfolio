@@ -124,12 +124,17 @@ if (live) {
     if (target) target.scrollIntoView({ block: 'start', behavior: 'instant' });
   }
   let lenis = null;
+  let scrolledAt = 0;   // when the page last scrolled, or a wheel last turned
   const smooth = params.get('smooth') !== 'off' && !pose;
   // Lenis starts once the 3D stage is set up, not before: its wheel listener holds every wheel turn until the
   // page's script is free, and setting up the stage keeps it busy for a moment, so a visitor who scrolls the
   // moment the page opens would wait for it. Until then the browser scrolls the page by itself.
   const startLenis = async () => {
     const { default: Lenis } = await import('lenis');
+    // and it takes over in a pause of the scroll, never mid-gesture: wheel turns already on their way as its
+    // listener arrived were scrolled by the browser and counted by Lenis as well, and Lenis carried on from where
+    // it thought the page was, so the page jumped back (some 85 px) under a visitor scrolling as it opened
+    while (performance.now() - scrolledAt < 400) await new Promise((r) => setTimeout(r, 100));
     if (root.classList.contains('frozen')) return;   // the stills: the browser's own scrolling stays
     lenis = new Lenis({
       autoRaf: false, lerp: 0.1, smoothWheel: true, syncTouch: false, anchors: false,
@@ -173,7 +178,8 @@ if (live) {
   // any scroll keeps the loop running for three more frames, so frames come back to back while the page moves
   // (however slow they are): the watchdog then measures real frames, never the pause between two wheel ticks
   let moving = 0;
-  addEventListener('scroll', () => { moving = 3; ticker.invalidate(); }, { passive: true });
+  addEventListener('scroll', () => { moving = 3; scrolledAt = performance.now(); ticker.invalidate(); }, { passive: true });
+  addEventListener('wheel', () => { scrolledAt = performance.now(); }, { passive: true });
   addEventListener('resize', () => { measure(); ticker.invalidate(); });
   measure();
   ticker.add(() => { beats(scrollY); return moving-- > 0; });
