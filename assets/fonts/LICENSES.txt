@@ -3,6 +3,7 @@ Each file is the latin subset of the variable font published on Google Fonts.
 
 Archivo — Copyright 2016 The Archivo Project Authors
   https://github.com/Omnibus-Type/Archivo
+  (modified: limited to weight 800 and widths 62–75% by design/build_fonts.py)
 
 Geist — Copyright 2024 The Geist Project Authors
   https://github.com/vercel/geist-font

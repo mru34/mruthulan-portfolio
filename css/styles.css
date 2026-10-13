@@ -11,7 +11,7 @@
 
 /* Fonts are served from this site (latin subsets of the Google Fonts variable files, OFL; see
    assets/fonts/LICENSES.txt), so the first paint never waits on another domain. */
-@font-face{font-family:"Archivo";font-style:normal;font-weight:700 800;font-stretch:62% 75%;font-display:swap;src:url(../assets/fonts/archivo-latin.woff2) format("woff2")}
+@font-face{font-family:"Archivo";font-style:normal;font-weight:800;font-stretch:62% 75%;font-display:swap;src:url(../assets/fonts/archivo-latin.woff2) format("woff2")}
 @font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:500 700;font-display:swap;src:url(../assets/fonts/bricolage-grotesque-latin.woff2) format("woff2")}
 @font-face{font-family:"Geist";font-style:normal;font-weight:400 600;font-display:swap;src:url(../assets/fonts/geist-latin.woff2) format("woff2")}
 /* Stand-ins sized to the real fonts (measured widths), so text wraps the same before and after they load and nothing jumps */
@@ -550,3 +550,4 @@ html.smooth{scroll-behavior:auto}
 .rail.on{opacity:1}
 .rail li{width:22px;height:2px;border-radius:2px;background:var(--hair);transition:width .3s var(--ease),background-color .3s}
 .rail li[data-on]{width:36px;background:var(--c)}
+

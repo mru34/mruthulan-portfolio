@@ -427,6 +427,16 @@ def module_map():
     return imports
 
 
+# The homepage's layout for the live 3D (.has-3d: tall chapters, the canvas) is set before the page is first laid
+# out, from the cheap half of js/lib/capability.js want3D (keep the two alike): set by home.js, it came after the
+# first layout, and the whole page was laid out again. home.js still makes the full check (a WebGL2 context) and
+# takes the class back off for the stills.
+EARLY_3D = ("(()=>{const q=new URLSearchParams(location.search).get('mode'),m=(s)=>matchMedia(s).matches,"
+            "c=navigator.connection,d=navigator.deviceMemory;"
+            "if(q!=='stills'&&'WebGL2RenderingContext' in window&&(q==='3d'||!(m('(prefers-reduced-motion: reduce)')"
+            "||(c&&c.saveData)||(typeof d==='number'&&d<4))))document.documentElement.classList.add('has-3d')})()")
+
+
 # What the homepage's 3D needs before it can draw anything: home.js, then the modules it always loads at once (the
 # stage, the world, the hero, Lenis), and everything those import. Each module is found only once the one that
 # imports it has arrived, so on a first visit they came one round trip after another (the hero's 3D at ~3 s);
@@ -464,6 +474,11 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
     # arrived, the rest was laid out a few frames into the title's morph from "More info" and the morph stalled.
     # A case page is small and arrives at once, so this costs nothing; the homepage (modules) is not held.
     expect = '' if modules else '\n  <link rel="expect" href="#site-foot" blocking="render">'
+    early3d = f'\n  <script>{EARLY_3D}</script>' if modules else ''
+    # the homepage carries its stylesheet: a first visit is drawn without waiting one more round trip for it (on a
+    # phone's connection ~0.1-0.2 s). Its url()s (../assets/fonts/...) resolve the same from the site's root.
+    style = (f'<style>{(ROOT / "css/styles.css").read_text(encoding="utf-8").strip()}</style>' if modules
+             else f'<link rel="stylesheet" href="{prefix}css/styles.css">')
     if modules:
         imap = module_map()
         # at low priority: the page's own picture (the hero's still) still comes first
@@ -492,8 +507,8 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="{prefix}css/styles.css">{expect}
-  <script>document.documentElement.classList.replace('no-js','js-on')</script>
+  {style}{expect}
+  <script>document.documentElement.classList.replace('no-js','js-on')</script>{early3d}
   <script>{BACK_FADE}</script>
   <script src="{prefix}js/script.js" defer></script>
   <script src="{prefix}js/analytics.js" defer></script>{mods}{ld_html}
