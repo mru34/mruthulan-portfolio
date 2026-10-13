@@ -15,6 +15,16 @@
   const smooth = () => requestAnimationFrame(() => root.classList.add('loaded'));
   if (document.readyState === 'complete') smooth(); else addEventListener('load', smooth, { once: true });
 
+  /* ---------------------------------------------------------- return visits */
+  // The service worker (sw.js, written by design/build_site.py) keeps the site's files in the browser, so a return
+  // visit is drawn from there. Registered once the page has loaded, so it never competes with the first visit; not
+  // on localhost (it would hide edits while working) unless asked for with ?sw=on.
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  if ('serviceWorker' in navigator && (!local || /[?&]sw=on\b/.test(location.search))) {
+    // and asks each time whether there is a newer one (a release): browsers do not reliably check on their own
+    addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').then((reg) => reg.update()).catch(() => {}); }, { once: true });
+  }
+
   /* ---------------------------------------------------------- smooth-motion helpers */
   // Decode a picture before it is shown, so a crossfade never waits on a large image.
   const warm = (img) => {

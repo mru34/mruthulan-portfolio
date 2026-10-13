@@ -128,6 +128,45 @@ export function createWorld(stage, { sections, form }) {
     d.setAttribute('data-described', '');
     pin.prepend(d);
   }
+  // Building goes in steps, as many in a frame as fit in BUDGET ms, the scene nearest the visitor first. Built
+  // one step a frame, a room of fifty pieces took over a second, and a visitor who scrolled the moment the page
+  // opened reached each room before it was built: the still, not the scene.
+  // A frame already busy (the frame's own drawing, a room being made) gets no building on top, for up to three
+  // frames in a row: building beside a room being made was one 90 ms frame as the visitor left the hero.
+  const BUDGET = 5;
+  const busyFrame = (frameStart) => performance.now() - frameStart > 2 * BUDGET;
+  const steps = [];   // { s, run, done, fail }
+  let pumping = false, waited = 0;
+  const nearness = (s) => Math.abs(sections.indexOf(s) - current(scrollY));
+  function pump(frameStart) {
+    if (busyFrame(frameStart) && waited < 3) waited += 1;
+    else {
+      waited = 0;
+      const t = performance.now();
+      steps.sort((a, b) => nearness(a.s) - nearness(b.s));
+      while (steps.length && performance.now() - t < BUDGET) {
+        const x = steps.shift();
+        try { x.run(); x.done(); } catch (err) { x.fail(err); }
+      }
+    }
+    if (steps.length) requestAnimationFrame(pump); else pumping = false;
+  }
+  const step = (s, run) => new Promise((done, fail) => {
+    steps.push({ s, run, done, fail });
+    if (!pumping) { pumping = true; requestAnimationFrame(pump); }
+  });
+  // and one scene is made at a time (its module's mount: its objects and pictures), the nearest first: two made
+  // in the same frames (the next room and the one after it) were one 90 ms frame as the visitor left the hero
+  const making = [];   // { s, go }
+  let makingOne = false;
+  function nextMade() {
+    if (makingOne || !making.length) return;
+    making.sort((a, b) => nearness(a.s) - nearness(b.s));
+    makingOne = true;
+    making.shift().go();
+  }
+  const turnToMake = (s) => new Promise((go) => { making.push({ s, go }); nextMade(); });
+  const made = () => { makingOne = false; nextMade(); };
   function mountScene(s) {
     if (mounted.has(s.name)) return Promise.resolve();
     if (pending.has(s.name)) return pending.get(s.name);
@@ -135,26 +174,26 @@ export function createWorld(stage, { sections, form }) {
     if (s.kind === 'flight') s.el.classList.add('near');   // its name's own typeface may load now
     const job = (async () => {
       const mod = await s.load();
-      const part = await mod.mount({ THREE, world: api, stage, section: s.el, form: form0, origin: origins[s.name] ?? origins.page, invalidate: stage.invalidate });
+      await turnToMake(s);
+      let part;
+      try {
+        if (!stillWanted()) return;   // freed while it waited its turn
+        part = await mod.mount({ THREE, world: api, stage, section: s.el, form: form0, origin: origins[s.name] ?? origins.page, invalidate: stage.invalidate });
+      } finally { made(); }
       if (!stillWanted()) { part.dispose(); return; }   // freed while it was being made
       built.set(s.name, part);
-      // shaders compile and textures go to the GPU before the scene shows, a frame at a time
+      // shaders compile, textures go to the GPU and each piece is drawn once out of sight (warmUp), all before the
+      // scene shows, in steps paced by the frame (step, below)
       if (part.group.parent) part.group.parent.remove(part.group);
-      // one piece at a time, a frame apart, so compiling never stalls the scroll
-      for (const piece of [...part.group.children]) {
-        if (!stillWanted()) break;
-        await renderer.compileAsync(piece, camera, scene);
-        await nextFrame();
-      }
-      for (const tex of new Set([...texturesOf(part.group), ...(part.warm || [])])) {
-        if (!stillWanted()) break;
-        renderer.initTexture(tex);
-        await nextFrame();
-      }
-      // and each piece is drawn once, out of sight, a frame apart (see warmUp)
-      for (const piece of [...part.group.children]) {
-        if (!stillWanted()) break;
-        await new Promise((done) => { warming.push({ group: part.group, piece, done, wanted: stillWanted }); stage.invalidate(); });
+      const pieces = [...part.group.children];
+      const compiling = [];
+      await Promise.all(pieces.map((piece) => step(s, () => { if (stillWanted()) compiling.push(stage.compile(piece)); })));
+      await Promise.all(compiling);
+      await Promise.all([...new Set([...texturesOf(part.group), ...(part.warm || [])])].map((tex) => step(s, () => { if (stillWanted()) renderer.initTexture(tex); })));
+      if (!posing) {
+        const warmed = pieces.map((piece) => new Promise((done) => warming.push({ s, group: part.group, piece, done, wanted: stillWanted })));
+        stage.invalidate();
+        await Promise.all(warmed);
       }
       if (!stillWanted()) return;   // freed while it was being built (free disposed it)
       built.delete(s.name);
@@ -177,8 +216,9 @@ export function createWorld(stage, { sections, form }) {
   // A scene's geometry goes to the GPU, and its draws are set up, the first time it is drawn: for a room with a
   // hundred objects that was one long frame, the frame it came into view mid-flight. So while it is being built,
   // each piece is drawn once into a single pixel, all of it in view and nothing else of the world, just before a
-  // frame's own drawing (which then covers the whole picture): a piece a frame, never in sight.
-  const warming = [];   // { group, piece, done, wanted }
+  // frame's own drawing (which then covers the whole picture), as many as fit in BUDGET, never in sight.
+  const warming = [];   // { s, group, piece, done, wanted }
+  let posing = false, warmWaited = 0;   // a posed still (design/stills.mjs): drawn once, before the frame loop runs, so no warming
   function warmUp({ group, piece, done, wanted }) {
     if (wanted()) {
       const undo = [];
@@ -238,7 +278,7 @@ export function createWorld(stage, { sections, form }) {
     },
     counts: () => ({ ...renderer.info.memory }),
     // builds one scene now, whatever the scroll (the stills)
-    pose(name) { return mountScene(sections.find((x) => x.name === name)); },
+    pose(name) { posing = true; return mountScene(sections.find((x) => x.name === name)); },
     freeAll() { sections.forEach(free); },
     // test seams: how far a fitted page object is from its box, in pixels; whether the camera is on the path
     debugFit(name) {
@@ -286,13 +326,17 @@ export function createWorld(stage, { sections, form }) {
       { const i = current(y); place = { i, frac: (y - spans[i][0]) / Math.max(1, spans[i][1] - spans[i][0]) }; }
       // the scenes near the visitor exist; far ones are freed. The one on screen is built first and its
       // neighbours only once it is live (or has failed), so the two never share the frames: on arrival the
-      // name board goes live sooner, and the first scroll is not slowed by the next room being built
+      // name board goes live sooner, and the first scroll is not slowed by the next room being built. Then, once
+      // the next room is live, the room after next (still freed only three away): a visitor scrolling on finds it
+      // built. (Built together with the next room, the two were one 90 ms frame.)
       const cur = current(y);
       const here = sections[cur];
       mountScene(here);
-      const settled = mounted.has(here.name) || here.el.hasAttribute('data-failed');
+      const isSettled = (sec) => !sec || mounted.has(sec.name) || sec.el.hasAttribute('data-failed');
+      const settled = isSettled(here);
+      const nextSettled = settled && isSettled(sections[cur + 1]);   // the room after next waits for the next one
       sections.forEach((sec, i) => {
-        if (i !== cur && Math.abs(i - cur) <= 1 && settled) mountScene(sec);
+        if (i !== cur && ((Math.abs(i - cur) <= 1 && settled) || (i === cur + 2 && nextSettled))) mountScene(sec);
         else if (Math.abs(i - cur) >= 3) free(sec);
       });
       // the camera
@@ -344,7 +388,16 @@ export function createWorld(stage, { sections, form }) {
         else if (!part.group.visible && inGraph) root.remove(part.group);
       });
       // a piece of a scene being built, drawn out of sight just before this frame's own drawing (warmUp)
-      if (warming.length) { warmUp(warming.shift()); busy = true; }
+      if (warming.length) {
+        if (busyFrame(now) && warmWaited < 3) warmWaited += 1;
+        else {
+          warmWaited = 0;
+          warming.sort((a, b) => nearness(a.s) - nearness(b.s));
+          const t = performance.now();
+          do warmUp(warming.shift()); while (warming.length && performance.now() - t < BUDGET);
+        }
+        busy = true;
+      }
       return busy;
     },
   };
