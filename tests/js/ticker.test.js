@@ -72,5 +72,18 @@ test('time the page spent away (another page, the browser cache, a hidden tab) i
   assert.equal(f.pending, 1, 'one frame on return');
   f.run(9000);
   f.run(9016);
-  assert.deepEqual(got, [[16, null], [16, 16], [16, null], [16, 16]]);
+  f.run(9032);                       // timed from the second frame back, not the first (see the next test)
+  assert.deepEqual(got, [[16, null], [16, 16], [16, null], [16, null], [16, 16]]);
+});
+
+test('the first frame back from the browser cache can carry the time from before leaving: it times nothing', () => {
+  // Chrome, restoring a page from its back/forward cache, ran the first frame with the timestamp of the last frame
+  // before the page left (1032 here, at about 9000): timed from it, the next frame was the whole visit long
+  const f = fakeRaf(); const t = createTicker(f.raf, f.caf); const got = [];
+  t.add((now, dt, gap) => { got.push([dt, gap]); return true; });
+  f.run(1000); f.run(1016);
+  t.away(); t.back();
+  f.run(1032);                       // stale
+  f.run(9016); f.run(9032);
+  assert.deepEqual(got, [[16, null], [16, 16], [16, null], [16, null], [16, 16]]);
 });

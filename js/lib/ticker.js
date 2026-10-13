@@ -9,6 +9,7 @@ export function createTicker(raf = (fn) => requestAnimationFrame(fn), caf = (id)
   let moving = false;   // whether the previous frame asked for this one straight away
   let stopped = false;
   let gone = false;     // the page is away: no frames until it is back
+  let returning = false;   // the first frame back: its timestamp may be from before the page left
   function frame(now) {
     id = 0;
     const dt = last ? Math.min(now - last, 100) : 16;
@@ -20,6 +21,9 @@ export function createTicker(raf = (fn) => requestAnimationFrame(fn), caf = (id)
     let busy = false;
     for (const job of [...jobs]) busy = job(now, dt, gap) || busy;
     moving = busy;
+    // Chrome, restoring a page from its back/forward cache, ran the first frame with the time of the last frame
+    // before the page left: nothing is timed from it, or the next frame is the whole visit long
+    if (returning) { returning = false; last = 0; prev = 0; }
     if (busy) invalidate(); else last = 0;
   }
   function invalidate() { if (!id && !stopped && !gone) id = raf(frame); }
@@ -30,7 +34,7 @@ export function createTicker(raf = (fn) => requestAnimationFrame(fn), caf = (id)
     // the browser draws as the page leaves wakes nothing) and starts afresh when it is back, so the time away is
     // neither one long step for the springs nor a slow frame for the watchdog
     away() { gone = true; if (id) caf(id); id = 0; last = 0; prev = 0; moving = false; },
-    back() { if (!gone) return; gone = false; invalidate(); },
+    back() { if (!gone) return; gone = false; returning = true; invalidate(); },
     stop() { stopped = true; if (id) caf(id); id = 0; },
     get running() { return Boolean(id); },
   };

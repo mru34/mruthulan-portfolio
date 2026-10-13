@@ -434,6 +434,10 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
     ld_html = (f'\n  <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>'
                if ld else '')
     mods = ''
+    # a case page is drawn only once all of it has been read (the footer is last): drawn as soon as its top had
+    # arrived, the rest was laid out a few frames into the title's morph from "More info" and the morph stalled.
+    # A case page is small and arrives at once, so this costs nothing; the homepage (modules) is not held.
+    expect = '' if modules else '\n  <link rel="expect" href="#site-foot" blocking="render">'
     if modules:
         imap = module_map()
         mods = (f'\n  <script type="importmap">{json.dumps({"imports": imap}, separators=(",", ":"))}</script>'
@@ -459,7 +463,7 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="{prefix}css/styles.css">
+  <link rel="stylesheet" href="{prefix}css/styles.css">{expect}
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script>{BACK_FADE}</script>
   <script src="{prefix}js/script.js" defer></script>
@@ -508,7 +512,7 @@ MULBERRY = ('MEANT’s symbols: <a href="https://mulberrysymbols.org" target="_b
 
 def footer(home='', prefix='', credit=''):
     credit = f'\n    <p class="foot-credit">{credit}</p>' if credit else ''
-    return f"""<footer class="wrap">
+    return f"""<footer class="wrap" id="site-foot">
     <div class="foot">
       <span><b>Mruthulan Senthil Nathan</b> · Singapore</span>
       <nav aria-label="Footer">
