@@ -85,7 +85,7 @@ export async function mount({ world, stage, section }) {
   for (const [i, el] of items.entries()) {
     const stackEl = el.querySelector('.aw-stack'), placeEl = el.querySelector('.aw-place');
     const shots = [...stackEl.querySelectorAll('.shot')];
-    const tex = await Promise.all(shots.map((s) => loadTexture(`assets/3d/aw-${s.dataset.photo}.webp`, { bitmap: true })));
+    const tex = await Promise.all(shots.map((s) => loadTexture(`assets/3d/aw-${s.dataset.photo}.webp`)));
     const frame = frameBox();
     const prints = tex.map((t) => { const p = photo(t); frame.add(p); return p; });
     const pool = glow(WARM, 1, 1, 0), beam = glow(WARM, 1, 1, 0);

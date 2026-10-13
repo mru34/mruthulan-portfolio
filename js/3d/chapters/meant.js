@@ -88,7 +88,7 @@ export async function mount({ world, stage, section, origin, form }) {
   const desk = form === 'desk';
   const names = ['mt-tablet', 'mt-partner-wait', 'mt-words', 'mt-paper', ...[1, 2, 3, 4].flatMap((i) => [`mt-partner-${i}`, `mt-reply-${i}`])];
   // the newspaper is a photograph of a printed page: decoded off the main thread (textures.js)
-  const tex = Object.fromEntries(await Promise.all(names.map(async (n) => [n, await loadTexture(`assets/3d/${n}.webp`, { bitmap: n === 'mt-paper' })])));
+  const tex = Object.fromEntries(await Promise.all(names.map(async (n) => [n, await loadTexture(`assets/3d/${n}.webp`)])));
 
   const group = new THREE.Group();
   group.position.copy(origin);
