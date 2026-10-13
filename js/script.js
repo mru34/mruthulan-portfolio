@@ -352,6 +352,19 @@
         $('#top').scrollIntoView();
       }
     } catch { /* cross-origin frame */ }
+    // "All work" on a case page opened from the homepage goes Back: the homepage returns from the browser's cache
+    // as it was left, live and in the same place, with the plain fade. Loaded again, it showed the room empty
+    // while it faded in and rebuilt its 3D in view. (Without the Navigation API the link is followed.)
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="index.html#work-"]');
+      const nav = window.navigation;
+      if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !nav || !nav.canGoBack) return;
+      const prev = nav.entries()[nav.currentEntry.index - 1];
+      const url = prev && prev.url && new URL(prev.url);
+      if (!url || url.origin !== location.origin || !/\/(index\.html)?$/.test(url.pathname)) return;
+      e.preventDefault();
+      nav.back();
+    });
   }
 
   if (page !== 'home') return;

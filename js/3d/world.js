@@ -50,6 +50,7 @@ export function createWorld(stage, { sections, form }) {
 
   const origins = Object.fromEntries(Object.entries(ORIGINS).map(([k, a]) => [k, new THREE.Vector3(...a)]));
   const mounted = new Map();     // name -> part
+  const built = new Map();       // name -> part being built (made, not yet mounted)
   const pending = new Map();     // name -> promise
   const docRects = new Map();    // fitted element -> its box in document coordinates
   let spans = [];                // each section's top and bottom in document coordinates
@@ -135,6 +136,8 @@ export function createWorld(stage, { sections, form }) {
     const job = (async () => {
       const mod = await s.load();
       const part = await mod.mount({ THREE, world: api, stage, section: s.el, form: form0, origin: origins[s.name] ?? origins.page, invalidate: stage.invalidate });
+      if (!stillWanted()) { part.dispose(); return; }   // freed while it was being made
+      built.set(s.name, part);
       // shaders compile and textures go to the GPU before the scene shows, a frame at a time
       if (part.group.parent) part.group.parent.remove(part.group);
       // one piece at a time, a frame apart, so compiling never stalls the scroll
@@ -148,12 +151,22 @@ export function createWorld(stage, { sections, form }) {
         renderer.initTexture(tex);
         await nextFrame();
       }
-      if (!stillWanted()) { part.dispose(); return; }   // freed while it was being built
+      // and each piece is drawn once, out of sight, a frame apart (see warmUp)
+      for (const piece of [...part.group.children]) {
+        if (!stillWanted()) break;
+        await new Promise((done) => { warming.push({ group: part.group, piece, done, wanted: stillWanted }); stage.invalidate(); });
+      }
+      if (!stillWanted()) return;   // freed while it was being built (free disposed it)
+      built.delete(s.name);
       root.add(part.group);
       mounted.set(s.name, part);
+      // the still gives way in the frame the scene is first drawn: this frame callback runs after the loop's, which
+      // draws it. Hidden at once, the still left one frame with neither it nor the scene, a black flash.
+      stage.invalidate();
+      await nextFrame();
+      if (mounted.get(s.name) !== part) return;   // freed meanwhile
       if (!document.documentElement.classList.contains('frozen')) anchorsOf(s).forEach((a) => a.setAttribute('data-live', ''));
       describe(s, true);
-      stage.invalidate();
     })().catch((err) => {
       console.warn(`3D scene "${s.name}" did not load; its still stays.`, err);
       s.el.setAttribute('data-failed', '');
@@ -161,8 +174,36 @@ export function createWorld(stage, { sections, form }) {
     pending.set(s.name, job);
     return job;
   }
+  // A scene's geometry goes to the GPU, and its draws are set up, the first time it is drawn: for a room with a
+  // hundred objects that was one long frame, the frame it came into view mid-flight. So while it is being built,
+  // each piece is drawn once into a single pixel, all of it in view and nothing else of the world, just before a
+  // frame's own drawing (which then covers the whole picture): a piece a frame, never in sight.
+  const warming = [];   // { group, piece, done, wanted }
+  function warmUp({ group, piece, done, wanted }) {
+    if (wanted()) {
+      const undo = [];
+      const set = (o, k, v) => { if (o[k] !== v) { undo.push([o, k, o[k]]); o[k] = v; } };
+      for (const c of root.children) set(c, 'visible', false);
+      for (const c of group.children) if (c !== piece) set(c, 'visible', false);
+      piece.traverse((o) => { set(o, 'visible', true); set(o, 'frustumCulled', false); });
+      const added = group.parent !== root;
+      if (added) root.add(group);
+      set(group, 'visible', true);
+      renderer.setScissorTest(true);
+      renderer.setScissor(0, 0, 1, 1);
+      renderer.render(scene, camera);
+      renderer.setScissorTest(false);
+      if (added) root.remove(group);
+      for (let i = undo.length - 1; i >= 0; i--) { const [o, k, v] = undo[i]; o[k] = v; }
+    }
+    done();
+  }
   function free(s) {
     pending.delete(s.name);
+    // a scene half built already has things on the GPU (its textures, its warmed pieces): they go now, not when
+    // its build next looks up
+    const half = built.get(s.name);
+    if (half) { built.delete(s.name); half.dispose(); }
     const part = mounted.get(s.name);
     if (!part) return;
     mounted.delete(s.name);
@@ -302,6 +343,8 @@ export function createWorld(stage, { sections, form }) {
         if (part.group.visible && !inGraph) root.add(part.group);
         else if (!part.group.visible && inGraph) root.remove(part.group);
       });
+      // a piece of a scene being built, drawn out of sight just before this frame's own drawing (warmUp)
+      if (warming.length) { warmUp(warming.shift()); busy = true; }
       return busy;
     },
   };

@@ -7,23 +7,26 @@ const loader = new THREE.TextureLoader();
 // waits for the next frame: a scene that builds a lot yields between parts, so building never stalls a frame
 export const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
 
-// a real capture as a texture, already decoded (off the main thread where the browser can), so putting it on
-// the GPU later never stalls a frame on decoding. A photograph-heavy image (`{ bitmap: true }`: the newspaper)
-// can still take a long frame to upload that way, so it is decoded into a bitmap off the main thread instead,
-// flipped the way WebGL wants it, and its upload is a plain copy
-export function loadTexture(url, { bitmap = false } = {}) {
-  if (bitmap && typeof createImageBitmap === 'function') {
-    return fetch(url)
-      .then((r) => { if (!r.ok) throw new Error(`${url}: ${r.status}`); return r.blob(); })
-      .then((b) => createImageBitmap(b, { imageOrientation: 'flipY', premultiplyAlpha: 'none' }))
-      .then((bmp) => {
-        const t = new THREE.Texture(bmp);
-        t.flipY = false;   // flipped already
-        t.colorSpace = THREE.SRGBColorSpace;
-        t.anisotropy = 16;
-        t.needsUpdate = true;
-        return t;
-      });
+// a real capture as a texture, decoded into a bitmap off the main thread, flipped the way WebGL wants it, so its
+// upload is a plain copy. (Decoded through an <img>, the decode was the compositor's: WebGL decoded the picture
+// again on the main thread as it uploaded it, a long frame for every screen of a room built during the scroll.)
+// One picture decodes at a time, a frame apart: decoded all at once, a room's pictures arrived in one frame
+// together and that frame stalled.
+let decoding = Promise.resolve();
+export function loadTexture(url) {
+  if (typeof createImageBitmap === 'function') {
+    const blob = fetch(url).then((r) => { if (!r.ok) throw new Error(`${url}: ${r.status}`); return r.blob(); });
+    const bitmap = Promise.all([blob, decoding])
+      .then(([b]) => createImageBitmap(b, { imageOrientation: 'flipY', premultiplyAlpha: 'none' }));
+    decoding = bitmap.then(nextFrame, () => {});
+    return bitmap.then((bmp) => {
+      const t = new THREE.Texture(bmp);
+      t.flipY = false;   // flipped already
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = 16;   // three caps it at what the GPU offers
+      t.needsUpdate = true;
+      return t;
+    });
   }
   return new Promise((resolve, reject) => loader.load(url, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
@@ -195,7 +198,10 @@ export function disposeTree(root) {
     const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
     for (const m of mats) {
       for (const k of ['map', 'alphaMap', 'emissiveMap', 'roughnessMap', 'normalMap']) {
-        if (m[k] && !m[k].userData.shared) m[k].dispose();
+        if (m[k] && !m[k].userData.shared) {
+          m[k].dispose();
+          if (m[k].image && m[k].image.close) m[k].image.close();   // a decoded bitmap's memory, at once
+        }
       }
       m.dispose();
     }
