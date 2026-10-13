@@ -32,7 +32,8 @@ const chapters = $$('.chapter');
 const rail = document.querySelector('.rail');
 const marks = rail ? $$('li', rail) : [];
 const live = want3D(readEnv());
-root.classList.add(live ? 'has-3d' : 'stills');
+root.classList.toggle('has-3d', live);   // usually set already, in <head> (EARLY_3D in design/build_site.py)
+if (!live) root.classList.add('stills');
 
 let onFreeze = () => {};
 function freeze() {
