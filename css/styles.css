@@ -435,11 +435,11 @@ html:has(dialog[open]){overflow:hidden;scrollbar-gutter:stable} /* the page stay
 .icon-btn svg{width:20px;height:20px;flex:none;fill:currentColor}
 @media (hover:hover){.icon-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}}
 html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible){opacity:0;pointer-events:none}
-/* the homepage is one full-screen scene: its bar has no fill and no rule, only a shadow behind its words */
+/* the homepage is one full-screen scene: its bar has no fill and no rule, only a shade that fades into the scene,
+   so the logo and buttons stay readable over bright 3D (barber poles, screens, word tiles) as well as page text */
 [data-page="home"] .top,[data-page="home"] .top.scrolled{background:transparent;border-bottom-color:transparent}
 [data-page="home"] .top :is(.logo,.nav a,.icon-only){text-shadow:0 1px 12px rgba(12,12,13,.9)}
-[data-page="home"] .top::before{content:"";position:absolute;inset:0 0 -28px;z-index:-1;pointer-events:none;background:linear-gradient(rgba(12,12,13,.94) 62%,rgba(12,12,13,0));opacity:0;transition:opacity .3s var(--ease)}
-[data-page="home"] .top.over-text::before{opacity:1}
+[data-page="home"] .top::before{content:"";position:absolute;inset:0 0 -28px;z-index:-1;pointer-events:none;background:linear-gradient(rgba(12,12,13,.94) 62%,rgba(12,12,13,0))}
 
 
 /* the chapters: each fills the screen; its words sit in a corner over a soft shade */
@@ -453,6 +453,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .info::before{content:"";position:absolute;inset:-30% -35%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(12,12,13,.82),rgba(12,12,13,0))}
 .chapter[data-side="right"] .info{left:auto;right:calc(var(--gutter) + 40px)}
 .chapter[data-side="bottom-left"] .info{top:auto;bottom:clamp(40px,8vh,96px);translate:none}
+.has-consent-prompt .chapter[data-side="bottom-left"] .info{bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))}
 .ch-num{font:500 16px/1 var(--mono);letter-spacing:.1em;color:var(--c)}
 .ch-name{font-family:var(--name-font),var(--stmt);font-weight:400;font-size:clamp(48px,18cqi,120px);line-height:1;letter-spacing:-.01em;color:var(--c);text-wrap:balance}
 .ch-name a{color:inherit}
@@ -518,6 +519,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
   html.has-3d .rail{display:none} /* on a phone the rail would sit over the scene */
   .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
   .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
+  .has-consent-prompt .info,.has-consent-prompt .chapter[data-side] .info{bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))} /* above the analytics question while it is up */
   .me{grid-template-columns:1fr}
   .me .portrait{max-width:220px;position:static} /* small, so the words show on the first screen */
   .me-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 16px}

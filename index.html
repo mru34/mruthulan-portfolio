@@ -456,11 +456,11 @@ html:has(dialog[open]){overflow:hidden;scrollbar-gutter:stable} /* the page stay
 .icon-btn svg{width:20px;height:20px;flex:none;fill:currentColor}
 @media (hover:hover){.icon-btn:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}}
 html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible){opacity:0;pointer-events:none}
-/* the homepage is one full-screen scene: its bar has no fill and no rule, only a shadow behind its words */
+/* the homepage is one full-screen scene: its bar has no fill and no rule, only a shade that fades into the scene,
+   so the logo and buttons stay readable over bright 3D (barber poles, screens, word tiles) as well as page text */
 [data-page="home"] .top,[data-page="home"] .top.scrolled{background:transparent;border-bottom-color:transparent}
 [data-page="home"] .top :is(.logo,.nav a,.icon-only){text-shadow:0 1px 12px rgba(12,12,13,.9)}
-[data-page="home"] .top::before{content:"";position:absolute;inset:0 0 -28px;z-index:-1;pointer-events:none;background:linear-gradient(rgba(12,12,13,.94) 62%,rgba(12,12,13,0));opacity:0;transition:opacity .3s var(--ease)}
-[data-page="home"] .top.over-text::before{opacity:1}
+[data-page="home"] .top::before{content:"";position:absolute;inset:0 0 -28px;z-index:-1;pointer-events:none;background:linear-gradient(rgba(12,12,13,.94) 62%,rgba(12,12,13,0))}
 
 
 /* the chapters: each fills the screen; its words sit in a corner over a soft shade */
@@ -474,6 +474,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .info::before{content:"";position:absolute;inset:-30% -35%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(12,12,13,.82),rgba(12,12,13,0))}
 .chapter[data-side="right"] .info{left:auto;right:calc(var(--gutter) + 40px)}
 .chapter[data-side="bottom-left"] .info{top:auto;bottom:clamp(40px,8vh,96px);translate:none}
+.has-consent-prompt .chapter[data-side="bottom-left"] .info{bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))}
 .ch-num{font:500 16px/1 var(--mono);letter-spacing:.1em;color:var(--c)}
 .ch-name{font-family:var(--name-font),var(--stmt);font-weight:400;font-size:clamp(48px,18cqi,120px);line-height:1;letter-spacing:-.01em;color:var(--c);text-wrap:balance}
 .ch-name a{color:inherit}
@@ -539,6 +540,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
   html.has-3d .rail{display:none} /* on a phone the rail would sit over the scene */
   .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
   .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
+  .has-consent-prompt .info,.has-consent-prompt .chapter[data-side] .info{bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))} /* above the analytics question while it is up */
   .me{grid-template-columns:1fr}
   .me .portrait{max-width:220px;position:static} /* small, so the words show on the first screen */
   .me-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 16px}
@@ -574,7 +576,7 @@ html.smooth{scroll-behavior:auto}
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script>(()=>{const q=new URLSearchParams(location.search).get('mode'),m=(s)=>matchMedia(s).matches,c=navigator.connection,d=navigator.deviceMemory;if(q!=='stills'&&'WebGL2RenderingContext' in window&&(q==='3d'||!(m('(prefers-reduced-motion: reduce)')||(c&&c.saveData)||(typeof d==='number'&&d<4))))document.documentElement.classList.add('has-3d')})()</script>
   <script>for(const t of['pageswap','pagereveal'])addEventListener(t,(e)=>{const a=t==='pageswap'?e.activation:window.navigation&&navigation.activation;if(e.viewTransition&&e.viewTransition.types&&a&&a.navigationType==='traverse')e.viewTransition.types.add('back')})</script>
-  <script src="js/script.js?v=e02e7830" defer></script>
+  <script src="js/script.js?v=5a08047a" defer></script>
   <script src="js/analytics.js?v=915544e1" defer></script>
   <script type="importmap">{"imports":{"./js/3d/awards-timeline.js":"./js/3d/awards-timeline.js?v=8ae7430a","./js/3d/awards.js":"./js/3d/awards.js?v=33cff537","./js/3d/board.js":"./js/3d/board.js?v=65edb9bc","./js/3d/chapters/bcb-timeline.js":"./js/3d/chapters/bcb-timeline.js?v=956fa94d","./js/3d/chapters/better-call-bhai.js":"./js/3d/chapters/better-call-bhai.js?v=ddf2d81e","./js/3d/chapters/boss-breaker.js":"./js/3d/chapters/boss-breaker.js?v=fc21bd77","./js/3d/chapters/boss-timeline.js":"./js/3d/chapters/boss-timeline.js?v=19648e24","./js/3d/chapters/knowcad-timeline.js":"./js/3d/chapters/knowcad-timeline.js?v=e50ef3ca","./js/3d/chapters/knowcad.js":"./js/3d/chapters/knowcad.js?v=12688bcc","./js/3d/chapters/meant-timeline.js":"./js/3d/chapters/meant-timeline.js?v=5269b19b","./js/3d/chapters/meant.js":"./js/3d/chapters/meant.js?v=8b3313c3","./js/3d/chapters/signalbridge-timeline.js":"./js/3d/chapters/signalbridge-timeline.js?v=26504e75","./js/3d/chapters/signalbridge.js":"./js/3d/chapters/signalbridge.js?v=24ff4a40","./js/3d/devices.js":"./js/3d/devices.js?v=086bac31","./js/3d/ending.js":"./js/3d/ending.js?v=22bb6a02","./js/3d/flap.js":"./js/3d/flap.js?v=e53ccadb","./js/3d/hero.js":"./js/3d/hero.js?v=056bcd76","./js/3d/paths.js":"./js/3d/paths.js?v=9408f81c","./js/3d/stage.js":"./js/3d/stage.js?v=16d08d8a","./js/3d/tap.js":"./js/3d/tap.js?v=58a4c4f2","./js/3d/textures.js":"./js/3d/textures.js?v=ca312fd4","./js/3d/world.js":"./js/3d/world.js?v=d7ebfa76","./js/home.js":"./js/home.js?v=0b930cfe","./js/lib/capability.js":"./js/lib/capability.js?v=fd53f0ed","./js/lib/fit.js":"./js/lib/fit.js?v=d1ad86dd","./js/lib/glide.js":"./js/lib/glide.js?v=51b16fde","./js/lib/motion.js":"./js/lib/motion.js?v=d570a3ea","./js/lib/path.js":"./js/lib/path.js?v=3d503fb9","./js/lib/physics.js":"./js/lib/physics.js?v=d11d19f2","./js/lib/scatter.js":"./js/lib/scatter.js?v=32949847","./js/lib/scrollnav.js":"./js/lib/scrollnav.js?v=d7dd1bef","./js/lib/ticker.js":"./js/lib/ticker.js?v=23f277c5","./js/lib/watchdog.js":"./js/lib/watchdog.js?v=58ebeb3b","./js/vendor/lenis/lenis.min.js":"./js/vendor/lenis/lenis.min.js?v=c340ac3c","./js/vendor/three/addons/environments/RoomEnvironment.js":"./js/vendor/three/addons/environments/RoomEnvironment.js?v=1592f672","three/addons/environments/RoomEnvironment.js":"./js/vendor/three/addons/environments/RoomEnvironment.js?v=1592f672","./js/vendor/three/addons/geometries/RoundedBoxGeometry.js":"./js/vendor/three/addons/geometries/RoundedBoxGeometry.js?v=57e49d98","three/addons/geometries/RoundedBoxGeometry.js":"./js/vendor/three/addons/geometries/RoundedBoxGeometry.js?v=57e49d98","./js/vendor/three/three.module.min.js":"./js/vendor/three/three.module.min.js?v=8b618bd9","three":"./js/vendor/three/three.module.min.js?v=8b618bd9","lenis":"./js/vendor/lenis/lenis.min.js?v=c340ac3c"}}</script>
   <link rel="modulepreload" href="./js/home.js?v=0b930cfe" fetchpriority="low">
