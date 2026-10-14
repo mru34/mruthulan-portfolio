@@ -407,22 +407,6 @@
   new IntersectionObserver(([e]) => {
     bar.classList.toggle('scrolled', !e.isIntersecting && e.boundingClientRect.top < 200);
   }, { rootMargin: `-${bar.offsetHeight}px 0px 0px 0px` }).observe(heroEnd);
-  // the bar has no fill over the 3D; while page text (Awards, About, the ending) passes under it, a soft shade
-  // keeps its links readable. Watched in a band the bar's height at the top of the screen.
-  const texts = $$('[data-sec="awards"], [data-sec="about"], [data-sec="contact"]');
-  const under = new Set();
-  let band = null;
-  const watchBand = () => {
-    if (band) band.disconnect();
-    under.clear();
-    band = new IntersectionObserver((es) => {
-      es.forEach((e) => (e.isIntersecting ? under.add(e.target) : under.delete(e.target)));
-      bar.classList.toggle('over-text', under.size > 0);
-    }, { rootMargin: `0px 0px -${Math.max(0, innerHeight - bar.offsetHeight)}px 0px` });
-    texts.forEach((s) => band.observe(s));
-  };
-  watchBand();
-  addEventListener('resize', watchBand);
 
   const ink = $('.nav-ink');
   function mark(id) {
