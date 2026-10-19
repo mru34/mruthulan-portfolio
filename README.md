@@ -102,4 +102,8 @@ Archivo, Bricolage Grotesque, Geist and JetBrains Mono are served from `assets/f
 
 ## Résumé
 
-The résumé is built from text by `python design/build_resume.py` (one A4 page; needs reportlab), which writes `assets/Mruthulan-Senthil-Nathan-Resume.pdf` and the same file at the old address, `assets/Senthil-Nathan-Mruthulan-Resume.pdf`, so older links still work. Every line matches what the site says, so change both together. The phone number is never published, so it is not in the script; add it to your own copy for applications.
+The current approved résumé is `design/resume/latest.pdf`, with its editable Word source at `design/resume/latest.docx` (approved 19 October 2026). These are the authoritative files; retain the approved template, colours, content and project dates when making future edits. Watsons and CGPA are intentionally omitted.
+
+After approving a new PDF, replace `design/resume/latest.pdf` and its Word source, then run `python design/build_resume.py` and `python design/build_site.py`. The first command copies the exact approved PDF to `assets/Mruthulan-Senthil-Nathan-Resume.pdf` and the legacy address `assets/Senthil-Nathan-Mruthulan-Resume.pdf`. The second updates every résumé button with a content version so browsers request the latest file. Both stable PDF addresses continue to work. The sources under `design/` are excluded from the deployed site.
+
+`python design/build_resume.py --private` copies the approved PDF to `private/Mruthulan-Senthil-Nathan-Resume.pdf` for application edits. Add a phone number to your private Word/PDF copy if needed; the public résumé contains no phone number.

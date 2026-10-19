@@ -15,6 +15,7 @@ rather than guessed.
 import html
 import re
 import json
+import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,7 +23,8 @@ MEDIA = json.loads((ROOT / 'data' / 'media.json').read_text(encoding='utf-8'))
 CONTENT = json.loads((ROOT / 'data' / 'content.json').read_text(encoding='utf-8'))
 
 SITE = 'https://mruthulan.com'
-RESUME = 'assets/Mruthulan-Senthil-Nathan-Resume.pdf'
+RESUME_PATH = 'assets/Mruthulan-Senthil-Nathan-Resume.pdf'
+RESUME = f'{RESUME_PATH}?v={hashlib.sha256((ROOT / RESUME_PATH).read_bytes()).hexdigest()[:12]}'
 EMAIL = 'mruthulansenthilnathan@gmail.com'
 LINKEDIN = 'https://www.linkedin.com/in/mruthulan/'
 GITHUB = 'https://github.com/mru34'
