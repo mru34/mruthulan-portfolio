@@ -551,23 +551,27 @@ def header(home, current=None, prefix=''):
   </header>"""
 
 
-# MEANT's word board and its pictures are Mulberry Symbols, whose licence asks for this line wherever they appear
+CUE = 'https://cueslides.com/'
+
+# MEANT's word board and its pictures are Mulberry Symbols, whose licence asks for this line wherever they appear.
+# It sits at the end of MEANT's page (#credits); the homepage footer links there.
 MULBERRY = ('MEANT’s symbols: <a href="https://mulberrysymbols.org" target="_blank" rel="noopener noreferrer">Mulberry Symbols</a> '
             '© Steve Lee, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>')
 
 
-def footer(home='', prefix='', credit=''):
-    credit = f'\n    <p class="foot-credit">{credit}</p>' if credit else ''
+def footer(home='', prefix='', credits=''):
+    credits = f'\n        <a href="{credits}">Credits</a>' if credits else ''
     return f"""<footer class="wrap" id="site-foot">
     <div class="foot">
       <span><b>Mruthulan Senthil Nathan</b> · Singapore</span>
       <nav aria-label="Footer">
         <a href="{GITHUB}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         <a href="{LINKEDIN}" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a>
-        <a href="{prefix}privacy.html">Privacy</a>
+        <a href="{CUE}" target="_blank" rel="noopener" data-event="contact_open_cue">Cue Slides ↗</a>
+        <a href="{prefix}privacy.html">Privacy</a>{credits}
         <a href="#top">Back to top ↑</a>
       </nav>
-    </div>{credit}
+    </div>
   </footer>"""
 
 
@@ -841,13 +845,6 @@ ABOUT_FACTS = [
     ('Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028', ''),
     ('Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER', ''),
 ]
-# as the résumé groups it
-ABOUT_STACK = [
-    ('Languages', 'TypeScript, JavaScript, Python, Java, SQL'),
-    ('Web', 'React, Next.js, Node.js, Express, FastAPI, REST APIs, HTML/CSS'),
-    ('Databases', 'PostgreSQL, MySQL, SQLite'),
-    ('Tools', 'Git, GitHub, pytest, Render'),
-]
 
 
 def still_picture(scene, alt='', eager=False):
@@ -902,6 +899,7 @@ def build_home():
           'alternateName': ['Mruthulan', 'Senthil Nathan Mruthulan'], 'url': f'{SITE}/',
           'jobTitle': 'Software developer and IT student',
           'affiliation': {'@type': 'CollegeOrUniversity', 'name': 'Singapore Polytechnic'},
+          'worksFor': {'@type': 'Organization', '@id': f'{CUE}#org', 'name': 'Cue Slides', 'url': CUE},
           'address': {'@type': 'PostalAddress', 'addressCountry': 'SG'},
           'sameAs': [LINKEDIN, GITHUB]}
     chapters = '\n      '.join(chapter(c, first=(i == 0)) for i, c in enumerate(CHAPTERS))
@@ -914,8 +912,6 @@ def build_home():
         cls = f' class="{cls}"' if cls else ''
         return f'<div><dt>{e(term)}</dt><dd{cls}>{e(text)}</dd></div>'
     facts = ''.join(fact(*f) for f in ABOUT_FACTS)
-    stack = ''.join(f'<span><b>{e(k)}</b> {e(v)}</span>' for k, v in ABOUT_STACK)
-    facts += f'<div><dt>Stack</dt><dd class="stack">{stack}</dd></div>'
     stats = ''.join(
         f'<li data-flap="{n}"><span class="flaps" aria-hidden="true">{"".join(f"<i>{d}</i>" for d in n)}</span>'
         f'<span class="stat-what" aria-hidden="true">{e(what)}</span><span class="sr-only">{n} {e(what)}</span></li>'
@@ -973,7 +969,7 @@ def build_home():
     </section>
   </main>
 
-  {footer(credit=MULBERRY)}
+  {footer(credits='meant.html#credits')}
   {VIEWER}
 </body>
 </html>
@@ -1041,7 +1037,7 @@ def build_case(p):
       </header>
 
       {''.join(p['sections']())}{press_section() if p['id'] == 'mt' else ''}
-      {more}
+      {more}{f'<p class="case-credit" id="credits">{MULBERRY}</p>' if p['id'] == 'mt' else ''}
 
       <nav class="case-nav" aria-label="More projects">
         <a href="{prev['slug']}.html" rel="prev" data-event="case_open" data-project="{prev['id']}"><small>← Previous</small><span class="cn">{e(prev['name'])}</span></a>
@@ -1051,7 +1047,7 @@ def build_case(p):
     </div>
   </main>
 
-  {footer('index.html', credit=MULBERRY if p['id'] == 'mt' else '')}
+  {footer('index.html')}
   {VIEWER}
 </body>
 </html>
