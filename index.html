@@ -239,8 +239,8 @@ p{margin:0}
 .foot a{transition:color .2s}
 .foot a:hover{color:var(--ink)}
 .foot b{font-weight:600;color:var(--ink)}
-.foot-credit{margin:-18px 0 0;padding-bottom:30px;font-size:14px;color:var(--grey)}
-.foot-credit a{text-decoration:underline;text-underline-offset:2px}
+.case-credit{margin:24px 0 0;font-size:14px;color:var(--grey)}
+.case-credit a{text-decoration:underline;text-underline-offset:2px}
 [data-page="home"] .foot{margin-top:0;border-top:0}
 
 /* ------------------------------------------------------------- case pages */
@@ -525,8 +525,6 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .facts3{margin:clamp(40px,6vh,56px) 0 0;display:grid;gap:24px;border-top:1px solid var(--hair);padding-top:28px}
 .facts3 dt{font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
 .facts3 dd{margin:8px 0 0;font-size:clamp(18px,1.5vw,22px);line-height:1.4}
-.facts3 .stack{display:grid;gap:6px;font:500 16px/1.5 var(--mono);color:var(--soft)}
-.facts3 .stack b{font-weight:500;color:var(--grey);margin-right:.6em}
 
 /* the ending: the internship board, the links */
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}
@@ -602,7 +600,7 @@ html.smooth{scroll-behavior:auto}
   <link rel="modulepreload" href="./js/3d/flap.js?v=e53ccadb" fetchpriority="low">
   <link rel="modulepreload" href="./js/lib/scatter.js?v=32949847" fetchpriority="low">
   <script type="module" src="./js/home.js?v=0b930cfe"></script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Mruthulan Senthil Nathan", "alternateName": ["Mruthulan", "Senthil Nathan Mruthulan"], "url": "https://mruthulan.com/", "jobTitle": "Software developer and IT student", "affiliation": {"@type": "CollegeOrUniversity", "name": "Singapore Polytechnic"}, "address": {"@type": "PostalAddress", "addressCountry": "SG"}, "sameAs": ["https://www.linkedin.com/in/mruthulan/", "https://github.com/mru34"]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Mruthulan Senthil Nathan", "alternateName": ["Mruthulan", "Senthil Nathan Mruthulan"], "url": "https://mruthulan.com/", "jobTitle": "Software developer and IT student", "affiliation": {"@type": "CollegeOrUniversity", "name": "Singapore Polytechnic"}, "worksFor": {"@type": "Organization", "@id": "https://cueslides.com/#org", "name": "Cue Slides", "url": "https://cueslides.com/"}, "address": {"@type": "PostalAddress", "addressCountry": "SG"}, "sameAs": ["https://www.linkedin.com/in/mruthulan/", "https://github.com/mru34"]}</script>
 </head>
 <body data-page="home">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -735,7 +733,7 @@ html.smooth{scroll-behavior:auto}
           <ul class="me-stats" aria-label="In numbers"><li data-flap="5"><span class="flaps" aria-hidden="true"><i>5</i></span><span class="stat-what" aria-hidden="true">projects</span><span class="sr-only">5 projects</span></li><li data-flap="3"><span class="flaps" aria-hidden="true"><i>3</i></span><span class="stat-what" aria-hidden="true">hackathon awards</span><span class="sr-only">3 hackathon awards</span></li><li data-flap="2"><span class="flaps" aria-hidden="true"><i>2</i></span><span class="stat-what" aria-hidden="true">champion titles</span><span class="sr-only">2 champion titles</span></li><li data-flap="1"><span class="flaps" aria-hidden="true"><i>1</i></span><span class="stat-what" aria-hidden="true">newspaper feature</span><span class="sr-only">1 newspaper feature</span></li></ul>
           <h3 class="me-how-title">How I work</h3>
           <ol class="me-how"><li><b>Start with one person.</b> I built SignalBridge’s consent screen: a youth’s note reaches their worker only after the youth has read it and said yes.</li><li><b>Make the demo hard to break.</b> Before MEANT’s live demo I fixed a stuck mic, a silent send and a black camera.</li><li><b>Keep the rules on the server.</b> In Boss Breaker the server works out points and boss damage, so the browser can’t cheat.</li><li><b>Then explain it.</b> I built and delivered the winning presentation at the Autodesk Singapore Hackathon 2026.</li></ol>
-          <dl class="facts3" id="credentials"><div><dt>Looking for</dt><dd>A year-long software engineering internship · 2027/28</dd></div><div><dt>Study</dt><dd>Diploma in Information Technology · Singapore Polytechnic · 2025–2028</dd></div><div><dt>Leadership</dt><dd>Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER</dd></div><div><dt>Stack</dt><dd class="stack"><span><b>Languages</b> TypeScript, JavaScript, Python, Java, SQL</span><span><b>Web</b> React, Next.js, Node.js, Express, FastAPI, REST APIs, HTML/CSS</span><span><b>Databases</b> PostgreSQL, MySQL, SQLite</span><span><b>Tools</b> Git, GitHub, pytest, Render</span></dd></div></dl>
+          <dl class="facts3" id="credentials"><div><dt>Looking for</dt><dd>A year-long software engineering internship · 2027/28</dd></div><div><dt>Study</dt><dd>Diploma in Information Technology · Singapore Polytechnic · 2025–2028</dd></div><div><dt>Leadership</dt><dd>Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER</dd></div></dl>
         </div>
       </div>
     </section>
@@ -755,11 +753,12 @@ html.smooth{scroll-behavior:auto}
       <nav aria-label="Footer">
         <a href="https://github.com/mru34" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         <a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a>
+        <a href="https://cueslides.com/" target="_blank" rel="noopener" data-event="contact_open_cue">Cue Slides ↗</a>
         <a href="privacy.html">Privacy</a>
+        <a href="meant.html#credits">Credits</a>
         <a href="#top">Back to top ↑</a>
       </nav>
     </div>
-    <p class="foot-credit">MEANT’s symbols: <a href="https://mulberrysymbols.org" target="_blank" rel="noopener noreferrer">Mulberry Symbols</a> © Steve Lee, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></p>
   </footer>
   <dialog class="viewer" data-viewer aria-labelledby="vw-title">
     <div class="vw-bar">

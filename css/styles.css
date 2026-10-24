@@ -218,8 +218,8 @@ p{margin:0}
 .foot a{transition:color .2s}
 .foot a:hover{color:var(--ink)}
 .foot b{font-weight:600;color:var(--ink)}
-.foot-credit{margin:-18px 0 0;padding-bottom:30px;font-size:14px;color:var(--grey)}
-.foot-credit a{text-decoration:underline;text-underline-offset:2px}
+.case-credit{margin:24px 0 0;font-size:14px;color:var(--grey)}
+.case-credit a{text-decoration:underline;text-underline-offset:2px}
 [data-page="home"] .foot{margin-top:0;border-top:0}
 
 /* ------------------------------------------------------------- case pages */
@@ -504,8 +504,6 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .facts3{margin:clamp(40px,6vh,56px) 0 0;display:grid;gap:24px;border-top:1px solid var(--hair);padding-top:28px}
 .facts3 dt{font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
 .facts3 dd{margin:8px 0 0;font-size:clamp(18px,1.5vw,22px);line-height:1.4}
-.facts3 .stack{display:grid;gap:6px;font:500 16px/1.5 var(--mono);color:var(--soft)}
-.facts3 .stack b{font-weight:500;color:var(--grey);margin-right:.6em}
 
 /* the ending: the internship board, the links */
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}

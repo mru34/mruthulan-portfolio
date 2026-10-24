@@ -78,7 +78,6 @@ COPY = [
     'How I work', 'Start with one person.', 'Make the demo hard to break.', 'Keep the rules on the server.',
     'Then explain it.', 'Before MEANT’s live demo I fixed a stuck mic, a silent send and a black camera.',
     'Looking for', 'A year-long software engineering internship · 2027/28',
-    'Stack', 'TypeScript, JavaScript, Python, Java, SQL', 'PostgreSQL, MySQL, SQLite',
     'Open to internships, 2027/28', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
