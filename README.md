@@ -98,7 +98,7 @@ Each case study shares with its own 1200×630 card (`assets/og/<page>.jpg`); the
 
 ## Fonts
 
-Archivo, Bricolage Grotesque, Geist and JetBrains Mono are served from `assets/fonts/` (latin subsets of the Google Fonts variable files, OFL; see `assets/fonts/LICENSES.txt`). `css/styles.css` declares them and every page preloads Archivo, the name and board font, so the first paint never waits on another domain.
+Archivo, Atkinson Hyperlegible and JetBrains Mono are served from `assets/fonts/` (latin subsets, OFL; see `assets/fonts/LICENSES.txt`). `css/styles.css` declares them and every page preloads Archivo, the name and board font, and Atkinson Hyperlegible, so the first paint never waits on another domain. Geist and Bricolage Grotesque stay in the folder for the build tools only (`design/build_3d_assets.py` draws the 3D screens in Geist; `design/og-card.html` uses Bricolage); no page loads them.
 
 ## Résumé
 

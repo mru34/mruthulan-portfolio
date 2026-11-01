@@ -61,11 +61,6 @@ def e(s):
     return html.escape(str(s), quote=True)
 
 
-def code_line(x):
-    """Code in a card: long paths and names may break after / and _, not mid-word."""
-    return e(x).replace('/', '/<wbr>').replace('_', '_<wbr>')
-
-
 def ext(href):
     return ' target="_blank" rel="noopener noreferrer"' if href.startswith('http') else ''
 
@@ -506,7 +501,7 @@ def head(title, desc, path, og_title=None, og_desc=None, ld=None, noindex=False,
   <title>{e(title)}</title>
   <link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/atkinson-hyperlegible-400-latin.woff2" as="font" type="font/woff2" crossorigin>
   {style}{expect}
   <script>document.documentElement.classList.replace('no-js','js-on')</script>{early3d}
   <script>{BACK_FADE}</script>
@@ -611,8 +606,7 @@ def sechead(sid, title):
 # ------------------------------------------------------------------ what I built, on the case pages
 # Each "What I built" line is backed by the project's repository. Pointing at a line
 # (or tapping it) zooms the real screenshot to that part (r = x, y, w, h as fractions of
-# the image), or, where there is nothing to show on screen, opens a card with the real
-# route, test or table names.
+# the image); a line with nothing to show on screen (t='text') is just the line.
 FEATURED = [
     dict(pid='sb',
          frame='browser',
@@ -621,12 +615,8 @@ FEATURED = [
              ('The youth-facing chat, sign-in and dashboard', dict(t='img', l='chat', r=[0.0, 0.08, 1.0, 0.32],
                  phone='signalbridge-phone-chat')),
              ('The consent step: the young person previews the note before it is shared', dict(t='img', l='consent', r=[0.24, 0.1, 0.52, 0.56])),
-             ('FastAPI routes that connect the chat to the backend', dict(t='card', f='services/api/app/routes/conversations.py',
-                 lines=['GET   /youth/conversation', 'POST  /conversations/{conversation_id}/messages', 'POST  /handoffs/consent'],
-                 note='From my commit d1d654e. The team later reorganised the backend.')),
-             ('The Discord integration, with tests for its intake', dict(t='card', f='services/api/tests/test_production_alpha.py',
-                 lines=['def test_discord_thread_conversation_routes_to_safenight()', 'def test_discord_public_intake_falls_back_when_youth_id_missing()'],
-                 note='Plus the migrations for Discord user and thread IDs.')),
+             ('FastAPI routes that connect the chat to the backend', dict(t='text')),
+             ('The Discord integration, with tests for its intake', dict(t='text')),
          ],
     ),
     dict(pid='bb',
@@ -636,10 +626,7 @@ FEATURED = [
              ('The booking site customers use', dict(t='img', l='flow', r=[0.206, 0.042, 0.263, 0.928])),
              ('Server-side rules: no past dates, and each slot can only be booked once', dict(t='img', l='flow', r=[0.552, 0.33, 0.222, 0.41],
                  tag='Taken slots are struck through; a second booking gets “That time slot is already booked.”')),
-             ('A Node/Express API on SQLite, with the shop’s admin page', dict(t='card', f='server.js',
-                 lines=['GET/POST/PATCH/DELETE  /api/services', 'POST  /api/bookings        GET  /api/bookings', 'PATCH /api/bookings/:id/status', 'GET   /api/slots',
-                        'CREATE UNIQUE INDEX idx_bookings_date_time ON bookings(date, time)'],
-                 note='From the private repository; every commit is mine.')),
+             ('A Node/Express API on SQLite, with the shop’s admin page', dict(t='text')),
              ('Deployed on Render', dict(t='img', l='live', r=[0.0, 0.0, 1.0, 1.0])),
          ],
     ),
@@ -650,13 +637,8 @@ FEATURED = [
              ('A nine-page frontend: dashboard, challenges, boss raid, shop, inventory', dict(t='img', l='dash', r=[0.08, 0.0, 0.84, 0.07])),
              ('Points and boss damage worked out on the server', dict(t='img', l='dash', r=[0.06, 0.13, 0.89, 0.27],
                  tag='damage = challenge.points × item multiplier + bonus_damage')),
-             ('An Express API and a nine-table MySQL schema created at start-up', dict(t='card', f='src/configure/initTables.js',
-                 lines=['User · WellnessChallenge · UserCompletion', 'Item · Inventory · UserEffect', 'Boss · BossDamageLog · Review',
-                        'CREATE TABLE IF NOT EXISTS …  (runs on an empty database)'],
-                 note='From the public repository; every commit is mine.')),
-             ('bcrypt-hashed passwords and JWT-protected routes', dict(t='card', f='src/middleware',
-                 lines=['bcrypt.hash(req.body.password, saltRounds, callback)', 'Authorization: Bearer <token>'],
-                 note='bcryptMiddleware.js and jwtMiddleware.js.')),
+             ('An Express API and a nine-table MySQL schema created at start-up', dict(t='text')),
+             ('bcrypt-hashed passwords and JWT-protected routes', dict(t='text')),
          ],
     ),
 ]
@@ -667,11 +649,8 @@ FEAT_BY_ID = {f['pid']: f for f in FEATURED}
 
 def phone_view(f, d):
     """On phones each "What I built" line shows its part of the product right under it: the zoomed-in
-    crop of the screenshot (r = x, y, w, h as fractions), or the code card. Hidden on larger screens,
-    where pointing at the line zooms the picture instead."""
-    if d['t'] == 'card':
-        lines = ''.join(f'<code>{code_line(x)}</code>' for x in d['lines'])
-        return f'<div class="hs-m hs-m-card"><p class="hs-file">{code_line(d["f"])}</p>{lines}<p class="hs-note">{e(d["note"])}</p></div>'
+    crop of the screenshot (r = x, y, w, h as fractions). Hidden on larger screens, where pointing at the
+    line zooms the picture instead."""
     tag = f'<p class="hs-m-tag">{e(d["tag"])}</p>' if d.get('tag') else ''
     if d.get('phone'):  # a phone screenshot of the same thing reads better than a crop of a laptop screen
         m, (x, y, w, h) = MEDIA[d['phone']], (0, 0, 1, 1)
@@ -696,12 +675,11 @@ def hotspots(f):
         on = ' data-on fetchpriority="high"' if k == f['first'] else ' loading="lazy"'
         layers += (f'<img class="hs-layer" data-layer="{k}" src="assets/media/{m["src"]}" width="{m["width"]}" height="{m["height"]}" '
                    f'alt="{e(m["alt"])}"{on} decoding="async">')
-    cards = items = ''
+    items = ''
     for k, (label, d) in enumerate(f['items']):
-        if d['t'] == 'card':
-            lines = ''.join(f'<code>{code_line(x)}</code>' for x in d['lines'])
-            cards += (f'<div class="hs-card" data-card="{k}"><p class="hs-file">{code_line(d["f"])}</p>{lines}'
-                      f'<p class="hs-note">{e(d["note"])}</p></div>')
+        if d['t'] == 'text':
+            items += f'<li><p class="hs-line"><span class="hs-dot" aria-hidden="true"></span>{e(label)}</p></li>'
+            continue
         data = {k2: v for k2, v in d.items() if k2 in ('t', 'l', 'r', 'tag')}
         data['i'] = k
         items += (f'<li><button class="hs-item" type="button" aria-pressed="false" data-hs="{e(json.dumps(data, ensure_ascii=False))}">'
@@ -712,7 +690,7 @@ def hotspots(f):
             <div class="hs-frame{' is-device' if f['frame'] == 'device' else ''}">{bar}
               <div class="hs-view" aria-hidden="true"><div class="hs-stage">{layers}<span class="hs-spot"></span></div><p class="hs-tag"></p></div>
             </div>
-            <p class="hs-hint" aria-hidden="true"><span class="fine">Point at a line to see it in the product</span><span class="touch">Tap a line below to see it in the product</span></p>{cards}
+            <p class="hs-hint" aria-hidden="true"><span class="fine">Point at a line to see it in the product</span><span class="touch">Tap a line below to see it in the product</span></p>
           </div>
           <div class="feat-text">
             <h2 class="k" id="built-title">What I built</h2><ul class="built">{items}</ul>
