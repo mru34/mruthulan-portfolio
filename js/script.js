@@ -168,13 +168,12 @@
   }
 
   /* ---------------------------------------------------------- featured builds: linked hotspots */
-  // Pointing at (or tapping) a "What I built" line zooms the real screenshot to that part,
-  // or, where there is nothing on screen to show, opens a card with the real route, test or
-  // table names. With reduced motion the view changes without moving.
+  // Pointing at (or tapping) a "What I built" line zooms the real screenshot to that part.
+  // With reduced motion the view changes without moving.
   const fine = matchMedia('(hover: hover)');
   $$('[data-feat]').forEach((f) => {
     const view = $('.hs-view', f), stage = $('.hs-stage', f), spot = $('.hs-spot', f), tag = $('.hs-tag', f);
-    const layers = $$('.hs-layer', f), cards = $$('.hs-card', f), items = $$('.hs-item', f);
+    const layers = $$('.hs-layer', f), items = $$('.hs-item', f);
     const first = (layers.find((l) => l.hasAttribute('data-on')) || layers[0]).dataset.layer;
     let current = null;
     const showLayer = (name) => layers.forEach((l) => l.toggleAttribute('data-on', l.dataset.layer === name));
@@ -184,8 +183,7 @@
       items.forEach((i) => i.setAttribute('aria-pressed', 'false'));
       showLayer(first);
       stage.style.transform = '';
-      view.classList.remove('spotlit', 'carded');
-      cards.forEach((c) => c.removeAttribute('data-on'));
+      view.classList.remove('spotlit');
       tag.removeAttribute('data-on');
     };
     const activate = (it) => {
@@ -193,27 +191,17 @@
       current = it;
       f.classList.add('active');
       items.forEach((i) => i.setAttribute('aria-pressed', String(i === it)));
-      cards.forEach((c) => c.toggleAttribute('data-on', +c.dataset.card === d.i));
-      if (d.t === 'img') {
-        showLayer(d.l);
-        const [x, y, w, h] = d.r;
-        const s = Math.max(1, Math.min(2.4, 0.84 / Math.max(w, h)));
-        // keep the zoomed picture covering the frame
-        const cx = Math.min(Math.max(x + w / 2, 0.5 / s), 1 - 0.5 / s), cy = Math.min(Math.max(y + h / 2, 0.5 / s), 1 - 0.5 / s);
-        stage.style.transform = `scale(${s.toFixed(3)}) translate(${((0.5 - cx) * 100).toFixed(2)}%, ${((0.5 - cy) * 100).toFixed(2)}%)`;
-        stage.style.setProperty('--s', s.toFixed(3));
-        Object.assign(spot.style, { left: `${x * 100}%`, top: `${y * 100}%`, width: `${w * 100}%`, height: `${h * 100}%` });
-        view.classList.toggle('spotlit', w < 0.99 || h < 0.99);
-        view.classList.remove('carded');
-        tag.textContent = d.tag || '';
-        tag.toggleAttribute('data-on', !!d.tag);
-      } else {
-        showLayer(first);
-        stage.style.transform = '';
-        view.classList.remove('spotlit');
-        view.classList.add('carded');
-        tag.removeAttribute('data-on');
-      }
+      showLayer(d.l);
+      const [x, y, w, h] = d.r;
+      const s = Math.max(1, Math.min(2.4, 0.84 / Math.max(w, h)));
+      // keep the zoomed picture covering the frame
+      const cx = Math.min(Math.max(x + w / 2, 0.5 / s), 1 - 0.5 / s), cy = Math.min(Math.max(y + h / 2, 0.5 / s), 1 - 0.5 / s);
+      stage.style.transform = `scale(${s.toFixed(3)}) translate(${((0.5 - cx) * 100).toFixed(2)}%, ${((0.5 - cy) * 100).toFixed(2)}%)`;
+      stage.style.setProperty('--s', s.toFixed(3));
+      Object.assign(spot.style, { left: `${x * 100}%`, top: `${y * 100}%`, width: `${w * 100}%`, height: `${h * 100}%` });
+      view.classList.toggle('spotlit', w < 0.99 || h < 0.99);
+      tag.textContent = d.tag || '';
+      tag.toggleAttribute('data-on', !!d.tag);
     };
     items.forEach((it) => {
       it.addEventListener('mouseenter', () => { if (fine.matches) activate(it); });

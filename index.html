@@ -18,7 +18,7 @@
   <title>Mruthulan Senthil Nathan</title>
   <link rel="icon" href="assets/favicon.svg?v=75fb1612" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/atkinson-hyperlegible-400-latin.woff2" as="font" type="font/woff2" crossorigin>
   <style>/* Mruthulan — Night Edition
    One dark ground, off-white type, condensed display letters and a split-flap
    board. Project colour appears only in small marks and on the project in
@@ -33,11 +33,7 @@
 /* Fonts are served from this site (latin subsets of the Google Fonts variable files, OFL; see
    assets/fonts/LICENSES.txt), so the first paint never waits on another domain. */
 @font-face{font-family:"Archivo";font-style:normal;font-weight:800;font-stretch:62% 75%;font-display:swap;src:url(../assets/fonts/archivo-latin.woff2) format("woff2")}
-@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:500 700;font-display:swap;src:url(../assets/fonts/bricolage-grotesque-latin.woff2) format("woff2")}
-@font-face{font-family:"Geist";font-style:normal;font-weight:400 600;font-display:swap;src:url(../assets/fonts/geist-latin.woff2) format("woff2")}
 /* Stand-ins sized to the real fonts (measured widths), so text wraps the same before and after they load and nothing jumps */
-@font-face{font-family:"Bricolage Fallback";src:local("Arial");size-adjust:90.1%}
-@font-face{font-family:"Geist Fallback";src:local("Arial");size-adjust:103.8%}
 @font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:400;font-display:swap;src:url(../assets/fonts/atkinson-hyperlegible-400-latin.woff2) format("woff2")}
 @font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:700;font-display:swap;src:url(../assets/fonts/atkinson-hyperlegible-700-latin.woff2) format("woff2")}
 @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;src:url(../assets/fonts/jetbrains-mono-400-500-latin.woff2) format("woff2")}
@@ -54,8 +50,8 @@
   --flap:#1D1D20; --flap-ink:#F4F4F4; --amber:#FFB000; --gold:#E8B64C; --focus:#6FA3FF;
   --gutter:clamp(16px,4.4vw,56px); --max:1440px; --bar:72px;
   --disp:"Archivo","Arial Narrow","Helvetica Neue",Arial,sans-serif;
-  --body:"Geist","Geist Fallback",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --stmt:"Bricolage Grotesque","Bricolage Fallback","Geist",system-ui,sans-serif; /* big statements: the hero line, leads, award quotes */
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --stmt:"Atkinson Hyperlegible",system-ui,sans-serif; /* big statements: the hero line, leads, award quotes */
   --mono:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace; /* proof only: routes, files, stack, figures */
   --ease:cubic-bezier(.2,.7,.2,1);
 }
@@ -118,7 +114,8 @@ p{margin:0}
 
 /* ------------------------------------------------------------- hero */
 
-/* type roles: statements in Bricolage, reading text in Geist, proof in mono; emphasis is weight and gold, never italics */
+/* type roles: headings in condensed Archivo, everything else in Atkinson Hyperlegible, mono only for code and the
+   boss fight; emphasis is weight and gold, never italics */
 .case-hl,.text-page .lead{font-family:var(--stmt);font-weight:600;font-variation-settings:"opsz" 96;letter-spacing:-.025em;color:var(--ink)}
 .acts{display:flex;gap:10px;flex-wrap:wrap}
 
@@ -142,6 +139,7 @@ p{margin:0}
 .hs-item[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--ink)}
 .hs-item[aria-pressed="true"] .hs-dot{background:var(--c);transform:scale(1.2)}
 @media (hover:hover){.hs-item:hover{color:var(--ink)}}
+.hs-line{display:flex;gap:12px;align-items:flex-start;margin:0;padding:9px 12px 9px 0;color:var(--soft);font:400 16.5px/1.45 var(--body)}
 .hs-wrap{position:relative}
 .hs-frame{position:relative;border-radius:10px;overflow:hidden;background:#0E0E10;box-shadow:0 0 0 1px rgba(255,255,255,.16),0 26px 60px rgba(0,0,0,.5);container-type:inline-size}
 .hs-frame.is-device{background:#141416}
@@ -154,14 +152,6 @@ p{margin:0}
 .hs-layer[data-on]{opacity:1}
 .hs-spot{position:absolute;border-radius:10px;opacity:0;pointer-events:none;box-shadow:0 0 0 2000px rgba(8,8,9,.62),0 0 0 calc(2px / var(--s,1)) var(--c),0 0 calc(30px / var(--s,1)) color-mix(in srgb,var(--c) 60%,transparent);transition:opacity .35s,left .6s var(--ease),top .6s var(--ease),width .6s var(--ease),height .6s var(--ease)}
 .hs-view.spotlit .hs-spot{opacity:1}
-.hs-view.carded .hs-stage{transform:scale(1.04);filter:brightness(.45)}
-.hs-card{position:absolute;inset:auto 5% 7% 5%;z-index:4;padding:16px 18px;border-radius:10px;background:rgba(14,14,16,.95);border:1px solid color-mix(in srgb,var(--c) 55%,#333);box-shadow:0 20px 50px rgba(0,0,0,.6);display:grid;gap:4px;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .35s,transform .45s var(--ease),visibility .35s;pointer-events:none}
-.hs-card[data-on]{opacity:1;visibility:visible;transform:none}
-.hs-card code{font:400 16px/1.5 var(--mono);color:#E8E8EA;white-space:pre-wrap;overflow-wrap:anywhere}
-.hs-card > *{min-width:0}
-.hs-file,.hs-note{font-size:16px;color:var(--c);overflow-wrap:anywhere}
-.hs-file{font-family:var(--mono)}
-.hs-note{color:#A0A0A7;margin-top:6px}
 .hs-tag{position:absolute;left:4%;right:4%;bottom:5%;padding:10px 14px;border-radius:8px;background:rgba(14,14,16,.92);border:1px solid color-mix(in srgb,var(--c) 50%,#333);font:500 16px/1.4 var(--body);color:#F2F2F2;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .4s var(--ease)}
 .hs-tag[data-on]{opacity:1;transform:none}
 .hs-hint{position:absolute;z-index:3;left:14px;bottom:14px;padding:5px 11px;border-radius:99px;background:rgba(14,14,16,.88);border:1px solid rgba(255,255,255,.16);font-size:16px;color:#D4D4D7;transition:opacity .3s}
@@ -202,7 +192,7 @@ p{margin:0}
 .no-js .gal .ph{aspect-ratio:3/2}
 .win h3{font-size:clamp(28px,2.9vw,44px);line-height:.9;text-wrap:balance}
 .win .ev{font-size:16.5px;margin-top:8px}
-.win .fact{display:inline-block;margin-left:4px;font:500 16px/1 var(--mono);padding:4px 8px;border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:4px;color:var(--gold);vertical-align:1px}
+.win .fact{display:inline-block;margin-left:4px;font:500 16px/1 var(--body);padding:4px 8px;border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:4px;color:var(--gold);vertical-align:1px}
 .win .pr{display:flex;flex-wrap:wrap;gap:4px 22px;margin-top:4px}
 .win .pr a{display:inline-flex;gap:8px;align-items:center;font-weight:600;color:var(--ink)}
 .win .pr a + a{font-weight:500;color:var(--soft)}
@@ -361,9 +351,6 @@ p{margin:0}
   .feat .hs-wrap{order:1}.feat .k{order:2;margin:4px 0 -6px}.feat .built{order:3}
   .hs-hint{position:static;padding:0;margin-top:8px;border:0;background:none;color:var(--grey)}
   .feat.active .hs-hint{opacity:1}
-  .hs-card{position:static;display:none;margin-top:10px;transform:none}
-  .hs-card[data-on]{display:grid}
-  .hs-view.carded .hs-stage{filter:none;transform:none}
   .hs-tag{position:static;margin-top:10px;display:none;transform:none}
   .hs-tag[data-on]{display:block}
   /* phones: no small zoomable picture; each line shows its own part of the product */
@@ -373,8 +360,6 @@ p{margin:0}
   .hs-m{display:block;margin-top:10px}
   .hs-crop{width:min(100%,calc(62vh * var(--ratio)));aspect-ratio:var(--ratio);border-radius:10px;background-repeat:no-repeat;background-color:#0E0E10;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
   .hs-m-tag{margin-top:10px;font-size:16px;color:var(--soft)}
-  .hs-m-card{display:grid;gap:4px;padding:14px 16px;border-radius:10px;background:#0E0E10;border:1px solid color-mix(in srgb,var(--c) 45%,#333)}
-  .hs-m-card code{font:400 15px/1.5 var(--mono);color:#E8E8EA;white-space:pre-wrap;overflow-wrap:anywhere}
   .crumb-ev{display:none}
   .aw-row{grid-template-columns:minmax(0,1fr);row-gap:clamp(40px,7vh,72px)}
   .win h3{font-size:34px}
@@ -476,7 +461,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .chapter[data-side="right"] .info{left:auto;right:calc(var(--gutter) + 40px)}
 .chapter[data-side="bottom-left"] .info{top:auto;bottom:clamp(40px,8vh,96px);translate:none}
 .has-consent-prompt .chapter[data-side="bottom-left"] .info{bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))}
-.ch-num{font:500 16px/1 var(--mono);letter-spacing:.1em;color:var(--c)}
+.ch-num{font:500 16px/1 var(--body);letter-spacing:.1em;color:var(--c)}
 .ch-name{font-family:var(--name-font),var(--stmt);font-weight:400;font-size:clamp(48px,18cqi,120px);line-height:1;letter-spacing:-.01em;color:var(--c);text-wrap:balance}
 .ch-name a{color:inherit}
 /* with script on, a project's own typeface is only asked for once its chapter is near (the world adds .near); the
@@ -484,7 +469,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .js-on:not(.stills):not(.frozen) .chapter:not(.near) .ch-name{font-family:var(--stmt)}
 .chapter[data-scene="knowcad"] .ch-name{font-size:clamp(40px,14cqi,96px)} /* Michroma is very wide */
 .ch-line{font-size:clamp(18px,1.5vw,22px);line-height:1.45;color:var(--soft);max-width:32ch}
-.ch-res{font:500 16px/1.4 var(--mono);letter-spacing:.02em;color:var(--c)}
+.ch-res{font:500 16px/1.4 var(--body);letter-spacing:.02em;color:var(--c)}
 .info .btn{margin-top:6px}
 /* Boss Breaker: the boss's HP, kept above the 3D health bar by the scene, and the Attack button (live 3D only) */
 .bx-hud{position:absolute;top:0;left:0;z-index:2;display:grid;justify-items:center;gap:2px;text-align:center;pointer-events:none;white-space:nowrap;text-shadow:0 2px 12px rgba(12,12,13,.9)}
@@ -501,13 +486,12 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .mt-pick:focus-visible{position:fixed;left:50%;bottom:24px;translate:-50% 0;width:auto;height:auto;clip-path:none;padding:12px 18px;background:var(--bg);border:2px solid var(--focus);border-radius:8px;z-index:30;font:500 18px/1.2 var(--body)}
 .chapter:not([data-live]) .mt-picks{display:none}
 /* KnowCad: the question, typed by the scroll; a still caret (it never blinks) */
-.kc-q{order:-1;font:500 clamp(18px,1.8vw,24px)/1.35 var(--mono);color:var(--ink);max-width:28ch;min-height:2.7em}
+.kc-q{order:-1;font:500 clamp(18px,1.8vw,24px)/1.35 var(--body);color:var(--ink);max-width:28ch;min-height:2.7em}
 .kc-caret{display:inline-block;width:.55em;height:1.1em;margin-left:2px;vertical-align:-.18em;background:var(--c);opacity:.8}
 .rail{display:none}
 
 /* the About page: the then and the now in big type, the booth photo full width, the story in one readable column
-   with the barber's message, then the portrait beside what I'm looking for. Atkinson Hyperlegible throughout */
-body[data-page="about"]{--body:"Atkinson Hyperlegible",system-ui,sans-serif}
+   with the barber's message, then the portrait beside what I'm looking for */
 .letter{max-width:calc(820px + 2 * var(--gutter));padding-top:clamp(28px,4vw,56px)}
 .lt-hook{margin:clamp(28px,4vw,48px) 0 clamp(32px,4vw,48px)}
 .lt-hook h1{margin:0 0 18px;font-size:clamp(26px,2.4vw,34px);line-height:1;color:var(--gold)}
@@ -534,7 +518,7 @@ body[data-page="about"]{--body:"Atkinson Hyperlegible",system-ui,sans-serif}
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}
 .end-board{width:min(100%,1240px);aspect-ratio:19.76/3.42;contain:size;display:grid;place-items:center}
 .end-board .still img{width:100%;height:auto}
-.end-mail{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center;font:500 clamp(17px,1.8vw,22px)/1.3 var(--mono);color:var(--soft)}
+.end-mail{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center;font:500 clamp(17px,1.8vw,22px)/1.3 var(--body);color:var(--soft)}
 
 @media (max-width:860px){
   .hero-board{aspect-ratio:10.12/5.07}
@@ -574,7 +558,7 @@ html.smooth{scroll-behavior:auto}
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script>(()=>{const q=new URLSearchParams(location.search).get('mode'),m=(s)=>matchMedia(s).matches,c=navigator.connection,d=navigator.deviceMemory;if(q!=='stills'&&'WebGL2RenderingContext' in window&&(q==='3d'||!(m('(prefers-reduced-motion: reduce)')||(c&&c.saveData)||(typeof d==='number'&&d<4))))document.documentElement.classList.add('has-3d')})()</script>
   <script>for(const t of['pageswap','pagereveal'])addEventListener(t,(e)=>{const a=t==='pageswap'?e.activation:window.navigation&&navigation.activation;if(e.viewTransition&&e.viewTransition.types&&a&&a.navigationType==='traverse')e.viewTransition.types.add('back')})</script>
-  <script src="js/script.js?v=3cec4b26" defer></script>
+  <script src="js/script.js?v=ab1e732a" defer></script>
   <script src="js/analytics.js?v=915544e1" defer></script>
   <script type="importmap">{"imports":{"./js/3d/awards-timeline.js":"./js/3d/awards-timeline.js?v=8ae7430a","./js/3d/awards.js":"./js/3d/awards.js?v=33cff537","./js/3d/board.js":"./js/3d/board.js?v=65edb9bc","./js/3d/chapters/bcb-timeline.js":"./js/3d/chapters/bcb-timeline.js?v=956fa94d","./js/3d/chapters/better-call-bhai.js":"./js/3d/chapters/better-call-bhai.js?v=ddf2d81e","./js/3d/chapters/boss-breaker.js":"./js/3d/chapters/boss-breaker.js?v=fc21bd77","./js/3d/chapters/boss-timeline.js":"./js/3d/chapters/boss-timeline.js?v=19648e24","./js/3d/chapters/knowcad-timeline.js":"./js/3d/chapters/knowcad-timeline.js?v=e50ef3ca","./js/3d/chapters/knowcad.js":"./js/3d/chapters/knowcad.js?v=12688bcc","./js/3d/chapters/meant-timeline.js":"./js/3d/chapters/meant-timeline.js?v=5269b19b","./js/3d/chapters/meant.js":"./js/3d/chapters/meant.js?v=8b3313c3","./js/3d/chapters/signalbridge-timeline.js":"./js/3d/chapters/signalbridge-timeline.js?v=26504e75","./js/3d/chapters/signalbridge.js":"./js/3d/chapters/signalbridge.js?v=24ff4a40","./js/3d/devices.js":"./js/3d/devices.js?v=086bac31","./js/3d/ending.js":"./js/3d/ending.js?v=22bb6a02","./js/3d/flap.js":"./js/3d/flap.js?v=e53ccadb","./js/3d/hero.js":"./js/3d/hero.js?v=056bcd76","./js/3d/paths.js":"./js/3d/paths.js?v=9408f81c","./js/3d/stage.js":"./js/3d/stage.js?v=16d08d8a","./js/3d/tap.js":"./js/3d/tap.js?v=58a4c4f2","./js/3d/textures.js":"./js/3d/textures.js?v=ca312fd4","./js/3d/world.js":"./js/3d/world.js?v=d7ebfa76","./js/home.js":"./js/home.js?v=0b930cfe","./js/lib/capability.js":"./js/lib/capability.js?v=fd53f0ed","./js/lib/fit.js":"./js/lib/fit.js?v=d1ad86dd","./js/lib/glide.js":"./js/lib/glide.js?v=51b16fde","./js/lib/motion.js":"./js/lib/motion.js?v=d570a3ea","./js/lib/path.js":"./js/lib/path.js?v=3d503fb9","./js/lib/physics.js":"./js/lib/physics.js?v=d11d19f2","./js/lib/scatter.js":"./js/lib/scatter.js?v=32949847","./js/lib/scrollnav.js":"./js/lib/scrollnav.js?v=d7dd1bef","./js/lib/ticker.js":"./js/lib/ticker.js?v=23f277c5","./js/lib/watchdog.js":"./js/lib/watchdog.js?v=58ebeb3b","./js/vendor/lenis/lenis.min.js":"./js/vendor/lenis/lenis.min.js?v=c340ac3c","./js/vendor/three/addons/environments/RoomEnvironment.js":"./js/vendor/three/addons/environments/RoomEnvironment.js?v=1592f672","three/addons/environments/RoomEnvironment.js":"./js/vendor/three/addons/environments/RoomEnvironment.js?v=1592f672","./js/vendor/three/addons/geometries/RoundedBoxGeometry.js":"./js/vendor/three/addons/geometries/RoundedBoxGeometry.js?v=57e49d98","three/addons/geometries/RoundedBoxGeometry.js":"./js/vendor/three/addons/geometries/RoundedBoxGeometry.js?v=57e49d98","./js/vendor/three/three.module.min.js":"./js/vendor/three/three.module.min.js?v=8b618bd9","three":"./js/vendor/three/three.module.min.js?v=8b618bd9","lenis":"./js/vendor/lenis/lenis.min.js?v=c340ac3c"}}</script>
   <link rel="modulepreload" href="./js/home.js?v=0b930cfe" fetchpriority="low">
