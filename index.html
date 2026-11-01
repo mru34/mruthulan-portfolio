@@ -7,7 +7,7 @@
   <meta name="description" content="Mruthulan Senthil Nathan, Year 2 IT at Singapore Polytechnic, builds full-stack products. Five projects, what I built on each, and three hackathon results.">
   <link rel="canonical" href="https://mruthulan.com/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Mruthulan Senthil Nathan — Developer &amp; Builder">
+  <meta property="og:title" content="Mruthulan Senthil Nathan">
   <meta property="og:description" content="Five projects, what I built on each, and three hackathon results.">
   <meta property="og:url" content="https://mruthulan.com/">
   <meta property="og:image" content="https://mruthulan.com/assets/og/home.jpg?v=0d1b5ef1">
@@ -15,7 +15,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://mruthulan.com/assets/og/home.jpg?v=0d1b5ef1">
-  <title>Mruthulan Senthil Nathan — Developer &amp; Builder</title>
+  <title>Mruthulan Senthil Nathan</title>
   <link rel="icon" href="assets/favicon.svg?v=75fb1612" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -401,7 +401,7 @@ p{margin:0}
 
 /* ------------------------------------------------------------- motion (only when wanted) */
 @media (prefers-reduced-motion: no-preference){
-  html.loaded{scroll-behavior:smooth} /* not while the page loads: a jump to /#about then lands instantly and stays put as the page settles */
+  html.loaded{scroll-behavior:smooth} /* not while the page loads: a jump to /#awards then lands instantly and stays put as the page settles */
   @view-transition{navigation:auto}
   ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}
@@ -442,7 +442,6 @@ p{margin:0}
    Without it, each 3D box shows a still of itself and the page flows normally: this is that page. */
 .stage{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:none}
 [data-page="home"] main,[data-page="home"] footer{position:relative;z-index:1}
-.big{font:700 clamp(44px,7.4vw,120px)/.95 var(--stmt);letter-spacing:-.035em;color:var(--ink);text-wrap:balance}
 .still{display:block;width:100%;height:100%}
 .still img{width:100%;height:100%;object-fit:contain}
 [data-anchor][data-live] > .still{visibility:hidden} /* the live 3D now draws this box */
@@ -504,28 +503,6 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .kc-caret{display:inline-block;width:.55em;height:1.1em;margin-left:2px;vertical-align:-.18em;background:var(--c);opacity:.8}
 .rail{display:none}
 
-/* about: the portrait (it stays beside the words on a laptop), who the projects were for, the record as split-flap
-   tiles, how I work, then the facts */
-.me{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:clamp(32px,5vw,80px);align-items:start;margin-top:clamp(28px,4vh,48px)}
-.me .portrait{aspect-ratio:4/5;border-radius:10px;overflow:hidden;position:sticky;top:calc(var(--bar) + 24px)}
-.me .portrait img{width:100%;height:100%;object-fit:cover}
-.me-intro{margin:0;font-family:var(--stmt);font-weight:600;font-variation-settings:"opsz" 96;font-size:clamp(26px,2.7vw,40px);line-height:1.18;letter-spacing:-.02em;max-width:24ch;color:var(--ink);text-wrap:balance}
-.me-intro strong{font-weight:inherit;color:var(--gold)}
-.me-stats{list-style:none;margin:clamp(32px,5vh,48px) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.me-stats li{display:grid;gap:10px;justify-items:start;cursor:default}
-.flaps{display:flex;gap:4px}
-.flaps i{position:relative;display:grid;place-items:center;width:52px;height:68px;border-radius:6px;background:linear-gradient(#1d1d20,#141416 50%,#0f0f11);box-shadow:inset 0 1px rgba(255,255,255,.06),0 2px 0 #050506;font:800 52px/1 var(--disp);font-stretch:62%;font-style:normal;color:var(--gold)}
-.flaps i::after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:#0a0a0b}
-.stat-what{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);line-height:1.3}
-.me-how-title{margin:clamp(40px,6vh,56px) 0 0;font-size:16px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
-.me-how{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 36px;counter-reset:how}
-.me-how li{counter-increment:how;border-top:1px solid var(--hair);padding-top:16px;font-size:clamp(17px,1.35vw,19px);line-height:1.45;color:var(--soft)}
-.me-how li::before{content:"0" counter(how);display:block;margin-bottom:10px;font:500 15px/1 var(--mono);color:var(--gold)}
-.me-how b{display:block;margin-bottom:4px;font-weight:600;font-size:1.06em;color:var(--ink)}
-.facts3{margin:clamp(40px,6vh,56px) 0 0;display:grid;gap:24px;border-top:1px solid var(--hair);padding-top:28px}
-.facts3 dt{font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
-.facts3 dd{margin:8px 0 0;font-size:clamp(18px,1.5vw,22px);line-height:1.4}
-
 /* the ending: the internship board, the links */
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}
 .end-board{width:min(100%,1240px);aspect-ratio:19.76/3.42;contain:size;display:grid;place-items:center}
@@ -539,11 +516,6 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
   .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
   .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
   .has-consent-prompt .info,.has-consent-prompt .chapter[data-side] .info{bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))} /* above the analytics question while it is up */
-  .me{grid-template-columns:1fr}
-  .me .portrait{max-width:220px;position:static} /* small, so the words show on the first screen */
-  .me-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 16px}
-  .me-how{grid-template-columns:1fr}
-  .flaps i{width:46px;height:60px;font-size:46px}
 }
 
 /* stills of the 3D (design/stills.mjs): only the canvas shows; around the boards the page is transparent */
@@ -574,7 +546,7 @@ html.smooth{scroll-behavior:auto}
   <script>document.documentElement.classList.replace('no-js','js-on')</script>
   <script>(()=>{const q=new URLSearchParams(location.search).get('mode'),m=(s)=>matchMedia(s).matches,c=navigator.connection,d=navigator.deviceMemory;if(q!=='stills'&&'WebGL2RenderingContext' in window&&(q==='3d'||!(m('(prefers-reduced-motion: reduce)')||(c&&c.saveData)||(typeof d==='number'&&d<4))))document.documentElement.classList.add('has-3d')})()</script>
   <script>for(const t of['pageswap','pagereveal'])addEventListener(t,(e)=>{const a=t==='pageswap'?e.activation:window.navigation&&navigation.activation;if(e.viewTransition&&e.viewTransition.types&&a&&a.navigationType==='traverse')e.viewTransition.types.add('back')})</script>
-  <script src="js/script.js?v=5a08047a" defer></script>
+  <script src="js/script.js?v=3cec4b26" defer></script>
   <script src="js/analytics.js?v=915544e1" defer></script>
   <script type="importmap">{"imports":{"./js/3d/awards-timeline.js":"./js/3d/awards-timeline.js?v=8ae7430a","./js/3d/awards.js":"./js/3d/awards.js?v=33cff537","./js/3d/board.js":"./js/3d/board.js?v=65edb9bc","./js/3d/chapters/bcb-timeline.js":"./js/3d/chapters/bcb-timeline.js?v=956fa94d","./js/3d/chapters/better-call-bhai.js":"./js/3d/chapters/better-call-bhai.js?v=ddf2d81e","./js/3d/chapters/boss-breaker.js":"./js/3d/chapters/boss-breaker.js?v=fc21bd77","./js/3d/chapters/boss-timeline.js":"./js/3d/chapters/boss-timeline.js?v=19648e24","./js/3d/chapters/knowcad-timeline.js":"./js/3d/chapters/knowcad-timeline.js?v=e50ef3ca","./js/3d/chapters/knowcad.js":"./js/3d/chapters/knowcad.js?v=12688bcc","./js/3d/chapters/meant-timeline.js":"./js/3d/chapters/meant-timeline.js?v=5269b19b","./js/3d/chapters/meant.js":"./js/3d/chapters/meant.js?v=8b3313c3","./js/3d/chapters/signalbridge-timeline.js":"./js/3d/chapters/signalbridge-timeline.js?v=26504e75","./js/3d/chapters/signalbridge.js":"./js/3d/chapters/signalbridge.js?v=24ff4a40","./js/3d/devices.js":"./js/3d/devices.js?v=086bac31","./js/3d/ending.js":"./js/3d/ending.js?v=22bb6a02","./js/3d/flap.js":"./js/3d/flap.js?v=e53ccadb","./js/3d/hero.js":"./js/3d/hero.js?v=056bcd76","./js/3d/paths.js":"./js/3d/paths.js?v=9408f81c","./js/3d/stage.js":"./js/3d/stage.js?v=16d08d8a","./js/3d/tap.js":"./js/3d/tap.js?v=58a4c4f2","./js/3d/textures.js":"./js/3d/textures.js?v=ca312fd4","./js/3d/world.js":"./js/3d/world.js?v=d7ebfa76","./js/home.js":"./js/home.js?v=0b930cfe","./js/lib/capability.js":"./js/lib/capability.js?v=fd53f0ed","./js/lib/fit.js":"./js/lib/fit.js?v=d1ad86dd","./js/lib/glide.js":"./js/lib/glide.js?v=51b16fde","./js/lib/motion.js":"./js/lib/motion.js?v=d570a3ea","./js/lib/path.js":"./js/lib/path.js?v=3d503fb9","./js/lib/physics.js":"./js/lib/physics.js?v=d11d19f2","./js/lib/scatter.js":"./js/lib/scatter.js?v=32949847","./js/lib/scrollnav.js":"./js/lib/scrollnav.js?v=d7dd1bef","./js/lib/ticker.js":"./js/lib/ticker.js?v=23f277c5","./js/lib/watchdog.js":"./js/lib/watchdog.js?v=58ebeb3b","./js/vendor/lenis/lenis.min.js":"./js/vendor/lenis/lenis.min.js?v=c340ac3c","./js/vendor/three/addons/environments/RoomEnvironment.js":"./js/vendor/three/addons/environments/RoomEnvironment.js?v=1592f672","three/addons/environments/RoomEnvironment.js":"./js/vendor/three/addons/environments/RoomEnvironment.js?v=1592f672","./js/vendor/three/addons/geometries/RoundedBoxGeometry.js":"./js/vendor/three/addons/geometries/RoundedBoxGeometry.js?v=57e49d98","three/addons/geometries/RoundedBoxGeometry.js":"./js/vendor/three/addons/geometries/RoundedBoxGeometry.js?v=57e49d98","./js/vendor/three/three.module.min.js":"./js/vendor/three/three.module.min.js?v=8b618bd9","three":"./js/vendor/three/three.module.min.js?v=8b618bd9","lenis":"./js/vendor/lenis/lenis.min.js?v=c340ac3c"}}</script>
   <link rel="modulepreload" href="./js/home.js?v=0b930cfe" fetchpriority="low">
@@ -609,7 +581,7 @@ html.smooth{scroll-behavior:auto}
   <header class="top" data-top>
     <div class="wrap top-in">
       <a class="logo cn" href="#top">Mruthulan</a>
-      <nav class="nav" aria-label="Main"><a href="#work" data-nav="work">Work</a><a href="#awards" data-nav="awards">Awards</a><a href="#about" data-nav="about">About</a><span class="nav-ink" aria-hidden="true"></span></nav>
+      <nav class="nav" aria-label="Main"><a href="#work" data-nav="work">Work</a><a href="#awards" data-nav="awards">Awards</a><span class="nav-ink" aria-hidden="true"></span></nav>
       <div class="top-acts">
         <a class="icon-only" href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg></a>
         <a class="icon-only" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
@@ -618,7 +590,7 @@ html.smooth{scroll-behavior:auto}
         <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
-    <nav class="menu" id="menu" aria-label="Menu" hidden><a href="#work">Work</a><a href="#awards">Awards</a><a href="#about">About</a><a href="#contact">Contact</a><a href="assets/Mruthulan-Senthil-Nathan-Resume.pdf?v=621f882544b1" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a><a href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github">GitHub ↗</a></nav>
+    <nav class="menu" id="menu" aria-label="Menu" hidden><a href="#work">Work</a><a href="#awards">Awards</a><a href="#contact">Contact</a><a href="assets/Mruthulan-Senthil-Nathan-Resume.pdf?v=621f882544b1" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a><a href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github">GitHub ↗</a></nav>
   </header>
 
   <main id="main">
@@ -638,7 +610,7 @@ html.smooth{scroll-behavior:auto}
             <p class="ch-num">01</p>
             <h3 class="ch-name" id="ch-sb" style="view-transition-name:t-sb"><a href="signalbridge.html" data-event="case_open" data-project="sb">SignalBridge</a></h3>
             <p class="ch-line beat-line">After-hours chat for young people. Nothing reaches a youth worker until they say yes.</p>
-            <p class="ch-res beat-pay">Champion · Dell InnovateDash 2026</p>
+            <p class="ch-res beat-pay">Won Dell InnovateDash 2026</p>
             <a class="btn beat-pay" href="signalbridge.html" data-event="case_open" data-project="sb">More info <span aria-hidden="true">→</span></a>
           </div>
         </div>
@@ -650,8 +622,8 @@ html.smooth{scroll-behavior:auto}
           <div class="info">
             <p class="ch-num">02</p>
             <h3 class="ch-name" id="ch-bx" style="view-transition-name:t-bx"><a href="boss-breaker.html" data-event="case_open" data-project="bx">Boss Breaker</a></h3>
-            <p class="ch-line beat-line">Wellness challenges, played as a boss fight.</p>
-            <p class="ch-res beat-pay">Solo build · code on GitHub</p>
+            <p class="ch-line beat-line">A wellness app where finishing challenges lets you fight a boss.</p>
+            <p class="ch-res beat-pay">Built alone, code on GitHub</p>
             <a class="btn beat-pay" href="boss-breaker.html" data-event="case_open" data-project="bx">More info <span aria-hidden="true">→</span></a><button class="btn bx-attack" type="button" data-attack>Attack</button>
           </div><div class="bx-hud" aria-hidden="true"><p class="bx-hit" data-hit></p><p class="bx-boss">Stress Dragon</p><p class="bx-hp"><span data-hp>1,840</span> / 5,000 HP</p><p class="bx-down" data-defeated hidden>Stress Dragon defeated</p></div><p class="sr-only" aria-live="polite" data-hp-live></p>
         </div>
@@ -664,7 +636,7 @@ html.smooth{scroll-behavior:auto}
             <p class="ch-num">03</p>
             <h3 class="ch-name" id="ch-bb" style="view-transition-name:t-bb"><a href="better-call-bhai.html" data-event="case_open" data-project="bb">Better Call Bhai</a></h3>
             <p class="ch-line beat-line">Online booking for a barbershop in Singapore.</p>
-            <p class="ch-res beat-pay">Solo build · in a pilot with the shop</p>
+            <p class="ch-res beat-pay">Built alone, now being tried out by the shop</p>
             <a class="btn beat-pay" href="better-call-bhai.html" data-event="case_open" data-project="bb">More info <span aria-hidden="true">→</span></a>
           </div>
         </div>
@@ -676,8 +648,8 @@ html.smooth{scroll-behavior:auto}
           <div class="info">
             <p class="ch-num">04</p>
             <h3 class="ch-name" id="ch-mt" style="view-transition-name:t-mt"><a href="meant.html" data-event="case_open" data-project="mt">MEANT</a></h3>
-            <p class="ch-line beat-line">Helps people who can’t rely on their speech reply in time. They choose every word.</p>
-            <p class="ch-res beat-pay">2nd runner-up · Dell InnovateFest 2026</p>
+            <p class="ch-line beat-line">Helps people who can’t rely on their speech keep up in a conversation, with replies they choose.</p>
+            <p class="ch-res beat-pay">2nd runner-up at Dell InnovateFest 2026</p>
             <a class="btn beat-pay" href="meant.html" data-event="case_open" data-project="mt">More info <span aria-hidden="true">→</span></a><a class="link mt-press" href="meant.html#press">Featured in Tamil Murasu</a><div class="mt-picks" role="group" aria-label="Pick a reply"><button class="mt-pick" type="button" data-reply="0">Roasted chicken rice</button><button class="mt-pick" type="button" data-reply="1">Steamed chicken rice</button><button class="mt-pick" type="button" data-reply="2">Char siew rice</button><button class="mt-pick" type="button" data-reply="3">Duck rice</button></div><p class="sr-only" aria-live="polite" data-partner-live></p>
           </div>
         </div>
@@ -690,7 +662,7 @@ html.smooth{scroll-behavior:auto}
             <p class="ch-num">05</p>
             <h3 class="ch-name" id="ch-kc" style="view-transition-name:t-kc"><a href="knowcad.html" data-event="case_open" data-project="kc">KnowCad</a></h3>
             <p class="ch-line beat-line">An AI assistant for customer service that finds answers in long documents.</p>
-            <p class="ch-res beat-pay">Champion · Autodesk Singapore Hackathon 2026</p>
+            <p class="ch-res beat-pay">Won the Autodesk Singapore Hackathon 2026</p>
             <a class="btn beat-pay" href="knowcad.html" data-event="case_open" data-project="kc">More info <span aria-hidden="true">→</span></a><p class="kc-q" aria-hidden="true"><span data-typed>Licence “in use on another device” after moving to new laptops</span><i class="kc-caret"></i></p><p class="sr-only">Licence “in use on another device” after moving to new laptops</p>
           </div>
         </div>
@@ -721,20 +693,6 @@ html.smooth{scroll-behavior:auto}
           <p class="pr"><a class="link" href="knowcad.html" data-event="case_open" data-project="kc"><i class="sw"></i>KnowCad</a><a class="link" href="https://lnkd.in/p/dQW9Pg_v" target="_blank" rel="noopener noreferrer" data-event="proof_post_click" data-project="kc">LinkedIn post ↗</a></p>
           <div class="org"><img src="assets/logos/autodesk.svg" alt="Autodesk" width="166" height="17" loading="lazy" decoding="async"></div>
         </article>
-      </div>
-    </section>
-
-    <section class="sec wrap" id="about" data-sec="about" aria-labelledby="about-title">
-      <h2 class="big" id="about-title">About</h2>
-      <div class="me">
-        <div class="ph portrait"><img src="assets/media/about-portrait.webp" width="800" height="1000" alt="Portrait of Mruthulan in a dark Singapore Polytechnic blazer, white shirt and red tie" decoding="async" loading="lazy"></div>
-        <div class="me-text">
-          <p class="me-intro">I build for one real person first: <strong>a youth worker at midnight</strong>, <strong>someone who can’t rely on their speech</strong>, <strong>a barber with a full day of bookings</strong>.</p>
-          <ul class="me-stats" aria-label="In numbers"><li data-flap="5"><span class="flaps" aria-hidden="true"><i>5</i></span><span class="stat-what" aria-hidden="true">projects</span><span class="sr-only">5 projects</span></li><li data-flap="3"><span class="flaps" aria-hidden="true"><i>3</i></span><span class="stat-what" aria-hidden="true">hackathon awards</span><span class="sr-only">3 hackathon awards</span></li><li data-flap="2"><span class="flaps" aria-hidden="true"><i>2</i></span><span class="stat-what" aria-hidden="true">champion titles</span><span class="sr-only">2 champion titles</span></li><li data-flap="1"><span class="flaps" aria-hidden="true"><i>1</i></span><span class="stat-what" aria-hidden="true">newspaper feature</span><span class="sr-only">1 newspaper feature</span></li></ul>
-          <h3 class="me-how-title">How I work</h3>
-          <ol class="me-how"><li><b>Start with one person.</b> I built SignalBridge’s consent screen: a youth’s note reaches their worker only after the youth has read it and said yes.</li><li><b>Make the demo hard to break.</b> Before MEANT’s live demo I fixed a stuck mic, a silent send and a black camera.</li><li><b>Keep the rules on the server.</b> In Boss Breaker the server works out points and boss damage, so the browser can’t cheat.</li><li><b>Then explain it.</b> I built and delivered the winning presentation at the Autodesk Singapore Hackathon 2026.</li></ol>
-          <dl class="facts3" id="credentials"><div><dt>Looking for</dt><dd>A year-long software engineering internship · 2027/28</dd></div><div><dt>Study</dt><dd>Diploma in Information Technology · Singapore Polytechnic · 2025–2028</dd></div><div><dt>Leadership</dt><dd>Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER</dd></div></dl>
-        </div>
       </div>
     </section>
 
