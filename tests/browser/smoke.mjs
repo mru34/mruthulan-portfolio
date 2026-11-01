@@ -51,7 +51,7 @@ scenario('without JavaScript, everything is there', async () => {
   const { page } = await open({ js: false });
   check(await page.$$eval('.chapter', (s) => s.length) === 5, 'five chapters');
   for (const pid of PIDS) check(await infoVisible(page, pid), `chapter ${pid}: information visible`);
-  check(await page.$$eval('.hero-links a', (a) => a.length) === 3, 'three hero links');
+  check(await page.$$eval('.hero-links a', (a) => a.length) === 4, 'four hero links (About me, LinkedIn, GitHub, Résumé)');
   check(await page.$eval('canvas.stage', (c) => getComputedStyle(c).display === 'none'), 'canvas hidden');
   await page.close();
 });

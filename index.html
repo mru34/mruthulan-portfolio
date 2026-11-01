@@ -38,6 +38,8 @@
 /* Stand-ins sized to the real fonts (measured widths), so text wraps the same before and after they load and nothing jumps */
 @font-face{font-family:"Bricolage Fallback";src:local("Arial");size-adjust:90.1%}
 @font-face{font-family:"Geist Fallback";src:local("Arial");size-adjust:103.8%}
+@font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:400;font-display:swap;src:url(../assets/fonts/atkinson-hyperlegible-400-latin.woff2) format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:700;font-display:swap;src:url(../assets/fonts/atkinson-hyperlegible-700-latin.woff2) format("woff2")}
 @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 500;font-display:swap;src:url(../assets/fonts/jetbrains-mono-400-500-latin.woff2) format("woff2")}
 /* each project's name in its own typeface, cut down to the letters of the name (design/build_name_fonts.py) */
 @font-face{font-family:"Name SignalBridge";src:url(../assets/fonts/name-signalbridge.woff2) format("woff2");font-display:swap}
@@ -503,6 +505,31 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .kc-caret{display:inline-block;width:.55em;height:1.1em;margin-left:2px;vertical-align:-.18em;background:var(--c);opacity:.8}
 .rail{display:none}
 
+/* the About page: the then and the now in big type, the booth photo full width, the story in one readable column
+   with the barber's message, then the portrait beside what I'm looking for. Atkinson Hyperlegible throughout */
+body[data-page="about"]{--body:"Atkinson Hyperlegible",system-ui,sans-serif}
+.letter{max-width:calc(820px + 2 * var(--gutter));padding-top:clamp(28px,4vw,56px)}
+.lt-hook{margin:clamp(28px,4vw,48px) 0 clamp(32px,4vw,48px)}
+.lt-hook h1{margin:0 0 18px;font-size:clamp(26px,2.4vw,34px);line-height:1;color:var(--gold)}
+.lt-then,.lt-since{margin:0;font-family:var(--body);font-weight:700;font-size:clamp(24px,2.5vw,34px);line-height:1.3;letter-spacing:-.01em;text-wrap:pretty}
+.lt-then{color:var(--ink)}
+.lt-since{margin-top:.6em;color:var(--gold)}
+.lt-since a{color:inherit;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.14em}
+.lt-photo{margin:0;display:grid;gap:12px}
+.lt-photo .ph{border-radius:14px;overflow:hidden}
+.lt-photo img{width:100%;height:auto}
+.lt-story{max-width:680px;margin-top:clamp(40px,5vw,64px)}
+.lt-story > p{margin:0 0 1.1em;font-size:clamp(18px,1.3vw,20px);line-height:1.65;color:var(--soft)}
+.lt-story > p a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
+.lt-story .quote{margin:8px 0 1.6em}
+.lt-story > p.lt-close{margin:clamp(28px,4vw,44px) 0 0;font-weight:700;font-size:clamp(24px,2.5vw,34px);line-height:1.3;color:var(--gold)}
+.lt-story .quote p{font-size:clamp(17px,1.2vw,19px)}
+.lt-end{display:flex;align-items:center;gap:24px;max-width:680px;margin-top:clamp(40px,5vw,64px);padding-top:32px;border-top:1px solid var(--hair)}
+.lt-face{flex:none;width:104px;aspect-ratio:4/5;border-radius:12px;overflow:hidden}
+.lt-face img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.lt-now{margin:0;font-size:clamp(17px,1.2vw,19px);line-height:1.5;color:var(--soft)}
+.lt-end .acts{margin-top:18px}
+
 /* the ending: the internship board, the links */
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}
 .end-board{width:min(100%,1240px);aspect-ratio:19.76/3.42;contain:size;display:grid;place-items:center}
@@ -512,6 +539,7 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 @media (max-width:860px){
   .hero-board{aspect-ratio:10.12/5.07}
   .end-board{aspect-ratio:12.3/5.07}
+  .lt-end{flex-direction:column;align-items:flex-start}
   html.has-3d .rail{display:none} /* on a phone the rail would sit over the scene */
   .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
   .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
@@ -581,7 +609,7 @@ html.smooth{scroll-behavior:auto}
   <header class="top" data-top>
     <div class="wrap top-in">
       <a class="logo cn" href="#top">Mruthulan</a>
-      <nav class="nav" aria-label="Main"><a href="#work" data-nav="work">Work</a><a href="#awards" data-nav="awards">Awards</a><span class="nav-ink" aria-hidden="true"></span></nav>
+      <nav class="nav" aria-label="Main"><a href="#work" data-nav="work">Work</a><a href="#awards" data-nav="awards">Awards</a><a href="about.html">About</a><span class="nav-ink" aria-hidden="true"></span></nav>
       <div class="top-acts">
         <a class="icon-only" href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg></a>
         <a class="icon-only" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
@@ -590,14 +618,14 @@ html.smooth{scroll-behavior:auto}
         <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
-    <nav class="menu" id="menu" aria-label="Menu" hidden><a href="#work">Work</a><a href="#awards">Awards</a><a href="#contact">Contact</a><a href="assets/Mruthulan-Senthil-Nathan-Resume.pdf?v=621f882544b1" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a><a href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github">GitHub ↗</a></nav>
+    <nav class="menu" id="menu" aria-label="Menu" hidden><a href="#work">Work</a><a href="#awards">Awards</a><a href="#contact">Contact</a><a href="about.html">About</a><a href="assets/Mruthulan-Senthil-Nathan-Resume.pdf?v=621f882544b1" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin">LinkedIn ↗</a><a href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github">GitHub ↗</a></nav>
   </header>
 
   <main id="main">
     <section class="hero wrap" data-scene="hero" aria-labelledby="name">
       <h1 class="sr-only" id="name">Mruthulan Senthil Nathan</h1>
       <div class="hero-board" data-anchor><picture class="still"><source media="(max-width: 860px)" srcset="assets/3d/stills/hero-phone.webp" width="712" height="356"><img src="assets/3d/stills/hero-desk.webp" width="2480" height="568" alt="" decoding="async" fetchpriority="high"></picture></div>
-      <ul class="hero-links" aria-label="Links"><li><a class="icon-btn" href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg><span>LinkedIn</span></a></li><li><a class="icon-btn" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a></li><li><a class="icon-btn" href="assets/Mruthulan-Senthil-Nathan-Resume.pdf?v=621f882544b1" target="_blank" rel="noopener" data-event="resume_click"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/></svg><span>Résumé</span></a></li></ul>
+      <ul class="hero-links" aria-label="Links"><li><a class="icon-btn" href="about.html" data-event="about_open"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/></svg><span>About me</span></a></li><li><a class="icon-btn" href="https://www.linkedin.com/in/mruthulan/" target="_blank" rel="noopener noreferrer" data-event="contact_open_linkedin"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg><span>LinkedIn</span></a></li><li><a class="icon-btn" href="https://github.com/mru34" target="_blank" rel="noopener noreferrer" data-event="contact_open_github"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a></li><li><a class="icon-btn" href="assets/Mruthulan-Senthil-Nathan-Resume.pdf?v=621f882544b1" target="_blank" rel="noopener" data-event="resume_click"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/></svg><span>Résumé</span></a></li></ul>
       <div data-hero-end aria-hidden="true"></div>
     </section>
 

@@ -221,5 +221,14 @@
     "note": "Real local capture (portfolio-tools/card-shots); fictional seed data.",
     "width": 1170,
     "height": 1823
+  },
+  "about-meant-booth": {
+    "status": "ready",
+    "note": "Supplied by Mruthulan (the event photo).",
+    "src": "about-meant-booth.webp",
+    "alt": "The MEANT team in school blazers giving a thumbs up at their Dell InnovateFest 2026 booth, around a man in a wheelchair with a tablet mounted in front of him and a woman standing beside him, under a TRY MEANT sign.",
+    "caption": "Our MEANT booth at Dell InnovateFest 2026",
+    "width": 1280,
+    "height": 719
   }
 }
