@@ -380,7 +380,7 @@ p{margin:0}
 
 /* ------------------------------------------------------------- motion (only when wanted) */
 @media (prefers-reduced-motion: no-preference){
-  html.loaded{scroll-behavior:smooth} /* not while the page loads: a jump to /#about then lands instantly and stays put as the page settles */
+  html.loaded{scroll-behavior:smooth} /* not while the page loads: a jump to /#awards then lands instantly and stays put as the page settles */
   @view-transition{navigation:auto}
   ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.7,.2,1)}
   ::view-transition-old(root),::view-transition-new(root){animation-duration:.28s}
@@ -421,7 +421,6 @@ p{margin:0}
    Without it, each 3D box shows a still of itself and the page flows normally: this is that page. */
 .stage{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:none}
 [data-page="home"] main,[data-page="home"] footer{position:relative;z-index:1}
-.big{font:700 clamp(44px,7.4vw,120px)/.95 var(--stmt);letter-spacing:-.035em;color:var(--ink);text-wrap:balance}
 .still{display:block;width:100%;height:100%}
 .still img{width:100%;height:100%;object-fit:contain}
 [data-anchor][data-live] > .still{visibility:hidden} /* the live 3D now draws this box */
@@ -483,28 +482,6 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
 .kc-caret{display:inline-block;width:.55em;height:1.1em;margin-left:2px;vertical-align:-.18em;background:var(--c);opacity:.8}
 .rail{display:none}
 
-/* about: the portrait (it stays beside the words on a laptop), who the projects were for, the record as split-flap
-   tiles, how I work, then the facts */
-.me{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:clamp(32px,5vw,80px);align-items:start;margin-top:clamp(28px,4vh,48px)}
-.me .portrait{aspect-ratio:4/5;border-radius:10px;overflow:hidden;position:sticky;top:calc(var(--bar) + 24px)}
-.me .portrait img{width:100%;height:100%;object-fit:cover}
-.me-intro{margin:0;font-family:var(--stmt);font-weight:600;font-variation-settings:"opsz" 96;font-size:clamp(26px,2.7vw,40px);line-height:1.18;letter-spacing:-.02em;max-width:24ch;color:var(--ink);text-wrap:balance}
-.me-intro strong{font-weight:inherit;color:var(--gold)}
-.me-stats{list-style:none;margin:clamp(32px,5vh,48px) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.me-stats li{display:grid;gap:10px;justify-items:start;cursor:default}
-.flaps{display:flex;gap:4px}
-.flaps i{position:relative;display:grid;place-items:center;width:52px;height:68px;border-radius:6px;background:linear-gradient(#1d1d20,#141416 50%,#0f0f11);box-shadow:inset 0 1px rgba(255,255,255,.06),0 2px 0 #050506;font:800 52px/1 var(--disp);font-stretch:62%;font-style:normal;color:var(--gold)}
-.flaps i::after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:#0a0a0b}
-.stat-what{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);line-height:1.3}
-.me-how-title{margin:clamp(40px,6vh,56px) 0 0;font-size:16px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
-.me-how{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 36px;counter-reset:how}
-.me-how li{counter-increment:how;border-top:1px solid var(--hair);padding-top:16px;font-size:clamp(17px,1.35vw,19px);line-height:1.45;color:var(--soft)}
-.me-how li::before{content:"0" counter(how);display:block;margin-bottom:10px;font:500 15px/1 var(--mono);color:var(--gold)}
-.me-how b{display:block;margin-bottom:4px;font-weight:600;font-size:1.06em;color:var(--ink)}
-.facts3{margin:clamp(40px,6vh,56px) 0 0;display:grid;gap:24px;border-top:1px solid var(--hair);padding-top:28px}
-.facts3 dt{font-size:16px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
-.facts3 dd{margin:8px 0 0;font-size:clamp(18px,1.5vw,22px);line-height:1.4}
-
 /* the ending: the internship board, the links */
 .end{display:grid;justify-items:center;gap:clamp(28px,4vh,44px);padding-block:clamp(96px,16vh,200px);text-align:center}
 .end-board{width:min(100%,1240px);aspect-ratio:19.76/3.42;contain:size;display:grid;place-items:center}
@@ -518,11 +495,6 @@ html:not(.no-js) [data-page="home"] .top:not(.scrolled) .logo:not(:focus-visible
   .info,.chapter[data-side] .info{left:var(--gutter);right:var(--gutter);width:auto;top:auto;bottom:clamp(24px,5vh,48px);translate:none}
   .info::before{inset:-40% -20% -20%;background:linear-gradient(to top,rgba(12,12,13,.9) 40%,rgba(12,12,13,0))}
   .has-consent-prompt .info,.has-consent-prompt .chapter[data-side] .info{bottom:calc(var(--consent-h,96px) + 32px + env(safe-area-inset-bottom,0px))} /* above the analytics question while it is up */
-  .me{grid-template-columns:1fr}
-  .me .portrait{max-width:220px;position:static} /* small, so the words show on the first screen */
-  .me-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 16px}
-  .me-how{grid-template-columns:1fr}
-  .flaps i{width:46px;height:60px;font-size:46px}
 }
 
 /* stills of the 3D (design/stills.mjs): only the canvas shows; around the boards the page is transparent */

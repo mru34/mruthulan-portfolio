@@ -10,7 +10,7 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-  // In-page links scroll smoothly once the page has loaded. Not before: a page opened at /#about must
+  // In-page links scroll smoothly once the page has loaded. Not before: a page opened at /#awards must
   // jump straight there, so the browser can keep it in place while fonts and pictures settle above it.
   const smooth = () => requestAnimationFrame(() => root.classList.add('loaded'));
   if (document.readyState === 'complete') smooth(); else addEventListener('load', smooth, { once: true });
@@ -378,27 +378,6 @@
   }
 
   if (page !== 'home') return;
-
-  /* ---------------------------------------------------------- home: about's numbers */
-  // Each number is a row of split-flap tiles: under the mouse, or on a tap, they flicker through a few digits and
-  // land back on the number, like the name board. Never by themselves, and not with reduced motion.
-  $$('.me-stats li[data-flap]').forEach((li) => {
-    const tiles = $$('.flaps i', li);
-    const want = li.dataset.flap;
-    let timer = 0;
-    const flick = () => {
-      if (still() || timer) return;
-      let step = 0;
-      timer = setInterval(() => {
-        step += 1;
-        const done = step >= 7;
-        tiles.forEach((t, k) => { t.textContent = done ? want[k] : String(Math.floor(Math.random() * 10)); });
-        if (done) { clearInterval(timer); timer = 0; }
-      }, 55);
-    };
-    li.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') flick(); });
-    li.addEventListener('click', flick);
-  });
 
   /* ---------------------------------------------------------- home: header */
   // The gold logo stays hidden while the name board fills the screen (CSS), and the header gets its

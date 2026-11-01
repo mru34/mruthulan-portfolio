@@ -60,24 +60,16 @@ def test_case_pages_cycle_through_five_in_homepage_order():
 
 COPY = [
     'SignalBridge', 'After-hours chat for young people. Nothing reaches a youth worker until they say yes.',
-    'Champion · Dell InnovateDash 2026',
-    'Boss Breaker', 'Wellness challenges, played as a boss fight.', 'Solo build · code on GitHub',
-    'Better Call Bhai', 'Online booking for a barbershop in Singapore.', 'Solo build · in a pilot with the shop',
-    'MEANT', 'Helps people who can’t rely on their speech reply in time. They choose every word.',
-    '2nd runner-up · Dell InnovateFest 2026',
+    'Won Dell InnovateDash 2026',
+    'Boss Breaker', 'A wellness app where finishing challenges lets you fight a boss.', 'Built alone, code on GitHub',
+    'Better Call Bhai', 'Online booking for a barbershop in Singapore.', 'Built alone, now being tried out by the shop',
+    'MEANT', 'Helps people who can’t rely on their speech keep up in a conversation, with replies they choose.',
+    '2nd runner-up at Dell InnovateFest 2026',
     'KnowCad', 'An AI assistant for customer service that finds answers in long documents.',
-    'Champion · Autodesk Singapore Hackathon 2026',
+    'Won the Autodesk Singapore Hackathon 2026',
     'More info',
     'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
     'Next photo', 'Licence “in use on another device” after moving to new laptops', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
-    'Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028',
-    'Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER',
-    'I build for one real person first:', 'a youth worker at midnight',   # the three people are in gold
-    'someone who can’t rely on their speech', 'a barber with a full day of bookings',
-    '5 projects', '3 hackathon awards', '2 champion titles', '1 newspaper feature',
-    'How I work', 'Start with one person.', 'Make the demo hard to break.', 'Keep the rules on the server.',
-    'Then explain it.', 'Before MEANT’s live demo I fixed a stuck mic, a silent send and a black camera.',
-    'Looking for', 'A year-long software engineering internship · 2027/28',
     'Open to internships, 2027/28', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
@@ -239,7 +231,7 @@ def test_knowcad_asks_its_question_in_full_without_the_3d():
 
 def test_awards_are_three_stacks_with_their_placing_boxes_and_no_carousel():
     markup = bs.build_home()
-    sec = markup[markup.index('id="awards"'):markup.index('id="about"')]
+    sec = markup[markup.index('id="awards"'):markup.index('id="contact"')]
     assert 'data-track' not in sec and 'data-slide' not in sec and 'track-dots' not in sec
     assert sec.count('class="aw-stack gal" data-anchor data-gal') == 3
     assert sec.count('class="aw-place" data-anchor') == 3
@@ -275,12 +267,3 @@ def test_every_chapter_still_has_its_own_description():
     for c in bs.CHAPTERS:
         assert c.get('alt'), c['pid']
         assert bs.BY_ID[c['pid']]['name'].split()[0] in c['alt'] or c['pid'] == 'kc', c['pid']
-
-
-def test_about_numbers_match_the_record():
-    """The flap tiles count what the page shows: five projects, three hackathon results (two of them Champion),
-    one newspaper feature (Tamil Murasu)."""
-    assert dict((w, int(n)) for n, w in bs.ABOUT_STATS) == {
-        'projects': len(bs.PROJECTS), 'hackathon awards': 3, 'champion titles': 2, 'newspaper feature': 1}
-    results = [p['result'] for p in bs.PROJECTS if p['type'] == 'Hackathon']
-    assert len(results) == 3 and sum('Champion' in r for r in results) == 2

@@ -218,8 +218,7 @@ def note(t):
 
 
 def quote(q, who):
-    return (f'<blockquote class="quote"><p>“{e(q)}”</p><footer>{e(who)} · WhatsApp message, '
-            'emoji removed and one sentence left out, marked with an ellipsis</footer></blockquote>')
+    return (f'<blockquote class="quote"><p>“{e(q)}”</p><footer>{e(who)} · on WhatsApp (shortened, emoji removed)</footer></blockquote>')
 
 
 PROJECTS = [
@@ -235,34 +234,34 @@ PROJECTS = [
         desc=('SignalBridge case study: a consent-led youth support platform that won Dell InnovateDash '
               '2026. The handoff, the decisions and my role on the build.'),
         og='A consent-led youth support platform. Dell InnovateDash 2026 Champion.',
-        hl='Youth support that keeps the context, and asks before anything is shared.',
-        st=('A youth-support command centre for a brief from Singapore Children’s Society, built by four '
-            'Year 2 IT students around after-hours conversations, human handoff and consent.'),
+        hl='A youth-support app where young people decide what their worker sees.',
+        st=('Four of us, all Year 2 IT students, built it for a Singapore Children’s Society brief about young '
+            'people who reach out after hours.'),
         actions=[('Open the app ↗', 'https://signalbridge-web.onrender.com/', None),
                  ('Code on GitHub ↗', SIGNALBRIDGE_REPO, None)],
         more=[('My Dell InnovateDash post ↗', POST_SP, 'proof_post_click'),
-              ('SP’s feature, which calls it SP InnovateDash 2026 ↗', SP_FEATURE, None)],
+              ('SP’s article about it ↗', SP_FEATURE, None)],
         facts=[('My role', 'The youth chat and consent flow, their API routes, and the Discord integration with its tests'),
                ('Result', 'Dell InnovateDash 2026 — Champion'),
                ('Stack', 'Next.js · FastAPI · PostgreSQL')],
         lead=('signalbridge-shot-1', None),
         scene='signalbridge-case',
         sections=lambda: [
-            sec('The handoff', 'Five moments. The worker decides at every one.', steps([
+            sec('How it works', 'How a message gets to a youth worker.', steps([
                 ('Message', 'A young person writes to SafeNight after hours.'),
-                ('Signal', 'Fixed rules flag the risk before any AI is involved.'),
-                ('Consent', 'Nothing is shared until they agree to the note.'),
-                ('Brief', 'A handoff brief: context, risk, a key quote, a first response.'),
-                ('Worker', 'The worker opens the brief instead of a cold thread.')])),
-            sec('Evidence', 'What it actually looks like.',
+                ('Signal', 'Fixed rules check for risk first, before any AI runs.'),
+                ('Consent', 'They read a note about the chat and choose whether to share it.'),
+                ('Brief', 'The worker gets a short brief: what happened, the risk, a quote from the chat and a suggested first reply.'),
+                ('Worker', 'The worker reads the brief first instead of starting from the raw chat.')])),
+            sec('Screenshots', 'What the worker and the young person see.',
                 shots(['signalbridge-shot-2', 'signalbridge-shot-3'], one=True)
-                + note('Fictional demo data from the running app. The backend, AI and deployment were teammates’ work.')),
+                + note('Demo data, not real users. My teammates built the backend, the AI and the deployment.')),
         ],
     ),
     dict(
         id='bx', slug='boss-breaker', name='Boss Breaker', type='Solo build', c='#F06A43',
         board=('SOLO BUILD', 'COMPLETED'),
-        line='Wellness challenges, played as a boss fight.',
+        line='A wellness app where finishing challenges lets you fight a boss.',
         role='Solo build: frontend, API, database and game logic',
         result='Full-stack coursework build',
         event='Back-end development module · coursework',
@@ -271,9 +270,9 @@ PROJECTS = [
         desc=('Boss Breaker case study: a full-stack wellness game with challenges, points and boss raids. '
               'Built with JavaScript, Node.js and MySQL.'),
         og='A full-stack wellness game with challenges, points and boss raids.',
-        hl='Wellness challenges, played as a boss fight.',
-        st=('A full-stack build for a back-end development module assignment: complete wellness challenges to earn points, then '
-            'spend them against a shared boss.'),
+        hl='A wellness app where finishing challenges lets you fight a boss.',
+        st=('I built it for a back-end development module. You do wellness challenges to earn points, then '
+            'spend them fighting a boss with everyone else.'),
         actions=[('View the code ↗', 'https://github.com/mru34/bedca2', None)],
         facts=[('My role', 'Built it alone: frontend, API, database and game logic'),
                ('Stack', 'JavaScript · Node.js · MySQL'),
@@ -281,13 +280,13 @@ PROJECTS = [
         lead=('boss-breaker-dashboard', None),
         scene='boss-breaker-case',
         sections=lambda: [
-            sec('The loop', 'Four mechanics, one habit.', steps([
-                ('Challenges', 'A wellness action is how you earn anything.'),
-                ('Points', 'Added on the server, so the browser cannot cheat.'),
-                ('Boss raids', 'Spend points against a shared boss, with a damage leaderboard.'),
-                ('Progression', 'Everything lives in MySQL, so it survives a refresh.')])),
-            sec('In play', 'What a session looks like.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
-                + note('Run locally on a fresh database with demo data. Every commit in the public repository is mine.')),
+            sec('How it works', 'Do a challenge, earn points, hit the boss.', steps([
+                ('Challenges', 'You earn points by doing wellness challenges.'),
+                ('Points', 'The server adds them up, so nobody can cheat from the browser.'),
+                ('Boss raids', 'Everyone spends points attacking the same boss, and a leaderboard shows who did the most damage.'),
+                ('Progress', 'It’s saved in MySQL, so reloading the page doesn’t reset it.')])),
+            sec('Screenshots', 'The game running.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
+                + note('Running on my laptop with demo data. I wrote all the code in the repo.')),
         ],
     ),
     dict(
@@ -302,10 +301,9 @@ PROJECTS = [
         desc=('Better Call Bhai case study: an appointment booking site for a local barbershop, deployed '
               'on Render and in a pilot with the shop.'),
         og='An appointment booking site for a local barbershop, in a pilot with the shop.',
-        hl='Barber bookings, minus the back-and-forth.',
-        st=('Customers pick a service, a day and an open slot and confirm on the site, with their booking '
-            'details one tap away on WhatsApp. The shop is piloting it; most bookings still come in through '
-            'WhatsApp for now.'),
+        hl='Booking a haircut without messaging the shop.',
+        st=('Customers pick a service, a day and a free slot on the site, and their booking details are one tap '
+            'away on WhatsApp. The shop is trying it out, and most bookings still come in over WhatsApp for now.'),
         actions=[('Visit the site ↗', 'https://bettercalbhai.onrender.com/', None)],
         facts=[('My role', 'Built it alone: design, frontend, Express API, SQLite database, admin page and deployment'),
                ('Status', 'Deployed pilot, for a barbershop in Singapore'),
@@ -313,20 +311,20 @@ PROJECTS = [
         lead=('better-call-bhai-shot-1', 'The deployed site, on a laptop and a phone'),
         scene='better-call-bhai-case',
         sections=lambda: [
-            sec('Before and after', 'The whole job was removing a conversation.', compare(
+            sec('Before and after', 'Booking used to mean a WhatsApp chat with the shop.', compare(
                 ('Before: WhatsApp', ['Message the shop to ask what is free.', 'Wait for a reply.',
                                       'Agree a time.', 'Confirm again closer to the day.']),
                 ('After: the site', ['Open the site.', 'Pick an open slot.', 'Confirm.']))),
-            sec('Evidence', 'The booking flow, end to end.',
+            sec('Screenshots', 'Booking a slot, start to finish.',
                 shots(['better-call-bhai-flow', 'better-call-bhai-shot-3'], one=True)
-                + note('Run locally with test bookings, so no customer appears.')
+                + note('Test bookings on my laptop, so no real customers are shown.')
                 + (quote(*TESTIMONIAL) if TESTIMONIAL else '')),
         ],
     ),
     dict(
         id='mt', slug='meant', name='MEANT', type='Hackathon', c='#4DA3FF',
         board=('HACKATHON', '2ND RUNNER-UP'),
-        line='Helps people who can’t rely on their speech reply in time. They choose every word.',
+        line='Helps people who can’t rely on their speech keep up in a conversation, with replies they choose.',
         role='UI and UX, the Singaporean TTS voice with a teammate, presenting the build',
         result='Dell InnovateFest 2026 — Second runner-up · S$3,000',
         event='Dell InnovateFest 2026 · Second runner-up',
@@ -336,8 +334,8 @@ PROJECTS = [
               '2026 second runner-up, S$3,000.'),
         og='An on-device communication assistant that keeps AAC users in control of what they say.',
         hl='Helping AAC users reply before the conversation moves on.',
-        st=('AAC users often lose their turn while they compose a reply. MEANT prepares a few likely '
-            'replies, and the user still chooses every word. Partner: SPD Ltd, Singapore.'),
+        st=('People who use AAC often lose their turn while they put a reply together. MEANT suggests a few likely '
+            'replies, and the user still decides what gets said. We worked with SPD Ltd, Singapore.'),
         actions=[('My Dell InnovateFest post ↗', POST_DELL, 'proof_post_click'),
                  ('Featured in Tamil Murasu ↓', '#press', None)],
         more=[('SP School of Computing’s post ↗', POST_SPSOC_DELL, 'proof_post_click')],
@@ -347,23 +345,22 @@ PROJECTS = [
         lead=None,
         scene='meant-case',
         sections=lambda: [
-            sec('One turn', 'Three seconds of a conversation.', steps([
-                ('The room moves on', 'Turn Claim tells the other person an answer is coming.'),
-                ('A reply is offered', 'Suggestions come from a Dell GB10. Nothing leaves the device.'),
-                ('The user authors it', 'They pick, type or use their board. Nothing is spoken without a tap.')])),
-            sec('The voice', 'It had to sound like it came from here.',
-                para('A generic text-to-speech voice makes a Singaporean user sound like someone else. '
-                     'I worked on the Singaporean TTS voice with a teammate.')
+            sec('How it works', 'What happens when it’s their turn to reply.', steps([
+                ('Holding the turn', 'Turn Claim shows the other person that a reply is coming.'),
+                ('Suggestions', 'A Dell GB10 makes the suggestions on the device itself, not online.'),
+                ('They decide', 'They pick a suggestion, type, or use their board, and it’s only spoken when they tap.')])),
+            sec('The voice', 'A Singaporean voice.',
+                para('Most text-to-speech voices don’t sound Singaporean, so the user ends up sounding like someone else. '
+                     'I worked on a Singaporean TTS voice with a teammate.')
                 + shots(['meant-shot-2', 'meant-shot-3'])
-                + note('The running tablet client with the hawker demo pack. The repository is private.')),
-            sec('If the AI stops', 'It still works.',
-                para('If the AI layer goes down, the AAC board and typing still work.')),
-            sec('My part', 'The screens a person uses, and a demo that could not stall.', built([
-                ('Boards you can read at a glance', 'Each kind of word gets a colour and an openly licensed symbol.'),
-                ('No dead ends', 'Search the whole vocabulary when a prediction is wrong.'),
-                ('Setup that fits the person', 'The screen ruler and mic permission come during setup, not mid-conversation.'),
-                ('A demo that could not stall', 'Scripted the stage turn and fixed a stuck mic, a silent send and a black camera.')],
-                'From my commits to the private MEANT repository.')),
+                + note('The tablet app with the hawker-centre demo words. The code is private.')),
+            sec('Without the AI', 'If the AI goes down, the board and typing still work.', ''),
+            sec('What I did', 'The screens people use, and getting the live demo to work.', built([
+                ('Colour-coded boards', 'Each type of word has its own colour and an openly licensed symbol.'),
+                ('Search', 'If the suggestions are wrong, you can search every word instead.'),
+                ('Setup first', 'The screen ruler and mic permission happen during setup, not in the middle of a conversation.'),
+                ('The live demo', 'I scripted our turn on stage and fixed a stuck mic, a silent send and a black camera.')],
+                'All from my commits to MEANT’s private repo.')),
         ],
     ),
     dict(
@@ -378,7 +375,7 @@ PROJECTS = [
         desc=('KnowCad case study: a retrieval-based AI assistant for customer service that won the '
               'Autodesk Singapore Hackathon 2026.'),
         og='A retrieval-based AI assistant for customer service. Autodesk Singapore Hackathon 2026 Champion.',
-        hl='A retrieval-based AI assistant for customer service.',
+        hl='An AI assistant that helps customer service find answers in long manuals.',
         st=('Built by a mixed team at the Autodesk Singapore Hackathon 2026. The Autodesk engineers led the '
             'code; I built and delivered the presentation.'),
         actions=[('My Autodesk hackathon post ↗', POST_AUTODESK, 'proof_post_click')],
@@ -387,12 +384,12 @@ PROJECTS = [
                ('Approach', 'Retrieval-augmented generation (RAG)')],
         lead=('win-knowcad-champion', 'Champion, announced on the night'),
         sections=lambda: [
-            sec('From a pile to an answer', 'Every step throws work away.', steps([
-                ('Everything', 'Knowledge spread across long documents, none of it indexed.'),
-                ('What is relevant', 'Retrieval narrows it to the passages that matter.'),
-                ('The answer', 'One answer with its source, and a human still reviewing.')])),
-            sec('Proof', 'The result.', shots(['win-knowcad-team'], one=True)
-                + note('The product is private, so the proof is the award and my post.')),
+            sec('How it works', 'From long manuals to one answer.', steps([
+                ('The problem', 'The answers are buried in long documents that nobody has indexed.'),
+                ('Search', 'Retrieval finds the few passages that matter.'),
+                ('The answer', 'It gives one answer with its source, and a person still checks it.')])),
+            sec('The result', 'Champion at the Autodesk Singapore Hackathon 2026.', shots(['win-knowcad-team'], one=True)
+                + note('The product is private, so all I can show is the award and my post.')),
         ],
     ),
 ]
@@ -532,7 +529,7 @@ def header(home, current=None, prefix=''):
     def nav(sid, label):
         cur = ' aria-current="true"' if current == sid else ''
         return f'<a href="{h}#{sid}" data-nav="{sid}"{cur}>{label}</a>'
-    links = [('work', 'Work'), ('awards', 'Awards'), ('about', 'About')]
+    links = [('work', 'Work'), ('awards', 'Awards')]
     solid = '' if not home else ' solid'
     menu = ''.join(f'<a href="{h}#{sid}">{label}</a>' for sid, label in links + [('contact', 'Contact')])
     return f"""<header class="top{solid}" data-top>
@@ -791,11 +788,11 @@ END_LINKS = [('gmail', 'Gmail', GMAIL, 'contact_open_mail_app'),
 KC_QUERY = 'Licence “in use on another device” after moving to new laptops'
 
 CHAPTERS = [
-    dict(pid='sb', num='01', side='left', result='Champion · Dell InnovateDash 2026',
+    dict(pid='sb', num='01', side='left', result='Won Dell InnovateDash 2026',
          font='Name SignalBridge', still='signalbridge-card',
          alt='SignalBridge on a phone and a laptop: the youth’s SafeNight chat showing Worker notified, '
              'and the worker’s handoff brief for Mira Tan, a fictional youth.'),
-    dict(pid='bx', num='02', side='right', result='Solo build · code on GitHub',
+    dict(pid='bx', num='02', side='right', result='Built alone, code on GitHub',
          font='Name Boss Breaker', still='boss-breaker-card',
          alt='Boss Breaker’s Boss Raid screen on a large display and on a phone, the Stress Dragon’s health bar '
              'at 1,840 of 5,000 HP, a hand of challenge cards and the leaderboard.',
@@ -804,11 +801,11 @@ CHAPTERS = [
              '<p class="bx-hp"><span data-hp>1,840</span> / 5,000 HP</p>'
              '<p class="bx-down" data-defeated hidden>Stress Dragon defeated</p></div>'
              '<p class="sr-only" aria-live="polite" data-hp-live></p>'),
-    dict(pid='bb', num='03', side='bottom-left', result='Solo build · in a pilot with the shop',
+    dict(pid='bb', num='03', side='bottom-left', result='Built alone, now being tried out by the shop',
          font='Name Better Call Bhai', still='better-call-bhai-card',
          alt='Better Call Bhai on a phone showing Booking Confirmed, between two yellow, black and white barber poles, '
              'with the day’s time slots behind it and 15:00 chosen.'),
-    dict(pid='mt', num='04', side='right', result='2nd runner-up · Dell InnovateFest 2026',
+    dict(pid='mt', num='04', side='right', result='2nd runner-up at Dell InnovateFest 2026',
          font='Name MEANT', still='meant-card',
          alt='MEANT on a café table: the tablet showing four suggested replies, the partner’s display showing '
              'Give me a moment, and the Tamil Murasu page, with word tiles from the board around them.',
@@ -817,7 +814,7 @@ CHAPTERS = [
                + ''.join(f'<button class="mt-pick" type="button" data-reply="{i}">{r}</button>'
                          for i, r in enumerate(['Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice']))
                + '</div><p class="sr-only" aria-live="polite" data-partner-live></p>'),
-    dict(pid='kc', num='05', side='left', result='Champion · Autodesk Singapore Hackathon 2026',
+    dict(pid='kc', num='05', side='left', result='Won the Autodesk Singapore Hackathon 2026',
          font='Name KnowCad', still='win-knowcad-champion',
          alt='KnowCad at a support rep’s desk: a customer asks why their licence shows as in use on another '
              'device, and KnowCad’s suggested answer cites three manuals pulled from the shelves around the desk, '
@@ -825,27 +822,6 @@ CHAPTERS = [
          extra=f'<p class="kc-q" aria-hidden="true"><span data-typed>{e(KC_QUERY)}</span>'
                f'<i class="kc-caret"></i></p><p class="sr-only">{e(KC_QUERY)}</p>'),
 ]
-
-# About: who the projects were for (in gold), the record in numbers, how I work (each line is a thing a project
-# above shows, and the résumé says), then the facts. Every word comes from the résumé or the projects' own pages.
-ABOUT_INTRO = ('I build for one real person first: *a youth worker at midnight*, *someone who can’t rely on their '
-               'speech*, *a barber with a full day of bookings*.')
-# number, what it counts: shown as split-flap tiles that flicker under the pointer (js/script.js)
-ABOUT_STATS = [('5', 'projects'), ('3', 'hackathon awards'), ('2', 'champion titles'), ('1', 'newspaper feature')]
-ABOUT_HOW = [
-    ('Start with one person.', 'I built SignalBridge’s consent screen: a youth’s note reaches their worker only after '
-                               'the youth has read it and said yes.'),
-    ('Make the demo hard to break.', 'Before MEANT’s live demo I fixed a stuck mic, a silent send and a black camera.'),
-    ('Keep the rules on the server.', 'In Boss Breaker the server works out points and boss damage, so the browser '
-                                      'can’t cheat.'),
-    ('Then explain it.', 'I built and delivered the winning presentation at the Autodesk Singapore Hackathon 2026.'),
-]
-ABOUT_FACTS = [
-    ('Looking for', 'A year-long software engineering internship · 2027/28', ''),
-    ('Study', 'Diploma in Information Technology · Singapore Polytechnic · 2025–2028', ''),
-    ('Leadership', 'Secretary, Youth Harmony Chapter subcommittee · Class Chairman · SP ACER', ''),
-]
-
 
 def still_picture(scene, alt='', eager=False):
     """The rendered still of a 3D scene (design/stills.mjs), desk and phone versions, or None until it is made."""
@@ -908,18 +884,9 @@ def build_home():
     hero_links = ''.join(f'<li>{icon_link(*link)}</li>' for link in HERO_LINKS)
     end_links = ''.join(f'<li>{icon_link(*link)}</li>' for link in END_LINKS)
 
-    def fact(term, text, cls):
-        cls = f' class="{cls}"' if cls else ''
-        return f'<div><dt>{e(term)}</dt><dd{cls}>{e(text)}</dd></div>'
-    facts = ''.join(fact(*f) for f in ABOUT_FACTS)
-    stats = ''.join(
-        f'<li data-flap="{n}"><span class="flaps" aria-hidden="true">{"".join(f"<i>{d}</i>" for d in n)}</span>'
-        f'<span class="stat-what" aria-hidden="true">{e(what)}</span><span class="sr-only">{n} {e(what)}</span></li>'
-        for n, what in ABOUT_STATS)
-    how = ''.join(f'<li><b>{e(head)}</b> {e(body)}</li>' for head, body in ABOUT_HOW)
-    return f"""{head('Mruthulan Senthil Nathan — Developer & Builder',
+    return f"""{head('Mruthulan Senthil Nathan',
                  'Mruthulan Senthil Nathan, Year 2 IT at Singapore Polytechnic, builds full-stack products. Five projects, what I built on each, and three hackathon results.',
-                 '', og_title='Mruthulan Senthil Nathan — Developer & Builder',
+                 '', og_title='Mruthulan Senthil Nathan',
                  og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld, modules=True)}
 {body_open('home')}
   <canvas class="stage" aria-hidden="true"></canvas>
@@ -943,20 +910,6 @@ def build_home():
       {sechead('awards-title', 'Awards')}
       <div class="aw-row" aria-label="Awards">
         {''.join(award(*a) for a in AWARDS)}
-      </div>
-    </section>
-
-    <section class="sec wrap" id="about" data-sec="about" aria-labelledby="about-title">
-      <h2 class="big" id="about-title">About</h2>
-      <div class="me">
-        {pic('about-portrait', '(max-width: 860px) 100vw, 380px', cls='ph portrait')}
-        <div class="me-text">
-          <p class="me-intro">{emph(ABOUT_INTRO)}</p>
-          <ul class="me-stats" aria-label="In numbers">{stats}</ul>
-          <h3 class="me-how-title">How I work</h3>
-          <ol class="me-how">{how}</ol>
-          <dl class="facts3" id="credentials">{facts}</dl>
-        </div>
       </div>
     </section>
 
