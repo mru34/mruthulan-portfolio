@@ -119,7 +119,7 @@ def pic(key, sizes, eager=False, alt=None, cls='ph', fit_style=''):
 
 # On phones a laptop-and-phone scene shrinks until neither screen can be read, so the case pages show
 # just the phone there: the same region of each scene (the phone sits in the same place in all three).
-PHONE_SCENES = {'signalbridge-case': 'The youth’s side: SafeNight asks before anything is shared',
+PHONE_SCENES = {'signalbridge-case': 'The youth’s side: SafeNight asks before the note is shared',
                 'better-call-bhai-case': 'A booking confirmed on a phone',
                 'boss-breaker-case': 'Boss Raid on a phone'}   # with the caption for the phone alone
 PHONE_CROP = (0.685, 0.10, 0.985, 0.90)   # left, top, right, bottom, as fractions of the scene
@@ -221,16 +221,16 @@ PROJECTS = [
     dict(
         id='sb', slug='signalbridge', name='SignalBridge', type='Hackathon', c='#2BC4BC',
         board=('HACKATHON', 'CHAMPION'),
-        line='After-hours chat for young people. Nothing reaches a youth worker until they say yes.',
+        line='After-hours chat for young people, with a consent step before a note goes to their youth worker.',
         role='Youth-facing chat and consent flow, its API routes, the Discord integration',
         result='Dell InnovateDash 2026 — Champion',
         event='Dell InnovateDash 2026 · Champion',
         proof=('View my Dell InnovateDash post ↗', POST_SP, 'proof_post_click'),
         preview='signalbridge-shot-1', cover=('browser', 'signalbridge-shot-1'),
-        desc=('SignalBridge case study: a consent-led youth support platform that won Dell InnovateDash '
+        desc=('SignalBridge case study: a youth support platform with a consent step, which won Dell InnovateDash '
               '2026. The handoff, the decisions and my role on the build.'),
-        og='A consent-led youth support platform. Dell InnovateDash 2026 Champion.',
-        hl='A youth-support app where young people decide what their worker sees.',
+        og='A youth support platform with a consent step before the handoff. Dell InnovateDash 2026 Champion.',
+        hl='A youth-support app that asks young people before their note goes to a worker.',
         st=('Four of us, all Year 2 IT students, built it for a Singapore Children’s Society brief about young '
             'people who reach out after hours.'),
         actions=[('Open the app ↗', 'https://signalbridge-web.onrender.com/', None),
@@ -278,7 +278,7 @@ PROJECTS = [
         sections=lambda: [
             sec('How it works', 'Do a challenge, earn points, hit the boss.', steps([
                 ('Challenges', 'You earn points by doing wellness challenges.'),
-                ('Points', 'The server adds them up, so nobody can cheat from the browser.'),
+                ('Points', 'The server works out points and boss damage, not the browser.'),
                 ('Boss raids', 'Everyone spends points attacking the same boss, and a leaderboard shows who did the most damage.'),
                 ('Progress', 'It’s saved in MySQL, so reloading the page doesn’t reset it.')])),
             sec('Screenshots', 'The game running.', shots(['boss-breaker-raid', 'boss-breaker-shot-1'], one=True)
@@ -638,7 +638,7 @@ FEATURED = [
              ('Points and boss damage worked out on the server', dict(t='img', l='dash', r=[0.06, 0.13, 0.89, 0.27],
                  tag='damage = challenge.points × item multiplier + bonus_damage')),
              ('An Express API and a nine-table MySQL schema created at start-up', dict(t='text')),
-             ('bcrypt-hashed passwords and JWT-protected routes', dict(t='text')),
+             ('bcrypt-hashed passwords, and JWT logins on most routes', dict(t='text')),
          ],
     ),
 ]

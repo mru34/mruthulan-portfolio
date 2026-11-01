@@ -60,7 +60,7 @@ def test_case_pages_cycle_through_five_in_homepage_order():
 
 
 COPY = [
-    'SignalBridge', 'After-hours chat for young people. Nothing reaches a youth worker until they say yes.',
+    'SignalBridge', 'After-hours chat for young people, with a consent step before a note goes to their youth worker.',
     'Won Dell InnovateDash 2026',
     'Boss Breaker', 'A wellness app where finishing challenges lets you fight a boss.', 'Built alone, code on GitHub',
     'Better Call Bhai', 'Online booking for a barbershop in Singapore.', 'Built alone, now being tried out by the shop',
