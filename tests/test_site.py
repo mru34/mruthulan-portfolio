@@ -11,7 +11,8 @@ import build_site as bs  # noqa: E402
 
 
 def pages():
-    out = {'index.html': bs.build_home(), 'privacy.html': bs.build_privacy(), '404.html': bs.build_404()}
+    out = {'index.html': bs.build_home(), 'about.html': bs.build_about(), 'privacy.html': bs.build_privacy(),
+           '404.html': bs.build_404()}
     for p in bs.PROJECTS:
         out[f"{p['slug']}.html"] = bs.build_case(p)
     return out
@@ -70,10 +71,11 @@ COPY = [
     'More info',
     'Attack', 'Stress Dragon', '1,840 / 5,000 HP', 'Stress Dragon defeated',
     'Next photo', 'Licence “in use on another device” after moving to new laptops', 'Featured in Tamil Murasu', 'Roasted chicken rice', 'Steamed chicken rice', 'Char siew rice', 'Duck rice',
+    'About me',
     'Open to internships, 2027/28', 'Gmail', 'LinkedIn', 'GitHub', 'Résumé', 'mruthulansenthilnathan@gmail.com', 'Copy',
 ]
 GONE = ['Spin a project', 'Let’s talk', 'I build full-stack', 'Selected work', 'retrieval-based', 'AAC users',
-        'Year 2 IT', 'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo',
+        'See all projects', 'last mile', 'Now showing', 'Five projects.', 'Previous award', 'Next award', 'Previous photo',
         'Who won the Autodesk Singapore Hackathon 2026?', '(expected)', 'Reach out', 'SWE internship',
         'I study IT at Singapore Polytechnic. I build']
 BANNED = ['innovative', 'seamless', 'cutting-edge', 'passionate', 'empower', 'leverage', 'elevate', 'journey',

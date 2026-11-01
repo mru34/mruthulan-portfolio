@@ -3,7 +3,7 @@
 
     python design/build_site.py
 
-Writes index.html, the five case pages, privacy.html and 404.html, makes
+Writes index.html, the five case pages, about.html, privacy.html and 404.html, makes
 800px-wide copies of large images for phones (originals are never touched),
 then stamps the CSS and JS links (stamp_assets.py).
 
@@ -145,11 +145,12 @@ def phone_crop(key, width=640):
     return f'assets/media/{out.name}', size
 
 
-def zoom(key, sizes, caption=None, eager=False, cls='ph', project=None):
+def zoom(key, sizes, caption=None, eager=False, cls='ph', project=None, data_group=None):
     """A picture that opens full size in the viewer (or as the file, without script)."""
     m = MEDIA[key]
     cap = caption if caption is not None else (m.get('caption') or '')
     proj = f' data-project="{project}"' if project else ''
+    proj += f' data-group="{data_group}"' if data_group else ''
     return (f'<a class="zoom" href="assets/media/{m["src"]}" data-zoom="{e(cap or "Full size")}" '
             f'data-alt="{e(m["alt"])}"{proj} aria-label="View full size: {e(cap or m["alt"])}">'
             f'{pic(key, sizes, eager, cls=cls)}</a>')
@@ -532,10 +533,11 @@ def header(home, current=None, prefix=''):
     links = [('work', 'Work'), ('awards', 'Awards')]
     solid = '' if not home else ' solid'
     menu = ''.join(f'<a href="{h}#{sid}">{label}</a>' for sid, label in links + [('contact', 'Contact')])
+    about = f'<a href="{prefix}about.html"{" aria-current=\"page\"" if current == "about" else ""}>About</a>'
     return f"""<header class="top{solid}" data-top>
     <div class="wrap top-in">
       <a class="logo cn" href="{h or ''}#top">Mruthulan</a>
-      <nav class="nav" aria-label="Main">{''.join(nav(s, l) for s, l in links)}<span class="nav-ink" aria-hidden="true"></span></nav>
+      <nav class="nav" aria-label="Main">{''.join(nav(s, l) for s, l in links)}{about}<span class="nav-ink" aria-hidden="true"></span></nav>
       <div class="top-acts">
         <a class="icon-only" href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin" aria-label="LinkedIn">{icon('linkedin')}</a>
         <a class="icon-only" href="{GITHUB}"{ext(GITHUB)} data-event="contact_open_github" aria-label="GitHub">{icon('github')}</a>
@@ -544,7 +546,7 @@ def header(home, current=None, prefix=''):
         <button class="btn menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menu</button>
       </div>
     </div>
-    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin">LinkedIn ↗</a><a href="{GITHUB}"{ext(GITHUB)} data-event="contact_open_github">GitHub ↗</a></nav>
+    <nav class="menu" id="menu" aria-label="Menu" hidden>{menu}{about}<a href="{prefix}{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a><a href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin">LinkedIn ↗</a><a href="{GITHUB}"{ext(GITHUB)} data-event="contact_open_github">GitHub ↗</a></nav>
   </header>"""
 
 
@@ -756,6 +758,7 @@ def award(pid, anchor, place, event, facts, logos, photos, post):
 # Icons, inlined and drawn in the text colour (never in brand colours). GitHub and Gmail: Simple Icons
 # 16.34.0 (CC0). LinkedIn and the résumé page: Bootstrap Icons 1.11.3 (MIT, assets/ICONS-LICENSE.txt).
 ICONS = {
+    'person': ('0 0 16 16', 'M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z'),
     'github': ('0 0 24 24', 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'),
     'gmail': ('0 0 24 24', 'M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z'),
     'linkedin': ('0 0 16 16', 'M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z'),
@@ -773,7 +776,8 @@ def icon_link(name, label, href, event):
     return f'<a class="icon-btn" href="{e(href)}"{target} data-event="{event}">{icon(name)}<span>{e(label)}</span></a>'
 
 
-HERO_LINKS = [('linkedin', 'LinkedIn', LINKEDIN, 'contact_open_linkedin'),
+HERO_LINKS = [('person', 'About me', 'about.html', 'about_open'),
+              ('linkedin', 'LinkedIn', LINKEDIN, 'contact_open_linkedin'),
               ('github', 'GitHub', GITHUB, 'contact_open_github'),
               ('resume', 'Résumé', RESUME, 'resume_click')]
 END_LINKS = [('gmail', 'Gmail', GMAIL, 'contact_open_mail_app'),
@@ -1025,6 +1029,71 @@ def press_section():
 
 # ------------------------------------------------------------------ small pages
 
+# The About page (about.html), linked from the hero and the header. It opens on the then and the now: the first
+# thing Mruthulan built, then what has happened since (all on the project pages). Then the MEANT booth photo, full
+# width, and the story in Mruthulan's own words (from their answers, only spelling tidied), with the barber's message
+# beside the barbershop. Set in Atkinson Hyperlegible, made by the Braille Institute for readers with low vision.
+ABOUT_THEN = 'The first thing I ever built was a pretty bad website, just to see if I’d even like this.'
+ABOUT_SINCE = ('Since then: three hackathon wins, <a href="meant.html#press">a newspaper feature</a>, and '
+               '<a href="better-call-bhai.html">a barbershop</a> trying out a booking site I built.')
+ABOUT_STORY = [
+    'The one I still think about is <a href="meant.html">Dell InnovateFest</a>. Right before presenting we were '
+    'all so nervous, but we somehow did it, and we were proud of ourselves for doing it.',
+    'The barbershop was random. I saw it around my neighbourhood and noticed they still take bookings over '
+    'WhatsApp, so I was like, might as well help them out. That became '
+    '<a href="better-call-bhai.html">Better Call Bhai</a>, and this is what the owner sent me:',
+    'QUOTE',
+    'That’s honestly why I like building for real people. It actually makes an impact on them, and it’s '
+    'something that helps them. Outside of that, I play sports with my friends once in a while, whatever we feel '
+    'like that day.',
+]
+# the end answers the opening line
+ABOUT_CLOSE = 'So yeah, turns out I do like it.'
+ABOUT_NOW = ('I study IT at Singapore Polytechnic (2025–2028), and I’m looking for a year-long software engineering '
+             'internship in 2027/28, to keep building things people actually use.')
+
+
+def build_about():
+    bhai = BY_ID['bb']['c']
+    said = (f'<div style="--c:{bhai}">{quote(*TESTIMONIAL)}</div>' if TESTIMONIAL else '')
+    story = '\n        '.join(said if p == 'QUOTE' else f'<p>{p}</p>' for p in ABOUT_STORY)
+    return f"""{head('About — Mruthulan', 'Mruthulan Senthil Nathan: IT student at Singapore Polytechnic, looking for a year-long software engineering internship in 2027/28.', 'about.html')}
+{body_open('about')}
+  {header('index.html', current='about')}
+  <main id="main">
+    <article class="wrap letter">
+      <p class="crumb"><a class="link" href="index.html">← Back to the portfolio</a></p>
+      <header class="lt-hook">
+        <h1 class="cn">Hi, I’m Mruthulan.</h1>
+        <p class="lt-then">{e(ABOUT_THEN)}</p>
+        <p class="lt-since">{ABOUT_SINCE}</p>
+      </header>
+      <figure class="lt-photo">{zoom("about-meant-booth", "(max-width: 860px) 100vw, 820px", eager=True)}
+        <figcaption class="cap">{e(MEDIA["about-meant-booth"]["caption"])}</figcaption></figure>
+      <div class="lt-story">
+        {story}
+        <p class="lt-close">{e(ABOUT_CLOSE)}</p>
+      </div>
+      <footer class="lt-end">
+        {pic('about-portrait', '120px', cls='ph lt-face')}
+        <div>
+          <p class="lt-now">{e(ABOUT_NOW)}</p>
+          <div class="acts">
+            <a class="btn solid" href="{GMAIL}"{ext(GMAIL)} data-event="contact_open_mail_app">Email me</a>
+            <a class="btn" href="{RESUME}" target="_blank" rel="noopener" data-event="resume_click">Résumé ↓</a>
+            <a class="btn" href="{LINKEDIN}"{ext(LINKEDIN)} data-event="contact_open_linkedin">LinkedIn</a>
+          </div>
+        </div>
+      </footer>
+    </article>
+  </main>
+  {footer('index.html')}
+  {VIEWER}
+</body>
+</html>
+"""
+
+
 def build_privacy():
     return f"""{head('Privacy & analytics — Mruthulan', 'How analytics works on Mruthulan’s portfolio and how to change your choice.', 'privacy.html')}
 {body_open('privacy')}
@@ -1144,6 +1213,7 @@ if __name__ == '__main__':
     write('index.html', build_home())
     for proj in PROJECTS:
         write(f"{proj['slug']}.html", build_case(proj))
+    write('about.html', build_about())
     write('privacy.html', build_privacy())
     write('404.html', build_404())
     import sys
