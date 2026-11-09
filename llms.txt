@@ -1,0 +1,26 @@
+# Mruthulan Senthil Nathan
+
+> Mruthulan Senthil Nathan is a co-founder of Cue Slides, an AI presentation maker, and a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Based in Singapore. Open to a year-long software engineering internship in 2027/28.
+
+## Cue Slides
+
+- Mruthulan co-founded Cue Slides in 2026 with Shelton (https://kingshelton.com/).
+- Cue Slides (cueslides.com), or Cue for short, is an AI presentation maker. Give it a prompt, a document or an old deck and it designs a slide deck that moves like film, then follows your voice as you present.
+- Website: https://cueslides.com/
+- About Cue, for AI agents: https://cueslides.com/llms.txt
+
+## Projects
+
+- [SignalBridge](https://mruthulan.com/signalbridge.html): After-hours chat for young people, with a consent step before a note goes to their youth worker. Dell InnovateDash 2026 — Champion.
+- [Boss Breaker](https://mruthulan.com/boss-breaker.html): A wellness app where finishing challenges lets you fight a boss. Full-stack coursework build.
+- [Better Call Bhai](https://mruthulan.com/better-call-bhai.html): Online booking for a barbershop in Singapore. Deployed pilot.
+- [MEANT](https://mruthulan.com/meant.html): Helps people who can’t rely on their speech keep up in a conversation, with replies they choose. Dell InnovateFest 2026 — Second runner-up · S$3,000.
+- [KnowCad](https://mruthulan.com/knowcad.html): An AI assistant for customer service that finds answers in long documents. Autodesk Singapore Hackathon 2026 — Champion.
+
+## Links
+
+- Portfolio: https://mruthulan.com/
+- About: https://mruthulan.com/about.html
+- Résumé (PDF): https://mruthulan.com/assets/Mruthulan-Senthil-Nathan-Resume.pdf
+- LinkedIn: https://www.linkedin.com/in/mruthulan/
+- GitHub: https://github.com/mru34

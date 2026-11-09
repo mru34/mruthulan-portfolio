@@ -546,6 +546,64 @@ def header(home, current=None, prefix=''):
 
 
 CUE = 'https://cueslides.com/'
+CUE_LINE = ('Cue Slides (cueslides.com), or Cue for short, is an AI presentation maker. Give it a prompt, a document '
+            'or an old deck and it designs a slide deck that moves like film, then follows your voice as you present.')
+
+# Who Mruthulan is, for search engines and AI agents: structured data in each page's <head> (people never see it).
+# The Cue Slides nodes reuse cueslides.com's own @ids (its homepage carries the same Organization and founders),
+# so both sites describe one company and one person.
+ME = {'@type': 'Person', '@id': f'{SITE}/#me', 'name': 'Mruthulan Senthil Nathan',
+      'alternateName': ['Mruthulan', 'Senthil Nathan Mruthulan', 'Mru'], 'url': f'{SITE}/',
+      'jobTitle': ['Co-founder of Cue Slides', 'Software developer', 'IT student'],
+      'description': ('Mruthulan Senthil Nathan is a co-founder of Cue Slides, an AI presentation maker, and a Year 2 '
+                      'IT student at Singapore Polytechnic who builds full-stack products.'),
+      'worksFor': {'@id': f'{CUE}#org'},
+      'affiliation': {'@type': 'CollegeOrUniversity', 'name': 'Singapore Polytechnic'},
+      'address': {'@type': 'PostalAddress', 'addressCountry': 'SG'},
+      'sameAs': [LINKEDIN, GITHUB]}
+CUE_ORG = {'@type': 'Organization', '@id': f'{CUE}#org', 'name': 'Cue Slides',
+           'alternateName': ['Cue', 'CueSlides'], 'url': CUE, 'description': CUE_LINE, 'foundingDate': '2026',
+           'founder': [{'@id': f'{SITE}/#me'}, {'@id': f'{CUE}#king'}],
+           'sameAs': ['https://www.linkedin.com/company/cueslides/', 'https://x.com/cueslides']}
+CUE_KING = {'@type': 'Person', '@id': f'{CUE}#king', 'name': 'Shelton', 'jobTitle': 'Co-founder of Cue Slides',
+            'url': 'https://kingshelton.com/', 'worksFor': {'@id': f'{CUE}#org'}}
+
+
+def person_ld(page=None):
+    """The person graph; `page` adds the page itself (a ProfilePage about Mruthulan) for the About page."""
+    graph = [ME, CUE_ORG, CUE_KING]
+    if page:
+        graph.insert(0, {'@type': 'ProfilePage', '@id': f'{SITE}/{page}', 'url': f'{SITE}/{page}',
+                         'mainEntity': {'@id': f'{SITE}/#me'}})
+    return {'@context': 'https://schema.org', '@graph': graph}
+
+
+# /llms.txt: a plain-text summary of the site for AI agents (llmstxt.org). Built from the same data as the pages.
+def build_llms():
+    work = '\n'.join(f"- [{p['name']}]({SITE}/{p['slug']}.html): {p['line']} {p['result']}." for p in PROJECTS)
+    return f"""# Mruthulan Senthil Nathan
+
+> Mruthulan Senthil Nathan is a co-founder of Cue Slides, an AI presentation maker, and a Year 2 IT student at Singapore Polytechnic who builds full-stack products. Based in Singapore. Open to a year-long software engineering internship in 2027/28.
+
+## Cue Slides
+
+- Mruthulan co-founded Cue Slides in 2026 with Shelton (https://kingshelton.com/).
+- {CUE_LINE}
+- Website: {CUE}
+- About Cue, for AI agents: {CUE}llms.txt
+
+## Projects
+
+{work}
+
+## Links
+
+- Portfolio: {SITE}/
+- About: {SITE}/about.html
+- Résumé (PDF): {SITE}/{RESUME_PATH}
+- LinkedIn: {LINKEDIN}
+- GitHub: {GITHUB}
+"""
 
 # MEANT's word board and its pictures are Mulberry Symbols, whose licence asks for this line wherever they appear.
 # It sits at the end of MEANT's page (#credits); the homepage footer links there.
@@ -853,13 +911,7 @@ def chapter(c, first=False):
 
 
 def build_home():
-    ld = {'@context': 'https://schema.org', '@type': 'Person', 'name': 'Mruthulan Senthil Nathan',
-          'alternateName': ['Mruthulan', 'Senthil Nathan Mruthulan'], 'url': f'{SITE}/',
-          'jobTitle': 'Software developer and IT student',
-          'affiliation': {'@type': 'CollegeOrUniversity', 'name': 'Singapore Polytechnic'},
-          'worksFor': {'@type': 'Organization', '@id': f'{CUE}#org', 'name': 'Cue Slides', 'url': CUE},
-          'address': {'@type': 'PostalAddress', 'addressCountry': 'SG'},
-          'sameAs': [LINKEDIN, GITHUB]}
+    ld = person_ld()
     chapters = '\n      '.join(chapter(c, first=(i == 0)) for i, c in enumerate(CHAPTERS))
     rail = '<ol class="rail" aria-hidden="true">' + ''.join(
         f'<li style="--c:{BY_ID[c["pid"]]["c"]}"></li>' for c in CHAPTERS) + '</ol>'
@@ -951,7 +1003,7 @@ def build_case(p):
     back = f"index.html#work-{p['id']}"
     ld = {'@context': 'https://schema.org', '@type': 'CreativeWork', 'name': p['name'],
           'description': p['og'], 'url': f"{SITE}/{p['slug']}.html",
-          'author': {'@type': 'Person', 'name': 'Mruthulan Senthil Nathan', 'url': f'{SITE}/'}}
+          'author': {'@type': 'Person', '@id': f'{SITE}/#me', 'name': 'Mruthulan Senthil Nathan', 'url': f'{SITE}/'}}
     return f"""{head(f"{p['name']} — Mruthulan", p['desc'], f"{p['slug']}.html",
                  og_title=f"{p['name']} — Mruthulan", og_desc=p['og'], ld=ld)}
 {body_open('case', f"--c:{p['c']}")}
@@ -1035,7 +1087,7 @@ def build_about():
     bhai = BY_ID['bb']['c']
     said = (f'<div style="--c:{bhai}">{quote(*TESTIMONIAL)}</div>' if TESTIMONIAL else '')
     story = '\n        '.join(said if p == 'QUOTE' else f'<p>{p}</p>' for p in ABOUT_STORY)
-    return f"""{head('About — Mruthulan', 'Mruthulan Senthil Nathan: IT student at Singapore Polytechnic, looking for a year-long software engineering internship in 2027/28.', 'about.html')}
+    return f"""{head('About — Mruthulan', 'Mruthulan Senthil Nathan: IT student at Singapore Polytechnic, looking for a year-long software engineering internship in 2027/28.', 'about.html', ld=person_ld('about.html'))}
 {body_open('about')}
   {header('index.html', current='about')}
   <main id="main">
@@ -1194,6 +1246,7 @@ if __name__ == '__main__':
     write('about.html', build_about())
     write('privacy.html', build_privacy())
     write('404.html', build_404())
+    write('llms.txt', build_llms())
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import stamp_assets
