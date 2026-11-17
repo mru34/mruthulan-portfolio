@@ -33,11 +33,12 @@ const rail = document.querySelector('.rail');
 const marks = rail ? $$('li', rail) : [];
 const live = want3D(readEnv());
 root.classList.toggle('has-3d', live);   // usually set already, in <head> (EARLY_3D in design/build_site.py)
-if (!live) root.classList.add('stills');
+if (!live) { root.classList.add('stills'); window.__boot?.(); }
 
 let onFreeze = () => {};
 function freeze() {
   root.classList.add('frozen');
+  window.__boot?.();
   $$('[data-live]').forEach((a) => a.removeAttribute('data-live'));
   onFreeze();
 }
@@ -99,6 +100,9 @@ async function start3D(ticker) {
     return;
   }
   stage.add(world);
+  // the page opened held still (html.booting, set in <head>): it goes on once the room the visitor is at is live
+  const ready = () => { const n = world.debugPlace().name; return world.mounted.has(n) || sections.find((x) => x.name === n)?.el.hasAttribute('data-failed'); };
+  const gate = setInterval(() => { if (ready() || root.classList.contains('frozen')) { clearInterval(gate); window.__boot?.(); } }, 80);
 
   // frames that run back to back (the page moving) are measured; the time the loop spends asleep is not. While a
   // scene is being built a frame may take twice as long (js/lib/watchdog.js)

@@ -429,7 +429,9 @@ def module_map():
 EARLY_3D = ("(()=>{const q=new URLSearchParams(location.search).get('mode'),m=(s)=>matchMedia(s).matches,"
             "c=navigator.connection,d=navigator.deviceMemory;"
             "if(q!=='stills'&&'WebGL2RenderingContext' in window&&(q==='3d'||!(m('(prefers-reduced-motion: reduce)')"
-            "||(c&&c.saveData)||(typeof d==='number'&&d<4))))document.documentElement.classList.add('has-3d')})()")
+            "||(c&&c.saveData)||(typeof d==='number'&&d<4)))){const r=document.documentElement;r.classList.add('has-3d');"
+            "if(q!=='3d'||!new URLSearchParams(location.search).get('pose')){r.classList.add('booting');try{if(sessionStorage.getItem('booted'))r.classList.add('boot-quiet')}catch(e){}"
+            "window.__boot=()=>{r.classList.remove('booting');try{sessionStorage.setItem('booted','1')}catch(e){}};setTimeout(window.__boot,9000)}}})()")
 
 
 # What the homepage's 3D needs before it can draw anything: home.js, then the modules it always loads at once (the
@@ -924,6 +926,7 @@ def build_home():
                  og_desc='Five projects, what I built on each, and three hackathon results.', ld=ld, modules=True)}
 {body_open('home')}
   <canvas class="stage" aria-hidden="true"></canvas>
+  <div class="boot" aria-hidden="true"><span>Mruthulan</span><i></i></div>
   {header('')}
 
   <main id="main">

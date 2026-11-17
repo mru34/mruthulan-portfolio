@@ -516,6 +516,18 @@ html[data-pose] body > :not(.stage){visibility:hidden}
 /* with the live 3D (.has-3d, set by js/home.js): the canvas shows; every chapter is a tall section whose
    content stays pinned while the scroll drives it; a chapter's words arrive in beats */
 .has-3d .stage{display:block}
+/* a first visit on a slow connection: the page holds still until the hero's 3D is live (js/home.js), so a fast
+   scroll never runs ahead of rooms that are not built. It shows only if that takes over a quarter of a second,
+   so a return visit never sees it, and it goes at once (no fade). Set in <head> (EARLY_3D), taken off by home.js,
+   or by a 9 s timer there if the script never arrives. */
+.boot{display:none}
+html.booting{overflow:hidden}
+html.booting:not(.boot-quiet) .boot{position:fixed;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:14px;background:var(--bg);color:var(--soft);font:600 15px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;opacity:0;animation:boot-in 0s .25s forwards}
+html.booting .boot i{display:block;width:120px;height:2px;background:var(--hair);position:relative;overflow:hidden}
+html.booting .boot i::after{content:"";position:absolute;inset:0;width:40%;background:var(--gold);animation:boot-run 1.1s var(--ease) infinite}
+@keyframes boot-in{to{opacity:1}}
+@keyframes boot-run{from{translate:-100%}to{translate:250%}}
+@media (prefers-reduced-motion: reduce){html.booting .boot i::after{animation:none;width:100%}}
 .has-3d.frozen .stage{display:none}
 .has-3d .chapter{height:160svh}
 /* between two rooms the camera flies with nothing but the 3D on screen: a stretch of scroll of its own, so the
